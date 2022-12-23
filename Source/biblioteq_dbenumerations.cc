@@ -473,7 +473,7 @@ void biblioteq_dbenumerations::show(QMainWindow *parent, const bool populate)
 #endif
   activateWindow();
   raise();
-  m_ui.emptyLabel->setMinimumHeight(m_ui.addCdFormat->height());
+  //m_ui.emptyLabel->setMinimumHeight(m_ui.addCdFormat->height());
 
   if(populate)
     populateWidgets();

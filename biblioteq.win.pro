@@ -4,7 +4,7 @@ include(biblioteq-source.pro)
 purge.commands = del /Q *~ && del /Q *\\*~
 
 CONFIG		+= qt release thread warn_on windows
-DEFINES         += BIBLIOTEQ_LINKED_WITH_YAZ
+#DEFINES         += BIBLIOTEQ_LINKED_WITH_YAZ
 LANGUAGE	= C++
 QT		+= network sql printsupport widgets
 QT		-= webkit
@@ -33,10 +33,8 @@ INCLUDEPATH	+= Include.win32 \
                    Source \
                    temp
 LIBS		+= -L"." \
-		   -L"Libraries.win32\\sqlite3" \
-                   -L"Libraries.win32\\yaz" \
-                   -lsqlite3 \
-                   -lyaz5
+                   -L"D:\\SQLite3" \
+                   -lsqlite3
 RC_FILE		= biblioteq.win.rc
 PROJECTNAME	= BiblioteQ
 TARGET		= BiblioteQ
@@ -54,9 +52,7 @@ documentation.path = release\\Documentation\\.
 libraries.files = Libraries.win32\\miscellaneous\\*.dll \
                   Libraries.win32\\postgresql\\*.dll \
                   Libraries.win32\\postgresql\\*.manifest \
-                  Libraries.win32\\sqlite3\\*.dll \
-                  Libraries.win32\\yaz\\*.dll \
-                  Libraries.win32\\yaz\\*.exe \
+                  D:\\SQLite3\\*.dll \
                   Libraries.win64\\*.exe
 libraries.path = release\\.
 plugins1.files = $$[QT_INSTALL_PLUGINS]\\*
@@ -101,3 +97,5 @@ INSTALLS = biblioteq \
            qtlibraries \
            sql1 \
            sql2
+
+FORMS +=

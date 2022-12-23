@@ -23,8 +23,8 @@ void biblioteq_photograph_view::resizeEvent(QResizeEvent *event)
       QGraphicsPixmapItem *item = nullptr;
 
       if(scene() && !scene()->items().isEmpty())
-	item = qgraphicsitem_cast<QGraphicsPixmapItem *>
-	  (scene()->items().at(0));
+        item = qgraphicsitem_cast<QGraphicsPixmapItem *>
+          (scene()->items().at(0));
 
       if(item)
 	{
@@ -56,7 +56,7 @@ void biblioteq_photograph_view::rotateImage(const qreal degrees)
       m_degrees += degrees;
 
       if(m_degrees >= 360.0 || m_degrees <= -360.0)
-	m_degrees = 0.0;
+        m_degrees = 0.0;
 
       item->setRotation(m_degrees);
       scene()->setSceneRect(scene()->itemsBoundingRect());

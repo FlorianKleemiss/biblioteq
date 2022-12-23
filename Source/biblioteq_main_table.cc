@@ -25,15 +25,12 @@ QHash<QString, QString> biblioteq_main_table::friendlyStates(void) const
     {
       QString state("");
 
-      for(int j = 0;
-	  j < m_hiddenColumns.value(m_hiddenColumns.keys().at(i)).size();
-	  j++)
-	state += QString::number
-	  (m_hiddenColumns.value(m_hiddenColumns.keys().at(i)).at(j)).
-	  append(",");
+      for(int j = 0; j < m_hiddenColumns.value(m_hiddenColumns.keys().at(i)).size(); j++)
+        state += QString::number
+	  (m_hiddenColumns.value(m_hiddenColumns.keys().at(i)).at(j)).append(",");
 
       if(state.endsWith(","))
-	state = state.mid(0, state.length() - 1);
+        state = state.mid(0, state.length() - 1);
 
       states[m_hiddenColumns.keys().at(i)] = state;
     }
@@ -73,8 +70,8 @@ int biblioteq_main_table::columnNumber(const QString &name) const
   for(int i = 0; i < m_columnHeaderIndexes.size(); i++)
     if(m_columnHeaderIndexes.at(i).toLower() == name.toLower())
       {
-	index = i;
-	break;
+        index = i;
+        break;
       }
 
   return index;
@@ -84,7 +81,7 @@ void biblioteq_main_table::keyPressEvent(QKeyEvent *event)
 {
   if(event)
     switch(event->key())
-      {
+    {
       case Qt::Key_Enter:
       case Qt::Key_Return:
 	{
@@ -105,10 +102,9 @@ void biblioteq_main_table::parseStates(const QHash<QString, QString> &states)
   m_hiddenColumns.clear();
 
   for(int i = 0; i < states.keys().size(); i++)
-    {
-      QList<int> intList;
-      auto strList
-	(states[states.keys().at(i)].split(",",
+  {
+        QList<int> intList;
+        auto strList (states[states.keys().at(i)].split(",",
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
 					   Qt::SkipEmptyParts
 #else
@@ -117,7 +113,7 @@ void biblioteq_main_table::parseStates(const QHash<QString, QString> &states)
 					   ));
 
       for(int j = 0; j < strList.size(); j++)
-	intList.append(qBound(0, strList.at(j).toInt(), strList.size()));
+        intList.append(qBound(0, strList.at(j).toInt(), strList.size()));
 
       m_hiddenColumns[states.keys().at(i)] = intList;
     }
@@ -136,10 +132,10 @@ void biblioteq_main_table::recordColumnHidden(const QString &username,
   indexstr.append("_header_state");
 
   if(hidden)
-    {
+  {
       if(!m_hiddenColumns[indexstr].contains(index))
-	m_hiddenColumns[indexstr].append(index);
-    }
+        m_hiddenColumns[indexstr].append(index);
+  }
   else if(m_hiddenColumns.contains(indexstr))
     m_hiddenColumns[indexstr].removeAll(index);
 }
