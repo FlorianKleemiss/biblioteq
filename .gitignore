@@ -6,3 +6,4 @@ Makefile
 moc_*
 qrc_icons.cpp
 temp/
+*.autosave

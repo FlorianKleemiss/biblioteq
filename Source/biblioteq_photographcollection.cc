@@ -864,9 +864,7 @@ void biblioteq_photographcollection::showPhotographs(const int page)
 	  QImage image;
 	  biblioteq_graphicsitempixmap *pixmapItem = nullptr;
 
-	  image.loadFromData
-	    (QByteArray::fromBase64(query.value(0).
-				    toByteArray()));
+      image.loadFromData(QByteArray::fromBase64(query.value(0).toByteArray()));
 
 	  if(image.isNull())
 	    image.loadFromData(query.value(0).toByteArray());
@@ -879,8 +877,7 @@ void biblioteq_photographcollection::showPhotographs(const int page)
 	  */
 
 	  if(!image.isNull())
-	    image = image.scaled
-	      (126, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        image = image.scaled(126, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
 	  pixmapItem = new biblioteq_graphicsitempixmap
 	    (QPixmap::fromImage(image), nullptr);

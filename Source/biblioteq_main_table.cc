@@ -229,10 +229,10 @@ void biblioteq_main_table::setColumns(const QString &username,
       list.append(tr("Title"));
       list.append(tr("ID Number"));
 
-      if(type == "All Overdue" ||
-	 type == "All Requested" ||
-	 type == "All Reserved")
-	list.append(tr("Call Number"));
+      if(type == "All Overdue"   ||
+         type == "All Requested" ||
+         type == "All Reserved")
+        list.append(tr("Call Number"));
 
       list.append(tr("Publisher"));
       list.append(tr("Publication Date"));
@@ -245,10 +245,10 @@ void biblioteq_main_table::setColumns(const QString &username,
       m_columnHeaderIndexes.append("Title");
       m_columnHeaderIndexes.append("ID Number");
 
-      if(type == "All Overdue" ||
-	 type == "All Requested" ||
-	 type == "All Reserved")
-	m_columnHeaderIndexes.append("Call Number");
+      if(type == "All Overdue"   ||
+         type == "All Requested" ||
+         type == "All Reserved")
+        m_columnHeaderIndexes.append("Call Number");
 
       m_columnHeaderIndexes.append("Publisher");
       m_columnHeaderIndexes.append("Publication Date");
@@ -663,6 +663,6 @@ void biblioteq_main_table::updateToolTips(const int row)
       auto item = this->item(row, i);
 
       if(item)
-	item->setToolTip(tooltip);
+        item->setToolTip(tooltip);
     }
 }
