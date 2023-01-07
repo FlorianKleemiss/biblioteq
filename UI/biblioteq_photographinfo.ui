@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1000</width>
-    <height>800</height>
+    <height>1232</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -32,8 +32,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>967</width>
-         <height>1110</height>
+         <width>978</width>
+         <height>1172</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -334,13 +334,45 @@
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout_2">
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="id_item">
+              <property name="sizeConstraint">
+               <enum>QLayout::SetDefaultConstraint</enum>
+              </property>
+              <property name="spacing">
+               <number>6</number>
+              </property>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_18">
+                <property name="text">
+                 <string>Other Number</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="QLineEdit" name="call_number_item">
+                <property name="maxLength">
+                 <number>64</number>
+                </property>
                 <property name="readOnly">
                  <bool>true</bool>
                 </property>
                 <property name="placeholderText">
-                 <string>ID</string>
+                 <string>Call Number</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1">
+               <widget class="QTextEdit" name="reproduction_number_item">
+                <property name="tabChangesFocus">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+                <property name="acceptRichText">
+                 <bool>false</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>Reproduction Number</string>
                 </property>
                </widget>
               </item>
@@ -348,6 +380,43 @@
                <widget class="QLabel" name="label_12">
                 <property name="text">
                  <string>Creators</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QTextEdit" name="creators_item">
+                <property name="tabChangesFocus">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+                <property name="textInteractionFlags">
+                 <set>Qt::TextSelectableByMouse</set>
+                </property>
+                <property name="placeholderText">
+                 <string>Creators</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="0">
+               <widget class="QLabel" name="label_9">
+                <property name="text">
+                 <string>Subjects</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_15">
+                <property name="text">
+                 <string>ID</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>Reproduction Number</string>
                 </property>
                </widget>
               </item>
@@ -391,100 +460,17 @@
                 </property>
                </widget>
               </item>
-              <item row="7" column="1">
-               <widget class="QTextEdit" name="copyright_item">
-                <property name="tabChangesFocus">
-                 <bool>true</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-                <property name="acceptRichText">
-                 <bool>false</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Copyright</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0">
-               <widget class="QLabel" name="label_17">
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_10">
                 <property name="text">
-                 <string>Call Number</string>
+                 <string>Copies</string>
                 </property>
                </widget>
               </item>
-              <item row="8" column="1">
-               <widget class="QLineEdit" name="call_number_item">
-                <property name="maxLength">
-                 <number>64</number>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Call Number</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1">
-               <widget class="QTextEdit" name="reproduction_number_item">
-                <property name="tabChangesFocus">
-                 <bool>true</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-                <property name="acceptRichText">
-                 <bool>false</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Reproduction Number</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <widget class="QLabel" name="label_18">
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_13">
                 <property name="text">
-                 <string>Other Number</string>
-                </property>
-               </widget>
-              </item>
-              <item row="7" column="0">
-               <widget class="QLabel" name="label_7">
-                <property name="text">
-                 <string>Copyright</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_5">
-                <property name="text">
-                 <string>Medium</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="title_item">
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Title</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_6">
-                <property name="text">
-                 <string>Reproduction Number</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Title</string>
+                 <string>Publication Date</string>
                 </property>
                </widget>
               </item>
@@ -514,44 +500,10 @@
                 </property>
                </widget>
               </item>
-              <item row="11" column="0">
-               <widget class="QLabel" name="label_9">
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_4">
                 <property name="text">
-                 <string>Subjects</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_13">
-                <property name="text">
-                 <string>Publication Date</string>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="0">
-               <widget class="QLabel" name="label_11">
-                <property name="text">
-                 <string>Format</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="1">
-               <widget class="QLineEdit" name="other_number_item">
-                <property name="maxLength">
-                 <number>64</number>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Other Number</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_10">
-                <property name="text">
-                 <string>Copies</string>
+                 <string>Title</string>
                 </property>
                </widget>
               </item>
@@ -582,26 +534,17 @@
                 </item>
                </layout>
               </item>
-              <item row="2" column="1">
-               <widget class="QTextEdit" name="creators_item">
-                <property name="tabChangesFocus">
-                 <bool>true</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-                <property name="textInteractionFlags">
-                 <set>Qt::TextSelectableByMouse</set>
-                </property>
-                <property name="placeholderText">
-                 <string>Creators</string>
+              <item row="13" column="0">
+               <widget class="QLabel" name="label_19">
+                <property name="text">
+                 <string>Accession Number</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_15">
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_5">
                 <property name="text">
-                 <string>ID</string>
+                 <string>Medium</string>
                 </property>
                </widget>
               </item>
@@ -621,6 +564,36 @@
                 </property>
                </widget>
               </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_17">
+                <property name="text">
+                 <string>Call Number</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <widget class="QTextEdit" name="copyright_item">
+                <property name="tabChangesFocus">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+                <property name="acceptRichText">
+                 <bool>false</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>Copyright</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="0">
+               <widget class="QLabel" name="label_7">
+                <property name="text">
+                 <string>Copyright</string>
+                </property>
+               </widget>
+              </item>
               <item row="12" column="1">
                <widget class="QTextEdit" name="format_item">
                 <property name="tabChangesFocus">
@@ -637,10 +610,13 @@
                 </property>
                </widget>
               </item>
-              <item row="13" column="0">
-               <widget class="QLabel" name="label_19">
-                <property name="text">
-                 <string>Accession Number</string>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="id_item">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>ID</string>
                 </property>
                </widget>
               </item>
@@ -651,6 +627,50 @@
                 </property>
                 <property name="placeholderText">
                  <string>Accession Number</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="0">
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>Format</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <widget class="QLineEdit" name="other_number_item">
+                <property name="maxLength">
+                 <number>64</number>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>Other Number</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="title_item">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+                <property name="placeholderText">
+                 <string>Title</string>
+                </property>
+               </widget>
+              </item>
+              <item row="14" column="0">
+               <widget class="QLabel" name="label_22">
+                <property name="text">
+                 <string>Linked Picture</string>
+                </property>
+               </widget>
+              </item>
+              <item row="14" column="1">
+               <widget class="QPushButton" name="linked_picture_button">
+                <property name="text">
+                 <string>Show Comparison</string>
                 </property>
                </widget>
               </item>

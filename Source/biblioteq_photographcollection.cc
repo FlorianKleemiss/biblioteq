@@ -3,6 +3,7 @@
 #include "biblioteq_graphicsitempixmap.h"
 #include "biblioteq_photographcollection.h"
 #include "ui_biblioteq_photographview.h"
+#include "ui_biblioteq_photographcompare.h"
 
 #include <QFileDialog>
 #include <QScrollBar>
@@ -35,8 +36,7 @@ biblioteq_photographcollection::biblioteq_photographcollection
   scene3 = new QGraphicsScene(this);
   pc.setupUi(this);
   setQMain(this);
-  pc.publication_date->setDisplayFormat
-    (qmain->publicationDateFormat("photographcollections"));
+  pc.publication_date->setDisplayFormat (qmain->publicationDateFormat("photographcollections"));
   pc.quantity->setMaximum(static_cast<int> (biblioteq::Limits::QUANTITY));
   pc.thumbnail_item->enableDoubleClickResize(false);
   m_scene = new biblioteq_bgraphicsscene(pc.graphicsView);
@@ -84,43 +84,45 @@ biblioteq_photographcollection::biblioteq_photographcollection
   m_photo_diag->setWindowModality(Qt::WindowModal);
   updateFont(QApplication::font(), qobject_cast<QWidget *> (m_photo_diag));
   connect(pc.select_image_collection, SIGNAL(clicked(void)),
-	  this, SLOT(slotSelectImage(void)));
+          this, SLOT(slotSelectImage(void)));
   connect(photo.select_image_item, SIGNAL(clicked(void)),
-	  this, SLOT(slotSelectImage(void)));
-  connect(pc.okButton, SIGNAL(clicked(void)), this, SLOT(slotGo(void)));
-  connect(pc.cancelButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotCancel(void)));
-  connect(pc.importItems, SIGNAL(clicked(void)), this,
-	  SLOT(slotImportItems(void)));
-  connect(pc.resetButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotReset(void)));
-  connect(pc.printButton, SIGNAL(clicked(void)), this, SLOT(slotPrint(void)));
-  connect(pc.addItemButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotAddItem(void)));
-  connect(photo.cancelButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotClosePhoto(void)));
-  connect(menu1->addAction(tr("Reset Collection Image")),
-	  SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection ID")),
-	  SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection Title")),
-	  SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection Location")),
-	  SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection About")),
-	  SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection Notes")),
-	  SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Accession Number")),
-	  SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu2->addAction(tr("&All...")),
-	  SIGNAL(triggered(void)), this, SLOT(slotExportPhotographs(void)));
-  connect(menu2->addAction(tr("&Current Page...")),
-	  SIGNAL(triggered(void)), this, SLOT(slotExportPhotographs(void)));
-  connect(menu2->addAction(tr("&Selected...")),
-	  SIGNAL(triggered(void)), this, SLOT(slotExportPhotographs(void)));
+          this, SLOT(slotSelectImage(void)));
+  connect(pc.okButton, SIGNAL(clicked(void)),
+          this, SLOT(slotGo(void)));
+  connect(pc.cancelButton, SIGNAL(clicked(void)),
+          this, SLOT(slotCancel(void)));
+  connect(pc.importItems, SIGNAL(clicked(void)),
+          this, SLOT(slotImportItems(void)));
+  connect(pc.resetButton, SIGNAL(clicked(void)),
+          this, SLOT(slotReset(void)));
+  connect(pc.printButton, SIGNAL(clicked(void)),
+          this, SLOT(slotPrint(void)));
+  connect(pc.addItemButton, SIGNAL(clicked(void)),
+          this, SLOT(slotAddItem(void)));
+  connect(photo.cancelButton, SIGNAL(clicked(void)),
+          this, SLOT(slotClosePhoto(void)));
+  connect(menu1->addAction(tr("Reset Collection Image")), SIGNAL(triggered(void)),
+          this, SLOT(slotReset(void)));
+  connect(menu1->addAction(tr("Reset Collection ID")), SIGNAL(triggered(void)),
+          this, SLOT(slotReset(void)));
+  connect(menu1->addAction(tr("Reset Collection Title")), SIGNAL(triggered(void)),
+          this, SLOT(slotReset(void)));
+  connect(menu1->addAction(tr("Reset Collection Location")), SIGNAL(triggered(void)),
+          this, SLOT(slotReset(void)));
+  connect(menu1->addAction(tr("Reset Collection About")), SIGNAL(triggered(void)),
+          this, SLOT(slotReset(void)));
+  connect(menu1->addAction(tr("Reset Collection Notes")), SIGNAL(triggered(void)),
+          this, SLOT(slotReset(void)));
+  connect(menu1->addAction(tr("Reset Accession Number")), SIGNAL(triggered(void)),
+          this, SLOT(slotReset(void)));
+  connect(menu2->addAction(tr("&All...")), SIGNAL(triggered(void)),
+          this, SLOT(slotExportPhotographs(void)));
+  connect(menu2->addAction(tr("&Current Page...")), SIGNAL(triggered(void)),
+          this, SLOT(slotExportPhotographs(void)));
+  connect(menu2->addAction(tr("&Selected...")), SIGNAL(triggered(void)),
+          this, SLOT(slotExportPhotographs(void)));
   connect(pc.page, SIGNAL(currentIndexChanged(const QString &)),
-	  this, SLOT(slotPageChanged(const QString &)));
+          this, SLOT(slotPageChanged(const QString &)));
   connect(pc.graphicsView->scene(), SIGNAL(itemDoubleClicked(void)),
 	  this, SLOT(slotViewPhotograph(void)));
   pc.resetButton->setMenu(menu1);
@@ -396,86 +398,81 @@ void biblioteq_photographcollection::loadPhotographFromItem
   query.bindValue(1, item->data(0).toLongLong());
 
   if(query.exec())
+  {
     if(query.next())
-      {
-	QImage image;
-	auto bytes(QByteArray::fromBase64(query.value(0).toByteArray()));
-	auto format(biblioteq_misc_functions::imageFormatGuess(bytes));
+    {
+      QImage image;
+      auto bytes(QByteArray::fromBase64(query.value(0).toByteArray()));
+      auto format(biblioteq_misc_functions::imageFormatGuess(bytes));
 
-	image.loadFromData(bytes);
+      image.loadFromData(bytes);
 
-	if(image.isNull())
+      if(image.isNull())
 	  {
 	    bytes = query.value(0).toByteArray();
 	    image.loadFromData(bytes);
 	  }
 
-	if(image.isNull())
-	  image = QImage(":/no_image.png");
+      if(image.isNull())
+        image = QImage(":/no_image.png");
 
-	QSize size;
+      QSize size;
 
-	if(percent == 0)
-	  size = scene->views().value(0)->size();
-	else
+      if(percent == 0)
+        size = scene->views().value(0)->size();
+      else
 	  {
 	    size = image.size();
 	    size.setHeight((percent * size.height()) / 100);
 	    size.setWidth((percent * size.width()) / 100);
 	  }
 
-	if(!image.isNull())
-	  image = image.scaled
-	    (size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+      if(!image.isNull())
+        image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-	pc.graphicsView->scene()->clearSelection();
+      pc.graphicsView->scene()->clearSelection();
 
-	QGraphicsPixmapItem *pixmapItem = nullptr;
+      QGraphicsPixmapItem *pixmapItem = nullptr;
 
-	if(!scene->items().isEmpty())
+      if(!scene->items().isEmpty())
 	  {
-	    pixmapItem = qgraphicsitem_cast<QGraphicsPixmapItem *>
-	      (scene->items().at(0));
+        pixmapItem = qgraphicsitem_cast<QGraphicsPixmapItem *> (scene->items().at(0));
 
 	    if(pixmapItem)
 	      pixmapItem->setPixmap(QPixmap::fromImage(image));
 	  }
-	else
-	  pixmapItem = scene->addPixmap(QPixmap::fromImage(image));
+      else
+        pixmapItem = scene->addPixmap(QPixmap::fromImage(image));
 
-	if(pixmapItem)
-	  pixmapItem->setData(1, bytes);
+      if(pixmapItem)
+        pixmapItem->setData(1, bytes);
 
-	item->setSelected(true);
+      item->setSelected(true);
 
-	if(!scene->items().isEmpty())
+      if(!scene->items().isEmpty())
 	  {
 	    scene->items().at(0)->setData(0, item->data(0)); // myoid
 	    scene->items().at(0)->setData(2, item->data(2)); // Navigation.
 	  }
 
-	scene->setSceneRect(scene->itemsBoundingRect());
+      scene->setSceneRect(scene->itemsBoundingRect());
 
-	auto view = qobject_cast<biblioteq_photograph_view *>
-	  (scene->views().value(0));
+      auto view = qobject_cast<biblioteq_photograph_view *> (scene->views().value(0));
 
-	if(view)
+      if(view)
 	  {
 	    connect(view,
-		    SIGNAL(save(const QImage &,
-				const QString &,
-				const qint64)),
+            SIGNAL(save(const QImage &, const QString &, const qint64)),
 		    this,
-		    SLOT(slotSaveRotatedImage(const QImage &,
-					      const QString &,
-					      const qint64)),
+            SLOT(slotSaveRotatedImage(const QImage &, const QString &, const qint64)),
 		    Qt::UniqueConnection);
 	    view->horizontalScrollBar()->setValue(0);
 	    view->setBestFit(percent == 0);
 	    view->setImage(image, format, item->data(0).toLongLong());
 	    view->verticalScrollBar()->setValue(0);
 	  }
-      }
+    }
+  }
 
   QApplication::restoreOverrideCursor();
 }
@@ -1595,15 +1592,15 @@ void biblioteq_photographcollection::slotImageViewSizeChanged
   auto parent = comboBox->parentWidget();
 
   do
-    {
-      if(!parent)
-	break;
+  {
+    if(!parent)
+      break;
 
-      if(qobject_cast<QMainWindow *> (parent))
-	break;
+    if(qobject_cast<QMainWindow *> (parent))
+      break;
 
-      parent = parent->parentWidget();
-    }
+    parent = parent->parentWidget();
+  }
   while(true);
 
   if(!parent)
@@ -1612,52 +1609,48 @@ void biblioteq_photographcollection::slotImageViewSizeChanged
   auto scene = parent->findChild<QGraphicsScene *> ();
 
   if(scene)
+  {
+    auto item = qgraphicsitem_cast<QGraphicsPixmapItem *> (scene->items().value(0));
+
+    if(item)
     {
-      auto item = qgraphicsitem_cast<QGraphicsPixmapItem *>
-	(scene->items().value(0));
+      QImage image;
 
-      if(item)
-	{
-	  QImage image;
+      if(image.loadFromData(item->data(1).toByteArray()))
+      {
+        QSize size;
+        auto percent = QString(text).remove("%").toInt();
 
-	  if(image.loadFromData(item->data(1).toByteArray()))
-	    {
-	      QSize size;
-	      auto percent = QString(text).remove("%").toInt();
+        if(percent == 0)
+        {
+          if(scene->views().value(0))
+          {
+            scene->setProperty("view_size", scene->views().value(0)->size());
+            size = scene->views().value(0)->size();
+          }
+          else
+            size = scene->property("view_size").toSize();
+        }
+        else
+        {
+          size = image.size();
+          size.setHeight((percent * size.height()) / 100);
+          size.setWidth((percent * size.width()) / 100);
+        }
 
-	      if(percent == 0)
-		{
-		  if(scene->views().value(0))
-		    {
-		      scene->setProperty
-			("view_size", scene->views().value(0)->size());
-		      size = scene->views().value(0)->size();
-		    }
-		  else
-		    size = scene->property("view_size").toSize();
-		}
-	      else
-		{
-		  size = image.size();
-		  size.setHeight((percent * size.height()) / 100);
-		  size.setWidth((percent * size.width()) / 100);
-		}
+        if(!image.isNull())
+          image = image.scaled (size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-	      if(!image.isNull())
-		image = image.scaled
-		  (size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        item->setPixmap(QPixmap::fromImage(image));
+        scene->setSceneRect(scene->itemsBoundingRect());
 
-	      item->setPixmap(QPixmap::fromImage(image));
-	      scene->setSceneRect(scene->itemsBoundingRect());
+        auto view = qobject_cast<biblioteq_photograph_view *> (scene->views().value(0));
 
-	      auto view = qobject_cast<biblioteq_photograph_view *>
-		(scene->views().value(0));
-
-	      if(view)
-		view->setBestFit(percent == 0);
-	    }
-	}
+        if(view)
+          view->setBestFit(percent == 0);
+      }
     }
+  }
 }
 
 void biblioteq_photographcollection::slotImportItems(void)
