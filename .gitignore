@@ -9,3 +9,4 @@ temp/
 *.autosave
 java*
 SQLite3*
+*.user.*
