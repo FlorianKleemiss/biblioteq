@@ -3,7 +3,6 @@
 #include "biblioteq_files.h"
 #include "biblioteq_graphicsitempixmap.h"
 #include "biblioteq_otheroptions.h"
-#include "biblioteq_pdfreader.h"
 
 #include <QActionGroup>
 #include <QDesktopServices>

@@ -7,3 +7,5 @@ moc_*
 qrc_icons.cpp
 temp/
 *.autosave
+java*
+SQLite3*

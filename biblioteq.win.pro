@@ -4,7 +4,6 @@ include(biblioteq-source.pro)
 purge.commands = del /Q *~ && del /Q *\\*~
 
 CONFIG		+= qt release thread warn_on windows
-#DEFINES         += BIBLIOTEQ_LINKED_WITH_YAZ
 LANGUAGE	= C++
 QT		+= network sql printsupport widgets
 QT		-= webkit
@@ -20,11 +19,11 @@ QMAKE_CXXFLAGS_RELEASE += -O3 \
                           -Wformat=2 \
                           -Woverloaded-virtual \
                           -Wpointer-arith \
-                          -Wstrict-overflow=5 \
+                          -Wstrict-overflow=1 \
                           -fwrapv \
                           -pedantic \
                           -pie \
-                          -std=c++11
+                          -std=c++17
 QMAKE_DISTCLEAN += debug temp .qmake.cache .qmake.stash
 QMAKE_EXTRA_TARGETS = purge
 
@@ -33,7 +32,7 @@ INCLUDEPATH	+= Include.win32 \
                    Source \
                    temp
 LIBS		+= -L"." \
-                   -L"D:\\SQLite3" \
+                   -L"..\\biblioteq\\Libraries.win32\\sqlite3\\" \
                    -lsqlite3
 RC_FILE		= biblioteq.win.rc
 PROJECTNAME	= BiblioteQ
@@ -52,7 +51,7 @@ documentation.path = release\\Documentation\\.
 libraries.files = Libraries.win32\\miscellaneous\\*.dll \
                   Libraries.win32\\postgresql\\*.dll \
                   Libraries.win32\\postgresql\\*.manifest \
-                  D:\\SQLite3\\*.dll \
+                  Libraries.win32\\sqlite3\\*.dll \
                   Libraries.win64\\*.exe
 libraries.path = release\\.
 plugins1.files = $$[QT_INSTALL_PLUGINS]\\*
@@ -67,14 +66,14 @@ pluginspurge.extra = del /Q /S *d.dll
 pluginspurge.path = release\\plugins\\.
 qt.files = Qt\\qt.conf
 qt.path = release\\.
-qtlibraries.files = $$[QT_INSTALL_BINS]\\Qt5Concurrent.dll \
-                    $$[QT_INSTALL_BINS]\\Qt5Core.dll \
-                    $$[QT_INSTALL_BINS]\\Qt5Gui.dll \
-                    $$[QT_INSTALL_BINS]\\Qt5Network.dll \
-                    $$[QT_INSTALL_BINS]\\Qt5PrintSupport.dll \
-                    $$[QT_INSTALL_BINS]\\Qt5Sql.dll \
-                    $$[QT_INSTALL_BINS]\\Qt5Widgets.dll \
-                    $$[QT_INSTALL_BINS]\\Qt5Xml.dll \
+qtlibraries.files = $$[QT_INSTALL_BINS]\\Qt6Concurrent.dll \
+                    $$[QT_INSTALL_BINS]\\Qt6Core.dll \
+                    $$[QT_INSTALL_BINS]\\Qt6Gui.dll \
+                    $$[QT_INSTALL_BINS]\\Qt6Network.dll \
+                    $$[QT_INSTALL_BINS]\\Qt6PrintSupport.dll \
+                    $$[QT_INSTALL_BINS]\\Qt6Sql.dll \
+                    $$[QT_INSTALL_BINS]\\Qt6Widgets.dll \
+                    $$[QT_INSTALL_BINS]\\Qt6Xml.dll \
                     $$[QT_INSTALL_BINS]\\libgcc_s_dw2-1.dll \
                     $$[QT_INSTALL_BINS]\\libstdc++-6.dll \
                     $$[QT_INSTALL_BINS]\\libwinpthread-1.dll
