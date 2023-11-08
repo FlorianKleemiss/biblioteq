@@ -24,6 +24,24 @@ QMAKE_CXXFLAGS_RELEASE += -O3 \
                           -pedantic \
                           -pie \
                           -std=c++17
+win32-msvc* {
+  QMAKE_CXXFLAGS_RELEASE -= -O3 \
+                            -Wcast-qual \
+                            -Wdouble-promotion \
+                            -Wextra \
+                            -Wformat=2 \
+                            -Woverloaded-virtual \
+                            -Wpointer-arith \
+                            -Wstrict-overflow=1 \
+                            -Wcast-align \
+                            -fwrapv \
+                            -pedantic \
+                            -pie \
+                            -std=c++17
+  QMAKE_CXXFLAGS_RELEASE += /std:c++17 \
+                            /O2 \
+  CONFIG += entrypoint
+}
 QMAKE_DISTCLEAN += debug temp .qmake.cache .qmake.stash
 QMAKE_EXTRA_TARGETS = purge
 

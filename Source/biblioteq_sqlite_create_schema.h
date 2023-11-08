@@ -460,23 +460,24 @@ CREATE TABLE member							\
     comments         TEXT,						\
     dob		     VARCHAR(32) NOT NULL,				\
     email	     VARCHAR(128),					\
-    expiration_date  VARCHAR(32) NOT NULL,			        \
-    first_name	     VARCHAR(128) NOT NULL,				\
-    general_registration_number TEXT,					\
-    last_name	     VARCHAR(128) NOT NULL,				\
-    maximum_reserved_books INTEGER NOT NULL DEFAULT 0,			\
-    memberclass      TEXT,						\
-    memberid	     VARCHAR(16) NOT NULL PRIMARY KEY DEFAULT 1,	\
-    membership_fees  NUMERIC(10, 2) NOT NULL DEFAULT 0.00,		\
-    membersince	     VARCHAR(32) NOT NULL,				\
-    middle_init	     VARCHAR(1),					\
-    overdue_fees     NUMERIC(10, 2) NOT NULL DEFAULT 0.00,		\
-    sex		     VARCHAR(32) NOT NULL DEFAULT 'Private',		\
-    state_abbr	     VARCHAR(16) NOT NULL DEFAULT 'N/A',		\
-    street	     VARCHAR(256) NOT NULL,				\
-    telephone_num    VARCHAR(32),					\
-    zip		     VARCHAR(16) NOT NULL DEFAULT 'N/A'			\
-);									\
+    expiration_date  VARCHAR(32) NOT NULL,\
+    first_name	     VARCHAR(128) NOT NULL,\
+    general_registration_number TEXT,\
+    last_name	     VARCHAR(128) NOT NULL,\
+    maximum_reserved_books INTEGER NOT NULL DEFAULT 0,\
+    memberclass      TEXT,\
+    memberid	     VARCHAR(16) NOT NULL PRIMARY KEY DEFAULT 1,\
+    membership_fees  NUMERIC(10, 2) NOT NULL DEFAULT 0.00,\
+    membersince	     VARCHAR(32) NOT NULL,\
+    middle_init	     VARCHAR(1),\
+    overdue_fees     NUMERIC(10, 2) NOT NULL DEFAULT 0.00,\
+    sex		     VARCHAR(32) NOT NULL DEFAULT 'Private',\
+    state_abbr	     VARCHAR(16) NOT NULL DEFAULT 'N/A',\
+    street	     VARCHAR(256) NOT NULL,\
+    telephone_num    VARCHAR(32),\
+    zip		     VARCHAR(16) NOT NULL DEFAULT 'N/A'\
+);"
+" \
 									\
 CREATE TABLE member_history						\
 (									\
