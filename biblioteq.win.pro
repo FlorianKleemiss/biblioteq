@@ -37,9 +37,11 @@ win32-msvc* {
                             -fwrapv \
                             -pedantic \
                             -pie \
+                            -Wall \
                             -std=c++17
   QMAKE_CXXFLAGS_RELEASE += /std:c++17 \
                             /O2 \
+                            /wd5219
   CONFIG += entrypoint
 }
 QMAKE_DISTCLEAN += debug temp .qmake.cache .qmake.stash
