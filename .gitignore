@@ -10,3 +10,4 @@ temp/
 java*
 SQLite3*
 *.user.*
+*.user
