@@ -124,7 +124,7 @@ biblioteq_photographcollection::biblioteq_photographcollection
   connect(pc.page, SIGNAL(currentIndexChanged(const QString &)),
           this, SLOT(slotPageChanged(const QString &)));
   connect(pc.graphicsView->scene(), SIGNAL(itemDoubleClicked(void)),
-	  this, SLOT(slotViewPhotograph(void)));
+      this, SLOT(slotModifyItem(void)));
   pc.resetButton->setMenu(menu1);
   pc.exportPhotographsToolButton->setMenu(menu2);
   connect(pc.exportPhotographsToolButton,
