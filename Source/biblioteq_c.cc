@@ -308,10 +308,10 @@ int biblioteq::populateTable(const QSqlQuery &query,
   if(pagingType == NEW_PAGE)
     {
       if(m_searchQuery.isActive())
-	m_searchQuery.clear();
+        m_searchQuery.clear();
 
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-      m_searchQuery = query;
+      m_searchQuery = std::move(query);
 #else
       m_searchQuery = query;
 #endif
