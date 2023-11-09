@@ -44,12 +44,6 @@ QColor biblioteq_otheroptions::availabilityColor(const QString &it) const
   if(itemType == "book" || itemType == "books")
     value = settings.value
       ("otheroptions/book_availability_color").toString();
-  else if(itemType == "cd" || itemType == "musiccds")
-    value = settings.value
-      ("otheroptions/cd_availability_color").toString();
-  else if(itemType == "dvd" || itemType == "dvds")
-    value = settings.value
-      ("otheroptions/dvd_availability_color").toString();
   else if(itemType == "greyliterature")
     value = settings.value
       ("otheroptions/grey_literature_availability_color").toString();
@@ -75,9 +69,6 @@ QString biblioteq_otheroptions::publicationDateFormat
   if(itemType == "books")
     return settings.value
       ("otheroptions/book_publication_date_format").toString();
-  else if(itemType == "dvds")
-    return settings.value
-      ("otheroptions/dvd_publication_date_format").toString();
   else if(itemType == "greyliterature")
     return settings.value
       ("otheroptions/grey_literature_date_format").toString();
@@ -87,8 +78,6 @@ QString biblioteq_otheroptions::publicationDateFormat
   else if(itemType == "magazines")
     return settings.value
       ("otheroptions/magazine_publication_date_format").toString();
-  else if(itemType == "musiccds")
-    return settings.value("otheroptions/cd_publication_date_format").toString();
   else if(itemType == "photographcollections")
     return settings.value
       ("otheroptions/photograph_publication_date_format").toString();
@@ -182,27 +171,21 @@ void biblioteq_otheroptions::prepareAvailability(void)
   QStringList list3;
 
   list1 << tr("Books")
-	<< tr("DVDs")
 	<< tr("Grey Literature")
 	<< tr("Journals")
 	<< tr("Magazines")
-	<< tr("Music CDs")
 	<< tr("Video Games");
   list2 << settings.value("otheroptions/book_availability_color").toString()
-	<< settings.value("otheroptions/dvd_availability_color").toString()
 	<< settings.value("otheroptions/grey_literature_availability_color").
            toString()
 	<< settings.value("otheroptions/journal_availability_color").toString()
 	<< settings.value("otheroptions/magazine_availability_color").toString()
-	<< settings.value("otheroptions/cd_availability_color").toString()
 	<< settings.value("otheroptions/videogame_availability_color").
            toString();
   list3 << "books"
-	<< "dvds"
 	<< "greyliterature"
 	<< "journals"
 	<< "magazines"
-	<< "musiccds"
 	<< "videogames";
   m_ui.availability_color->setRowCount(list1.size());
   m_ui.availability_colors->setChecked
@@ -253,32 +236,26 @@ void biblioteq_otheroptions::prepareSettings(void)
   QStringList list3;
 
   list1 << tr("Books")
-	<< tr("DVDs")
 	<< tr("Grey Literature")
 	<< tr("Journals")
 	<< tr("Magazines")
-	<< tr("Music CDs")
 	<< tr("Photograph Collections")
 	<< tr("Video Games");
   list2 << settings.value("otheroptions/book_publication_date_format").
            toString()
-	<< settings.value("otheroptions/dvd_publication_date_format").toString()
 	<< settings.value("otheroptions/grey_literature_date_format").toString()
 	<< settings.value("otheroptions/journal_publication_date_format").
            toString()
 	<< settings.value("otheroptions/magazine_publication_date_format").
            toString()
-    	<< settings.value("otheroptions/cd_publication_date_format").toString()
 	<< settings.value("otheroptions/photograph_publication_date_format").
            toString()
 	<< settings.value("otheroptions/videogame_publication_date_format").
            toString();
   list3 << "books"
-	<< "dvds"
 	<< "greyliterature"
 	<< "journals"
 	<< "magazines"
-	<< "musiccds"
 	<< "photographcollections"
 	<< "videogames";
   m_ui.book_read_status->setChecked
@@ -424,11 +401,9 @@ void biblioteq_otheroptions::slotSave(void)
   QStringList list;
 
   list << "otheroptions/book_availability_color"
-       << "otheroptions/dvd_availability_color"
        << "otheroptions/grey_literature_availability_color"
        << "otheroptions/journal_availability_color"
        << "otheroptions/magazine_availability_color"
-       << "otheroptions/cd_availability_color"
        << "otheroptions/videogame_availability_color";
 
   for(int i = 0; i < list.size(); i++)
@@ -450,11 +425,9 @@ void biblioteq_otheroptions::slotSave(void)
 
   list.clear();
   list << "otheroptions/book_publication_date_format"
-       << "otheroptions/dvd_publication_date_format"
        << "otheroptions/grey_literature_date_format"
        << "otheroptions/journal_publication_date_format"
        << "otheroptions/magazine_publication_date_format"
-       << "otheroptions/cd_publication_date_format"
        << "otheroptions/photograph_publication_date_format"
        << "otheroptions/videogame_publication_date_format";
 

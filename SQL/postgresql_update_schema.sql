@@ -9,16 +9,6 @@ UPDATE book SET type = 'Book';
 ALTER TABLE book ALTER type SET DEFAULT 'Book';
 ALTER TABLE book ALTER type SET NOT NULL;
 
-ALTER TABLE cd ADD type VARCHAR(16);
-UPDATE cd SET type = 'CD';
-ALTER TABLE cd ALTER type SET DEFAULT 'CD';
-ALTER TABLE cd ALTER type SET NOT NULL;
-
-ALTER TABLE dvd ADD type VARCHAR(16);
-UPDATE dvd SET type = 'DVD';
-ALTER TABLE dvd ALTER type SET DEFAULT 'DVD';
-ALTER TABLE dvd ALTER type SET NOT NULL;
-
 ALTER TABLE videogame ADD type VARCHAR(16);
 UPDATE videogame SET type = 'Video Game';
 ALTER TABLE videogame ALTER type SET DEFAULT 'Video Game';
@@ -46,20 +36,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON public.member_history_myoid_seq TO xbook
 
 /* Release 4.00 */
 
-CREATE VIEW cd_borrower_vw AS
-SELECT	 item_oid,
-	 copy_number,
-	 reserved_date,
-	 duedate
-FROM	 cd_borrower;
-
-CREATE VIEW dvd_borrower_vw AS
-SELECT	 item_oid,
-	 copy_number,
-	 reserved_date,
-	 duedate
-FROM	 dvd_borrower;
-
 CREATE VIEW book_borrower_vw AS
 SELECT	 item_oid,
 	 copy_number,
@@ -81,8 +57,6 @@ SELECT	 item_oid,
 	 duedate
 FROM	 videogame_borrower;
 
-GRANT SELECT ON cd_borrower_vw TO xbook_admin;
-GRANT SELECT ON dvd_borrower_vw TO xbook_admin;
 GRANT SELECT ON book_borrower_vw TO xbook_admin;
 GRANT SELECT ON magazine_borrower_vw TO xbook_admin;
 GRANT SELECT ON videogame_borrower_vw TO xbook_admin;
@@ -97,18 +71,6 @@ ALTER TABLE book ADD front_cover BYTEA;
 ALTER TABLE book ADD back_cover BYTEA;
 ALTER TABLE book ADD front_cover_fmt VARCHAR(8);
 ALTER TABLE book ADD back_cover_fmt VARCHAR(8);
-ALTER TABLE cd DROP front_cover;
-ALTER TABLE cd DROP back_cover;
-ALTER TABLE cd ADD front_cover BYTEA;
-ALTER TABLE cd ADD back_cover BYTEA;
-ALTER TABLE cd ADD front_cover_fmt VARCHAR(8);
-ALTER TABLE cd ADD back_cover_fmt VARCHAR(8);
-ALTER TABLE dvd DROP front_cover;
-ALTER TABLE dvd DROP back_cover;
-ALTER TABLE dvd ADD front_cover BYTEA;
-ALTER TABLE dvd ADD back_cover BYTEA;
-ALTER TABLE dvd ADD front_cover_fmt VARCHAR(8);
-ALTER TABLE dvd ADD back_cover_fmt VARCHAR(8);
 ALTER TABLE magazine DROP front_cover;
 ALTER TABLE magazine DROP back_cover;
 ALTER TABLE magazine ADD front_cover BYTEA;
@@ -125,8 +87,6 @@ ALTER TABLE videogame ADD back_cover_fmt VARCHAR(8);
 /* Release 4.04 */
 
 ALTER TABLE book ADD offsystem_url TEXT;
-ALTER TABLE cd ADD offsystem_url TEXT;
-ALTER TABLE dvd ADD offsystem_url TEXT;
 ALTER TABLE magazine ADD offsystem_url TEXT;
 ALTER TABLE videogame ADD offsystem_url TEXT;
 
@@ -137,29 +97,9 @@ ALTER TABLE videogame ADD offsystem_url TEXT;
 
 UPDATE admin SET roles = 'administrator' WHERE roles = 'all';
 
-DROP VIEW cd_borrower_vw;
-DROP VIEW dvd_borrower_vw;
 DROP VIEW book_borrower_vw;
 DROP VIEW magazine_borrower_vw;
 DROP VIEW videogame_borrower_vw;
-
-CREATE VIEW cd_borrower_vw AS
-SELECT	 item_oid,
-	 myoid,
-	 copyid,
-	 copy_number,
-	 reserved_date,
-	 duedate
-FROM	 cd_borrower;
-
-CREATE VIEW dvd_borrower_vw AS
-SELECT	 item_oid,
-	 myoid,
-	 copyid,
-	 copy_number,
-	 reserved_date,
-	 duedate
-FROM	 dvd_borrower;
 
 CREATE VIEW book_borrower_vw AS
 SELECT	 item_oid,
@@ -188,8 +128,6 @@ SELECT	 item_oid,
 	 duedate
 FROM	 videogame_borrower;
 
-GRANT SELECT ON cd_borrower_vw TO xbook_admin;
-GRANT SELECT ON dvd_borrower_vw TO xbook_admin;
 GRANT SELECT ON book_borrower_vw TO xbook_admin;
 GRANT SELECT ON magazine_borrower_vw TO xbook_admin;
 GRANT SELECT ON videogame_borrower_vw TO xbook_admin;
@@ -204,8 +142,6 @@ ALTER TABLE member DROP COLUMN state_abbr;
 ALTER TABLE member RENAME new_col TO state_abbr;
 ALTER TABLE member ALTER COLUMN state_abbr SET NOT NULL;
 
-DROP VIEW cd_borrower_vw;
-DROP VIEW dvd_borrower_vw;
 DROP VIEW book_borrower_vw;
 DROP VIEW magazine_borrower_vw;
 DROP VIEW videogame_borrower_vw;
@@ -233,8 +169,6 @@ SELECT	 item_oid,
 	 type
 FROM	 item_borrower;
 
-INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'CD' FROM cd_borrower;
-INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'DVD' FROM dvd_borrower;
 INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'Book' FROM book_borrower;
 INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'Journal' FROM magazine_borrower WHERE item_oid IN (SELECT myoid FROM magazine WHERE type = 'Journal');
 INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'Magazine' FROM magazine_borrower WHERE item_oid IN (SELECT myoid FROM magazine WHERE type = 'Magazine');
@@ -244,8 +178,6 @@ GRANT SELECT ON item_borrower_vw TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON item_borrower TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON public.item_borrower_myoid_seq TO xbook_admin;
 
-DROP TABLE cd_borrower CASCADE;
-DROP TABLE dvd_borrower CASCADE;
 DROP TABLE book_borrower CASCADE;
 DROP TABLE magazine_borrower CASCADE;
 DROP TABLE videogame_borrower CASCADE;
@@ -350,18 +282,12 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON public.journal_copy_info_myoid_seq TO xb
 
 ALTER TABLE book DROP COLUMN front_cover_fmt;
 ALTER TABLE book DROP COLUMN back_cover_fmt;
-ALTER TABLE cd DROP COLUMN front_cover_fmt;
-ALTER TABLE cd DROP COLUMN back_cover_fmt;
-ALTER TABLE dvd DROP COLUMN front_cover_fmt;
-ALTER TABLE dvd DROP COLUMN back_cover_fmt;
 ALTER TABLE magazine DROP COLUMN front_cover_fmt;
 ALTER TABLE magazine DROP COLUMN back_cover_fmt;
 ALTER TABLE videogame DROP COLUMN front_cover_fmt;
 ALTER TABLE videogame DROP COLUMN back_cover_fmt;
 
 DROP TRIGGER book_trigger ON book;
-DROP TRIGGER cd_trigger ON cd;
-DROP TRIGGER dvd_trigger ON dvd;
 DROP TRIGGER magazine_trigger ON magazine;
 DROP TRIGGER videogame_trigger ON videogame;
 
@@ -374,26 +300,6 @@ END;
 ' LANGUAGE plpgsql;
 CREATE TRIGGER book_trigger AFTER DELETE ON book
 FOR EACH row EXECUTE PROCEDURE delete_book_history();
-
-CREATE OR REPLACE FUNCTION delete_cd_history() RETURNS trigger AS '
-BEGIN
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''CD'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER cd_trigger AFTER DELETE ON cd
-FOR EACH row EXECUTE PROCEDURE delete_cd_history();
-
-CREATE OR REPLACE FUNCTION delete_dvd_history() RETURNS trigger AS '
-BEGIN
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''DVD'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER dvd_trigger AFTER DELETE ON dvd
-FOR EACH row EXECUTE PROCEDURE delete_dvd_history();
 
 CREATE OR REPLACE FUNCTION delete_journal_history() RETURNS trigger AS '
 BEGIN
@@ -442,18 +348,6 @@ UPDATE book SET new_category = CAST(category AS TEXT);
 ALTER TABLE book DROP COLUMN category;
 ALTER TABLE book RENAME new_category TO category;
 ALTER TABLE book ALTER COLUMN category SET NOT NULL;
-
-ALTER TABLE cd ADD COLUMN new_category TEXT;
-UPDATE cd SET new_category = CAST(category AS TEXT);
-ALTER TABLE cd DROP COLUMN category;
-ALTER TABLE cd RENAME new_category TO category;
-ALTER TABLE cd ALTER COLUMN category SET NOT NULL;
-
-ALTER TABLE dvd ADD COLUMN new_category TEXT;
-UPDATE dvd SET new_category = CAST(category AS TEXT);
-ALTER TABLE dvd DROP COLUMN category;
-ALTER TABLE dvd RENAME new_category TO category;
-ALTER TABLE dvd ALTER COLUMN category SET NOT NULL;
 
 ALTER TABLE journal ADD COLUMN new_category TEXT;
 UPDATE journal SET new_category = CAST(category AS TEXT);
@@ -515,8 +409,6 @@ ALTER TABLE item_borrower ADD FOREIGN KEY(memberid) REFERENCES member ON DELETE 
 /* Release 6.30 */
 
 ALTER TABLE book DROP offsystem_url;
-ALTER TABLE cd DROP offsystem_url;
-ALTER TABLE dvd DROP offsystem_url;
 ALTER TABLE journal DROP offsystem_url;
 ALTER TABLE magazine DROP offsystem_url;
 ALTER TABLE videogame DROP offsystem_url;
@@ -533,10 +425,6 @@ UPDATE book SET edition = TRIM(BOTH 'th' FROM edition);
 
 GRANT SELECT, UPDATE, USAGE ON public.book_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.book_copy_info_myoid_seq TO xbook_admin;
-GRANT SELECT, UPDATE, USAGE ON public.cd_myoid_seq TO xbook_admin;
-GRANT SELECT, UPDATE, USAGE ON public.cd_copy_info_myoid_seq TO xbook_admin;
-GRANT SELECT, UPDATE, USAGE ON public.dvd_myoid_seq TO xbook_admin;
-GRANT SELECT, UPDATE, USAGE ON public.dvd_copy_info_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.journal_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.journal_copy_info_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.magazine_myoid_seq TO xbook_admin;
@@ -566,26 +454,6 @@ CREATE TABLE languages
 	language	 TEXT NOT NULL PRIMARY KEY
 );
 
-CREATE TABLE cd_formats
-(
-	cd_format	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE dvd_ratings
-(
-	dvd_rating	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE dvd_aspect_ratios
-(
-	dvd_aspect_ratio	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE dvd_regions
-(
-	dvd_region	 TEXT NOT NULL PRIMARY KEY
-);
-
 CREATE TABLE minimum_days
 (
 	days		 INTEGER NOT NULL,
@@ -608,10 +476,6 @@ ALTER TABLE magazine ADD marc_tags TEXT;
 GRANT DELETE, INSERT, SELECT, UPDATE ON locations TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON monetary_units TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON languages TO xbook_admin;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_formats TO xbook_admin;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_ratings TO xbook_admin;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_aspect_ratios TO xbook_admin;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_regions TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON minimum_days TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_ratings TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_platforms TO xbook_admin;
@@ -631,8 +495,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON member TO xbook_admin;
 /* Release 6.51 */
 
 ALTER TABLE book ADD keyword TEXT;
-ALTER TABLE cd ADD keyword TEXT;
-ALTER TABLE dvd ADD keyword TEXT;
 ALTER TABLE journal ADD keyword TEXT;
 ALTER TABLE magazine ADD keyword TEXT;
 ALTER TABLE videogame ADD keyword TEXT;
@@ -665,15 +527,6 @@ GRANT biblioteq_patron TO biblioteq_membership WITH ADMIN OPTION;
 GRANT DELETE, INSERT, SELECT, UPDATE ON admin TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON book TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON book_copy_info TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_copy_info TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_formats TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_songs TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_aspect_ratios TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_copy_info TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_ratings TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_regions TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON item_borrower TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON journal TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON journal_copy_info TO biblioteq_administrator;
@@ -693,10 +546,6 @@ GRANT DELETE, SELECT ON item_request TO biblioteq_administrator;
 GRANT SELECT ON item_borrower_vw TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON book_copy_info_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON book_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON cd_copy_info_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON cd_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON dvd_copy_info_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON dvd_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON item_borrower_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON journal_copy_info_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON journal_myoid_seq TO biblioteq_administrator;
@@ -716,19 +565,6 @@ GRANT SELECT ON book TO biblioteq_circulation;
 GRANT SELECT ON book_copy_info TO biblioteq_circulation;
 GRANT SELECT ON book_copy_info_myoid_seq TO biblioteq_circulation;
 GRANT SELECT ON book_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON cd TO biblioteq_circulation;
-GRANT SELECT ON cd_copy_info TO biblioteq_circulation;
-GRANT SELECT ON cd_copy_info_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON cd_formats TO biblioteq_circulation;
-GRANT SELECT ON cd_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON cd_songs TO biblioteq_circulation;
-GRANT SELECT ON dvd TO biblioteq_circulation;
-GRANT SELECT ON dvd_aspect_ratios TO biblioteq_circulation;
-GRANT SELECT ON dvd_copy_info TO biblioteq_circulation;
-GRANT SELECT ON dvd_copy_info_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON dvd_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON dvd_ratings TO biblioteq_circulation;
-GRANT SELECT ON dvd_regions TO biblioteq_circulation;
 GRANT SELECT ON item_borrower_vw TO biblioteq_circulation;
 GRANT SELECT ON journal TO biblioteq_circulation;
 GRANT SELECT ON journal_copy_info TO biblioteq_circulation;
@@ -754,15 +590,6 @@ GRANT SELECT, UPDATE, USAGE ON member_history_myoid_seq TO biblioteq_circulation
 
 GRANT DELETE, INSERT, SELECT, UPDATE ON book TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON book_copy_info TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_copy_info TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_formats TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_songs TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_aspect_ratios TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_copy_info TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_ratings TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_regions TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON journal TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON journal_copy_info TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON languages TO biblioteq_librarian;
@@ -779,10 +606,6 @@ GRANT SELECT ON admin TO biblioteq_librarian;
 GRANT SELECT ON item_borrower_vw TO biblioteq_librarian;
 GRANT SELECT ON item_request TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON book_copy_info_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON cd_copy_info_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON cd_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON dvd_copy_info_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON dvd_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON item_request_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON journal_copy_info_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON journal_myoid_seq TO biblioteq_librarian;
@@ -798,19 +621,6 @@ GRANT SELECT ON book TO biblioteq_membership;
 GRANT SELECT ON book_copy_info TO biblioteq_membership;
 GRANT SELECT ON book_copy_info_myoid_seq TO biblioteq_membership;
 GRANT SELECT ON book_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON cd TO biblioteq_membership;
-GRANT SELECT ON cd_copy_info TO biblioteq_membership;
-GRANT SELECT ON cd_copy_info_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON cd_formats TO biblioteq_membership;
-GRANT SELECT ON cd_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON cd_songs TO biblioteq_membership;
-GRANT SELECT ON dvd TO biblioteq_membership;
-GRANT SELECT ON dvd_aspect_ratios TO biblioteq_membership;
-GRANT SELECT ON dvd_copy_info TO biblioteq_membership;
-GRANT SELECT ON dvd_copy_info_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON dvd_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON dvd_ratings TO biblioteq_membership;
-GRANT SELECT ON dvd_regions TO biblioteq_membership;
 GRANT SELECT ON item_borrower_vw TO biblioteq_membership;
 GRANT SELECT ON journal TO biblioteq_membership;
 GRANT SELECT ON journal_copy_info TO biblioteq_membership;
@@ -836,19 +646,6 @@ GRANT SELECT ON book TO biblioteq_patron;
 GRANT SELECT ON book_copy_info TO biblioteq_patron;
 GRANT SELECT ON book_copy_info_myoid_seq TO biblioteq_patron;
 GRANT SELECT ON book_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON cd TO biblioteq_patron;
-GRANT SELECT ON cd_copy_info TO biblioteq_patron;
-GRANT SELECT ON cd_copy_info_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON cd_formats TO biblioteq_patron;
-GRANT SELECT ON cd_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON cd_songs TO biblioteq_patron;
-GRANT SELECT ON dvd TO biblioteq_patron;
-GRANT SELECT ON dvd_aspect_ratios TO biblioteq_patron;
-GRANT SELECT ON dvd_copy_info TO biblioteq_patron;
-GRANT SELECT ON dvd_copy_info_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON dvd_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON dvd_ratings TO biblioteq_patron;
-GRANT SELECT ON dvd_regions TO biblioteq_patron;
 GRANT SELECT ON item_borrower_vw TO biblioteq_patron;
 GRANT SELECT ON journal TO biblioteq_patron;
 GRANT SELECT ON journal_copy_info TO biblioteq_patron;
@@ -959,10 +756,6 @@ GRANT SELECT ON photograph_collection TO biblioteq_patron;
 GRANT SELECT ON photograph_collection_myoid_seq TO biblioteq_patron;
 GRANT SELECT ON photograph_myoid_seq TO biblioteq_patron;
 
-/* Release 6.63 */
-
-ALTER TABLE cd_songs ADD artist TEXT NOT NULL DEFAULT 'UNKNOWN', ADD composer TEXT NOT NULL DEFAULT 'UNKNOWN';
-
 /* Release 6.64 */
 
 GRANT DELETE, SELECT ON member_history TO biblioteq_librarian;
@@ -1010,19 +803,6 @@ GRANT SELECT ON book_binding_types TO biblioteq_guest;
 GRANT SELECT ON book_copy_info TO biblioteq_guest;
 GRANT SELECT ON book_copy_info_myoid_seq TO biblioteq_guest;
 GRANT SELECT ON book_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON cd TO biblioteq_guest;
-GRANT SELECT ON cd_copy_info TO biblioteq_guest;
-GRANT SELECT ON cd_copy_info_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON cd_formats TO biblioteq_guest;
-GRANT SELECT ON cd_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON cd_songs TO biblioteq_guest;
-GRANT SELECT ON dvd TO biblioteq_guest;
-GRANT SELECT ON dvd_aspect_ratios TO biblioteq_guest;
-GRANT SELECT ON dvd_copy_info TO biblioteq_guest;
-GRANT SELECT ON dvd_copy_info_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON dvd_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON dvd_ratings TO biblioteq_guest;
-GRANT SELECT ON dvd_regions TO biblioteq_guest;
 GRANT SELECT ON item_borrower_vw TO biblioteq_guest;
 GRANT SELECT ON journal TO biblioteq_guest;
 GRANT SELECT ON journal_copy_info TO biblioteq_guest;
@@ -1187,8 +967,6 @@ GRANT SELECT, UPDATE, USAGE ON grey_literature_myoid_seq TO biblioteq_librarian;
 /* Release 2016.12.16 */
 
 ALTER TABLE book ADD accession_number TEXT;
-ALTER TABLE cd ADD accession_number TEXT;
-ALTER TABLE dvd ADD accession_number TEXT;
 ALTER TABLE journal ADD accession_number TEXT;
 ALTER TABLE magazine ADD accession_number TEXT;
 ALTER TABLE photograph ADD accession_number TEXT;
@@ -1271,14 +1049,10 @@ CREATE EXTENSION IF NOT EXISTS unaccent;
 
 CREATE SEQUENCE book_sequence START 1;
 DROP TRIGGER IF EXISTS book_trigger ON book;
-DROP TRIGGER IF EXISTS cd_trigger ON cd;
-DROP TRIGGER IF EXISTS dvd_trigger ON dvd;
 DROP TRIGGER IF EXISTS journal_trigger on journal;
 DROP TRIGGER IF EXISTS magazine_trigger on magazine;
 DROP TRIGGER IF EXISTS videogame_trigger on videogame;
 DROP FUNCTION IF EXISTS delete_book_history();
-DROP FUNCTION IF EXISTS delete_cd_history();
-DROP FUNCTION IF EXISTS delete_dvd_history();
 DROP FUNCTION IF EXISTS delete_journal_history();
 DROP FUNCTION IF EXISTS delete_magazine_history();
 DROP FUNCTION IF EXISTS delete_videogame_history();
@@ -1294,28 +1068,6 @@ END;
 ' LANGUAGE plpgsql;
 CREATE TRIGGER book_trigger AFTER DELETE ON book
 FOR EACH row EXECUTE PROCEDURE delete_book();
-
-CREATE OR REPLACE FUNCTION delete_cd() RETURNS trigger AS '
-BEGIN
-	DELETE FROM item_borrower WHERE item_oid = old.myoid;
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''CD'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER cd_trigger AFTER DELETE ON cd
-FOR EACH row EXECUTE PROCEDURE delete_cd();
-
-CREATE OR REPLACE FUNCTION delete_dvd() RETURNS trigger AS '
-BEGIN
-	DELETE FROM item_borrower WHERE item_oid = old.myoid;
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''DVD'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER dvd_trigger AFTER DELETE ON dvd
-FOR EACH row EXECUTE PROCEDURE delete_dvd();
 
 CREATE OR REPLACE FUNCTION delete_journal() RETURNS trigger AS '
 BEGIN
@@ -1377,8 +1129,6 @@ CREATE POLICY member_history_dnt_policy ON member_history_dnt TO biblioteq_admin
 /* Release 2021.02.02 */
 
 ALTER TABLE book_copy_info ADD status TEXT;
-ALTER TABLE cd_copy_info ADD status TEXT;
-ALTER TABLE dvd_copy_info ADD status TEXT;
 ALTER TABLE journal_copy_info ADD status TEXT;
 ALTER TABLE magazine_copy_info ADD status TEXT;
 ALTER TABLE videogame_copy_info ADD status TEXT;

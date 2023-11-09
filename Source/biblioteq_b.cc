@@ -151,8 +151,6 @@ int biblioteq::populateTable(const int search_type_arg,
     }
 
   QString bookFrontCover("'' AS front_cover ");
-  QString cdFrontCover("'' AS front_cover ");
-  QString dvdFrontCover("'' AS front_cover ");
   QString greyLiteratureFrontCover("'' AS front_cover ");
   QString journalFrontCover("'' AS front_cover ");
   QString magazineFrontCover("'' AS front_cover ");
@@ -162,8 +160,6 @@ int biblioteq::populateTable(const int search_type_arg,
   if(m_otheroptions->showMainTableImages())
     {
       bookFrontCover = "book.front_cover ";
-      cdFrontCover = "cd.front_cover ";
-      dvdFrontCover = "dvd.front_cover ";
       greyLiteratureFrontCover = "grey_literature.front_cover ";
       journalFrontCover = "journal.front_cover ";
       magazineFrontCover = "magazine.front_cover ";
@@ -249,72 +245,6 @@ int biblioteq::populateTable(const int search_type_arg,
 	       "book.type, "
 	       "book.myoid, "
 	       "book.front_cover "
-	       " %1 "
-	       "UNION "
-	       "SELECT DISTINCT cd.title, "
-	       "cd.id, "
-	       "cd.recording_label, cd.rdate, "
-	       "cd.category, "
-	       "cd.language, "
-	       "cd.price, cd.monetary_units, "
-	       "cd.quantity, "
-	       "cd.location, "
-	       "cd.quantity - COUNT(item_borrower.item_oid) "
-	       "AS availability, "
-	       "COUNT(item_borrower.item_oid) AS total_reserved, "
-	       "cd.accession_number, "
-	       "cd.type, "
-	       "cd.myoid, " +
-	       cdFrontCover +
-	       "FROM "
-	       "cd LEFT JOIN item_borrower ON "
-	       "cd.myoid = item_borrower.item_oid "
-	       "AND item_borrower.type = 'CD' "
-	       "GROUP BY cd.title, "
-	       "cd.id, "
-	       "cd.recording_label, cd.rdate, "
-	       "cd.category, "
-	       "cd.language, "
-	       "cd.price, cd.monetary_units, "
-	       "cd.quantity, "
-	       "cd.location, "
-	       "cd.accession_number, "
-	       "cd.type, "
-	       "cd.myoid, "
-	       "cd.front_cover "
-	       " %1 "
-	       "UNION "
-	       "SELECT DISTINCT dvd.title, "
-	       "dvd.id, "
-	       "dvd.studio, dvd.rdate, "
-	       "dvd.category, "
-	       "dvd.language, "
-	       "dvd.price, dvd.monetary_units, "
-	       "dvd.quantity, "
-	       "dvd.location, "
-	       "dvd.quantity - COUNT(item_borrower.item_oid) AS "
-	       "availability, "
-	       "COUNT(item_borrower.item_oid) AS total_reserved, "
-	       "dvd.accession_number, "
-	       "dvd.type, "
-	       "dvd.myoid, " +
-	       dvdFrontCover +
-	       "FROM "
-	       "dvd LEFT JOIN item_borrower ON "
-	       "dvd.myoid = item_borrower.item_oid "
-	       "AND item_borrower.type = 'DVD' "
-	       "GROUP BY dvd.title, "
-	       "dvd.id, "
-	       "dvd.studio, dvd.rdate, "
-	       "dvd.category, "
-	       "dvd.language, "
-	       "dvd.price, dvd.monetary_units, "
-	       "dvd.quantity, "
-	       "dvd.location, "
-	       "dvd.accession_number, "
-	       "dvd.type, "
-	       "dvd.myoid, "
-	       "dvd.front_cover "
 	       " %1 "
 	       "UNION "
 	       "SELECT DISTINCT grey_literature.document_title, "
@@ -536,114 +466,6 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "book.type, "
 				 "book.myoid, "
 				 "book.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "'' AS callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, " +
-				 cdFrontCover +
-				 "FROM "
-				 "cd LEFT JOIN item_borrower ON "
-				 "cd.myoid = item_borrower.item_oid "
-				 "AND item_borrower.type = 'CD' "
-				 "WHERE "
-				 "item_borrower.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' AND ");
-		searchstr.append
-		  ("SUBSTR(item_borrower.duedate, 7, 4) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 1, 2) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 4, 2) < '");
-		searchstr.append(now.toString("yyyy/MM/dd"));
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "cd.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "'' AS callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, " +
-				 dvdFrontCover +
-				 "FROM "
-				 "dvd LEFT JOIN item_borrower ON "
-				 "dvd.myoid = item_borrower.item_oid "
-				 "AND item_borrower.type = 'DVD' "
-				 "WHERE "
-				 "item_borrower.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' AND ");
-		searchstr.append
-		  ("SUBSTR(item_borrower.duedate, 7, 4) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 1, 2) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 4, 2) < '");
-		searchstr.append(now.toString("yyyy/MM/dd"));
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "dvd.front_cover ");
 		searchstr.append("UNION ");
 		searchstr.append("SELECT DISTINCT "
 				 "item_borrower.copyid, "
@@ -929,134 +751,6 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "book.type, "
 				 "book.myoid, "
 				 "book.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "'' AS callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, " +
-				 cdFrontCover +
-				 "FROM "
-				 "member, "
-				 "cd LEFT JOIN item_borrower ON "
-				 "cd.myoid = item_borrower.item_oid "
-				 "AND item_borrower.type = 'CD' "
-				 "WHERE "
-				 "LOWER(member.memberid) LIKE LOWER('");
-		searchstr.append(searchstrArg.trimmed().isEmpty() ?
-				 "%" : searchstrArg.trimmed());
-		searchstr.append("') AND ");
-		searchstr.append
-		  ("SUBSTR(item_borrower.duedate, 7, 4) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 1, 2) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 4, 2) < '");
-		searchstr.append(now.toString("yyyy/MM/dd"));
-		searchstr.append("' AND ");
-		searchstr.append("item_borrower.memberid = member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "cd.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "'' AS callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, " +
-				 dvdFrontCover +
-				 "FROM "
-				 "member, "
-				 "dvd LEFT JOIN item_borrower ON "
-				 "dvd.myoid = item_borrower.item_oid "
-				 "AND item_borrower.type = 'DVD' "
-				 "WHERE "
-				 "LOWER(member.memberid) LIKE LOWER('");
-		searchstr.append(searchstrArg.trimmed().isEmpty() ?
-				 "%" : searchstrArg.trimmed());
-		searchstr.append("') AND ");
-		searchstr.append
-		  ("SUBSTR(item_borrower.duedate, 7, 4) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 1, 2) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 4, 2) < '");
-		searchstr.append(now.toString("yyyy/MM/dd"));
-		searchstr.append("' AND ");
-		searchstr.append("item_borrower.memberid = member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "dvd.front_cover ");
 		searchstr.append("UNION ");
 		searchstr.append("SELECT DISTINCT "
 				 "member.last_name || ', ' || "
@@ -1370,88 +1064,6 @@ int biblioteq::populateTable(const int search_type_arg,
 		searchstr.append("UNION ");
 		searchstr.append("SELECT DISTINCT "
 				 "item_request.requestdate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "'' AS callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "item_request.myoid AS requestoid, " +
-				 cdFrontCover +
-				 "FROM "
-				 "cd LEFT JOIN item_request ON "
-				 "cd.myoid = item_request.item_oid "
-				 "AND item_request.type = 'CD' "
-				 "WHERE "
-				 "item_request.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_request.requestdate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "item_request.myoid, "
-				 "cd.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_request.requestdate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "'' AS callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "item_request.myoid AS requestoid, " +
-				 dvdFrontCover +
-				 "FROM "
-				 "dvd LEFT JOIN item_request ON "
-				 "dvd.myoid = item_request.item_oid "
-				 "AND item_request.type = 'DVD' "
-				 "WHERE "
-				 "item_request.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_request.requestdate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "item_request.myoid, "
-				 "dvd.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_request.requestdate, "
 				 "grey_literature.document_title, "
 				 "grey_literature.document_id, "
 				 "'', "
@@ -1669,102 +1281,6 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "book.myoid, "
 				 "item_request.myoid, "
 				 "book.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_request.requestdate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "'' AS callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "item_request.myoid AS requestoid, " +
-				 cdFrontCover +
-				 "FROM "
-				 "member, "
-				 "cd LEFT JOIN item_request ON "
-				 "cd.myoid = item_request.item_oid "
-				 "AND item_request.type = 'CD' "
-				 "WHERE ");
-		searchstr.append("item_request.memberid = "
-				 "member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_request.requestdate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "item_request.myoid, "
-				 "cd.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_request.requestdate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "'' AS callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "item_request.myoid AS requestoid, " +
-				 dvdFrontCover +
-				 "FROM "
-				 "member, "
-				 "dvd LEFT JOIN item_request ON "
-				 "dvd.myoid = item_request.item_oid "
-				 "AND item_request.type = 'DVD' "
-				 "WHERE ");
-		searchstr.append("item_request.memberid = "
-				 "member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_request.requestdate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "item_request.myoid, "
-				 "dvd.front_cover ");
 		searchstr.append("UNION ");
 		searchstr.append("SELECT DISTINCT "
 				 "member.last_name || ', ' || "
@@ -2023,102 +1539,6 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "item_borrower.copyid, "
 				 "item_borrower.reserved_date, "
 				 "item_borrower.duedate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "'' AS callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, " +
-				 cdFrontCover +
-				 "FROM "
-				 "cd LEFT JOIN item_borrower ON "
-				 "cd.myoid = item_borrower.item_oid "
-				 "AND item_borrower.type = 'CD' "
-				 "WHERE "
-				 "item_borrower.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "cd.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "'' AS callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, " +
-				 dvdFrontCover +
-				 "FROM "
-				 "dvd LEFT JOIN item_borrower ON "
-				 "dvd.myoid = item_borrower.item_oid "
-				 "AND item_borrower.type = 'DVD' "
-				 "WHERE "
-				 "item_borrower.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "dvd.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
 				 "grey_literature.document_title, "
 				 "grey_literature.document_id, "
 				 "'', "
@@ -2372,124 +1792,6 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "book.type, "
 				 "book.myoid, "
 				 "book.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "'' AS callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, " +
-				 cdFrontCover +
-				 "FROM "
-				 "member, "
-				 "cd LEFT JOIN item_borrower ON "
-				 "cd.myoid = item_borrower.item_oid "
-				 "AND item_borrower.type = 'CD' "
-				 "WHERE "
-				 "LOWER(member.memberid) LIKE LOWER('");
-		searchstr.append(searchstrArg.trimmed().isEmpty() ?
-				 "%" : searchstrArg.trimmed());
-		searchstr.append("') AND ");
-		searchstr.append("item_borrower.memberid = "
-				 "member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "cd.title, "
-				 "cd.id, "
-				 "callnumber, "
-				 "cd.recording_label, cd.rdate, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.price, cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "cd.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "'' AS callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, " +
-				 dvdFrontCover +
-				 "FROM "
-				 "member, "
-				 "dvd LEFT JOIN item_borrower ON "
-				 "dvd.myoid = item_borrower.item_oid "
-				 "AND item_borrower.type = 'DVD' "
-				 "WHERE "
-				 "LOWER(member.memberid) LIKE LOWER('");
-		searchstr.append(searchstrArg.trimmed().isEmpty() ?
-				 "%" : searchstrArg.trimmed());
-		searchstr.append("') AND ");
-		searchstr.append("item_borrower.memberid = "
-				 "member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "dvd.title, "
-				 "dvd.id, "
-				 "callnumber, "
-				 "dvd.studio, dvd.rdate, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.price, dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "dvd.front_cover ");
 		searchstr.append("UNION ");
 		searchstr.append("SELECT DISTINCT "
 				 "member.last_name || ', ' || "
@@ -2839,61 +2141,6 @@ int biblioteq::populateTable(const int search_type_arg,
 	      "book.title" +
 	      limitStr + offsetStr;
 	  }
-	else if(typefilter == "DVDs")
-	  {
-	    searchstr = "SELECT DISTINCT dvd.title, "
-	      "dvd.dvdformat, "
-	      "dvd.studio, "
-	      "dvd.rdate, "
-	      "dvd.dvddiskcount, "
-	      "dvd.dvdruntime, "
-	      "dvd.category, "
-	      "dvd.language, "
-	      "dvd.id, "
-	      "dvd.price, "
-	      "dvd.monetary_units, "
-	      "dvd.quantity, "
-	      "dvd.location, "
-	      "dvd.dvdrating, "
-	      "dvd.dvdregion, "
-	      "dvd.dvdaspectratio, "
-	      "dvd.quantity - "
-	      "COUNT(item_borrower.item_oid) "
-	      "AS availability, "
-	      "COUNT(item_borrower.item_oid) AS total_reserved, "
-	      "dvd.accession_number, "
-	      "dvd.type, "
-	      "dvd.myoid, " +
-	      dvdFrontCover +
-	      "FROM "
-	      "dvd LEFT JOIN item_borrower ON "
-	      "dvd.myoid = item_borrower.item_oid "
-	      "AND item_borrower.type = 'DVD' "
-	      "GROUP BY "
-	      "dvd.title, "
-	      "dvd.dvdformat, "
-	      "dvd.studio, "
-	      "dvd.rdate, "
-	      "dvd.dvddiskcount, "
-	      "dvd.dvdruntime, "
-	      "dvd.category, "
-	      "dvd.language, "
-	      "dvd.id, "
-	      "dvd.price, "
-	      "dvd.monetary_units, "
-	      "dvd.quantity, "
-	      "dvd.location, "
-	      "dvd.dvdrating, "
-	      "dvd.dvdregion, "
-	      "dvd.dvdaspectratio, "
-	      "dvd.accession_number, "
-	      "dvd.type, "
-	      "dvd.myoid, "
-	      "dvd.front_cover "
-	      "ORDER BY "
-	      "dvd.title" +
-	      limitStr + offsetStr;
-	  }
 	else if(typefilter == "Grey Literature")
 	  {
 	    searchstr = "SELECT DISTINCT grey_literature.author, "
@@ -2936,60 +2183,6 @@ int biblioteq::populateTable(const int search_type_arg,
 	      "grey_literature.front_cover "
 	      "ORDER BY "
 	      "grey_literature.author" +
-	      limitStr + offsetStr;
-	  }
-	else if(typefilter == "Music CDs")
-	  {
-	    searchstr = "SELECT DISTINCT cd.title, "
-	      "cd.artist, "
-	      "cd.cdformat, "
-	      "cd.recording_label, "
-	      "cd.rdate, "
-	      "cd.cddiskcount, "
-	      "cd.cdruntime, "
-	      "cd.category, "
-	      "cd.language, "
-	      "cd.id, "
-	      "cd.price, "
-	      "cd.monetary_units, "
-	      "cd.quantity, "
-	      "cd.location, "
-	      "cd.cdaudio, "
-	      "cd.cdrecording, "
-	      "cd.quantity - COUNT(item_borrower.item_oid) AS "
-	      "availability, "
-	      "COUNT(item_borrower.item_oid) AS total_reserved, "
-	      "cd.accession_number, "
-	      "cd.type, "
-	      "cd.myoid, " +
-	      cdFrontCover +
-	      "FROM "
-	      "cd LEFT JOIN item_borrower ON "
-	      "cd.myoid = item_borrower.item_oid "
-	      "AND item_borrower.type = 'CD' "
-	      "GROUP BY "
-	      "cd.title, "
-	      "cd.artist, "
-	      "cd.cdformat, "
-	      "cd.recording_label, "
-	      "cd.rdate, "
-	      "cd.cddiskcount, "
-	      "cd.cdruntime, "
-	      "cd.category, "
-	      "cd.language, "
-	      "cd.id, "
-	      "cd.price, "
-	      "cd.monetary_units, "
-	      "cd.quantity, "
-	      "cd.location, "
-	      "cd.cdaudio, "
-	      "cd.cdrecording, "
-	      "cd.accession_number, "
-	      "cd.type, "
-	      "cd.myoid, "
-	      "cd.front_cover "
-	      "ORDER BY "
-	      "cd.title" +
 	      limitStr + offsetStr;
 	  }
 	else if(typefilter == "Photograph Collections")
@@ -3136,42 +2329,6 @@ int biblioteq::populateTable(const int search_type_arg,
 
 	    searchstr += limitStr + offsetStr;
 	  }
-	else if(typefilter == "DVDs")
-	  {
-	    if(!searchstr.contains("ORDER BY"))
-	      {
-		searchstr.append(searchstrArg);
-		searchstr.append("GROUP BY "
-				 "dvd.title, "
-				 "dvd.dvdformat, "
-				 "dvd.studio, "
-				 "dvd.rdate, "
-				 "dvd.dvddiskcount, "
-				 "dvd.dvdruntime, "
-				 "dvd.category, "
-				 "dvd.language, "
-				 "dvd.id, "
-				 "dvd.price, "
-				 "dvd.monetary_units, "
-				 "dvd.quantity, "
-				 "dvd.location, "
-				 "dvd.dvdrating, "
-				 "dvd.dvdregion, "
-				 "dvd.dvdaspectratio, "
-				 "dvd.accession_number, "
-				 "dvd.type, "
-				 "dvd.myoid, "
-				 "dvd.front_cover "
-				 "ORDER BY "
-				 "dvd.title");
-	      }
-
-	    if(searchstr.lastIndexOf("LIMIT") != -1)
-	      searchstr.remove(searchstr.lastIndexOf("LIMIT"),
-			       searchstr.length());
-
-	    searchstr += limitStr + offsetStr;
-	  }
 	else if(typefilter == "Grey Literature")
 	  {
 	    if(!searchstr.contains("ORDER BY"))
@@ -3252,42 +2409,6 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "magazine.front_cover "
 				 "ORDER BY magazine.title, "
 				 "magazine.issuevolume, magazine.issueno");
-	      }
-
-	    if(searchstr.lastIndexOf("LIMIT") != -1)
-	      searchstr.remove(searchstr.lastIndexOf("LIMIT"),
-			       searchstr.length());
-
-	    searchstr += limitStr + offsetStr;
-	  }
-	else if(typefilter == "Music CDs")
-	  {
-	    if(!searchstr.contains("ORDER BY"))
-	      {
-		searchstr.append(searchstrArg);
-		searchstr.append("GROUP BY "
-				 "cd.title, "
-				 "cd.artist, "
-				 "cd.cdformat, "
-				 "cd.recording_label, "
-				 "cd.rdate, "
-				 "cd.cddiskcount, "
-				 "cd.cdruntime, "
-				 "cd.category, "
-				 "cd.language, "
-				 "cd.id, "
-				 "cd.price, "
-				 "cd.monetary_units, "
-				 "cd.quantity, "
-				 "cd.location, "
-				 "cd.cdaudio, "
-				 "cd.cdrecording, "
-				 "cd.accession_number, "
-				 "cd.type, "
-				 "cd.myoid, "
-				 "cd.front_cover "
-				 "ORDER BY "
-				 "cd.title");
 	      }
 
 	    if(searchstr.lastIndexOf("LIMIT") != -1)
@@ -3616,11 +2737,9 @@ int biblioteq::populateTable(const int search_type_arg,
   QString dateFormat("");
 
   if(typefilter == "Books" ||
-     typefilter == "DVDs" ||
      typefilter == "Grey Literature" ||
      typefilter == "Journals" ||
      typefilter == "Magazines" ||
-     typefilter == "Music CDs" ||
      typefilter == "Photograph Collections" ||
      typefilter == "Video Games")
     dateFormat = publicationDateFormat
@@ -3779,8 +2898,6 @@ int biblioteq::populateTable(const int search_type_arg,
 		    item = new QTableWidgetItem();
 		}
 	      else if(fieldName.endsWith("availability") ||
-		      fieldName.endsWith("cddiskcount") ||
-		      fieldName.endsWith("dvddiskcount") ||
 		      fieldName.endsWith("file_count") ||
 		      fieldName.endsWith("issue") ||
 		      fieldName.endsWith("issueno") ||
@@ -4284,70 +3401,10 @@ void biblioteq::slotBookSearch(void)
   book->raise();
 }
 
-void biblioteq::slotCDSearch(void)
-{
-  biblioteq_cd *cd = nullptr;
-
-  foreach(auto w, QApplication::topLevelWidgets())
-    {
-      auto c = qobject_cast<biblioteq_cd *> (w);
-
-      if(c && c->getID() == "search")
-	{
-	  cd = c;
-	  break;
-	}
-    }
-
-  if(!cd)
-    {
-      cd = new biblioteq_cd(this, "search", QModelIndex());
-      cd->search();
-    }
-
-#ifdef Q_OS_ANDROID
-  cd->showMaximized();
-#else
-  cd->showNormal();
-#endif
-  cd->activateWindow();
-  cd->raise();
-}
-
 void biblioteq::slotContextMenu(const QPoint &point)
 {
   prepareContextMenus();
   m_menu->exec(ui.table->mapToGlobal(point));
-}
-
-void biblioteq::slotDVDSearch(void)
-{
-  biblioteq_dvd *dvd = nullptr;
-
-  foreach(auto w, QApplication::topLevelWidgets())
-    {
-      auto d = qobject_cast<biblioteq_dvd *> (w);
-
-      if(d && d->getID() == "search")
-	{
-	  dvd = d;
-	  break;
-	}
-    }
-
-  if(!dvd)
-    {
-      dvd = new biblioteq_dvd(this, "search", QModelIndex());
-      dvd->search();
-    }
-
-#ifdef Q_OS_ANDROID
-  dvd->showMaximized();
-#else
-  dvd->showNormal();
-#endif
-  dvd->activateWindow();
-  dvd->raise();
 }
 
 void biblioteq::slotJournSearch(void)
@@ -4539,8 +3596,6 @@ void biblioteq::slotSearchBasic(void)
   QList<QVariant> values;
   QSqlQuery query(m_db);
   QString bookFrontCover("'' AS front_cover ");
-  QString cdFrontCover("'' AS front_cover ");
-  QString dvdFrontCover("'' AS front_cover ");
   QString greyLiteratureFrontCover("'' AS front_cover ");
   QString journalFrontCover("'' AS front_cover ");
   QString magazineFrontCover("'' AS front_cover ");
@@ -4553,8 +3608,6 @@ void biblioteq::slotSearchBasic(void)
   auto text(ui.search->text().trimmed());
 
   types.append("Book");
-  types.append("CD");
-  types.append("DVD");
   types.append("Grey Literature");
   types.append("Journal");
   types.append("Magazine");
@@ -4564,8 +3617,6 @@ void biblioteq::slotSearchBasic(void)
   if(m_otheroptions->showMainTableImages())
     {
       bookFrontCover = "book.front_cover ";
-      cdFrontCover = "cd.front_cover ";
-      dvdFrontCover = "dvd.front_cover ";
       greyLiteratureFrontCover = "grey_literature.front_cover ";
       journalFrontCover = "journal.front_cover ";
       magazineFrontCover = "magazine.front_cover ";
@@ -4639,10 +3690,6 @@ void biblioteq::slotSearchBasic(void)
 
 	  if(type == "Book")
 	    str.append(bookFrontCover);
-	  else if(type == "CD")
-	    str.append(cdFrontCover);
-	  else if(type == "DVD")
-	    str.append(dvdFrontCover);
 	  else if(type == "Journal")
 	    str.append(journalFrontCover);
 	  else if(type == "Magazine")
@@ -4933,17 +3980,7 @@ void biblioteq::slotSearchBasic(void)
 	  "photograph_collection.myoid, "
 	  "photograph_collection.image_scaled ";
 
-      if(type == "CD")
-	{
-	  str = str.replace("pdate", "rdate");
-	  str = str.replace("publisher", "recording_label");
-	}
-      else if(type == "DVD")
-	{
-	  str = str.replace("pdate", "rdate");
-	  str = str.replace("publisher", "studio");
-	}
-      else if(type == "Video Game")
+      if(type == "Video Game")
 	{
 	  str = str.replace("pdate", "rdate");
 	  str = str.replace("category", "genre");
@@ -5043,18 +4080,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
   list.append("CREATE TABLE IF NOT EXISTS languages "
 	      "("
 	      "language TEXT NOT NULL PRIMARY KEY)");
-  list.append("CREATE TABLE IF NOT EXISTS cd_formats "
-	      "("
-	      "cd_format	TEXT NOT NULL PRIMARY KEY)");
-  list.append("CREATE TABLE IF NOT EXISTS dvd_ratings "
-	      "("
-	      "dvd_rating TEXT NOT NULL PRIMARY KEY)");
-  list.append("CREATE TABLE IF NOT EXISTS dvd_aspect_ratios "
-	      "("
-	      "dvd_aspect_ratio TEXT NOT NULL PRIMARY KEY)");
-  list.append("CREATE TABLE IF NOT EXISTS dvd_regions "
-	      "("
-	      "dvd_region TEXT NOT NULL PRIMARY KEY)");
   list.append("CREATE TABLE IF NOT EXISTS minimum_days "
 	      "("
 	      "days INTEGER NOT NULL,"
@@ -5071,8 +4096,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
   list.append("ALTER TABLE member ADD expiration_date VARCHAR(32) "
 	      "NOT NULL DEFAULT '01/0/3000'");
   list.append("ALTER TABLE book ADD keyword TEXT");
-  list.append("ALTER TABLE cd ADD keyword TEXT");
-  list.append("ALTER TABLE dvd ADD keyword TEXT");
   list.append("ALTER TABLE journal ADD keyword TEXT");
   list.append("ALTER TABLE magazine ADD keyword TEXT");
   list.append("ALTER TABLE videogame ADD keyword TEXT");
@@ -5114,10 +4137,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 	      "PRIMARY KEY(id, collection_oid),"
 	      "FOREIGN KEY(collection_oid) REFERENCES "
 	      "photograph_collection(myoid) ON DELETE CASCADE)");
-  list.append("ALTER TABLE cd_songs ADD artist TEXT "
-	      "NOT NULL DEFAULT 'UNKNOWN'");
-  list.append("ALTER TABLE cd_songs ADD composer TEXT "
-	      "NOT NULL DEFAULT 'UNKNOWN'");
   list.append("ALTER TABLE book ADD condition TEXT");
   list.append("ALTER TABLE book ADD originality TEXT");
   list.append("ALTER TABLE book_copy_info ADD condition TEXT");
@@ -5292,8 +4311,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 	      "notes TEXT,"
 	      "type VARCHAR(16) NOT NULL DEFAULT 'Grey Literature')");
   list.append("ALTER TABLE book ADD accession_number TEXT");
-  list.append("ALTER TABLE cd ADD accession_number TEXT");
-  list.append("ALTER TABLE dvd ADD accession_number TEXT");
   list.append("ALTER TABLE journal ADD accession_number TEXT");
   list.append("ALTER TABLE magazine ADD accession_number TEXT");
   list.append("ALTER TABLE photograph ADD accession_number TEXT");
@@ -5321,8 +4338,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 	      "value            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"
 	      ")");
   list.append("ALTER TABLE book_copy_info ADD status TEXT");
-  list.append("ALTER TABLE cd_copy_info ADD status TEXT");
-  list.append("ALTER TABLE dvd_copy_info ADD status TEXT");
   list.append("ALTER TABLE journal_copy_info ADD status TEXT");
   list.append("ALTER TABLE magazine_copy_info ADD status TEXT");
   list.append("ALTER TABLE videogame_copy_info ADD status TEXT");

@@ -333,51 +333,6 @@ void biblioteq_main_table::setColumns(const QString &username,
       m_columnHeaderIndexes.append("Type");
       m_columnHeaderIndexes.append("MYOID");
     }
-  else if(type == "DVDs")
-    {
-      list.append(tr("Title"));
-      list.append(tr("Format"));
-      list.append(tr("Studio"));
-      list.append(tr("Release Date"));
-      list.append(tr("Number of Discs"));
-      list.append(tr("Runtime"));
-      list.append(tr("Categories"));
-      list.append(tr("Language"));
-      list.append(tr("UPC"));
-      list.append(tr("Price"));
-      list.append(tr("Monetary Units"));
-      list.append(tr("Quantity"));
-      list.append(tr("Location"));
-      list.append(tr("Rating"));
-      list.append(tr("Region"));
-      list.append(tr("Aspect Ratio"));
-      list.append(tr("Availability"));
-      list.append(tr("Total Reserved"));
-      list.append(tr("Accession Number"));
-      list.append(tr("Type"));
-      list.append("MYOID");
-      m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("Format");
-      m_columnHeaderIndexes.append("Studio");
-      m_columnHeaderIndexes.append("Release Date");
-      m_columnHeaderIndexes.append("Number of Discs");
-      m_columnHeaderIndexes.append("Runtime");
-      m_columnHeaderIndexes.append("Categories");
-      m_columnHeaderIndexes.append("Language");
-      m_columnHeaderIndexes.append("UPC");
-      m_columnHeaderIndexes.append("Price");
-      m_columnHeaderIndexes.append("Monetary Units");
-      m_columnHeaderIndexes.append("Quantity");
-      m_columnHeaderIndexes.append("Location");
-      m_columnHeaderIndexes.append("Rating");
-      m_columnHeaderIndexes.append("Region");
-      m_columnHeaderIndexes.append("Aspect Ratio");
-      m_columnHeaderIndexes.append("Availability");
-      m_columnHeaderIndexes.append("Total Reserved");
-      m_columnHeaderIndexes.append("Accession Number");
-      m_columnHeaderIndexes.append("Type");
-      m_columnHeaderIndexes.append("MYOID");
-    }
   else if(type == "Grey Literature")
     {
       list.append(tr("Authors"));
@@ -452,51 +407,6 @@ void biblioteq_main_table::setColumns(const QString &username,
       m_columnHeaderIndexes.append("LC Control Number");
       m_columnHeaderIndexes.append("Call Number");
       m_columnHeaderIndexes.append("Dewey Number");
-      m_columnHeaderIndexes.append("Availability");
-      m_columnHeaderIndexes.append("Total Reserved");
-      m_columnHeaderIndexes.append("Accession Number");
-      m_columnHeaderIndexes.append("Type");
-      m_columnHeaderIndexes.append("MYOID");
-    }
-  else if(type == "Music CDs")
-    {
-      list.append(tr("Title"));
-      list.append(tr("Artist"));
-      list.append(tr("Format"));
-      list.append(tr("Recording Label"));
-      list.append(tr("Release Date"));
-      list.append(tr("Number of Discs"));
-      list.append(tr("Runtime"));
-      list.append(tr("Categories"));
-      list.append(tr("Language"));
-      list.append(tr("Catalog Number"));
-      list.append(tr("Price"));
-      list.append(tr("Monetary Units"));
-      list.append(tr("Quantity"));
-      list.append(tr("Location"));
-      list.append(tr("Audio"));
-      list.append(tr("Recording Type"));
-      list.append(tr("Availability"));
-      list.append(tr("Total Reserved"));
-      list.append(tr("Accession Number"));
-      list.append(tr("Type"));
-      list.append("MYOID");
-      m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("Artist");
-      m_columnHeaderIndexes.append("Format");
-      m_columnHeaderIndexes.append("Recording Label");
-      m_columnHeaderIndexes.append("Release Date");
-      m_columnHeaderIndexes.append("Number of Discs");
-      m_columnHeaderIndexes.append("Runtime");
-      m_columnHeaderIndexes.append("Categories");
-      m_columnHeaderIndexes.append("Language");
-      m_columnHeaderIndexes.append("Catalog Number");
-      m_columnHeaderIndexes.append("Price");
-      m_columnHeaderIndexes.append("Monetary Units");
-      m_columnHeaderIndexes.append("Quantity");
-      m_columnHeaderIndexes.append("Location");
-      m_columnHeaderIndexes.append("Audio");
-      m_columnHeaderIndexes.append("Recording Type");
       m_columnHeaderIndexes.append("Availability");
       m_columnHeaderIndexes.append("Total Reserved");
       m_columnHeaderIndexes.append("Accession Number");

@@ -21,8 +21,6 @@ QImage biblioteq_misc_functions::getImage(const QString &oid,
     type = type.remove(" ");
 
   if(type == "book" ||
-     type == "cd" ||
-     type == "dvd" ||
      type == "grey_literature" ||
      type == "journal" ||
      type == "magazine" ||
@@ -108,12 +106,6 @@ QMap<QString, qint64> biblioteq_misc_functions::getItemsReservedCounts
     "SELECT COUNT(myoid) AS numbooks FROM item_borrower WHERE memberid = ? "
     "AND type = 'Book' "
     "UNION ALL "
-    "SELECT COUNT(myoid) AS numcds FROM item_borrower WHERE memberid = ? "
-    "AND type = 'CD' "
-    "UNION ALL "
-    "SELECT COUNT(myoid) AS numdvds FROM item_borrower WHERE memberid = ? "
-    "AND type = 'DVD' "
-    "UNION ALL "
     "SELECT COUNT(myoid) AS numgreyliteratures FROM item_borrower "
     "WHERE memberid = ? AND type = 'Grey Literature' "
     "UNION ALL "
@@ -131,8 +123,6 @@ QMap<QString, qint64> biblioteq_misc_functions::getItemsReservedCounts
   query.addBindValue(memberid);
   query.addBindValue(memberid);
   query.addBindValue(memberid);
-  query.addBindValue(memberid);
-  query.addBindValue(memberid);
 
   if(query.exec())
     while(query.next())
@@ -141,15 +131,11 @@ QMap<QString, qint64> biblioteq_misc_functions::getItemsReservedCounts
 
 	if(counts.isEmpty())
 	  counts["numbooks"] = count;
-	else if(counts.size() == 1)
-	  counts["numcds"] = count;
-	else if(counts.size() == 2)
-	  counts["numdvds"] = count;
-	else if(counts.size() == 3)
+    else if(counts.size() == 1)
 	  counts["numgreyliteratures"] = count;
-	else if(counts.size() == 4)
+    else if(counts.size() == 2)
 	  counts["numjournals"] = count;
-	else if(counts.size() == 5)
+    else if(counts.size() == 3)
 	  counts["nummagazines"] = count;
 	else
 	  counts["numvideogames"] = count;
@@ -158,8 +144,6 @@ QMap<QString, qint64> biblioteq_misc_functions::getItemsReservedCounts
   if(counts.isEmpty() || query.lastError().isValid())
     {
       counts["numbooks"] = 0;
-      counts["numcds"] = 0;
-      counts["numdvds"] = 0;
       counts["numgreyliteratures"] = 0;
       counts["numjournals"] = 0;
       counts["nummagazines"] = 0;
@@ -169,8 +153,6 @@ QMap<QString, qint64> biblioteq_misc_functions::getItemsReservedCounts
     }
   else
     counts["numtotal"] = counts.value("numbooks") +
-      counts.value("numcds") +
-      counts.value("numdvds") +
       counts.value("numgreyliteratures") +
       counts.value("numjournals") +
       counts.value("nummagazines") +
@@ -189,8 +171,6 @@ QString biblioteq_misc_functions::getAbstractInfo(const QString &oid,
   auto type(typeArg.toLower());
 
   if(type == "book" ||
-     type == "cd" ||
-     type == "dvd" ||
      type == "journal" ||
      type == "magazine" ||
      type == "video game")
@@ -238,8 +218,6 @@ QString biblioteq_misc_functions::getAvailability(const QString &oid,
   itemType = itemTypeArg;
 
   if(itemType.toLower() == "book" ||
-     itemType.toLower() == "cd" ||
-     itemType.toLower() == "dvd" ||
      itemType.toLower() == "journal" ||
      itemType.toLower() == "magazine" ||
      itemType.toLower() == "video game")
@@ -382,9 +360,7 @@ QString biblioteq_misc_functions::getOID(const QString &idArg,
   if(itemType == "book")
     querystr = QString("SELECT myoid FROM %1 WHERE id = ? AND "
 		       "id IS NOT NULL").arg(itemType);
-  else if(itemType == "cd" ||
-	  itemType == "dvd" ||
-	  itemType == "photograph_collection" ||
+  else if(itemType == "photograph_collection" ||
 	  itemType == "videogame")
     querystr = QString("SELECT myoid FROM %1 WHERE id = ?").arg(itemType);
   else if(itemType == "grey_literature")
@@ -458,8 +434,6 @@ QString biblioteq_misc_functions::getTotalReserved(const QSqlDatabase &db,
   itemType = itemTypeArg.toLower();
 
   if(itemType == "book" ||
-     itemType == "cd" ||
-     itemType == "dvd" ||
      itemType == "journal" ||
      itemType == "magazine" ||
      itemType == "video game")
@@ -585,94 +559,6 @@ QStringList biblioteq_misc_functions::getBookBindingTypes
   return types;
 }
 
-QStringList biblioteq_misc_functions::getCDFormats(const QSqlDatabase &db,
-						   QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr("");
-  QStringList formats;
-
-  errorstr = "";
-  querystr = "SELECT cd_format FROM cd_formats "
-    "WHERE LENGTH(TRIM(cd_format)) > 0 "
-    "ORDER BY cd_format";
-
-  if(query.exec(querystr))
-    while(query.next())
-      formats.append(query.value(0).toString().trimmed());
-
-  if(query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return formats;
-}
-
-QStringList biblioteq_misc_functions::getDVDAspectRatios
-(const QSqlDatabase &db, QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr("");
-  QStringList aspectratios;
-
-  errorstr = "";
-  querystr = "SELECT dvd_aspect_ratio FROM dvd_aspect_ratios "
-    "WHERE LENGTH(TRIM(dvd_aspect_ratio)) > 0 "
-    "ORDER BY dvd_aspect_ratio";
-
-  if(query.exec(querystr))
-    while(query.next())
-      aspectratios.append(query.value(0).toString().trimmed());
-
-  if(query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return aspectratios;
-}
-
-QStringList biblioteq_misc_functions::getDVDRatings(const QSqlDatabase &db,
-						    QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr("");
-  QStringList ratings;
-
-  errorstr = "";
-  querystr = "SELECT dvd_rating FROM dvd_ratings "
-    "WHERE LENGTH(TRIM(dvd_rating)) > 0 "
-    "ORDER BY dvd_rating";
-
-  if(query.exec(querystr))
-    while(query.next())
-      ratings.append(query.value(0).toString().trimmed());
-
-  if(query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return ratings;
-}
-
-QStringList biblioteq_misc_functions::getDVDRegions(const QSqlDatabase &db,
-						    QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr("");
-  QStringList regions;
-
-  errorstr = "";
-  querystr = "SELECT dvd_region FROM dvd_regions "
-    "WHERE LENGTH(TRIM(dvd_region)) > 0 "
-    "ORDER BY dvd_region";
-
-  if(query.exec(querystr))
-    while(query.next())
-      regions.append(query.value(0).toString().trimmed());
-
-  if(query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return regions;
-}
-
 QStringList biblioteq_misc_functions::getGreyLiteratureTypes
 (const QSqlDatabase &db, QString &errorstr)
 {
@@ -774,9 +660,6 @@ QStringList biblioteq_misc_functions::getMinimumDays(const QSqlDatabase &db,
   if(!map.contains("Book"))
     map["Book"] = "1";
 
-  if(!map.contains("DVD"))
-    map["DVD"] = "1";
-
   if(!map.contains("Grey Literature"))
     map["Grey Literature"] = "1";
 
@@ -785,9 +668,6 @@ QStringList biblioteq_misc_functions::getMinimumDays(const QSqlDatabase &db,
 
   if(!map.contains("Magazine"))
     map["Magazine"] = "1";
-
-  if(!map.contains("Music CD"))
-    map["Music CD"] = "1";
 
   if(!map.contains("Video Game"))
     map["Video Game"] = "1";
@@ -844,34 +724,6 @@ QStringList biblioteq_misc_functions::getReservedItems(const QString &memberid,
     "WHERE "
     "item_borrower.item_oid = book.myoid AND "
     "item_borrower.type = 'Book' AND "
-    "item_borrower.memberid = ? "
-    "UNION ALL "
-    "SELECT "
-    "item_borrower.copyid, "
-    "cd.location, "
-    "cd.type, "
-    "cd.title, "
-    "item_borrower.duedate "
-    "FROM "
-    "cd, "
-    "item_borrower "
-    "WHERE "
-    "item_borrower.item_oid = cd.myoid AND "
-    "item_borrower.type = 'CD' AND "
-    "item_borrower.memberid = ? "
-    "UNION ALL "
-    "SELECT "
-    "item_borrower.copyid, "
-    "dvd.location, "
-    "dvd.type, "
-    "dvd.title, "
-    "item_borrower.duedate "
-    "FROM "
-    "dvd, "
-    "item_borrower "
-    "WHERE "
-    "item_borrower.item_oid = dvd.myoid AND "
-    "item_borrower.type = 'DVD' AND "
     "item_borrower.memberid = ? "
     "UNION ALL "
     "SELECT "
@@ -1160,8 +1012,6 @@ bool biblioteq_misc_functions::isCopyAvailable(const QSqlDatabase &db,
   itemType = itemTypeArg;
 
   if(itemType.toLower() == "book" ||
-     itemType.toLower() == "cd" ||
-     itemType.toLower() == "dvd" ||
      itemType.toLower() == "journal" ||
      itemType.toLower() == "magazine" ||
      itemType.toLower() == "video game")
@@ -1772,8 +1622,6 @@ void biblioteq_misc_functions::createInitialCopies(const QString &idArg,
 	if(db.driverName() != "QSQLITE")
 	  {
 	    if(itemType == "book" ||
-	       itemType == "cd" ||
-	       itemType == "dvd" ||
 	       itemType == "journal" ||
 	       itemType == "magazine" ||
 	       itemType == "videogame")
@@ -1786,8 +1634,6 @@ void biblioteq_misc_functions::createInitialCopies(const QString &idArg,
 	else
 	  {
 	    if(itemType == "book" ||
-	       itemType == "cd" ||
-	       itemType == "dvd" ||
 	       itemType == "journal" ||
 	       itemType == "magazine" ||
 	       itemType == "videogame")
@@ -2167,8 +2013,6 @@ void biblioteq_misc_functions::saveQuantity(const QSqlDatabase &db,
   itemType = itemTypeArg.toLower().remove(" ");
 
   if(itemType == "book" ||
-     itemType == "cd" ||
-     itemType == "dvd" ||
      itemType == "journal" ||
      itemType == "magazine" ||
      itemType == "videogame")

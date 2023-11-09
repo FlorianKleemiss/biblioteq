@@ -310,14 +310,6 @@ biblioteq::biblioteq(void):QMainWindow()
 	  SIGNAL(triggered(void)),
 	  this,
 	  SLOT(slotShowOtherOptions(void)));
-  connect(ui.actionMusic_CD,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(slotInsertCD(void)));
-  connect(ui.action_DVD,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(slotInsertDVD(void)));
   connect(ui.action_Full_Screen,
 	  SIGNAL(triggered(void)),
 	  this,
@@ -1442,11 +1434,9 @@ void biblioteq::prepareFilter(void)
 	       << "All Overdue"
 	       << "All Reserved"
 	       << "Books"
-	       << "DVDs"
 	       << "Grey Literature"
 	       << "Journals"
 	       << "Magazines"
-	       << "Music CDs"
 	       << "Photograph Collections"
 	       << "Video Games";
       tmplist2 << tr("All")
@@ -1454,11 +1444,9 @@ void biblioteq::prepareFilter(void)
 	       << tr("All Overdue")
 	       << tr("All Reserved")
 	       << tr("Books")
-	       << tr("DVDs")
 	       << tr("Grey Literature")
 	       << tr("Journals")
 	       << tr("Magazines")
-	       << tr("Music CDs")
 	       << tr("Photograph Collections")
 	       << tr("Video Games");
     }
@@ -1471,11 +1459,9 @@ void biblioteq::prepareFilter(void)
 	       << "All Requested"
 	       << "All Reserved"
 	       << "Books"
-	       << "DVDs"
 	       << "Grey Literature"
 	       << "Journals"
 	       << "Magazines"
-	       << "Music CDs"
 	       << "Photograph Collections"
 	       << "Video Games";
       tmplist2 << tr("All")
@@ -1484,11 +1470,9 @@ void biblioteq::prepareFilter(void)
 	       << tr("All Requested")
 	       << tr("All Reserved")
 	       << tr("Books")
-	       << tr("DVDs")
 	       << tr("Grey Literature")
 	       << tr("Journals")
 	       << tr("Magazines")
-	       << tr("Music CDs")
 	       << tr("Photograph Collections")
 	       << tr("Video Games");
     }
@@ -1501,21 +1485,17 @@ void biblioteq::prepareFilter(void)
 	  tmplist1 << "All"
 		   << "All Available"
 		   << "Books"
-		   << "DVDs"
 		   << "Grey Literature"
 		   << "Journals"
 		   << "Magazines"
-		   << "Music CDs"
 		   << "Photograph Collections"
 		   << "Video Games";
 	  tmplist2 << tr("All")
 		   << tr("All Available")
 		   << tr("Books")
-		   << tr("DVDs")
 		   << tr("Grey Literature")
 		   << tr("Journals")
 		   << tr("Magazines")
-		   << tr("Music CDs")
 		   << tr("Photograph Collections")
 		   << tr("Video Games");
 	}
@@ -1527,11 +1507,9 @@ void biblioteq::prepareFilter(void)
 		   << "All Requested"
 		   << "All Reserved"
 		   << "Books"
-		   << "DVDs"
 		   << "Grey Literature"
 		   << "Journals"
 		   << "Magazines"
-		   << "Music CDs"
 		   << "Photograph Collections"
 		   << "Video Games";
 	  tmplist2 << tr("All")
@@ -1540,11 +1518,9 @@ void biblioteq::prepareFilter(void)
 		   << tr("All Requested")
 		   << tr("All Reserved")
 		   << tr("Books")
-		   << tr("DVDs")
 		   << tr("Grey Literature")
 		   << tr("Journals")
 		   << tr("Magazines")
-		   << tr("Music CDs")
 		   << tr("Photograph Collections")
 		   << tr("Video Games");
 	}
@@ -1602,10 +1578,8 @@ void biblioteq::prepareRequestToolButton(const QString &typefilter)
 	       typefilter == "All Available" ||
 	       typefilter == "Grey Literature" ||
 	       typefilter == "Books" ||
-	       typefilter == "DVDs" ||
 	       typefilter == "Journals" ||
 	       typefilter == "Magazines" ||
-	       typefilter == "Music CDs" ||
 	       typefilter == "Video Games"))
 	{
 	  ui.actionRequests->setData(RequestActionItems::REQUEST_SELECTED);
@@ -1697,18 +1671,6 @@ void biblioteq::removeBook(biblioteq_book *book)
     book->deleteLater();
 }
 
-void biblioteq::removeCD(biblioteq_cd *cd)
-{
-  if(cd)
-    cd->deleteLater();
-}
-
-void biblioteq::removeDVD(biblioteq_dvd *dvd)
-{
-  if(dvd)
-    dvd->deleteLater();
-}
-
 void biblioteq::removeGreyLiterature(biblioteq_grey_literature *gl)
 {
   if(gl)
@@ -1743,18 +1705,6 @@ void biblioteq::replaceBook(const QString &id, biblioteq_book *book)
 {
   Q_UNUSED(id);
   Q_UNUSED(book);
-}
-
-void biblioteq::replaceCD(const QString &id, biblioteq_cd *cd)
-{
-  Q_UNUSED(id);
-  Q_UNUSED(cd);
-}
-
-void biblioteq::replaceDVD(const QString &id, biblioteq_dvd *dvd)
-{
-  Q_UNUSED(id);
-  Q_UNUSED(dvd);
 }
 
 void biblioteq::replaceGreyLiterature(const QString &id,
@@ -1838,8 +1788,6 @@ void biblioteq::resetMembersBrowser(void)
   list.append(tr("Membership Fees"));
   list.append(tr("Overdue Fees"));
   list.append(tr("Books Reserved"));
-  list.append(tr("CDs Reserved"));
-  list.append(tr("DVDs Reserved"));
   list.append(tr("Grey Literatures Reserved"));
   list.append(tr("Journals Reserved"));
   list.append(tr("Magazines Reserved"));
@@ -1856,8 +1804,6 @@ void biblioteq::resetMembersBrowser(void)
   m_bbColumnHeaderIndexes.append("Membership Fees");
   m_bbColumnHeaderIndexes.append("Overdue Fees");
   m_bbColumnHeaderIndexes.append("Books Reserved");
-  m_bbColumnHeaderIndexes.append("CDs Reserved");
-  m_bbColumnHeaderIndexes.append("DVDs Reserved");
   m_bbColumnHeaderIndexes.append("Grey Literatures Reserved");
   m_bbColumnHeaderIndexes.append("Journals Reserved");
   m_bbColumnHeaderIndexes.append("Magazines Reserved");
@@ -2668,8 +2614,6 @@ void biblioteq::slotDelete(void)
 	itemType = itemType.remove(" ");
 
       if(itemType == "book" ||
-	 itemType == "cd" ||
-	 itemType == "dvd" ||
 	 itemType == "grey_literature" ||
 	 itemType == "journal" ||
 	 itemType == "magazine" ||
@@ -2712,21 +2656,6 @@ void biblioteq::slotDelete(void)
 	      query.prepare
 		(QString("DELETE FROM %1_files WHERE item_oid = ?").
 		 arg(itemType));
-	      query.bindValue(0, str);
-	      query.exec();
-	    }
-	  else if(itemType == "cd")
-	    {
-	      query.prepare("DELETE FROM cd_copy_info WHERE item_oid = ?");
-	      query.bindValue(0, str);
-	      query.exec();
-	      query.prepare("DELETE FROM cd_songs WHERE item_oid = ?");
-	      query.bindValue(0, str);
-	      query.exec();
-	    }
-	  else if(itemType == "dvd")
-	    {
-	      query.prepare("DELETE FROM dvd_copy_info WHERE item_oid = ?");
 	      query.bindValue(0, str);
 	      query.exec();
 	    }
@@ -2956,8 +2885,6 @@ void biblioteq::slotDuplicate(void)
   auto error = false;
   auto list(ui.table->selectionModel()->selectedRows());
   biblioteq_book *book = nullptr;
-  biblioteq_cd *cd = nullptr;
-  biblioteq_dvd *dvd = nullptr;
   biblioteq_grey_literature *gl = nullptr;
   biblioteq_journal *journal = nullptr;
   biblioteq_magazine *magazine = nullptr;
@@ -3013,16 +2940,6 @@ void biblioteq::slotDuplicate(void)
 	{
 	  book = new biblioteq_book(this, oid, index);
 	  book->duplicate(id, EDITABLE);
-	}
-      else if(type.toLower() == "cd")
-	{
-	  cd = new biblioteq_cd(this, oid, index);
-	  cd->duplicate(id, EDITABLE);
-	}
-      else if(type.toLower() == "dvd")
-	{
-	  dvd = new biblioteq_dvd(this, oid, index);
-	  dvd->duplicate(id, EDITABLE);
 	}
       else if(type.toLower() == "grey literature")
 	{
@@ -3213,28 +3130,6 @@ void biblioteq::slotInsertBook(void)
   book->insert();
 }
 
-void biblioteq::slotInsertCD(void)
-{
-  QString id("");
-  biblioteq_cd *cd = nullptr;
-
-  m_idCt += 1;
-  id = QString("insert_%1").arg(m_idCt);
-  cd = new biblioteq_cd(this, id, QModelIndex());
-  cd->insert();
-}
-
-void biblioteq::slotInsertDVD(void)
-{
-  QString id("");
-  biblioteq_dvd *dvd = nullptr;
-
-  m_idCt += 1;
-  id = QString("insert_%1").arg(m_idCt);
-  dvd = new biblioteq_dvd(this, id, QModelIndex());
-  dvd->insert();
-}
-
 void biblioteq::slotInsertJourn(void)
 {
   QString id("");
@@ -3347,8 +3242,6 @@ void biblioteq::slotModify(void)
   auto list(ui.table->selectionModel()->selectedRows());
   auto table = ui.table;
   biblioteq_book *book = nullptr;
-  biblioteq_cd *cd = nullptr;
-  biblioteq_dvd *dvd = nullptr;
   biblioteq_grey_literature *gl = nullptr;
   biblioteq_journal *journal = nullptr;
   biblioteq_magazine *magazine = nullptr;
@@ -3394,8 +3287,6 @@ void biblioteq::slotModify(void)
       type = biblioteq_misc_functions::getColumnString
 	(table, i, table->columnNumber("Type"));
       book = nullptr;
-      cd = nullptr;
-      dvd = nullptr;
       gl = nullptr;
       journal = nullptr;
       magazine = nullptr;
@@ -3419,42 +3310,6 @@ void biblioteq::slotModify(void)
 	    book = new biblioteq_book(this, oid, index);
 
 	  book->modify(EDITABLE);
-	}
-      else if(type.toLower() == "cd")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto c = qobject_cast<biblioteq_cd *> (w);
-
-	      if(c && c->getID() == oid)
-		{
-		  cd = c;
-		  break;
-		}
-	    }
-
-	  if(!cd)
-	    cd = new biblioteq_cd(this, oid, index);
-
-	  cd->modify(EDITABLE);
-	}
-      else if(type.toLower() == "dvd")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto d = qobject_cast<biblioteq_dvd *> (w);
-
-	      if(d && d->getID() == oid)
-		{
-		  dvd = d;
-		  break;
-		}
-	    }
-
-	  if(!dvd)
-	    dvd = new biblioteq_dvd(this, oid, index);
-
-	  dvd->modify(EDITABLE);
 	}
       else if(type.toLower() == "grey literature")
 	{
@@ -3746,10 +3601,6 @@ void biblioteq::slotPrintReserved(void)
   itemsReserved = biblioteq_misc_functions::getColumnString
     (bb.table, row, m_bbColumnHeaderIndexes.indexOf("Books Reserved")).
     toInt() +
-    biblioteq_misc_functions::getColumnString
-    (bb.table, row, m_bbColumnHeaderIndexes.indexOf("CDs Reserved")).toInt() +
-    biblioteq_misc_functions::getColumnString
-    (bb.table, row, m_bbColumnHeaderIndexes.indexOf("DVDs Reserved")).toInt() +
     biblioteq_misc_functions::getColumnString
     (bb.table, row, m_bbColumnHeaderIndexes.
      indexOf("Grey Literatures Reserved")).toInt() +
@@ -4616,8 +4467,6 @@ void biblioteq::slotShowMenu(void)
       connect(menu.addAction(tr("Add &Book...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotInsertBook(void)));
       // menu.addAction(tr("Add &Cassette Tape..."));
-      connect(menu.addAction(tr("Add &DVD...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotInsertDVD(void)));
       connect(menu.addAction(tr("Add &Grey Literature...")),
 	      SIGNAL(triggered(void)),
 	      this,
@@ -4626,8 +4475,6 @@ void biblioteq::slotShowMenu(void)
 	      SIGNAL(triggered(void)), this, SLOT(slotInsertJourn(void)));
       connect(menu.addAction(tr("Add &Magazine...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotInsertMag(void)));
-      connect(menu.addAction(tr("Add Music &CD...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotInsertCD(void)));
       // menu.addAction(tr("Add &Newspaper..."));
       connect(menu.addAction(tr("Add &Photograph Collection...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotInsertPhotograph(void)));
@@ -4660,8 +4507,6 @@ void biblioteq::slotShowMenu(void)
       menu.addSeparator();
       connect(menu.addAction(tr("&Book Search...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotBookSearch(void)));
-      connect(menu.addAction(tr("&DVD Search...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotDVDSearch(void)));
       connect(menu.addAction(tr("&Grey Literature Search...")),
 	      SIGNAL(triggered(void)),
 	      this,
@@ -4670,8 +4515,6 @@ void biblioteq::slotShowMenu(void)
 	      SIGNAL(triggered(void)), this, SLOT(slotJournSearch(void)));
       connect(menu.addAction(tr("&Magazine Search...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotMagSearch(void)));
-      connect(menu.addAction(tr("Music &CD Search...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotCDSearch(void)));
       connect
 	(menu.addAction(tr("&Photograph Collection Search...")),
 	 SIGNAL(triggered(void)), this, SLOT(slotPhotographSearch(void)));
@@ -4837,8 +4680,6 @@ void biblioteq::slotViewDetails(void)
   auto list(ui.table->selectionModel()->selectedRows());
   auto table = ui.table;
   biblioteq_book *book = nullptr;
-  biblioteq_cd *cd = nullptr;
-  biblioteq_dvd *dvd = nullptr;
   biblioteq_grey_literature *gl = nullptr;
   biblioteq_journal *journal = nullptr;
   biblioteq_magazine *magazine = nullptr;
@@ -4883,8 +4724,6 @@ void biblioteq::slotViewDetails(void)
       type = biblioteq_misc_functions::getColumnString
 	(table, i, table->columnNumber("Type"));
       book = nullptr;
-      cd = nullptr;
-      dvd = nullptr;
       gl = nullptr;
       journal = nullptr;
       magazine = nullptr;
@@ -4908,42 +4747,6 @@ void biblioteq::slotViewDetails(void)
 	    book = new biblioteq_book(this, oid, index);
 
 	  book->modify(VIEW_ONLY);
-	}
-      else if(type.toLower() == "cd")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto c = qobject_cast<biblioteq_cd *> (w);
-
-	      if(c && c->getID() == oid)
-		{
-		  cd = c;
-		  break;
-		}
-	    }
-
-	  if(!cd)
-	    cd = new biblioteq_cd(this, oid, index);
-
-	  cd->modify(VIEW_ONLY);
-	}
-      else if(type.toLower() == "dvd")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto d = qobject_cast<biblioteq_dvd *> (w);
-
-	      if(d && d->getID() == oid)
-		{
-		  dvd = d;
-		  break;
-		}
-	    }
-
-	  if(!dvd)
-	    dvd = new biblioteq_dvd(this, oid, index);
-
-	  dvd->modify(VIEW_ONLY);
 	}
       else if(type.toLower() == "grey literature")
 	{
@@ -5067,8 +4870,6 @@ void biblioteq::updateItemWindows(void)
   foreach(auto w, QApplication::topLevelWidgets())
     {
       auto book = qobject_cast<biblioteq_book *> (w);
-      auto cd = qobject_cast<biblioteq_cd *> (w);
-      auto dvd = qobject_cast<biblioteq_dvd *> (w);
       auto gl = qobject_cast<biblioteq_grey_literature *> (w);
       auto journal = qobject_cast<biblioteq_journal *> (w);
       auto magazine = qobject_cast<biblioteq_magazine *> (w);
@@ -5077,12 +4878,6 @@ void biblioteq::updateItemWindows(void)
 
       if(book)
 	book->updateWindow(EDITABLE);
-
-      if(cd)
-	cd->updateWindow(EDITABLE);
-
-      if(dvd)
-	dvd->updateWindow(EDITABLE);
 
       if(gl)
 	gl->updateWindow(EDITABLE);
@@ -5119,32 +4914,6 @@ void biblioteq::updateRows
 	  if(book && book->getID() == oid)
 	    {
 	      book->updateRow(index);
-	      break;
-	    }
-	}
-    }
-  else if(itemType == "cd")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto cd = qobject_cast<biblioteq_cd *> (w);
-
-	  if(cd && cd->getID() == oid)
-	    {
-	      cd->updateRow(index);
-	      break;
-	    }
-	}
-    }
-  else if(itemType == "dvd")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto dvd = qobject_cast<biblioteq_dvd *> (w);
-
-	  if(dvd && dvd->getID() == oid)
-	    {
-	      dvd->updateRow(index);
 	      break;
 	    }
 	}
@@ -5258,12 +5027,6 @@ void biblioteq::updateMembersBrowser(const QString &memberid)
 		 m_bbColumnHeaderIndexes.indexOf("Books Reserved"),
 		 QString::number(counts.value("numbooks")));
 	      biblioteq_misc_functions::updateColumn
-		(bb.table, i, m_bbColumnHeaderIndexes.indexOf("CDs Reserved"),
-		 QString::number(counts.value("numcds")));
-	      biblioteq_misc_functions::updateColumn
-		(bb.table, i, m_bbColumnHeaderIndexes.indexOf("DVDs Reserved"),
-		 QString::number(counts.value("numdvds")));
-	      biblioteq_misc_functions::updateColumn
 		(bb.table, i,
 		 m_bbColumnHeaderIndexes.indexOf("Grey Literatures Reserved"),
 		 QString::number(counts.value("numgreyliteratures")));
@@ -5323,12 +5086,6 @@ void biblioteq::updateMembersBrowser(void)
       biblioteq_misc_functions::updateColumn
 	(bb.table, row, m_bbColumnHeaderIndexes.indexOf("Books Reserved"),
 	 QString::number(counts.value("numbooks")));
-      biblioteq_misc_functions::updateColumn
-	(bb.table, row, m_bbColumnHeaderIndexes.indexOf("CDs Reserved"),
-	 QString::number(counts.value("numcds")));
-      biblioteq_misc_functions::updateColumn
-	(bb.table, row, m_bbColumnHeaderIndexes.indexOf("DVDs Reserved"),
-	 QString::number(counts.value("numdvds")));
       biblioteq_misc_functions::updateColumn
 	(bb.table, row,
 	 m_bbColumnHeaderIndexes.indexOf("Grey Literatures Reserved"),

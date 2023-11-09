@@ -11,22 +11,6 @@ biblioteq_dbenumerations::biblioteq_dbenumerations(biblioteq *parent):
 	  SIGNAL(clicked(void)),
 	  this,
 	  SLOT(slotAdd(void)));
-  connect(m_ui.addCdFormat,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotAdd(void)));
-  connect(m_ui.addDvdAspectRatio,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotAdd(void)));
-  connect(m_ui.addDvdRating,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotAdd(void)));
-  connect(m_ui.addDvdRegion,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotAdd(void)));
   connect(m_ui.addGreyLiteratureType,
 	  SIGNAL(clicked(void)),
 	  this,
@@ -60,22 +44,6 @@ biblioteq_dbenumerations::biblioteq_dbenumerations(biblioteq *parent):
 	  this,
 	  SLOT(slotReload(void)));
   connect(m_ui.removeBookBinding,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotRemove(void)));
-  connect(m_ui.removeCdFormat,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotRemove(void)));
-  connect(m_ui.removeDvdAspectRatio,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotRemove(void)));
-  connect(m_ui.removeDvdRating,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotRemove(void)));
-  connect(m_ui.removeDvdRegion,
 	  SIGNAL(clicked(void)),
 	  this,
 	  SLOT(slotRemove(void)));
@@ -191,10 +159,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
   QStringList tables;
 
   tables << "book_binding_types"
-	 << "cd_formats"
-	 << "dvd_aspect_ratios"
-	 << "dvd_ratings"
-	 << "dvd_regions"
 	 << "grey_literature_types"
 	 << "languages"
 	 << "locations"
@@ -216,30 +180,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
 	  list = biblioteq_misc_functions::getBookBindingTypes(qmain->getDB(),
 							       errorstr);
 	  listwidget = m_ui.bookBindingsList;
-	}
-      else if(str == "cd_formats")
-	{
-	  list = biblioteq_misc_functions::getCDFormats(qmain->getDB(),
-							errorstr);
-	  listwidget = m_ui.cdFormatsList;
-	}
-      else if(str == "dvd_aspect_ratios")
-	{
-	  list = biblioteq_misc_functions::getDVDAspectRatios(qmain->getDB(),
-							      errorstr);
-	  listwidget = m_ui.dvdAspectRatiosList;
-	}
-      else if(str == "dvd_ratings")
-	{
-	  list = biblioteq_misc_functions::getDVDRatings(qmain->getDB(),
-							 errorstr);
-	  listwidget = m_ui.dvdRatingsList;
-	}
-      else if(str == "dvd_regions")
-	{
-	  list = biblioteq_misc_functions::getDVDRegions(qmain->getDB(),
-							 errorstr);
-	  listwidget = m_ui.dvdRegionsList;
 	}
       else if(str == "grey_literature_types")
 	{
@@ -320,31 +260,25 @@ void biblioteq_dbenumerations::populateWidgets(void)
 	      layout->addSpacerItem(spacer);
 	      layout->setContentsMargins(0, 0, 0, 0);
 	      list << tr("Book")
-		   << tr("DVD")
 		   << tr("Grey Literature")
 		   << tr("Journal")
 		   << tr("Magazine")
-		   << tr("Music CD")
 		   << tr("Photograph Collection")
 		   << tr("Video Game");
 	      comboBox->addItems(list);
 
 	      if(pairList.at(j).first == "Book")
 		comboBox->setCurrentIndex(0);
-	      else if(pairList.at(j).first == "CD")
-		comboBox->setCurrentIndex(5);
-	      else if(pairList.at(j).first == "DVD")
-		comboBox->setCurrentIndex(1);
 	      else if(pairList.at(j).first == "Grey Literature")
-		comboBox->setCurrentIndex(2);
+        comboBox->setCurrentIndex(1);
 	      else if(pairList.at(j).first == "Journal")
-		comboBox->setCurrentIndex(3);
+        comboBox->setCurrentIndex(2);
 	      else if(pairList.at(j).first == "Magazine")
-		comboBox->setCurrentIndex(4);
+        comboBox->setCurrentIndex(3);
 	      else if(pairList.at(j).first == "Photograph Collection")
-		comboBox->setCurrentIndex(6);
+        comboBox->setCurrentIndex(4);
 	      else if(pairList.at(j).first == "Video Game")
-		comboBox->setCurrentIndex(7);
+        comboBox->setCurrentIndex(5);
 
 	      comboBox->setSizePolicy
 		(QSizePolicy::Preferred, QSizePolicy::Minimum);
@@ -501,26 +435,6 @@ void biblioteq_dbenumerations::slotAdd(void)
       list = m_ui.bookBindingsList;
       listItem = new QListWidgetItem(tr("Book Binding"));
     }
-  else if(toolButton == m_ui.addCdFormat)
-    {
-      list = m_ui.cdFormatsList;
-      listItem = new QListWidgetItem(tr("CD Format"));
-    }
-  else if(toolButton == m_ui.addDvdAspectRatio)
-    {
-      list = m_ui.dvdAspectRatiosList;
-      listItem = new QListWidgetItem(tr("DVD Aspect Ratio"));
-    }
-  else if(toolButton == m_ui.addDvdRating)
-    {
-      list = m_ui.dvdRatingsList;
-      listItem = new QListWidgetItem(tr("DVD Rating"));
-    }
-  else if(toolButton == m_ui.addDvdRegion)
-    {
-      list = m_ui.dvdRegionsList;
-      listItem = new QListWidgetItem(tr("DVD Region"));
-    }
   else if(toolButton == m_ui.addGreyLiteratureType)
     {
       list = m_ui.greyLiteratureTypes;
@@ -545,11 +459,9 @@ void biblioteq_dbenumerations::slotAdd(void)
       layout->addSpacerItem(spacer);
       layout->setContentsMargins(0, 0, 0, 0);
       list << tr("Book")
-	   << tr("DVD")
 	   << tr("Grey Literature")
 	   << tr("Journal")
 	   << tr("Magazine")
-	   << tr("Music CD")
 	   << tr("Photograph Collection")
 	   << tr("Video Game");
       comboBox->addItems(list);
@@ -638,14 +550,6 @@ void biblioteq_dbenumerations::slotRemove(void)
 
   if(toolButton == m_ui.removeBookBinding)
     list = m_ui.bookBindingsList;
-  else if(toolButton == m_ui.removeCdFormat)
-    list = m_ui.cdFormatsList;
-  else if(toolButton == m_ui.removeDvdAspectRatio)
-    list = m_ui.dvdAspectRatiosList;
-  else if(toolButton == m_ui.removeDvdRating)
-    list = m_ui.dvdRatingsList;
-  else if(toolButton == m_ui.removeDvdRegion)
-    list = m_ui.dvdRegionsList;
   else if(toolButton == m_ui.removeGreyLiteratureType)
     list = m_ui.greyLiteratureTypes;
   else if(toolButton == m_ui.removeLanguage)
@@ -675,10 +579,6 @@ void biblioteq_dbenumerations::slotSave(void)
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
   tables << "book_binding_types"
-	 << "cd_formats"
-	 << "dvd_aspect_ratios"
-	 << "dvd_ratings"
-	 << "dvd_regions"
 	 << "grey_literature_types"
 	 << "languages"
 	 << "locations"
@@ -717,14 +617,6 @@ void biblioteq_dbenumerations::slotSave(void)
       if(i == 0)
 	listwidget = m_ui.bookBindingsList;
       else if(i == 1)
-	listwidget = m_ui.cdFormatsList;
-      else if(i == 2)
-	listwidget = m_ui.dvdAspectRatiosList;
-      else if(i == 3)
-	listwidget = m_ui.dvdRatingsList;
-      else if(i == 4)
-	listwidget = m_ui.dvdRegionsList;
-      else if(i == 5)
 	listwidget = m_ui.greyLiteratureTypes;
       else if(i == 6)
 	listwidget = m_ui.languagesList;
@@ -783,15 +675,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(index == 1)
-		  {
-		    query.prepare("INSERT INTO locations "
-				  "(location, type) VALUES "
-				  "(?, 'DVD')");
-		    query.bindValue(0,
-				    tablewidget->item(j, 1)->text().trimmed());
-		  }
-		else if(index == 2)
+        else if(index == 1)
 		  {
 		    query.prepare("INSERT INTO locations "
 				  "(location, type) VALUES "
@@ -799,7 +683,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue
 		      (0, tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(index == 3)
+        else if(index == 2)
 		  {
 		    query.prepare("INSERT INTO locations "
 				  "(location, type) VALUES "
@@ -807,7 +691,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(index == 4)
+        else if(index == 3)
 		  {
 		    query.prepare("INSERT INTO locations "
 				  "(location, type) VALUES "
@@ -815,15 +699,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(index == 5)
-		  {
-		    query.prepare("INSERT INTO locations "
-				  "(location, type) VALUES "
-				  "(?, 'CD')");
-		    query.bindValue(0,
-				    tablewidget->item(j, 1)->text().trimmed());
-		  }
-		else if(index == 6)
+        else if(index == 4)
 		  {
 		    query.prepare("INSERT INTO locations "
 				  "(location, type) VALUES "
@@ -831,7 +707,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(index == 7)
+        else if(index == 5)
 		  {
 		    query.prepare("INSERT INTO locations "
 				  "(location, type) VALUES "
@@ -867,15 +743,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(j == 1)
-		  {
-		    query.prepare("INSERT INTO minimum_days "
-				  "(days, type) VALUES "
-				  "(?, 'DVD')");
-		    query.bindValue(0,
-				    tablewidget->item(j, 1)->text().trimmed());
-		  }
-		else if(j == 2)
+        else if(j == 1)
 		  {
 		    query.prepare("INSERT INTO minimum_days "
 				  "(days, type) VALUES "
@@ -883,7 +751,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(j == 3)
+        else if(j == 2)
 		  {
 		    query.prepare("INSERT INTO minimum_days "
 				  "(days, type) VALUES "
@@ -891,7 +759,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(j == 4)
+        else if(j == 3)
 		  {
 		    query.prepare("INSERT INTO minimum_days "
 				  "(days, type) VALUES "
@@ -899,15 +767,7 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-		else if(j == 5)
-		  {
-		    query.prepare("INSERT INTO minimum_days "
-				  "(days, type) VALUES "
-				  "(?, 'CD')");
-		    query.bindValue(0,
-				    tablewidget->item(j, 1)->text().trimmed());
-		  }
-		else if(j == 6)
+        else if(j == 4)
 		  {
 		    query.prepare("INSERT INTO minimum_days "
 				  "(days, type) VALUES "

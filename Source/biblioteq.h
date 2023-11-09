@@ -6,9 +6,7 @@
 
 #include "biblioteq_book.h"
 #include "biblioteq_callnum_table_item.h"
-#include "biblioteq_cd.h"
 #include "biblioteq_dbenumerations.h"
-#include "biblioteq_dvd.h"
 #include "biblioteq_generic_thread.h"
 #include "biblioteq_grey_literature.h"
 #include "biblioteq_import.h"
@@ -264,23 +262,17 @@ class biblioteq: public QMainWindow
 		const char *file = "",
 		const int line = 0);
   void bookSearch(const QString &field, const QString &value);
-  void cdSearch(const QString &field, const QString &value);
-  void dvdSearch(const QString &field, const QString &value);
   void greyLiteratureSearch(const QString &field, const QString &value);
   void journSearch(const QString &field, const QString &value);
   void magSearch(const QString &field, const QString &value);
   void pcSearch(const QString &field, const QString &value);
   void removeBook(biblioteq_book *book);
-  void removeCD(biblioteq_cd *cd);
-  void removeDVD(biblioteq_dvd *dvd);
   void removeGreyLiterature(biblioteq_grey_literature *gl);
   void removeJournal(biblioteq_journal *journal);
   void removeMagazine(biblioteq_magazine *magazine);
   void removePhotographCollection(biblioteq_photographcollection *pc);
   void removeVideoGame(biblioteq_videogame *videogame);
   void replaceBook(const QString &id, biblioteq_book *book);
-  void replaceCD(const QString &id, biblioteq_cd *cd);
-  void replaceDVD(const QString &id, biblioteq_dvd *dvd);
   void replaceGreyLiterature(const QString &id, biblioteq_grey_literature *gl);
   void replaceJournal(const QString &id, biblioteq_journal *journal);
   void replaceMagazine(const QString &id, biblioteq_magazine *magazine);
@@ -453,7 +445,6 @@ class biblioteq: public QMainWindow
   void slotAutoPopOnFilter(QAction *action);
   void slotBookSearch(void);
   void slotBranchChanged(void);
-  void slotCDSearch(void);
   void slotCancelAddUser(void);
   void slotChangeView(bool checked);
   void slotCheckout(void);
@@ -465,7 +456,6 @@ class biblioteq: public QMainWindow
   void slotContextMenu(const QPoint &point);
   void slotContributors(void);
   void slotCopyError(void);
-  void slotDVDSearch(void);
   void slotDelete(void);
   void slotDeleteAdmin(void);
   void slotDisconnect(void);
@@ -482,8 +472,6 @@ class biblioteq: public QMainWindow
   void slotGraphicsSceneEnterKeyPressed(void);
   void slotGreyLiteratureSearch(void);
   void slotInsertBook(void);
-  void slotInsertCD(void);
-  void slotInsertDVD(void);
   void slotInsertGreyLiterature(void);
   void slotInsertJourn(void);
   void slotInsertMag(void);

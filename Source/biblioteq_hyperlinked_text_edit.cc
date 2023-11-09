@@ -67,10 +67,6 @@ void biblioteq_hyperlinked_text_edit::slotAnchorClicked(const QUrl &url)
 
       if(searchType == "book_search")
 	qmain->bookSearch(searchKey, searchValue);
-      else if(searchType == "cd_search")
-	qmain->cdSearch(searchKey, searchValue);
-      else if(searchType == "dvd_search")
-	qmain->dvdSearch(searchKey, searchValue);
       else if(searchType == "greyliterature_search")
 	qmain->greyLiteratureSearch(searchKey, searchValue);
       else if(searchType == "journal_search")

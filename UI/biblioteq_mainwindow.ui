@@ -483,11 +483,9 @@
        <normaloff>:/16x16/add.png</normaloff>:/16x16/add.png</iconset>
      </property>
      <addaction name="action_Book"/>
-     <addaction name="action_DVD"/>
      <addaction name="action_Grey_Literature"/>
      <addaction name="action_Journal"/>
      <addaction name="action_Magazine"/>
-     <addaction name="actionMusic_CD"/>
      <addaction name="action_Photograph_Collection"/>
      <addaction name="action_Video_Game"/>
     </widget>
@@ -1189,11 +1187,6 @@
     <string>&amp;Book...</string>
    </property>
   </action>
-  <action name="action_DVD">
-   <property name="text">
-    <string>&amp;DVD...</string>
-   </property>
-  </action>
   <action name="action_Journal">
    <property name="text">
     <string>&amp;Journal...</string>
@@ -1202,11 +1195,6 @@
   <action name="action_Magazine">
    <property name="text">
     <string>&amp;Magazine...</string>
-   </property>
-  </action>
-  <action name="actionMusic_CD">
-   <property name="text">
-    <string>Music &amp;CD...</string>
    </property>
   </action>
   <action name="action_Video_Game">

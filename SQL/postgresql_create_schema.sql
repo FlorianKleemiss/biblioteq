@@ -68,97 +68,6 @@ CREATE TABLE book_files
 	PRIMARY KEY (file_digest, item_oid)
 );
 
-CREATE TABLE cd
-(
-	accession_number TEXT,
-	artist		 TEXT NOT NULL,
-	back_cover	 BYTEA,
-	category	 TEXT NOT NULL,
-	cdaudio		 VARCHAR(32) NOT NULL DEFAULT 'Mono',
-	cddiskcount	 INTEGER NOT NULL DEFAULT 1,
-	cdformat	 VARCHAR(128) NOT NULL,
-	cdrecording	 VARCHAR(32) NOT NULL DEFAULT 'Live',
-	cdruntime	 VARCHAR(32) NOT NULL,
-	description	 TEXT NOT NULL,
-	front_cover	 BYTEA,
-	id		 VARCHAR(32) NOT NULL PRIMARY KEY,
-	keyword		 TEXT,
-	language	 VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',
-	location	 TEXT NOT NULL,
-	monetary_units	 VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',
-	myoid		 BIGSERIAL UNIQUE,
-	price		 NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
-	quantity	 INTEGER NOT NULL DEFAULT 1,
-	rdate		 VARCHAR(32) NOT NULL,
-	recording_label	 TEXT NOT NULL,
-	title		 TEXT NOT NULL,
-	type		 VARCHAR(16) NOT NULL DEFAULT 'CD'
-);
-
-CREATE TABLE cd_copy_info
-(
-	copy_number	 INTEGER NOT NULL DEFAULT 1,
-	copyid		 VARCHAR(64) NOT NULL,
-	item_oid	 BIGINT NOT NULL,
-	myoid		 BIGSERIAL UNIQUE,
-	status		 TEXT,
-	FOREIGN KEY (item_oid) REFERENCES cd (myoid) ON DELETE CASCADE,
-	PRIMARY KEY (item_oid, copyid)
-);
-
-CREATE TABLE cd_songs
-(
-	albumnum	 INTEGER NOT NULL DEFAULT 1,
-	artist		 TEXT NOT NULL DEFAULT 'UNKNOWN',
-	composer	 TEXT NOT NULL DEFAULT 'UNKNOWN',
-	item_oid	 BIGINT NOT NULL,
-	runtime		 VARCHAR(32) NOT NULL,
-	songnum		 INTEGER NOT NULL DEFAULT 1,
-	songtitle	 VARCHAR(256) NOT NULL,
-	FOREIGN KEY (item_oid) REFERENCES cd (myoid) ON DELETE CASCADE,
-	PRIMARY KEY (item_oid, albumnum, songnum)
-);
-
-CREATE TABLE dvd
-(
-	accession_number TEXT,
-	back_cover	 BYTEA,
-	category	 TEXT NOT NULL,
-	description	 TEXT NOT NULL,
-	dvdactor	 TEXT NOT NULL,
-	dvdaspectratio	 VARCHAR(64) NOT NULL,
-	dvddirector	 TEXT NOT NULL,
-	dvddiskcount	 INTEGER NOT NULL DEFAULT 1,
-	dvdformat	 TEXT NOT NULL,
-	dvdrating	 VARCHAR(64) NOT NULL,
-	dvdregion	 VARCHAR(64) NOT NULL,
-	dvdruntime	 VARCHAR(32) NOT NULL,
-	front_cover	 BYTEA,
-	id		 VARCHAR(32) PRIMARY KEY NOT NULL,
-	keyword		 TEXT,
-	language	 VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',
-	location	 TEXT NOT NULL,
-	monetary_units	 VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',
-	myoid		 BIGSERIAL UNIQUE,
-	price		 NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
-	quantity	 INTEGER NOT NULL DEFAULT 1,
-	rdate		 VARCHAR(32) NOT NULL,
-	studio		 TEXT NOT NULL,
-	title		 TEXT NOT NULL,
-	type		 VARCHAR(16) NOT NULL DEFAULT 'DVD'
-);
-
-CREATE TABLE dvd_copy_info
-(
-	copy_number	 INTEGER NOT NULL DEFAULT 1,
-	copyid		 VARCHAR(64) NOT NULL,
-	item_oid	 BIGINT NOT NULL,
-	myoid		 BIGSERIAL UNIQUE,
-	status		 TEXT,
-	FOREIGN KEY (item_oid) REFERENCES dvd (myoid) ON DELETE CASCADE,
-	PRIMARY KEY (item_oid, copyid)
-);
-
 CREATE TABLE grey_literature
 (
 	author		TEXT NOT NULL,
@@ -453,28 +362,6 @@ END;
 CREATE TRIGGER book_trigger AFTER DELETE ON book
 FOR EACH row EXECUTE PROCEDURE delete_book();
 
-CREATE OR REPLACE FUNCTION delete_cd() RETURNS trigger AS '
-BEGIN
-	DELETE FROM item_borrower WHERE item_oid = old.myoid;
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''CD'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER cd_trigger AFTER DELETE ON cd
-FOR EACH row EXECUTE PROCEDURE delete_cd();
-
-CREATE OR REPLACE FUNCTION delete_dvd() RETURNS trigger AS '
-BEGIN
-	DELETE FROM item_borrower WHERE item_oid = old.myoid;
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''DVD'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER dvd_trigger AFTER DELETE ON dvd
-FOR EACH row EXECUTE PROCEDURE delete_dvd();
-
 CREATE OR REPLACE FUNCTION delete_grey_literature() RETURNS trigger AS '
 BEGIN
 	DELETE FROM item_borrower WHERE item_oid = old.myoid;
@@ -532,26 +419,6 @@ FOR EACH row EXECUTE PROCEDURE delete_request();
 CREATE TABLE book_binding_types
 (
 	binding_type	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE cd_formats
-(
-	cd_format	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE dvd_aspect_ratios
-(
-	dvd_aspect_ratio	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE dvd_ratings
-(
-	dvd_rating	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE dvd_regions
-(
-	dvd_region	 TEXT NOT NULL PRIMARY KEY
 );
 
 CREATE TABLE grey_literature_types
@@ -613,24 +480,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON book_copy_info TO biblioteq_administrato
 GRANT DELETE, INSERT, SELECT, UPDATE ON book_copy_info TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON book_files TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON book_files TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_copy_info TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_copy_info TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_formats TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_formats TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_songs TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON cd_songs TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_aspect_ratios TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_aspect_ratios TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_copy_info TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_copy_info TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_ratings TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_ratings TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_regions TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON dvd_regions TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON grey_literature TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON grey_literature TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON grey_literature_files TO biblioteq_administrator;
@@ -713,58 +562,6 @@ GRANT SELECT ON book_myoid_seq TO biblioteq_circulation;
 GRANT SELECT ON book_myoid_seq TO biblioteq_guest;
 GRANT SELECT ON book_myoid_seq TO biblioteq_membership;
 GRANT SELECT ON book_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON cd TO biblioteq_circulation;
-GRANT SELECT ON cd TO biblioteq_guest;
-GRANT SELECT ON cd TO biblioteq_membership;
-GRANT SELECT ON cd TO biblioteq_patron;
-GRANT SELECT ON cd_copy_info TO biblioteq_circulation;
-GRANT SELECT ON cd_copy_info TO biblioteq_guest;
-GRANT SELECT ON cd_copy_info TO biblioteq_membership;
-GRANT SELECT ON cd_copy_info TO biblioteq_patron;
-GRANT SELECT ON cd_copy_info_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON cd_copy_info_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON cd_copy_info_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON cd_copy_info_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON cd_formats TO biblioteq_circulation;
-GRANT SELECT ON cd_formats TO biblioteq_guest;
-GRANT SELECT ON cd_formats TO biblioteq_membership;
-GRANT SELECT ON cd_formats TO biblioteq_patron;
-GRANT SELECT ON cd_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON cd_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON cd_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON cd_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON cd_songs TO biblioteq_circulation;
-GRANT SELECT ON cd_songs TO biblioteq_guest;
-GRANT SELECT ON cd_songs TO biblioteq_membership;
-GRANT SELECT ON cd_songs TO biblioteq_patron;
-GRANT SELECT ON dvd TO biblioteq_circulation;
-GRANT SELECT ON dvd TO biblioteq_guest;
-GRANT SELECT ON dvd TO biblioteq_membership;
-GRANT SELECT ON dvd TO biblioteq_patron;
-GRANT SELECT ON dvd_aspect_ratios TO biblioteq_circulation;
-GRANT SELECT ON dvd_aspect_ratios TO biblioteq_guest;
-GRANT SELECT ON dvd_aspect_ratios TO biblioteq_membership;
-GRANT SELECT ON dvd_aspect_ratios TO biblioteq_patron;
-GRANT SELECT ON dvd_copy_info TO biblioteq_circulation;
-GRANT SELECT ON dvd_copy_info TO biblioteq_guest;
-GRANT SELECT ON dvd_copy_info TO biblioteq_membership;
-GRANT SELECT ON dvd_copy_info TO biblioteq_patron;
-GRANT SELECT ON dvd_copy_info_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON dvd_copy_info_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON dvd_copy_info_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON dvd_copy_info_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON dvd_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON dvd_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON dvd_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON dvd_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON dvd_ratings TO biblioteq_circulation;
-GRANT SELECT ON dvd_ratings TO biblioteq_guest;
-GRANT SELECT ON dvd_ratings TO biblioteq_membership;
-GRANT SELECT ON dvd_ratings TO biblioteq_patron;
-GRANT SELECT ON dvd_regions TO biblioteq_circulation;
-GRANT SELECT ON dvd_regions TO biblioteq_guest;
-GRANT SELECT ON dvd_regions TO biblioteq_membership;
-GRANT SELECT ON dvd_regions TO biblioteq_patron;
 GRANT SELECT ON grey_literature TO biblioteq_circulation;
 GRANT SELECT ON grey_literature TO biblioteq_guest;
 GRANT SELECT ON grey_literature TO biblioteq_membership;
@@ -904,14 +701,6 @@ GRANT SELECT, UPDATE, USAGE ON book_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON book_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON book_sequence TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON book_sequence TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON cd_copy_info_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON cd_copy_info_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON cd_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON cd_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON dvd_copy_info_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON dvd_copy_info_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON dvd_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON dvd_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON grey_literature_files_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON grey_literature_files_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON grey_literature_myoid_seq TO biblioteq_administrator;

@@ -4,12 +4,10 @@ FORMS           = UI/biblioteq_adminsetup.ui \
                   UI/biblioteq_bookinfo.ui \
                   UI/biblioteq_borrowers.ui \
                   UI/biblioteq_branch_s.ui \
-                  UI/biblioteq_cdinfo.ui \
                   UI/biblioteq_copybrowser.ui \
                   UI/biblioteq_customquery.ui \
                   UI/biblioteq_dbenumerations.ui \
                   UI/biblioteq_documentationwindow.ui \
-                  UI/biblioteq_dvdinfo.ui \
                   UI/biblioteq_errordiag.ui \
                   UI/biblioteq_files.ui \
                   UI/biblioteq_generalmessagediag.ui \
@@ -38,12 +36,10 @@ HEADERS		= Source/biblioteq.h \
                   Source/biblioteq_bgraphicsscene.h \
 		  Source/biblioteq_book.h \
 		  Source/biblioteq_borrowers_editor.h \
-		  Source/biblioteq_cd.h \
 		  Source/biblioteq_copy_editor.h \
 		  Source/biblioteq_copy_editor_book.h \
                   Source/biblioteq_dbenumerations.h \
                   Source/biblioteq_documentationwindow.h \
-                  Source/biblioteq_dvd.h \
                   Source/biblioteq_files.h \
 		  Source/biblioteq_filesize_table_item.h \
                   Source/biblioteq_generic_thread.h \
@@ -75,13 +71,11 @@ SOURCES		= Source/biblioteq_a.cc \
                   Source/biblioteq_borrowers_editor.cc \
 		  Source/biblioteq_c.cc \
                   Source/biblioteq_callnum_table_item.cc \
-                  Source/biblioteq_cd.cc \
                   Source/biblioteq_copy_editor.cc \
                   Source/biblioteq_copy_editor_book.cc \
                   Source/biblioteq_dbenumerations.cc \
                   Source/biblioteq_d.cc \
                   Source/biblioteq_documentationwindow.cc \
-                  Source/biblioteq_dvd.cc \
                   Source/biblioteq_files.cc \
 		  Source/biblioteq_filesize_table_item.cc \
                   Source/biblioteq_generic_thread.cc \

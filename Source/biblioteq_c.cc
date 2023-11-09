@@ -223,8 +223,6 @@ bool biblioteq::emptyContainers(void)
   foreach(auto w, QApplication::topLevelWidgets())
     {
       auto book = qobject_cast<biblioteq_book *> (w);
-      auto cd = qobject_cast<biblioteq_cd *> (w);
-      auto dvd = qobject_cast<biblioteq_dvd *> (w);
       auto gl = qobject_cast<biblioteq_grey_literature *> (w);
       auto journal = qobject_cast<biblioteq_journal *> (w);
       auto magazine = qobject_cast<biblioteq_magazine *> (w);
@@ -237,22 +235,6 @@ bool biblioteq::emptyContainers(void)
 	    return false;
 	  else
 	    book->deleteLater();
-	}
-
-      if(cd)
-	{
-	  if(cd->isVisible() && !cd->close())
-	    return false;
-	  else
-	    cd->deleteLater();
-	}
-
-      if(dvd)
-	{
-	  if(dvd->isVisible() && !dvd->close())
-	    return false;
-	  else
-	    dvd->deleteLater();
 	}
 
       if(gl)
@@ -627,11 +609,9 @@ int biblioteq::populateTable(const QSqlQuery &query,
   auto showToolTips = settings.value("show_maintable_tooltips", false).toBool();
 
   if(typefilter == "Books" ||
-     typefilter == "DVDs" ||
      typefilter == "Grey Literature" ||
      typefilter == "Journals" ||
      typefilter == "Magazines" ||
-     typefilter == "Music CDs" ||
      typefilter == "Photograph Collections" ||
      typefilter == "Video Games")
     dateFormat = publicationDateFormat
@@ -780,8 +760,6 @@ int biblioteq::populateTable(const QSqlQuery &query,
 		    item = new QTableWidgetItem();
 		}
 	      else if(fieldName.endsWith("availability") ||
-		      fieldName.endsWith("cddiskcount") ||
-		      fieldName.endsWith("dvddiskcount") ||
 		      fieldName.endsWith("file_count") ||
 		      fieldName.endsWith("issue") ||
 		      fieldName.endsWith("issueno") ||
@@ -1045,14 +1023,6 @@ void biblioteq::bookSearch(const QString &field, const QString &value)
   book->deleteLater();
 }
 
-void biblioteq::cdSearch(const QString &field, const QString &value)
-{
-  auto cd = new biblioteq_cd(this, "", QModelIndex());
-
-  cd->search(field, value);
-  cd->deleteLater();
-}
-
 void biblioteq::createConfigToolMenu(void)
 {
   if(!m_configToolMenu)
@@ -1077,32 +1047,6 @@ void biblioteq::deleteItem(const QString &oid, const QString &itemType)
 	  if(book && book->getID() == oid)
 	    {
 	      removeBook(book);
-	      break;
-	    }
-	}
-    }
-  else if(itemType == "cd")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto cd = qobject_cast<biblioteq_cd *> (w);
-
-	  if(cd && cd->getID() == oid)
-	    {
-	      removeCD(cd);
-	      break;
-	    }
-	}
-    }
-  else if(itemType == "dvd")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto dvd = qobject_cast<biblioteq_dvd *> (w);
-
-	  if(dvd && dvd->getID() == oid)
-	    {
-	      removeDVD(dvd);
 	      break;
 	    }
 	}
@@ -1177,14 +1121,6 @@ void biblioteq::deleteItem(const QString &oid, const QString &itemType)
 	    }
 	}
     }
-}
-
-void biblioteq::dvdSearch(const QString &field, const QString &value)
-{
-  auto dvd = new biblioteq_dvd(this, "", QModelIndex());
-
-  dvd->search(field, value);
-  dvd->deleteLater();
 }
 
 void biblioteq::exportAsCSV(biblioteq_main_table *table, const QString &title)
@@ -1752,8 +1688,6 @@ void biblioteq::slotAllGo(void)
   QList<QVariant> values;
   QSqlQuery query(m_db);
   QString bookFrontCover("'' AS front_cover ");
-  QString cdFrontCover("'' AS front_cover ");
-  QString dvdFrontCover("'' AS front_cover ");
   QString greyLiteratureFrontCover("'' AS front_cover ");
   QString journalFrontCover("'' AS front_cover ");
   QString magazineFrontCover("'' AS front_cover ");
@@ -1768,8 +1702,6 @@ void biblioteq::slotAllGo(void)
   if(m_otheroptions->showMainTableImages())
     {
       bookFrontCover = "book.front_cover ";
-      cdFrontCover = "cd.front_cover ";
-      dvdFrontCover = "dvd.front_cover ";
       greyLiteratureFrontCover = "grey_literature.front_cover ";
       journalFrontCover = "journal.front_cover ";
       magazineFrontCover = "magazine.front_cover ";
@@ -1778,8 +1710,6 @@ void biblioteq::slotAllGo(void)
     }
 
   types.append("Book");
-  types.append("CD");
-  types.append("DVD");
   types.append("Grey Literature");
   types.append("Journal");
   types.append("Magazine");
@@ -1852,10 +1782,6 @@ void biblioteq::slotAllGo(void)
 
 	  if(type == "Book")
 	    str.append(bookFrontCover);
-	  else if(type == "CD")
-	    str.append(cdFrontCover);
-	  else if(type == "DVD")
-	    str.append(dvdFrontCover);
 	  else if(type == "Journal")
 	    str.append(journalFrontCover);
 	  else if(type == "Magazine")
@@ -2335,16 +2261,6 @@ void biblioteq::slotAllGo(void)
 	    "photograph_collection.image_scaled ";
 	}
 
-      if(type == "CD")
-	{
-	  str = str.replace("pdate", "rdate");
-	  str = str.replace("publisher", "recording_label");
-	}
-      else if(type == "DVD")
-	{
-	  str = str.replace("pdate", "rdate");
-	  str = str.replace("publisher", "studio");
-	}
       else if(type == "Video Game")
 	{
 	  str = str.replace("pdate", "rdate");
@@ -2504,9 +2420,6 @@ void biblioteq::slotCheckout(void)
 	    itemid = biblioteq_misc_functions::getColumnString
 	      (ui.table, row2.row(), ui.table->columnNumber("ISBN-13"));
 	}
-      else if(type.toLower() == "dvd")
-	itemid = biblioteq_misc_functions::getColumnString
-	  (ui.table, row2.row(), ui.table->columnNumber("UPC"));
       else if(type.toLower() == "grey literature")
 	{
 	  itemid = biblioteq_misc_functions::getColumnString
@@ -2517,9 +2430,6 @@ void biblioteq::slotCheckout(void)
 	      type.toLower() == "magazine")
 	itemid = biblioteq_misc_functions::getColumnString
 	  (ui.table, row2.row(), ui.table->columnNumber("ISSN"));
-      else if(type.toLower() == "cd")
-	itemid = biblioteq_misc_functions::getColumnString
-	  (ui.table, row2.row(), ui.table->columnNumber("Catalog Number"));
       else if(type.toLower() == "video game")
 	itemid = biblioteq_misc_functions::getColumnString
 	  (ui.table, row2.row(), ui.table->columnNumber("UPC"));
@@ -3367,94 +3277,6 @@ void biblioteq::slotDisplaySummary(void)
 	    (ui.table, i, ui.table->columnNumber("Place of Publication"));
 	  summary += "<br>";
 	}
-      else if(type == "CD")
-	{
-	  summary += "<b>" +
-	    biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Title")) +
-	    "</b>";
-	  summary += "<br>";
-	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Catalog Number"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = biblioteq_misc_functions::getColumnString
-	      (ui.table, i, ui.table->columnNumber("ID Number"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = "<br>";
-
-	  summary += tmpstr;
-	  summary += "<br>";
-	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Publication Date"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = biblioteq_misc_functions::getColumnString
-	      (ui.table, i, ui.table->columnNumber("Release Date"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = "<br>";
-
-	  summary += tmpstr;
-	  summary += "<br>";
-	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Publisher"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = biblioteq_misc_functions::getColumnString
-	      (ui.table, i, ui.table->columnNumber("Recording Label"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = "<br>";
-
-	  summary += tmpstr;
-	  summary += "<br>";
-	}
-      else if(type == "DVD")
-	{
-	  summary += "<b>" +
-	    biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Title")) +
-	    "</b>";
-	  summary += "<br>";
-	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("UPC"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = biblioteq_misc_functions::getColumnString
-	      (ui.table, i, ui.table->columnNumber("ID Number"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = "<br>";
-
-	  summary += tmpstr;
-	  summary += "<br>";
-	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Publication Date"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = biblioteq_misc_functions::getColumnString
-	      (ui.table, i, ui.table->columnNumber("Release Date"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = "<br>";
-
-	  summary += tmpstr;
-	  summary += "<br>";
-	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Publisher"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = biblioteq_misc_functions::getColumnString
-	      (ui.table, i, ui.table->columnNumber("Studio"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = "<br>";
-
-	  summary += tmpstr;
-	  summary += "<br>";
-	}
       else if(type == "Grey Literature")
 	{
 	  summary += "<b>" +
@@ -4180,12 +4002,6 @@ void biblioteq::slotOtherOptionsSaved(void)
     if(qobject_cast<biblioteq_book *> (widget))
       qobject_cast<biblioteq_book *> (widget)->setPublicationDateFormat
 	(m_otheroptions->publicationDateFormat("books"));
-    else if(qobject_cast<biblioteq_cd *> (widget))
-      qobject_cast<biblioteq_cd *> (widget)->setPublicationDateFormat
-	(m_otheroptions->publicationDateFormat("musiccds"));
-    else if(qobject_cast<biblioteq_dvd *> (widget))
-      qobject_cast<biblioteq_dvd *> (widget)->setPublicationDateFormat
-	(m_otheroptions->publicationDateFormat("dvds"));
     else if(qobject_cast<biblioteq_grey_literature *> (widget))
       qobject_cast<biblioteq_grey_literature *> (widget)->
 	setPublicationDateFormat(m_otheroptions->
@@ -4311,28 +4127,22 @@ void biblioteq::slotPopulateMembersBrowser(void)
     "member.membership_fees, "
     "member.overdue_fees, "
     "COUNT(DISTINCT ib1.myoid) AS number_reserved_books, "
-    "COUNT(DISTINCT ib2.myoid) AS number_reserved_cds, "
-    "COUNT(DISTINCT ib3.myoid) AS number_reserved_dvds, "
-    "COUNT(DISTINCT ib4.myoid) AS number_reserved_greyliteratures, "
-    "COUNT(DISTINCT ib5.myoid) AS number_reserved_journals, "
-    "COUNT(DISTINCT ib6.myoid) AS number_reserved_magazines, "
-    "COUNT(DISTINCT ib7.myoid) AS number_reserved_videogames, "
+    "COUNT(DISTINCT ib2.myoid) AS number_reserved_greyliteratures, "
+    "COUNT(DISTINCT ib3.myoid) AS number_reserved_journals, "
+    "COUNT(DISTINCT ib4.myoid) AS number_reserved_magazines, "
+    "COUNT(DISTINCT ib5.myoid) AS number_reserved_videogames, "
     "0 AS number_reserved_total "
     "FROM member member "
     "LEFT JOIN item_borrower ib1 ON "
     "member.memberid = ib1.memberid AND ib1.type = 'Book' "
     "LEFT JOIN item_borrower ib2 ON "
-    "member.memberid = ib2.memberid AND ib2.type = 'CD' "
+    "member.memberid = ib2.memberid AND ib2.type = 'Grey Literature' "
     "LEFT JOIN item_borrower ib3 ON "
-    "member.memberid = ib3.memberid AND ib3.type = 'DVD' "
+    "member.memberid = ib3.memberid AND ib3.type = 'Journal' "
     "LEFT JOIN item_borrower ib4 ON "
-    "member.memberid = ib4.memberid AND ib4.type = 'Grey Literature' "
+    "member.memberid = ib4.memberid AND ib4.type = 'Magazine' "
     "LEFT JOIN item_borrower ib5 ON "
-    "member.memberid = ib5.memberid AND ib5.type = 'Journal' "
-    "LEFT JOIN item_borrower ib6 ON "
-    "member.memberid = ib6.memberid AND ib6.type = 'Magazine' "
-    "LEFT JOIN item_borrower ib7 ON "
-    "member.memberid = ib7.memberid AND ib7.type = 'Video Game' ";
+    "member.memberid = ib5.memberid AND ib5.type = 'Video Game' ";
 
   if(bb.filterBox->isChecked())
     {
@@ -4623,15 +4433,6 @@ void biblioteq::slotRefreshCustomQuery(void)
 	 << "book_binding_types"
 	 << "book_copy_info"
 	 << "book_files"
-	 << "cd"
-	 << "cd_copy_info"
-	 << "cd_formats"
-	 << "cd_songs"
-	 << "dvd"
-	 << "dvd_aspect_ratios"
-	 << "dvd_copy_info"
-	 << "dvd_ratings"
-	 << "dvd_regions"
 	 << "grey_literature"
 	 << "grey_literature_files"
 	 << "grey_literature_types"
@@ -4660,15 +4461,6 @@ void biblioteq::slotRefreshCustomQuery(void)
 	 << "book_binding_types"
 	 << "book_copy_info"
 	 << "book_files"
-	 << "cd"
-	 << "cd_copy_info"
-	 << "cd_formats"
-	 << "cd_songs"
-	 << "dvd"
-	 << "dvd_aspect_ratios"
-	 << "dvd_copy_info"
-	 << "dvd_ratings"
-	 << "dvd_regions"
 	 << "grey_literature"
 	 << "grey_literature_files"
 	 << "grey_literature_types"
@@ -6191,8 +5983,6 @@ void biblioteq::slotShowHistory(void)
       }
 
   list << "book"
-       << "cd"
-       << "dvd"
        << "grey_literature"
        << "journal"
        << "magazine"
@@ -6631,15 +6421,6 @@ void biblioteq::slotVacuum(void)
       progress.setValue(0);
       query.exec("DELETE FROM book_files WHERE item_oid NOT IN "
 		 "(SELECT myoid FROM book)");
-      progress.setValue(0);
-      query.exec("DELETE FROM cd_copy_info WHERE item_oid NOT IN "
-		 "(SELECT myoid FROM cd)");
-      progress.setValue(0);
-      query.exec("DELETE FROM cd_songs WHERE item_oid NOT IN "
-		 "(SELECT myoid FROM cd)");
-      progress.setValue(0);
-      query.exec("DELETE FROM dvd_copy_info WHERE item_oid NOT IN "
-		 "(SELECT myoid FROM dvd)");
       progress.setValue(0);
       query.exec("DELETE FROM grey_literature_files WHERE item_oid NOT IN "
 		 "(SELECT myoid FROM grey_literature)");
