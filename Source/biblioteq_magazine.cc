@@ -1,5 +1,4 @@
 #include "biblioteq.h"
-#include "biblioteq_borrowers_editor.h"
 #include "biblioteq_copy_editor.h"
 #include "biblioteq_filesize_table_item.h"
 #include "biblioteq_magazine.h"
@@ -96,8 +95,6 @@ biblioteq_magazine::biblioteq_magazine(biblioteq *parentArg,
   connect(ma.files, SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
 	  this, SLOT(slotFilesDoubleClicked(QTableWidgetItem *)));
   connect(ma.okButton, SIGNAL(clicked(void)), this, SLOT(slotGo(void)));
-  connect(ma.showUserButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotShowUsers(void)));
   connect(ma.sruQueryButton, SIGNAL(clicked(void)), this,
 	  SLOT(slotSRUQuery(void)));
   connect(ma.z3950QueryButton, SIGNAL(clicked(void)), this,
@@ -478,7 +475,6 @@ void biblioteq_magazine::duplicate(const QString &p_oid, const int state)
   ma.delete_files->setEnabled(false);
   ma.export_files->setEnabled(false);
   ma.copiesButton->setEnabled(false);
-  ma.showUserButton->setEnabled(false);
   m_oid = p_oid;
 
   if(m_subType.toLower() == "journal")
@@ -525,7 +521,6 @@ void biblioteq_magazine::insert(void)
   ma.volume->setValue(0);
   ma.issue->setMinimum(0);
   ma.issue->setValue(0);
-  ma.showUserButton->setEnabled(false);
   ma.location->setCurrentIndex(0);
   ma.language->setCurrentIndex(0);
   ma.monetary_units->setCurrentIndex(0);
@@ -586,7 +581,6 @@ void biblioteq_magazine::modify(const int state)
       ma.export_files->setEnabled(true);
       ma.marc_tags_format->setVisible(true);
       ma.parse_marc_tags->setVisible(true);
-      ma.showUserButton->setEnabled(true);
       ma.copiesButton->setEnabled(true);
       ma.sruQueryButton->setVisible(true);
       ma.z3950QueryButton->setVisible(true);
@@ -622,12 +616,6 @@ void biblioteq_magazine::modify(const int state)
       ma.delete_files->setVisible(false);
       ma.export_files->setVisible(true);
       ma.issnAvailableCheckBox->setCheckable(false);
-
-      if(qmain->isGuest())
-	ma.showUserButton->setVisible(false);
-      else
-	ma.showUserButton->setEnabled(true);
-
       ma.copiesButton->setVisible(false);
       ma.sruQueryButton->setVisible(false);
       ma.z3950QueryButton->setVisible(false);
@@ -1776,7 +1764,6 @@ void biblioteq_magazine::search(const QString &field, const QString &value)
   ma.keyword->clear();
   ma.category->clear();
   ma.copiesButton->setVisible(false);
-  ma.showUserButton->setVisible(false);
   ma.sruQueryButton->setVisible(false);
   ma.z3950QueryButton->setVisible(false);
   ma.okButton->setText(tr("&Search"));
@@ -3790,29 +3777,6 @@ void biblioteq_magazine::slotShowPDF(void)
   QApplication::restoreOverrideCursor();
 }
 
-void biblioteq_magazine::slotShowUsers(void)
-{
-  biblioteq_borrowers_editor *borrowerseditor = nullptr;
-  int state = 0;
-
-  if(!ma.okButton->isHidden())
-    state = biblioteq::EDITABLE;
-  else
-    state = biblioteq::VIEW_ONLY;
-
-  borrowerseditor = new biblioteq_borrowers_editor
-    (qobject_cast<QWidget *> (this),
-     qmain,
-     static_cast<biblioteq_item *> (this),
-     ma.quantity->value(),
-     m_oid,
-     ma.id->text(),
-     font(),
-     m_subType,
-     state);
-  borrowerseditor->showUsers();
-}
-
 void biblioteq_magazine::slotZ3950Query(void)
 {
   if(findChild<biblioteq_generic_thread *> ())
@@ -4017,7 +3981,6 @@ void biblioteq_magazine::updateWindow(const int state)
       ma.export_files->setEnabled(true);
       ma.marc_tags_format->setVisible(true);
       ma.parse_marc_tags->setVisible(true);
-      ma.showUserButton->setEnabled(true);
       ma.copiesButton->setEnabled(true);
       ma.sruQueryButton->setVisible(true);
       ma.z3950QueryButton->setVisible(true);
@@ -4054,11 +4017,6 @@ void biblioteq_magazine::updateWindow(const int state)
       ma.delete_files->setVisible(false);
       ma.export_files->setEnabled(true);
       ma.issnAvailableCheckBox->setCheckable(false);
-
-      if(qmain->isGuest())
-	ma.showUserButton->setVisible(false);
-      else
-	ma.showUserButton->setEnabled(true);
 
       ma.copiesButton->setVisible(false);
       ma.sruQueryButton->setVisible(false);

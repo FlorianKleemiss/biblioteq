@@ -3956,10 +3956,6 @@ void biblioteq::slotOtherOptionsSaved(void)
     else if(qobject_cast<biblioteq_magazine *> (widget))
       qobject_cast<biblioteq_magazine *> (widget)->setPublicationDateFormat
 	(m_otheroptions->publicationDateFormat("magazines"));
-    else if(qobject_cast<biblioteq_photographcollection *> (widget))
-      qobject_cast<biblioteq_photographcollection *> (widget)->
-	setPublicationDateFormat
-	(m_otheroptions->publicationDateFormat("photographcollections"));
 
   if(m_otheroptions->showMainTableImages())
     ui.table->setIconSize(QSize(64, 94));

@@ -32,8 +32,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>617</width>
-         <height>1015</height>
+         <width>618</width>
+         <height>848</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout">
@@ -88,40 +88,8 @@
           </property>
          </widget>
         </item>
-        <item row="11" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="text">
-           <string>Reservation Status</string>
-          </property>
-         </widget>
-        </item>
         <item row="11" column="1">
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="showUserButton">
-            <property name="text">
-             <string>&amp;Reservation Status...</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../Icons/icons.qrc">
-              <normaloff>:/16x16/members.png</normaloff>:/16x16/members.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+         <layout class="QHBoxLayout" name="horizontalLayout"/>
         </item>
         <item row="12" column="0">
          <widget class="QLabel" name="label_11">
@@ -659,7 +627,6 @@
   <tabstop>notes</tabstop>
   <tabstop>location</tabstop>
   <tabstop>copies</tabstop>
-  <tabstop>showUserButton</tabstop>
   <tabstop>status</tabstop>
   <tabstop>type</tabstop>
   <tabstop>files</tabstop>

@@ -32,8 +32,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>967</width>
-         <height>1296</height>
+         <width>968</width>
+         <height>1101</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout">
@@ -454,17 +454,6 @@
                   <property name="icon">
                    <iconset resource="../Icons/icons.qrc">
                     <normaloff>:/16x16/editcopy.png</normaloff>:/16x16/editcopy.png</iconset>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QPushButton" name="showUserButton">
-                  <property name="text">
-                   <string>&amp;Reservation Status...</string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../Icons/icons.qrc">
-                    <normaloff>:/16x16/members.png</normaloff>:/16x16/members.png</iconset>
                   </property>
                  </widget>
                 </item>
@@ -1167,7 +1156,6 @@
   <tabstop>monetary_units</tabstop>
   <tabstop>quantity</tabstop>
   <tabstop>copiesButton</tabstop>
-  <tabstop>showUserButton</tabstop>
   <tabstop>location</tabstop>
   <tabstop>description</tabstop>
   <tabstop>marc_tags</tabstop>

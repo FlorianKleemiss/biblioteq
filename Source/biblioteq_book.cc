@@ -1,6 +1,5 @@
 #include "biblioteq.h"
 #include "biblioteq_book.h"
-#include "biblioteq_borrowers_editor.h"
 #include "biblioteq_copy_editor_book.h"
 #include "biblioteq_filesize_table_item.h"
 #include "biblioteq_pdfreader.h"
@@ -93,8 +92,6 @@ biblioteq_book::biblioteq_book(biblioteq *parentArg,
 	  SLOT(slotOpenLibraryQuery(void)));
   connect(id.parse_marc_tags, SIGNAL(clicked(void)), this,
 	  SLOT(slotParseMarcTags(void)));
-  connect(id.showUserButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotShowUsers(void)));
   connect(id.sruQueryButton, SIGNAL(clicked(void)), this,
 	  SLOT(slotSRUQuery(void)));
   connect(id.z3950QueryButton, SIGNAL(clicked(void)), this,
@@ -667,7 +664,6 @@ void biblioteq_book::duplicate(const QString &p_oid, const int state)
   id.copiesButton->setEnabled(false);
   id.delete_files->setEnabled(false);
   id.export_files->setEnabled(false);
-  id.showUserButton->setEnabled(false);
   m_oid = p_oid;
   setWindowTitle(tr("BiblioteQ: Duplicate Book Entry"));
   m_duplicate = false;
@@ -710,7 +706,6 @@ void biblioteq_book::insert(void)
   id.price->setValue(0.00);
   id.quantity->setMinimum(1);
   id.quantity->setValue(1);
-  id.showUserButton->setEnabled(false);
   id.location->setCurrentIndex(0);
   id.edition->setCurrentIndex(0);
   id.language->setCurrentIndex(0);
@@ -770,7 +765,6 @@ void biblioteq_book::modify(const int state)
       id.export_files->setEnabled(true);
       id.marc_tags_format->setVisible(true);
       id.parse_marc_tags->setVisible(true);
-      id.showUserButton->setEnabled(true);
       id.okButton->setVisible(true);
       id.openLibraryQuery->setVisible(true);
       id.sruQueryButton->setVisible(true);
@@ -811,11 +805,6 @@ void biblioteq_book::modify(const int state)
       id.copiesButton->setVisible(false);
       id.delete_files->setVisible(false);
       id.export_files->setVisible(true);
-
-      if(qmain->isGuest())
-	id.showUserButton->setVisible(false);
-      else
-	id.showUserButton->setEnabled(true);
 
       id.okButton->setVisible(false);
       id.openLibraryQuery->setVisible(false);
@@ -1805,7 +1794,6 @@ void biblioteq_book::search(const QString &field, const QString &value)
   id.keyword->clear();
   id.url->clear();
   id.copiesButton->setVisible(false);
-  id.showUserButton->setVisible(false);
   id.openLibraryQuery->setVisible(false);
   id.sruQueryButton->setVisible(false);
   id.z3950QueryButton->setVisible(false);
@@ -4664,29 +4652,6 @@ void biblioteq_book::slotShowPDF(void)
   QApplication::restoreOverrideCursor();
 }
 
-void biblioteq_book::slotShowUsers(void)
-{
-  biblioteq_borrowers_editor *borrowerseditor = nullptr;
-  int state = 0;
-
-  if(!id.okButton->isHidden())
-    state = biblioteq::EDITABLE;
-  else
-    state = biblioteq::VIEW_ONLY;
-
-  borrowerseditor = new biblioteq_borrowers_editor
-    (qobject_cast<QWidget *> (this),
-     qmain,
-     static_cast<biblioteq_item *> (this),
-     id.quantity->value(),
-     m_oid,
-     id.id->text().remove('-').trimmed(),
-     font(),
-     "Book",
-     state);
-  borrowerseditor->showUsers();
-}
-
 void biblioteq_book::slotZ3950Query(void)
 {
   if(findChild<biblioteq_generic_thread *> ())
@@ -4892,7 +4857,6 @@ void biblioteq_book::updateWindow(const int state)
       id.export_files->setEnabled(true);
       id.marc_tags_format->setVisible(true);
       id.parse_marc_tags->setVisible(true);
-      id.showUserButton->setEnabled(true);
       id.okButton->setVisible(true);
       id.openLibraryQuery->setVisible(true);
       id.sruQueryButton->setVisible(true);
@@ -4923,11 +4887,6 @@ void biblioteq_book::updateWindow(const int state)
       id.copiesButton->setVisible(false);
       id.delete_files->setVisible(false);
       id.export_files->setEnabled(true);
-
-      if(qmain->isGuest())
-	id.showUserButton->setVisible(false);
-      else
-	id.showUserButton->setEnabled(true);
 
       id.okButton->setVisible(false);
       id.openLibraryQuery->setVisible(false);

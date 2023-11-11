@@ -1,5 +1,4 @@
 #include "biblioteq.h"
-#include "biblioteq_borrowers_editor.h"
 #include "biblioteq_filesize_table_item.h"
 #include "biblioteq_grey_literature.h"
 #include "biblioteq_pdfreader.h"
@@ -60,10 +59,6 @@ biblioteq_grey_literature::biblioteq_grey_literature(biblioteq *parentArg,
 	  SIGNAL(clicked(void)),
 	  this,
 	  SLOT(slotReset(void)));
-  connect(m_ui.showUserButton,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotShowUsers(void)));
   connect(menu->addAction(tr("Reset Title")),
 	  SIGNAL(triggered(void)),
 	  this,
@@ -371,7 +366,6 @@ void biblioteq_grey_literature::duplicate(const QString &p_oid, const int state)
   m_ui.attach_files->setEnabled(false);
   m_ui.delete_files->setEnabled(false);
   m_ui.export_files->setEnabled(false);
-  m_ui.showUserButton->setEnabled(false);
   setWindowTitle(tr("BiblioteQ: Duplicate Grey Literature Entry"));
 }
 
@@ -404,7 +398,6 @@ void biblioteq_grey_literature::insert(void)
   m_ui.location->setCurrentIndex(0);
   m_ui.notes->clear();
   m_ui.okButton->setText(tr("&Save"));
-  m_ui.showUserButton->setEnabled(false);
   m_ui.status->clear();
   m_ui.title->clear();
   m_ui.title->setFocus();
@@ -576,7 +569,6 @@ void biblioteq_grey_literature::modify(const int state)
       m_ui.okButton->setText("&Save");
       m_ui.okButton->setVisible(true);
       m_ui.resetButton->setVisible(true);
-      m_ui.showUserButton->setEnabled(true);
     }
   else
     {
@@ -589,11 +581,6 @@ void biblioteq_grey_literature::modify(const int state)
       m_ui.okButton->setVisible(false);
       m_ui.okButton->setVisible(false);
       m_ui.resetButton->setVisible(false);
-
-      if(qmain->isGuest())
-	m_ui.showUserButton->setEnabled(false);
-      else
-	m_ui.showUserButton->setEnabled(true);
     }
 
   QSqlQuery query(qmain->getDB());
@@ -838,7 +825,6 @@ void biblioteq_grey_literature::search(const QString &field,
   m_ui.location->insertItem(0, tr("Any"));
   m_ui.location->setCurrentIndex(0);
   m_ui.okButton->setText(tr("&Search"));
-  m_ui.showUserButton->setEnabled(false);
   m_ui.type->insertItem(0, tr("Any"));
   m_ui.type->setCurrentIndex(0);
 
@@ -1540,29 +1526,6 @@ void biblioteq_grey_literature::slotReset(void)
     }
 }
 
-void biblioteq_grey_literature::slotShowUsers(void)
-{
-  biblioteq_borrowers_editor *borrowerseditor = nullptr;
-  int state = 0;
-
-  if(!m_ui.okButton->isHidden())
-    state = biblioteq::EDITABLE;
-  else
-    state = biblioteq::VIEW_ONLY;
-
-  borrowerseditor = new biblioteq_borrowers_editor
-    (qobject_cast<QWidget *> (this),
-     qmain,
-     static_cast<biblioteq_item *> (this),
-     m_ui.copies->value(),
-     m_oid,
-     m_ui.id->text().trimmed(),
-     font(),
-     "Grey Literature",
-     state);
-  borrowerseditor->showUsers();
-}
-
 void biblioteq_grey_literature::updateDatabase(void)
 {
   QSqlQuery query(qmain->getDB());
@@ -1787,7 +1750,6 @@ void biblioteq_grey_literature::updateWindow(const int state)
       m_ui.export_files->setEnabled(true);
       m_ui.okButton->setVisible(true);
       m_ui.resetButton->setVisible(true);
-      m_ui.showUserButton->setEnabled(true);
       string = QString(tr("BiblioteQ: Modify Grey Literature Entry (")) +
 	m_ui.id->text() + tr(")");
     }
@@ -1799,12 +1761,6 @@ void biblioteq_grey_literature::updateWindow(const int state)
       m_ui.export_files->setEnabled(true);
       m_ui.okButton->setVisible(false);
       m_ui.resetButton->setVisible(false);
-
-      if(qmain->isGuest())
-	m_ui.showUserButton->setEnabled(false);
-      else
-	m_ui.showUserButton->setEnabled(true);
-
       string = QString(tr("BiblioteQ: View Grey Literature Details (")) +
 	m_ui.id->text() + tr(")");
     }

@@ -2,7 +2,6 @@ FORMS           = UI/biblioteq_adminsetup.ui \
 		  UI/biblioteq_allinfo.ui \
                   UI/biblioteq_bookcopybrowser.ui \
                   UI/biblioteq_bookinfo.ui \
-                  UI/biblioteq_borrowers.ui \
                   UI/biblioteq_branch_s.ui \
                   UI/biblioteq_copybrowser.ui \
                   UI/biblioteq_customquery.ui \
@@ -12,11 +11,9 @@ FORMS           = UI/biblioteq_adminsetup.ui \
                   UI/biblioteq_files.ui \
                   UI/biblioteq_generalmessagediag.ui \
 		  UI/biblioteq_greyliteratureinfo.ui \
-                  UI/biblioteq_history.ui \
                   UI/biblioteq_import.ui \
                   UI/biblioteq_maginfo.ui \
                   UI/biblioteq_mainwindow.ui \
-                  UI/biblioteq_members_browser.ui \
                   UI/biblioteq_merge_sqlite_databases.ui \
                   UI/biblioteq_otheroptions.ui \
                   UI/biblioteq_pdfreader.ui \
@@ -28,13 +25,11 @@ FORMS           = UI/biblioteq_adminsetup.ui \
                   UI/biblioteq_photographview.ui \
                   UI/biblioteq_sruResults.ui \
                   UI/biblioteq_tracks.ui \
-                  UI/biblioteq_userinfo.ui \
                   UI/biblioteq_z3950results.ui
 
 HEADERS		= Source/biblioteq.h \
                   Source/biblioteq_bgraphicsscene.h \
 		  Source/biblioteq_book.h \
-		  Source/biblioteq_borrowers_editor.h \
 		  Source/biblioteq_copy_editor.h \
 		  Source/biblioteq_copy_editor_book.h \
                   Source/biblioteq_dbenumerations.h \
@@ -66,7 +61,6 @@ SOURCES		= Source/biblioteq_a.cc \
                   Source/biblioteq_b.cc \
                   Source/biblioteq_bgraphicsscene.cc \
                   Source/biblioteq_book.cc \
-                  Source/biblioteq_borrowers_editor.cc \
 		  Source/biblioteq_c.cc \
                   Source/biblioteq_callnum_table_item.cc \
                   Source/biblioteq_copy_editor.cc \

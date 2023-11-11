@@ -34,9 +34,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>0</y>
-         <width>1067</width>
-         <height>1221</height>
+         <y>-78</y>
+         <width>1068</width>
+         <height>1058</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -697,17 +697,6 @@
                          <property name="icon">
                           <iconset resource="../Icons/icons.qrc">
                            <normaloff>:/16x16/editcopy.png</normaloff>:/16x16/editcopy.png</iconset>
-                         </property>
-                        </widget>
-                       </item>
-                       <item row="1" column="0">
-                        <widget class="QPushButton" name="showUserButton">
-                         <property name="text">
-                          <string>&amp;Reservation Status...</string>
-                         </property>
-                         <property name="icon">
-                          <iconset resource="../Icons/icons.qrc">
-                           <normaloff>:/16x16/members.png</normaloff>:/16x16/members.png</iconset>
                          </property>
                         </widget>
                        </item>
@@ -1511,7 +1500,6 @@
   <tabstop>condition</tabstop>
   <tabstop>quantity</tabstop>
   <tabstop>copiesButton</tabstop>
-  <tabstop>showUserButton</tabstop>
   <tabstop>location</tabstop>
   <tabstop>binding</tabstop>
   <tabstop>keyword</tabstop>
