@@ -155,7 +155,6 @@ int biblioteq::populateTable(const int search_type_arg,
   QString journalFrontCover("'' AS front_cover ");
   QString magazineFrontCover("'' AS front_cover ");
   QString photographCollectionFrontCover("'' AS image_scaled ");
-  QString videoGameFrontCover("'' AS front_cover ");
 
   if(m_otheroptions->showMainTableImages())
     {
@@ -164,7 +163,6 @@ int biblioteq::populateTable(const int search_type_arg,
       journalFrontCover = "journal.front_cover ";
       magazineFrontCover = "magazine.front_cover ";
       photographCollectionFrontCover = "photograph_collection.image_scaled ";
-      videoGameFrontCover = "videogame.front_cover ";
     }
 
   if(m_otheroptions->showMainTableProgressDialogs())
@@ -370,41 +368,9 @@ int biblioteq::populateTable(const int search_type_arg,
 	       "photograph_collection.accession_number, "
 	       "photograph_collection.type, "
 	       "photograph_collection.myoid, " +
-	       "photograph_collection.image_scaled "
-	       "UNION "
-	       "SELECT DISTINCT videogame.title, "
-	       "videogame.id, "
-	       "videogame.publisher, videogame.rdate, "
-	       "videogame.genre, "
-	       "videogame.language, "
-	       "videogame.price, videogame.monetary_units, "
-	       "videogame.quantity, "
-	       "videogame.location, "
-	       "videogame.quantity - COUNT(item_borrower.item_oid) "
-	       "AS availability, "
-	       "COUNT(item_borrower.item_oid) AS total_reserved, "
-	       "videogame.accession_number, "
-	       "videogame.type, "
-	       "videogame.myoid, " +
-	       videoGameFrontCover +
-	       "FROM "
-	       "videogame LEFT JOIN item_borrower ON "
-	       "videogame.myoid = item_borrower.item_oid "
-	       "AND item_borrower.type = 'Video Game' "
-	       "GROUP BY videogame.title, "
-	       "videogame.id, "
-	       "videogame.publisher, videogame.rdate, "
-	       "videogame.genre, "
-	       "videogame.language, "
-	       "videogame.price, videogame.monetary_units, "
-	       "videogame.quantity, "
-	       "videogame.location, "
-	       "videogame.accession_number, "
-	       "videogame.type, "
-	       "videogame.myoid, "
-	       "videogame.front_cover "
-	       " %1 "
-	       "ORDER BY 1").arg(checkAvailability) +
+           "photograph_collection.image_scaled "
+                              " %1 "
+                              "ORDER BY 1").arg(checkAvailability) +
 	      limitStr + offsetStr;
 	  }
 	else if(typefilter == "All Overdue")
@@ -628,62 +594,7 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "magazine.type, "
 				 "magazine.myoid, "
 				 "magazine.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "'' AS callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, " +
-				 videoGameFrontCover +
-				 "FROM "
-				 "videogame LEFT JOIN item_borrower ON "
-				 "videogame.myoid = "
-				 "item_borrower.item_oid "
-				 "AND item_borrower.type = 'Video Game' "
-				 "WHERE "
-				 "item_borrower.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' AND ");
-		searchstr.append
-		  ("SUBSTR(item_borrower.duedate, 7, 4) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 1, 2) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 4, 2) < '");
-		searchstr.append(now.toString("yyyy/MM/dd"));
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "videogame.front_cover ");
-		searchstr.append("ORDER BY 1");
+        searchstr.append("ORDER BY 1");
 		searchstr.append(limitStr + offsetStr);
 	      }
 	    else // !m_roles.isEmpty()
@@ -945,73 +856,7 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "magazine.type, "
 				 "magazine.myoid, "
 				 "magazine.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "'' AS callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, " +
-				 videoGameFrontCover +
-				 "FROM "
-				 "member, "
-				 "videogame LEFT JOIN item_borrower ON "
-				 "videogame.myoid = "
-				 "item_borrower.item_oid "
-				 "AND item_borrower.type = 'Video Game' "
-				 "WHERE "
-				 "LOWER(member.memberid) LIKE LOWER('");
-		searchstr.append(searchstrArg.trimmed().isEmpty() ?
-				 "%" : searchstrArg.trimmed());
-		searchstr.append("') AND ");
-		searchstr.append
-		  ("SUBSTR(item_borrower.duedate, 7, 4) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 1, 2) || '/' || "
-		   "SUBSTR(item_borrower.duedate, 4, 2) < '");
-		searchstr.append(now.toString("yyyy/MM/dd"));
-		searchstr.append("' AND ");
-		searchstr.append("item_borrower.memberid = "
-				 "member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "videogame.front_cover ");
-		searchstr.append("ORDER BY 1");
+        searchstr.append("ORDER BY 1");
 		searchstr.append(limitStr + offsetStr);
 	      }
 	  }
@@ -1187,49 +1032,7 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "magazine.myoid, "
 				 "item_request.myoid, "
 				 "magazine.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_request.requestdate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "'' AS callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "item_request.myoid AS requestoid, " +
-				 videoGameFrontCover +
-				 "FROM "
-				 "videogame LEFT JOIN item_request ON "
-				 "videogame.myoid = "
-				 "item_request.item_oid "
-				 "AND item_request.type = 'Video Game' "
-				 "WHERE "
-				 "item_request.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_request.requestdate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "item_request.myoid, "
-				 "videogame.front_cover ");
-		searchstr.append("ORDER BY 1");
+        searchstr.append("ORDER BY 1");
 		searchstr.append(limitStr + offsetStr);
 	      }
 	    else // !m_roles.isEmpty()
@@ -1428,56 +1231,7 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "magazine.myoid, "
 				 "item_request.myoid, "
 				 "magazine.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_request.requestdate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "'' AS callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "item_request.myoid AS requestoid, " +
-				 videoGameFrontCover +
-				 "FROM "
-				 "member, "
-				 "videogame LEFT JOIN item_request ON "
-				 "videogame.myoid = "
-				 "item_request.item_oid "
-				 "AND item_request.type = 'Video Game' "
-				 "WHERE ");
-		searchstr.append("item_request.memberid = "
-				 "member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_request.requestdate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "item_request.myoid, "
-				 "videogame.front_cover ");
-		searchstr.append("ORDER BY 1");
+        searchstr.append("ORDER BY 1");
 		searchstr.append(limitStr + offsetStr);
 	      }
 	  }
@@ -1680,56 +1434,7 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "magazine.type, "
 				 "magazine.myoid, "
 				 "magazine.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "'' AS callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, " +
-				 videoGameFrontCover +
-				 "FROM "
-				 "videogame LEFT JOIN item_borrower ON "
-				 "videogame.myoid = "
-				 "item_borrower.item_oid "
-				 "AND item_borrower.type = 'Video Game' "
-				 "WHERE "
-				 "item_borrower.memberid = '");
-		searchstr.append(searchstrArg);
-		searchstr.append("' ");
-		searchstr.append("GROUP BY "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "videogame.front_cover ");
-		searchstr.append("ORDER BY 1");
+        searchstr.append("ORDER BY 1");
 		searchstr.append(limitStr + offsetStr);
 	      }
 	    else // !m_roles.isEmpty()
@@ -1971,120 +1676,9 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "magazine.type, "
 				 "magazine.myoid, "
 				 "magazine.front_cover ");
-		searchstr.append("UNION ");
-		searchstr.append("SELECT DISTINCT "
-				 "member.last_name || ', ' || "
-				 "member.first_name AS name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "'' AS callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.quantity - "
-				 "COUNT(item_borrower.item_oid) "
-				 "AS availability, "
-				 "COUNT(item_borrower.item_oid) AS "
-				 "total_reserved, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, " +
-				 videoGameFrontCover +
-				 "FROM "
-				 "member, "
-				 "videogame LEFT JOIN item_borrower ON "
-				 "videogame.myoid = "
-				 "item_borrower.item_oid "
-				 "AND item_borrower.type = 'Video Game' "
-				 "WHERE "
-				 "LOWER(member.memberid) LIKE LOWER('");
-		searchstr.append(searchstrArg.trimmed().isEmpty() ?
-				 "%" : searchstrArg.trimmed());
-		searchstr.append("') AND ");
-		searchstr.append("item_borrower.memberid = "
-				 "member.memberid ");
-		searchstr.append("GROUP BY "
-				 "name, "
-				 "member.memberid, "
-				 "member.telephone_num, "
-				 "item_borrower.copyid, "
-				 "item_borrower.reserved_date, "
-				 "item_borrower.duedate, "
-				 "videogame.title, "
-				 "videogame.id, "
-				 "callnumber, "
-				 "videogame.publisher, videogame.rdate, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.price, videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "videogame.front_cover ");
-		searchstr.append("ORDER BY 1");
+        searchstr.append("ORDER BY 1");
 		searchstr.append(limitStr + offsetStr);
 	      }
-	  }
-	else if(typefilter == "Video Games")
-	  {
-	    searchstr = "SELECT DISTINCT videogame.title, "
-	      "videogame.vgrating, "
-	      "videogame.vgplatform, "
-	      "videogame.vgmode, "
-	      "videogame.publisher, "
-	      "videogame.rdate, "
-	      "videogame.place, "
-	      "videogame.genre, "
-	      "videogame.language, "
-	      "videogame.id, "
-	      "videogame.price, "
-	      "videogame.monetary_units, "
-	      "videogame.quantity, "
-	      "videogame.location, "
-	      "videogame.quantity - "
-	      "COUNT(item_borrower.item_oid) "
-	      "AS availability, "
-	      "COUNT(item_borrower.item_oid) AS total_reserved, "
-	      "videogame.accession_number, "
-	      "videogame.type, "
-	      "videogame.myoid, " +
-	      videoGameFrontCover +
-	      "FROM "
-	      "videogame LEFT JOIN item_borrower ON "
-	      "videogame.myoid = item_borrower.item_oid "
-	      "AND item_borrower.type = 'Video Game' "
-	      "GROUP BY "
-	      "videogame.title, "
-	      "videogame.vgrating, "
-	      "videogame.vgplatform, "
-	      "videogame.vgmode, "
-	      "videogame.publisher, "
-	      "videogame.rdate, "
-	      "videogame.place, "
-	      "videogame.genre, "
-	      "videogame.language, "
-	      "videogame.id, "
-	      "videogame.price, "
-	      "videogame.monetary_units, "
-	      "videogame.quantity, "
-	      "videogame.location, "
-	      "videogame.accession_number, "
-	      "videogame.type, "
-	      "videogame.myoid, "
-	      "videogame.front_cover "
-	      "ORDER BY "
-	      "videogame.title" +
-	      limitStr + offsetStr;
 	  }
 	else if(typefilter == "Books")
 	  {
@@ -2431,40 +2025,6 @@ int biblioteq::populateTable(const int search_type_arg,
 				 "photograph_collection.myoid, "
 				 "photograph_collection.image_scaled "
 				 "ORDER BY photograph_collection.title");
-	      }
-
-	    if(searchstr.lastIndexOf("LIMIT") != -1)
-	      searchstr.remove(searchstr.lastIndexOf("LIMIT"),
-			       searchstr.length());
-
-	    searchstr += limitStr + offsetStr;
-	  }
-	else if(typefilter == "Video Games")
-	  {
-	    if(!searchstr.contains("ORDER BY"))
-	      {
-		searchstr.append(searchstrArg);
-		searchstr.append("GROUP BY "
-				 "videogame.title, "
-				 "videogame.vgrating, "
-				 "videogame.vgplatform, "
-				 "videogame.vgmode, "
-				 "videogame.publisher, "
-				 "videogame.rdate, "
-				 "videogame.place, "
-				 "videogame.genre, "
-				 "videogame.language, "
-				 "videogame.id, "
-				 "videogame.price, "
-				 "videogame.monetary_units, "
-				 "videogame.quantity, "
-				 "videogame.location, "
-				 "videogame.accession_number, "
-				 "videogame.type, "
-				 "videogame.myoid, "
-				 "videogame.front_cover "
-				 "ORDER BY "
-				 "videogame.title");
 	      }
 
 	    if(searchstr.lastIndexOf("LIMIT") != -1)
@@ -3603,7 +3163,6 @@ void biblioteq::slotSearchBasic(void)
   QString searchstr("");
   QString str("");
   QString type("");
-  QString videoGameFrontCover("'' AS front_cover ");
   QStringList types;
   auto text(ui.search->text().trimmed());
 
@@ -3612,7 +3171,6 @@ void biblioteq::slotSearchBasic(void)
   types.append("Journal");
   types.append("Magazine");
   types.append("Photograph Collection");
-  types.append("Video Game");
 
   if(m_otheroptions->showMainTableImages())
     {
@@ -3621,7 +3179,6 @@ void biblioteq::slotSearchBasic(void)
       journalFrontCover = "journal.front_cover ";
       magazineFrontCover = "magazine.front_cover ";
       photographCollectionFrontCover = "photograph_collection.image_scaled ";
-      videoGameFrontCover = "videogame.front_cover ";
     }
 
   for(int i = 0; i < types.size(); i++)
@@ -3694,8 +3251,6 @@ void biblioteq::slotSearchBasic(void)
 	    str.append(journalFrontCover);
 	  else if(type == "Magazine")
 	    str.append(magazineFrontCover);
-	  else
-	    str.append(videoGameFrontCover);
 
 	  str += QString("FROM "
 			 "%1 LEFT JOIN item_borrower ON "
@@ -4084,12 +3639,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 	      "("
 	      "days INTEGER NOT NULL,"
 	      "type VARCHAR(16) NOT NULL PRIMARY KEY)");
-  list.append("CREATE TABLE IF NOT EXISTS videogame_ratings"
-	      "("
-	      "videogame_rating TEXT NOT NULL PRIMARY KEY)");
-  list.append("CREATE TABLE IF NOT EXISTS videogame_platforms "
-	      "("
-	      "videogame_platform TEXT NOT NULL PRIMARY KEY)");
   list.append("ALTER TABLE book ADD marc_tags TEXT");
   list.append("ALTER TABLE journal ADD marc_tags TEXT");
   list.append("ALTER TABLE magazine ADD marc_tags TEXT");
@@ -4098,7 +3647,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
   list.append("ALTER TABLE book ADD keyword TEXT");
   list.append("ALTER TABLE journal ADD keyword TEXT");
   list.append("ALTER TABLE magazine ADD keyword TEXT");
-  list.append("ALTER TABLE videogame ADD keyword TEXT");
   list.append("ALTER TABLE member ADD overdue_fees NUMERIC(10, 2) "
 	      "NOT NULL DEFAULT 0.00");
   list.append("ALTER TABLE member ADD comments TEXT");
@@ -4315,7 +3863,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
   list.append("ALTER TABLE magazine ADD accession_number TEXT");
   list.append("ALTER TABLE photograph ADD accession_number TEXT");
   list.append("ALTER TABLE photograph_collection ADD accession_number TEXT");
-  list.append("ALTER TABLE videogame ADD accession_number TEXT");
   list.append("CREATE TABLE IF NOT EXISTS grey_literature_files "
 	      "("
 	      "description TEXT,"
@@ -4340,7 +3887,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
   list.append("ALTER TABLE book_copy_info ADD status TEXT");
   list.append("ALTER TABLE journal_copy_info ADD status TEXT");
   list.append("ALTER TABLE magazine_copy_info ADD status TEXT");
-  list.append("ALTER TABLE videogame_copy_info ADD status TEXT");
   list.append("ALTER TABLE book ADD url");
   list.append
     ("ALTER TABLE grey_literature ADD quantity INTEGER NOT NULL DEFAULT 1");
@@ -4423,36 +3969,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
     }
 
   QApplication::processEvents();
-}
-
-void biblioteq::slotVideoGameSearch(void)
-{
-  biblioteq_videogame *videogame = nullptr;
-
-  foreach(auto w, QApplication::topLevelWidgets())
-    {
-      auto v = qobject_cast<biblioteq_videogame *> (w);
-
-      if(v && v->getID() == "search")
-	{
-	  videogame = v;
-	  break;
-	}
-    }
-
-  if(!videogame)
-    {
-      videogame = new biblioteq_videogame(this, "search", QModelIndex());
-      videogame->search();
-    }
-
-#ifdef Q_OS_ANDROID
-  videogame->showMaximized();
-#else
-  videogame->showNormal();
-#endif
-  videogame->activateWindow();
-  videogame->raise();
 }
 
 void biblioteq::slotViewFullOrNormalScreen(void)

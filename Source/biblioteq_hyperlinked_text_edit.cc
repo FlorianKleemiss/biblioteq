@@ -73,8 +73,6 @@ void biblioteq_hyperlinked_text_edit::slotAnchorClicked(const QUrl &url)
 	qmain->journSearch(searchKey, searchValue);
       else if(searchType == "magazine_search")
 	qmain->magSearch(searchKey, searchValue);
-      else if(searchType == "videogame_search")
-	qmain->vgSearch(searchKey, searchValue);
     }
 
   tmplist.clear();

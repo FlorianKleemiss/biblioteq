@@ -27,14 +27,6 @@ biblioteq_dbenumerations::biblioteq_dbenumerations(biblioteq *parent):
 	  SIGNAL(clicked(void)),
 	  this,
 	  SLOT(slotAdd(void)));
-  connect(m_ui.addVideoGamePlatform,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotAdd(void)));
-  connect(m_ui.addVideoGameRating,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotAdd(void)));
   connect(m_ui.cancelButton,
 	  SIGNAL(clicked(void)),
 	  this,
@@ -60,14 +52,6 @@ biblioteq_dbenumerations::biblioteq_dbenumerations(biblioteq *parent):
 	  this,
 	  SLOT(slotRemove(void)));
   connect(m_ui.removeMonetaryUnit,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotRemove(void)));
-  connect(m_ui.removeVideoGamePlatform,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotRemove(void)));
-  connect(m_ui.removeVideoGameRating,
 	  SIGNAL(clicked(void)),
 	  this,
 	  SLOT(slotRemove(void)));
@@ -162,10 +146,8 @@ void biblioteq_dbenumerations::populateWidgets(void)
 	 << "grey_literature_types"
 	 << "languages"
 	 << "locations"
-	 << "minimum_days"
-	 << "monetary_units"
-	 << "videogame_platforms"
-	 << "videogame_ratings";
+     << "minimum_days"
+         << "monetary_units";
 
   for(int i = 0; i < tables.size(); i++)
     {
@@ -210,18 +192,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
 	  list = biblioteq_misc_functions::getMonetaryUnits(qmain->getDB(),
 							    errorstr);
 	  listwidget = m_ui.monetaryUnitsList;
-	}
-      else if(str == "videogame_platforms")
-	{
-	  list = biblioteq_misc_functions::getVideoGamePlatforms(qmain->getDB(),
-								 errorstr);
-	  listwidget = m_ui.videoGamePlatformsList;
-	}
-      else if(str == "videogame_ratings")
-	{
-	  list = biblioteq_misc_functions::getVideoGameRatings(qmain->getDB(),
-							       errorstr);
-	  listwidget = m_ui.videoGameRatingsList;
 	}
 
       QApplication::restoreOverrideCursor();
@@ -489,16 +459,6 @@ void biblioteq_dbenumerations::slotAdd(void)
       list = m_ui.monetaryUnitsList;
       listItem = new QListWidgetItem(tr("Monetary Unit"));
     }
-  else if(toolButton == m_ui.addVideoGamePlatform)
-    {
-      list = m_ui.videoGamePlatformsList;
-      listItem = new QListWidgetItem(tr("Video Game Platform"));
-    }
-  else if(toolButton == m_ui.addVideoGameRating)
-    {
-      list = m_ui.videoGameRatingsList;
-      listItem = new QListWidgetItem(tr("Video Game Rating"));
-    }
 
   if(list && listItem)
     {
@@ -558,10 +518,6 @@ void biblioteq_dbenumerations::slotRemove(void)
     m_ui.locationsTable->removeRow(m_ui.locationsTable->currentRow());
   else if(toolButton == m_ui.removeMonetaryUnit)
     list = m_ui.monetaryUnitsList;
-  else if(toolButton == m_ui.removeVideoGamePlatform)
-    list = m_ui.videoGamePlatformsList;
-  else if(toolButton == m_ui.removeVideoGameRating)
-    list = m_ui.videoGameRatingsList;
 
   if(list)
     if(list->item(list->currentRow()))
@@ -583,9 +539,7 @@ void biblioteq_dbenumerations::slotSave(void)
 	 << "languages"
 	 << "locations"
 	 << "minimum_days"
-	 << "monetary_units"
-	 << "videogame_platforms"
-	 << "videogame_ratings";
+     << "monetary_units";
 
   for(int i = 0; i < tables.size(); i++)
     {
@@ -626,10 +580,6 @@ void biblioteq_dbenumerations::slotSave(void)
 	tablewidget = m_ui.minimumDaysTable;
       else if(i == 9)
 	listwidget = m_ui.monetaryUnitsList;
-      else if(i == 10)
-	listwidget = m_ui.videoGamePlatformsList;
-      else if(i == 11)
-	listwidget = m_ui.videoGameRatingsList;
 
       if(listwidget)
 	{

@@ -24,8 +24,7 @@ QImage biblioteq_misc_functions::getImage(const QString &oid,
      type == "grey_literature" ||
      type == "journal" ||
      type == "magazine" ||
-     type == "photograph_collection" ||
-     type == "videogame")
+     type == "photograph_collection")
     {
       if(which == "back_cover" ||
 	 which == "front_cover" ||
@@ -113,16 +112,12 @@ QMap<QString, qint64> biblioteq_misc_functions::getItemsReservedCounts
     "memberid = ? AND type = 'Journal' "
     "UNION ALL "
     "SELECT COUNT(myoid) AS nummagazines FROM item_borrower WHERE "
-    "memberid = ? AND type = 'Magazine' "
-    "UNION ALL "
-    "SELECT COUNT(myoid) AS numvideogames FROM item_borrower WHERE "
-    "memberid = ? AND type = 'Video Game'";
+    "memberid = ? AND type = 'Magazine' ";
   query.prepare(querystr);
   query.addBindValue(memberid);
   query.addBindValue(memberid);
   query.addBindValue(memberid);
-  query.addBindValue(memberid);
-  query.addBindValue(memberid);
+  query.addBindValue(memberid);;
 
   if(query.exec())
     while(query.next())
@@ -137,8 +132,6 @@ QMap<QString, qint64> biblioteq_misc_functions::getItemsReservedCounts
 	  counts["numjournals"] = count;
     else if(counts.size() == 3)
 	  counts["nummagazines"] = count;
-	else
-	  counts["numvideogames"] = count;
       }
 
   if(counts.isEmpty() || query.lastError().isValid())
@@ -148,15 +141,13 @@ QMap<QString, qint64> biblioteq_misc_functions::getItemsReservedCounts
       counts["numjournals"] = 0;
       counts["nummagazines"] = 0;
       counts["numtotal"] = 0;
-      counts["numvideogames"] = 0;
       errorstr = query.lastError().text();
     }
   else
     counts["numtotal"] = counts.value("numbooks") +
       counts.value("numgreyliteratures") +
       counts.value("numjournals") +
-      counts.value("nummagazines") +
-      counts.value("numvideogames");
+      counts.value("nummagazines");
 
   return counts;
 }
@@ -360,8 +351,7 @@ QString biblioteq_misc_functions::getOID(const QString &idArg,
   if(itemType == "book")
     querystr = QString("SELECT myoid FROM %1 WHERE id = ? AND "
 		       "id IS NOT NULL").arg(itemType);
-  else if(itemType == "photograph_collection" ||
-	  itemType == "videogame")
+  else if(itemType == "photograph_collection")
     querystr = QString("SELECT myoid FROM %1 WHERE id = ?").arg(itemType);
   else if(itemType == "grey_literature")
     querystr = "SELECT myoid FROM grey_literature WHERE document_id = ?";
@@ -753,27 +743,13 @@ QStringList biblioteq_misc_functions::getReservedItems(const QString &memberid,
     "item_borrower.item_oid = magazine.myoid AND "
     "item_borrower.type = 'Magazine' AND "
     "item_borrower.memberid = ? "
-    "UNION ALL "
-    "SELECT "
-    "item_borrower.copyid, "
-    "videogame.location, "
-    "videogame.type, "
-    "videogame.title, "
-    "item_borrower.duedate "
-    "FROM "
-    "videogame, "
-    "item_borrower "
-    "WHERE "
-    "item_borrower.item_oid = videogame.myoid AND "
-    "item_borrower.type = 'Video Game' AND "
-    "item_borrower.memberid = ? ";
+    "UNION ALL ";
   query.prepare(querystr);
   query.bindValue(0, memberid);
   query.bindValue(1, memberid);
   query.bindValue(2, memberid);
   query.bindValue(3, memberid);
   query.bindValue(4, memberid);
-  query.bindValue(5, memberid);
 
   QDate date;
 
@@ -801,50 +777,6 @@ QStringList biblioteq_misc_functions::getReservedItems(const QString &memberid,
     errorstr = query.lastError().text();
 
   return list;
-}
-
-QStringList biblioteq_misc_functions::getVideoGamePlatforms
-(const QSqlDatabase &db, QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr("");
-  QStringList platforms;
-
-  errorstr = "";
-  querystr = "SELECT videogame_platform FROM videogame_platforms "
-    "WHERE LENGTH(TRIM(videogame_platform)) > 0 "
-    "ORDER BY videogame_platform";
-
-  if(query.exec(querystr))
-    while(query.next())
-      platforms.append(query.value(0).toString().trimmed());
-
-  if(query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return platforms;
-}
-
-QStringList biblioteq_misc_functions::getVideoGameRatings
-(const QSqlDatabase &db, QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr("");
-  QStringList ratings;
-
-  errorstr = "";
-  querystr = "SELECT videogame_rating FROM videogame_ratings "
-    "WHERE LENGTH(TRIM(videogame_rating)) > 0 "
-    "ORDER BY videogame_rating";
-
-  if(query.exec(querystr))
-    while(query.next())
-      ratings.append(query.value(0).toString().trimmed());
-
-  if(query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return ratings;
 }
 
 bool biblioteq_misc_functions::dnt(const QSqlDatabase &db,
@@ -1623,8 +1555,7 @@ void biblioteq_misc_functions::createInitialCopies(const QString &idArg,
 	  {
 	    if(itemType == "book" ||
 	       itemType == "journal" ||
-	       itemType == "magazine" ||
-	       itemType == "videogame")
+           itemType == "magazine")
 	      query.prepare(QString("INSERT INTO %1_copy_info "
 				    "(item_oid, copy_number, "
 				    "copyid) "
@@ -1635,8 +1566,7 @@ void biblioteq_misc_functions::createInitialCopies(const QString &idArg,
 	  {
 	    if(itemType == "book" ||
 	       itemType == "journal" ||
-	       itemType == "magazine" ||
-	       itemType == "videogame")
+           itemType == "magazine")
 	      query.prepare(QString("INSERT INTO %1_copy_info "
 				    "(item_oid, copy_number, "
 				    "copyid, myoid) "
@@ -2014,8 +1944,7 @@ void biblioteq_misc_functions::saveQuantity(const QSqlDatabase &db,
 
   if(itemType == "book" ||
      itemType == "journal" ||
-     itemType == "magazine" ||
-     itemType == "videogame")
+     itemType == "magazine")
     querystr = QString("UPDATE %1 SET quantity = ? WHERE "
 		       "myoid = ?").arg(itemType);
   else

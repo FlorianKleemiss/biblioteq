@@ -23,13 +23,12 @@ FORMS           = UI/biblioteq_adminsetup.ui \
                   UI/biblioteq_password.ui \
                   UI/biblioteq_passwordPrompt.ui \
                   UI/biblioteq_photograph.ui \
-    UI/biblioteq_photographcompare.ui \
+                  UI/biblioteq_photographcompare.ui \
                   UI/biblioteq_photographinfo.ui \
                   UI/biblioteq_photographview.ui \
                   UI/biblioteq_sruResults.ui \
                   UI/biblioteq_tracks.ui \
                   UI/biblioteq_userinfo.ui \
-                  UI/biblioteq_videogameinfo.ui \
                   UI/biblioteq_z3950results.ui
 
 HEADERS		= Source/biblioteq.h \
@@ -57,7 +56,6 @@ HEADERS		= Source/biblioteq.h \
                   Source/biblioteq_photograph_view.h \
                   Source/biblioteq_sqlite_merge_databases.h \
 		  Source/biblioteq_sruResults.h \
-		  Source/biblioteq_videogame.h \
 		  Source/biblioteq_z3950results.h
 
 RESOURCES	= Documentation/documentation.qrc \
@@ -98,7 +96,6 @@ SOURCES		= Source/biblioteq_a.cc \
                   Source/biblioteq_photograph_view.cc \
                   Source/biblioteq_sqlite_merge_databases.cc \
                   Source/biblioteq_sruResults.cc \
-                  Source/biblioteq_videogame.cc \
                   Source/biblioteq_z3950results.cc
 
 TRANSLATIONS    = Translations/biblioteq_ar_JO.ts \

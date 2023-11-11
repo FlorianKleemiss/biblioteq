@@ -153,11 +153,7 @@ void biblioteq_sqlite_merge_databases::slotMerge(void)
 	      << "monetary_units"
 	      << "photograph"
 	      << "photograph_collection"
-	      << "sequence"
-	      << "videogame"
-	      << "videogame_copy_info"
-	      << "videogame_platforms"
-	      << "videogame_ratings");
+          << "sequence");
   int ct = 0;
 
   for(int i = 0; i < m_ui.databases->rowCount(); i++)

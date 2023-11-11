@@ -227,7 +227,6 @@ bool biblioteq::emptyContainers(void)
       auto journal = qobject_cast<biblioteq_journal *> (w);
       auto magazine = qobject_cast<biblioteq_magazine *> (w);
       auto photograph = qobject_cast<biblioteq_photographcollection *> (w);
-      auto videogame = qobject_cast<biblioteq_videogame *> (w);
 
       if(book)
 	{
@@ -268,14 +267,6 @@ bool biblioteq::emptyContainers(void)
 	    return false;
 	  else
 	    photograph->deleteLater();
-	}
-
-      if(videogame)
-	{
-	  if(videogame->isVisible() && !videogame->close())
-	    return false;
-	  else
-	    videogame->deleteLater();
 	}
     }
 
@@ -1108,19 +1099,6 @@ void biblioteq::deleteItem(const QString &oid, const QString &itemType)
 	    }
 	}
     }
-  else if(itemType == "videogame")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto videogame = qobject_cast<biblioteq_videogame *> (w);
-
-	  if(videogame && videogame->getID() == oid)
-	    {
-	      removeVideoGame(videogame);
-	      break;
-	    }
-	}
-    }
 }
 
 void biblioteq::exportAsCSV(biblioteq_main_table *table, const QString &title)
@@ -1695,7 +1673,6 @@ void biblioteq::slotAllGo(void)
   QString searchstr("");
   QString str("");
   QString type("");
-  QString videoGameFrontCover("'' AS front_cover ");
   QStringList types;
   auto caseinsensitive = al.caseinsensitive->isChecked();
 
@@ -1706,7 +1683,6 @@ void biblioteq::slotAllGo(void)
       journalFrontCover = "journal.front_cover ";
       magazineFrontCover = "magazine.front_cover ";
       photographCollectionFrontCover = "photograph_collection.image_scaled ";
-      videoGameFrontCover = "videogame.front_cover ";
     }
 
   types.append("Book");
@@ -1714,7 +1690,6 @@ void biblioteq::slotAllGo(void)
   types.append("Journal");
   types.append("Magazine");
   types.append("Photograph Collection");
-  types.append("Video Game");
 
   for(int i = 0; i < types.size(); i++)
     {
@@ -1786,8 +1761,6 @@ void biblioteq::slotAllGo(void)
 	    str.append(journalFrontCover);
 	  else if(type == "Magazine")
 	    str.append(magazineFrontCover);
-	  else
-	    str.append(videoGameFrontCover);
 
 	  str += QString("FROM "
 			 "%1 LEFT JOIN item_borrower ON "
@@ -4016,9 +3989,6 @@ void biblioteq::slotOtherOptionsSaved(void)
       qobject_cast<biblioteq_photographcollection *> (widget)->
 	setPublicationDateFormat
 	(m_otheroptions->publicationDateFormat("photographcollections"));
-    else if(qobject_cast<biblioteq_videogame *> (widget))
-      qobject_cast<biblioteq_videogame *> (widget)->setPublicationDateFormat
-	(m_otheroptions->publicationDateFormat("videogames"));
 
   if(m_otheroptions->showMainTableImages())
     ui.table->setIconSize(QSize(64, 94));
@@ -4130,7 +4100,6 @@ void biblioteq::slotPopulateMembersBrowser(void)
     "COUNT(DISTINCT ib2.myoid) AS number_reserved_greyliteratures, "
     "COUNT(DISTINCT ib3.myoid) AS number_reserved_journals, "
     "COUNT(DISTINCT ib4.myoid) AS number_reserved_magazines, "
-    "COUNT(DISTINCT ib5.myoid) AS number_reserved_videogames, "
     "0 AS number_reserved_total "
     "FROM member member "
     "LEFT JOIN item_borrower ib1 ON "
@@ -4449,12 +4418,8 @@ void biblioteq::slotRefreshCustomQuery(void)
 	 << "member_history"
 	 << "minimum_days"
 	 << "monetary_units"
-	 << "photograph"
-	 << "photograph_collection"
-	 << "videogame"
-	 << "videogame_copy_info"
-	 << "videogame_platforms"
-	 << "videogame_ratings";
+     << "photograph"
+         << "photograph_collection";
   else
     list << "admin"
 	 << "book"
@@ -4478,12 +4443,8 @@ void biblioteq::slotRefreshCustomQuery(void)
 	 << "member_history"
 	 << "minimum_days"
 	 << "monetary_units"
-	 << "photograph"
-	 << "photograph_collection"
-	 << "videogame"
-	 << "videogame_copy_info"
-	 << "videogame_platforms"
-	 << "videogame_ratings";
+     << "photograph"
+         << "photograph_collection";
 
   list.sort();
   cq.tables_t->setSortingEnabled(false);
@@ -5985,8 +5946,7 @@ void biblioteq::slotShowHistory(void)
   list << "book"
        << "grey_literature"
        << "journal"
-       << "magazine"
-       << "videogame";
+       << "magazine";
 
   if(!m_roles.isEmpty())
     memberid = biblioteq_misc_functions::getColumnString
@@ -6440,9 +6400,6 @@ void biblioteq::slotVacuum(void)
       query.exec("DELETE FROM photograph WHERE collection_oid NOT IN "
 		 "(SELECT myoid FROM photograph_collection)");
       progress.setValue(0);
-      query.exec("DELETE FROM videogame_copy_info WHERE item_oid NOT IN "
-		 "(SELECT myoid FROM videogame)");
-      progress.setValue(0);
     }
 
   query.exec("VACUUM");
@@ -6453,12 +6410,4 @@ void biblioteq::slotVacuum(void)
 
   progress.close();
   QApplication::restoreOverrideCursor();
-}
-
-void biblioteq::vgSearch(const QString &field, const QString &value)
-{
-  auto videogame = new biblioteq_videogame(this, "", QModelIndex());
-
-  videogame->search(field, value);
-  videogame->deleteLater();
 }

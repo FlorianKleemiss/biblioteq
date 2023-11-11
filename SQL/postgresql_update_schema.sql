@@ -9,11 +9,6 @@ UPDATE book SET type = 'Book';
 ALTER TABLE book ALTER type SET DEFAULT 'Book';
 ALTER TABLE book ALTER type SET NOT NULL;
 
-ALTER TABLE videogame ADD type VARCHAR(16);
-UPDATE videogame SET type = 'Video Game';
-ALTER TABLE videogame ALTER type SET DEFAULT 'Video Game';
-ALTER TABLE videogame ALTER type SET NOT NULL;
-
 /* Releases 3.23, 3.23.1 */
 
 CREATE TABLE member_history
@@ -50,16 +45,8 @@ SELECT	 item_oid,
 	 duedate
 FROM	 magazine_borrower;
 
-CREATE VIEW videogame_borrower_vw AS
-SELECT	 item_oid,
-	 copy_number,
-	 reserved_date,
-	 duedate
-FROM	 videogame_borrower;
-
 GRANT SELECT ON book_borrower_vw TO xbook_admin;
 GRANT SELECT ON magazine_borrower_vw TO xbook_admin;
-GRANT SELECT ON videogame_borrower_vw TO xbook_admin;
 DROP USER xbook;
 ALTER USER xbook_admin CREATEUSER;
 
@@ -77,18 +64,11 @@ ALTER TABLE magazine ADD front_cover BYTEA;
 ALTER TABLE magazine ADD back_cover BYTEA;
 ALTER TABLE magazine ADD front_cover_fmt VARCHAR(8);
 ALTER TABLE magazine ADD back_cover_fmt VARCHAR(8);
-ALTER TABLE videogame DROP front_cover;
-ALTER TABLE videogame DROP back_cover;
-ALTER TABLE videogame ADD front_cover BYTEA;
-ALTER TABLE videogame ADD back_cover BYTEA;
-ALTER TABLE videogame ADD front_cover_fmt VARCHAR(8);
-ALTER TABLE videogame ADD back_cover_fmt VARCHAR(8);
 
 /* Release 4.04 */
 
 ALTER TABLE book ADD offsystem_url TEXT;
 ALTER TABLE magazine ADD offsystem_url TEXT;
-ALTER TABLE videogame ADD offsystem_url TEXT;
 
 /* Release 5.00 */
 /* Please recreate the database. */
@@ -99,7 +79,6 @@ UPDATE admin SET roles = 'administrator' WHERE roles = 'all';
 
 DROP VIEW book_borrower_vw;
 DROP VIEW magazine_borrower_vw;
-DROP VIEW videogame_borrower_vw;
 
 CREATE VIEW book_borrower_vw AS
 SELECT	 item_oid,
@@ -119,18 +98,8 @@ SELECT	 item_oid,
 	 duedate
 FROM	 magazine_borrower;
 
-CREATE VIEW videogame_borrower_vw AS
-SELECT	 item_oid,
-	 myoid,
-	 copyid,
-	 copy_number,
-	 reserved_date,
-	 duedate
-FROM	 videogame_borrower;
-
 GRANT SELECT ON book_borrower_vw TO xbook_admin;
 GRANT SELECT ON magazine_borrower_vw TO xbook_admin;
-GRANT SELECT ON videogame_borrower_vw TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON public.member_history_myoid_seq TO xbook_admin;
 
 /* Release 6.00 */
@@ -144,7 +113,6 @@ ALTER TABLE member ALTER COLUMN state_abbr SET NOT NULL;
 
 DROP VIEW book_borrower_vw;
 DROP VIEW magazine_borrower_vw;
-DROP VIEW videogame_borrower_vw;
 
 CREATE TABLE item_borrower
 (
@@ -172,7 +140,6 @@ FROM	 item_borrower;
 INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'Book' FROM book_borrower;
 INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'Journal' FROM magazine_borrower WHERE item_oid IN (SELECT myoid FROM magazine WHERE type = 'Journal');
 INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'Magazine' FROM magazine_borrower WHERE item_oid IN (SELECT myoid FROM magazine WHERE type = 'Magazine');
-INSERT INTO item_borrower SELECT item_oid, memberid, reserved_date, duedate, myoid, copyid, copy_number, reserved_date, 'Video Game' FROM videogame_borrower;
 
 GRANT SELECT ON item_borrower_vw TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON item_borrower TO xbook_admin;
@@ -180,7 +147,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON public.item_borrower_myoid_seq TO xbook_
 
 DROP TABLE book_borrower CASCADE;
 DROP TABLE magazine_borrower CASCADE;
-DROP TABLE videogame_borrower CASCADE;
 
 /* Please execute the "Save Changes" function from within the Administrator
    Browser as this will grant the correct privileges to existing administrator
@@ -284,12 +250,9 @@ ALTER TABLE book DROP COLUMN front_cover_fmt;
 ALTER TABLE book DROP COLUMN back_cover_fmt;
 ALTER TABLE magazine DROP COLUMN front_cover_fmt;
 ALTER TABLE magazine DROP COLUMN back_cover_fmt;
-ALTER TABLE videogame DROP COLUMN front_cover_fmt;
-ALTER TABLE videogame DROP COLUMN back_cover_fmt;
 
 DROP TRIGGER book_trigger ON book;
 DROP TRIGGER magazine_trigger ON magazine;
-DROP TRIGGER videogame_trigger ON videogame;
 
 CREATE OR REPLACE FUNCTION delete_book_history() RETURNS trigger AS '
 BEGIN
@@ -321,16 +284,6 @@ END;
 CREATE TRIGGER magazine_trigger AFTER DELETE ON magazine
 FOR EACH row EXECUTE PROCEDURE delete_magazine_history();
 
-CREATE OR REPLACE FUNCTION delete_videogame_history() RETURNS trigger AS '
-BEGIN
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''Video Game'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER videogame_trigger AFTER DELETE ON videogame
-FOR EACH row EXECUTE PROCEDURE delete_videogame_history();
-
 INSERT INTO journal (SELECT * FROM magazine WHERE type = 'Journal');
 INSERT INTO journal_copy_info (SELECT * FROM magazine_copy_info WHERE item_oid IN (SELECT myoid FROM magazine WHERE type = 'Journal'));
 DELETE FROM magazine WHERE type = 'Journal';
@@ -360,12 +313,6 @@ UPDATE magazine SET new_category = CAST(category AS TEXT);
 ALTER TABLE magazine DROP COLUMN category;
 ALTER TABLE magazine RENAME new_category TO category;
 ALTER TABLE magazine ALTER COLUMN category SET NOT NULL;
-
-ALTER TABLE videogame ADD COLUMN new_genre TEXT;
-UPDATE videogame SET new_genre = CAST(genre AS TEXT);
-ALTER TABLE videogame DROP COLUMN genre;
-ALTER TABLE videogame RENAME new_genre TO genre;
-ALTER TABLE videogame ALTER COLUMN genre SET NOT NULL;
 
 /* Release 6.12 */
 
@@ -399,11 +346,6 @@ ALTER TABLE magazine ALTER place SET DEFAULT 'N/A';
 UPDATE magazine SET place = 'N/A';
 ALTER TABLE magazine ALTER place SET NOT NULL;
 
-ALTER TABLE videogame ADD COLUMN place TEXT;
-ALTER TABLE videogame ALTER place SET DEFAULT 'N/A';
-UPDATE videogame SET place = 'N/A';
-ALTER TABLE videogame ALTER place SET NOT NULL;
-
 ALTER TABLE item_borrower ADD FOREIGN KEY(memberid) REFERENCES member ON DELETE RESTRICT;
 
 /* Release 6.30 */
@@ -411,7 +353,6 @@ ALTER TABLE item_borrower ADD FOREIGN KEY(memberid) REFERENCES member ON DELETE 
 ALTER TABLE book DROP offsystem_url;
 ALTER TABLE journal DROP offsystem_url;
 ALTER TABLE magazine DROP offsystem_url;
-ALTER TABLE videogame DROP offsystem_url;
 VACUUM FULL;
 
 /* Release 6.37 */
@@ -429,8 +370,6 @@ GRANT SELECT, UPDATE, USAGE ON public.journal_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.journal_copy_info_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.magazine_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.magazine_copy_info_myoid_seq TO xbook_admin;
-GRANT SELECT, UPDATE, USAGE ON public.videogame_myoid_seq TO xbook_admin;
-GRANT SELECT, UPDATE, USAGE ON public.videogame_copy_info_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.item_borrower_myoid_seq TO xbook_admin;
 GRANT SELECT, USAGE ON public.item_request_myoid_seq TO xbook_admin;
 GRANT SELECT, UPDATE, USAGE ON public.member_history_myoid_seq TO xbook_admin;
@@ -460,16 +399,6 @@ CREATE TABLE minimum_days
 	type		 VARCHAR(16) NOT NULL PRIMARY KEY
 );
 
-CREATE TABLE videogame_ratings
-(
-	videogame_rating	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE videogame_platforms
-(
-	videogame_platform	 TEXT NOT NULL PRIMARY KEY
-);
-
 ALTER TABLE book ADD marc_tags TEXT;
 ALTER TABLE journal ADD marc_tags TEXT;
 ALTER TABLE magazine ADD marc_tags TEXT;
@@ -477,8 +406,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON locations TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON monetary_units TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON languages TO xbook_admin;
 GRANT DELETE, INSERT, SELECT, UPDATE ON minimum_days TO xbook_admin;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_ratings TO xbook_admin;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_platforms TO xbook_admin;
 
 /* Please execute the "Save Changes" function from within the Administrator
    Browser as this will grant the correct privileges to existing administrator
@@ -497,7 +424,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON member TO xbook_admin;
 ALTER TABLE book ADD keyword TEXT;
 ALTER TABLE journal ADD keyword TEXT;
 ALTER TABLE magazine ADD keyword TEXT;
-ALTER TABLE videogame ADD keyword TEXT;
 ALTER TABLE book DROP CONSTRAINT book_pkey;
 ALTER TABLE book ALTER COLUMN id DROP NOT NULL;
 ALTER TABLE book ADD CONSTRAINT book_id_key UNIQUE(id);
@@ -538,10 +464,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON member TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON member_history TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON minimum_days TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON monetary_units TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_copy_info TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_platforms TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_ratings TO biblioteq_administrator;
 GRANT DELETE, SELECT ON item_request TO biblioteq_administrator;
 GRANT SELECT ON item_borrower_vw TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON book_copy_info_myoid_seq TO biblioteq_administrator;
@@ -552,8 +474,6 @@ GRANT SELECT, UPDATE, USAGE ON journal_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON magazine_copy_info_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON magazine_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON member_history_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON videogame_copy_info_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON videogame_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, USAGE ON item_request_myoid_seq TO biblioteq_administrator;
 
 GRANT DELETE, INSERT, SELECT, UPDATE ON item_borrower TO biblioteq_circulation;
@@ -578,12 +498,6 @@ GRANT SELECT ON magazine_copy_info_myoid_seq TO biblioteq_circulation;
 GRANT SELECT ON magazine_myoid_seq TO biblioteq_circulation;
 GRANT SELECT ON member TO biblioteq_circulation;
 GRANT SELECT ON monetary_units TO biblioteq_circulation;
-GRANT SELECT ON videogame TO biblioteq_circulation;
-GRANT SELECT ON videogame_copy_info TO biblioteq_circulation;
-GRANT SELECT ON videogame_copy_info_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON videogame_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON videogame_platforms TO biblioteq_circulation;
-GRANT SELECT ON videogame_ratings TO biblioteq_circulation;
 GRANT SELECT, UPDATE, USAGE ON item_borrower_myoid_seq TO biblioteq_circulation;
 GRANT SELECT, UPDATE, USAGE ON item_request_myoid_seq TO biblioteq_circulation;
 GRANT SELECT, UPDATE, USAGE ON member_history_myoid_seq TO biblioteq_circulation;
@@ -598,10 +512,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON magazine TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON magazine_copy_info TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON minimum_days TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON monetary_units TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_copy_info TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_platforms TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_ratings TO biblioteq_librarian;
 GRANT SELECT ON admin TO biblioteq_librarian;
 GRANT SELECT ON item_borrower_vw TO biblioteq_librarian;
 GRANT SELECT ON item_request TO biblioteq_librarian;
@@ -611,8 +521,6 @@ GRANT SELECT, UPDATE, USAGE ON journal_copy_info_myoid_seq TO biblioteq_libraria
 GRANT SELECT, UPDATE, USAGE ON journal_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON magazine_copy_info_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON magazine_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON videogame_copy_info_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON videogame_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON book_myoid_seq TO biblioteq_librarian;
 
 GRANT DELETE, INSERT, SELECT, UPDATE ON member TO biblioteq_membership;
@@ -634,12 +542,6 @@ GRANT SELECT ON magazine_copy_info_myoid_seq TO biblioteq_membership;
 GRANT SELECT ON magazine_myoid_seq TO biblioteq_membership;
 GRANT SELECT ON minimum_days TO biblioteq_membership;
 GRANT SELECT ON monetary_units TO biblioteq_membership;
-GRANT SELECT ON videogame TO biblioteq_membership;
-GRANT SELECT ON videogame_copy_info TO biblioteq_membership;
-GRANT SELECT ON videogame_copy_info_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON videogame_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON videogame_platforms TO biblioteq_membership;
-GRANT SELECT ON videogame_ratings TO biblioteq_membership;
 
 GRANT DELETE, INSERT, SELECT ON item_request TO biblioteq_patron;
 GRANT SELECT ON book TO biblioteq_patron;
@@ -660,12 +562,6 @@ GRANT SELECT ON magazine_myoid_seq TO biblioteq_patron;
 GRANT SELECT ON member_history TO biblioteq_patron;
 GRANT SELECT ON member_history_myoid_seq TO biblioteq_patron;
 GRANT SELECT ON monetary_units TO biblioteq_patron;
-GRANT SELECT ON videogame TO biblioteq_patron;
-GRANT SELECT ON videogame_copy_info TO biblioteq_patron;
-GRANT SELECT ON videogame_copy_info_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON videogame_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON videogame_platforms TO biblioteq_patron;
-GRANT SELECT ON videogame_ratings TO biblioteq_patron;
 GRANT SELECT, UPDATE, USAGE ON item_request_myoid_seq TO biblioteq_patron;
 REVOKE ALL ON admin FROM biblioteq_patron;
 
@@ -819,12 +715,6 @@ GRANT SELECT ON photograph TO biblioteq_guest;
 GRANT SELECT ON photograph_collection TO biblioteq_guest;
 GRANT SELECT ON photograph_collection_myoid_seq TO biblioteq_guest;
 GRANT SELECT ON photograph_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON videogame TO biblioteq_guest;
-GRANT SELECT ON videogame_copy_info TO biblioteq_guest;
-GRANT SELECT ON videogame_copy_info_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON videogame_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON videogame_platforms TO biblioteq_guest;
-GRANT SELECT ON videogame_ratings TO biblioteq_guest;
 REVOKE ALL ON admin FROM biblioteq_guest;
 REVOKE biblioteq_patron FROM biblioteq_membership;
 CREATE USER xbook_guest ENCRYPTED PASSWORD 'xbook_guest' IN ROLE biblioteq_guest;
@@ -971,7 +861,6 @@ ALTER TABLE journal ADD accession_number TEXT;
 ALTER TABLE magazine ADD accession_number TEXT;
 ALTER TABLE photograph ADD accession_number TEXT;
 ALTER TABLE photograph_collection ADD accession_number TEXT;
-ALTER TABLE videogame ADD accession_number TEXT;
 
 /* Release 2018.04.01 */
 
@@ -1051,11 +940,9 @@ CREATE SEQUENCE book_sequence START 1;
 DROP TRIGGER IF EXISTS book_trigger ON book;
 DROP TRIGGER IF EXISTS journal_trigger on journal;
 DROP TRIGGER IF EXISTS magazine_trigger on magazine;
-DROP TRIGGER IF EXISTS videogame_trigger on videogame;
 DROP FUNCTION IF EXISTS delete_book_history();
 DROP FUNCTION IF EXISTS delete_journal_history();
 DROP FUNCTION IF EXISTS delete_magazine_history();
-DROP FUNCTION IF EXISTS delete_videogame_history();
 DROP VIEW item_borrower_vw;
 
 CREATE OR REPLACE FUNCTION delete_book() RETURNS trigger AS '
@@ -1091,17 +978,6 @@ END;
 CREATE TRIGGER magazine_trigger AFTER DELETE ON magazine
 FOR EACH row EXECUTE PROCEDURE delete_magazine();
 
-CREATE OR REPLACE FUNCTION delete_videogame() RETURNS trigger AS '
-BEGIN
-	DELETE FROM item_borrower WHERE item_oid = old.myoid;
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''Video Game'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER videogame_trigger AFTER DELETE ON videogame
-FOR EACH row EXECUTE PROCEDURE delete_videogame();
-
 GRANT SELECT (item_oid, type) ON item_borrower TO biblioteq_guest;
 GRANT SELECT, UPDATE, USAGE ON book_sequence TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON book_sequence TO biblioteq_librarian;
@@ -1131,7 +1007,6 @@ CREATE POLICY member_history_dnt_policy ON member_history_dnt TO biblioteq_admin
 ALTER TABLE book_copy_info ADD status TEXT;
 ALTER TABLE journal_copy_info ADD status TEXT;
 ALTER TABLE magazine_copy_info ADD status TEXT;
-ALTER TABLE videogame_copy_info ADD status TEXT;
 
 /* Release 2021.04.10 */
 

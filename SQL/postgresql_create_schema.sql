@@ -244,43 +244,6 @@ CREATE TABLE photograph
 	PRIMARY KEY (id, collection_oid)
 );
 
-CREATE TABLE videogame
-(
-	accession_number TEXT,
-	back_cover	 BYTEA,
-	description	 TEXT NOT NULL,
-	developer	 TEXT NOT NULL,
-	front_cover	 BYTEA,
-	genre		 TEXT NOT NULL,
-	id		 VARCHAR(32) PRIMARY KEY NOT NULL,
-	keyword		 TEXT,
-	language	 VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',
-	location	 TEXT NOT NULL,
-	monetary_units	 VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',
-	myoid		 BIGSERIAL UNIQUE,
-	place		 TEXT NOT NULL,
-	price		 NUMERIC(10, 2) NOT NULL DEFAULT 0.00,
-	publisher	 TEXT NOT NULL,
-	quantity	 INTEGER NOT NULL DEFAULT 1,
-	rdate		 VARCHAR(32) NOT NULL,
-	title		 TEXT NOT NULL,
-	type		 VARCHAR(16) NOT NULL DEFAULT 'Video Game',
-	vgmode		 VARCHAR(16) NOT NULL DEFAULT 'Multiplayer',
-	vgplatform	 VARCHAR(64) NOT NULL,
-	vgrating	 VARCHAR(64) NOT NULL
-);
-
-CREATE TABLE videogame_copy_info
-(
-	copy_number	 INTEGER NOT NULL DEFAULT 1,
-	copyid		 VARCHAR(64) NOT NULL,
-	item_oid	 BIGINT NOT NULL,
-	myoid		 BIGSERIAL UNIQUE,
-	status		 TEXT,
-	FOREIGN KEY (item_oid) REFERENCES videogame (myoid) ON DELETE CASCADE,
-	PRIMARY KEY (item_oid, copyid)
-);
-
 CREATE TABLE member
 (
 	city		 VARCHAR(256) NOT NULL,
@@ -395,27 +358,6 @@ END;
 CREATE TRIGGER magazine_trigger AFTER DELETE ON magazine
 FOR EACH row EXECUTE PROCEDURE delete_magazine();
 
-CREATE OR REPLACE FUNCTION delete_videogame() RETURNS trigger AS '
-BEGIN
-	DELETE FROM item_borrower WHERE item_oid = old.myoid;
-	DELETE FROM member_history WHERE item_oid = old.myoid AND
-	type = ''Video Game'';
-	RETURN NULL;
-END;
-' LANGUAGE 'plpgsql';
-CREATE TRIGGER videogame_trigger AFTER DELETE ON videogame
-FOR EACH row EXECUTE PROCEDURE delete_videogame();
-
-CREATE OR REPLACE FUNCTION delete_request() RETURNS trigger AS '
-BEGIN
-	DELETE FROM item_request WHERE item_oid = new.item_oid AND
-	type = new.type;
-	RETURN NULL;
-END;
-' LANGUAGE plpgsql;
-CREATE TRIGGER item_request_trigger AFTER INSERT ON item_borrower
-FOR EACH row EXECUTE PROCEDURE delete_request();
-
 CREATE TABLE book_binding_types
 (
 	binding_type	 TEXT NOT NULL PRIMARY KEY
@@ -447,16 +389,6 @@ CREATE TABLE minimum_days
 (
 	days		 INTEGER NOT NULL,
 	type		 VARCHAR(16) NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE videogame_platforms
-(
-	videogame_platform	 TEXT NOT NULL PRIMARY KEY
-);
-
-CREATE TABLE videogame_ratings
-(
-	videogame_rating	 TEXT NOT NULL PRIMARY KEY
 );
 
 CREATE ROLE biblioteq_administrator INHERIT SUPERUSER;
@@ -516,14 +448,6 @@ GRANT DELETE, INSERT, SELECT, UPDATE ON photograph TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON photograph TO biblioteq_librarian;
 GRANT DELETE, INSERT, SELECT, UPDATE ON photograph_collection TO biblioteq_administrator;
 GRANT DELETE, INSERT, SELECT, UPDATE ON photograph_collection TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_copy_info TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_copy_info TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_platforms TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_platforms TO biblioteq_librarian;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_ratings TO biblioteq_administrator;
-GRANT DELETE, INSERT, SELECT, UPDATE ON videogame_ratings TO biblioteq_librarian;
 GRANT DELETE, SELECT ON item_request TO biblioteq_administrator;
 GRANT DELETE, SELECT ON item_request TO biblioteq_circulation;
 GRANT DELETE, SELECT ON member_history TO biblioteq_librarian;
@@ -669,30 +593,6 @@ GRANT SELECT ON photograph_myoid_seq TO biblioteq_circulation;
 GRANT SELECT ON photograph_myoid_seq TO biblioteq_guest;
 GRANT SELECT ON photograph_myoid_seq TO biblioteq_membership;
 GRANT SELECT ON photograph_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON videogame TO biblioteq_circulation;
-GRANT SELECT ON videogame TO biblioteq_guest;
-GRANT SELECT ON videogame TO biblioteq_membership;
-GRANT SELECT ON videogame TO biblioteq_patron;
-GRANT SELECT ON videogame_copy_info TO biblioteq_circulation;
-GRANT SELECT ON videogame_copy_info TO biblioteq_guest;
-GRANT SELECT ON videogame_copy_info TO biblioteq_membership;
-GRANT SELECT ON videogame_copy_info TO biblioteq_patron;
-GRANT SELECT ON videogame_copy_info_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON videogame_copy_info_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON videogame_copy_info_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON videogame_copy_info_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON videogame_myoid_seq TO biblioteq_circulation;
-GRANT SELECT ON videogame_myoid_seq TO biblioteq_guest;
-GRANT SELECT ON videogame_myoid_seq TO biblioteq_membership;
-GRANT SELECT ON videogame_myoid_seq TO biblioteq_patron;
-GRANT SELECT ON videogame_platforms TO biblioteq_circulation;
-GRANT SELECT ON videogame_platforms TO biblioteq_guest;
-GRANT SELECT ON videogame_platforms TO biblioteq_membership;
-GRANT SELECT ON videogame_platforms TO biblioteq_patron;
-GRANT SELECT ON videogame_ratings TO biblioteq_circulation;
-GRANT SELECT ON videogame_ratings TO biblioteq_guest;
-GRANT SELECT ON videogame_ratings TO biblioteq_membership;
-GRANT SELECT ON videogame_ratings TO biblioteq_patron;
 GRANT SELECT, UPDATE, USAGE ON book_copy_info_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON book_copy_info_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON book_files_myoid_seq TO biblioteq_administrator;
@@ -728,10 +628,6 @@ GRANT SELECT, UPDATE, USAGE ON photograph_collection_myoid_seq TO biblioteq_admi
 GRANT SELECT, UPDATE, USAGE ON photograph_collection_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, UPDATE, USAGE ON photograph_myoid_seq TO biblioteq_administrator;
 GRANT SELECT, UPDATE, USAGE ON photograph_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON videogame_copy_info_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON videogame_copy_info_myoid_seq TO biblioteq_librarian;
-GRANT SELECT, UPDATE, USAGE ON videogame_myoid_seq TO biblioteq_administrator;
-GRANT SELECT, UPDATE, USAGE ON videogame_myoid_seq TO biblioteq_librarian;
 GRANT SELECT, USAGE ON item_request_myoid_seq TO biblioteq_administrator;
 GRANT biblioteq_circulation TO biblioteq_administrator WITH ADMIN OPTION;
 GRANT biblioteq_circulation TO biblioteq_circulation_librarian WITH ADMIN OPTION;

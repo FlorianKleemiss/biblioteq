@@ -338,10 +338,6 @@ biblioteq::biblioteq(void):QMainWindow()
 	  SIGNAL(triggered(void)),
 	  this,
 	  SLOT(slotVacuum(void)));
-  connect(ui.action_Video_Game,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(slotInsertVideoGame(void)));
   connect(ui.resetAllSearch,
 	  SIGNAL(clicked(void)),
 	  this,
@@ -1695,12 +1691,6 @@ void biblioteq::removePhotographCollection(biblioteq_photographcollection *pc)
     pc->deleteLater();
 }
 
-void biblioteq::removeVideoGame(biblioteq_videogame *videogame)
-{
-  if(videogame)
-    videogame->deleteLater();
-}
-
 void biblioteq::replaceBook(const QString &id, biblioteq_book *book)
 {
   Q_UNUSED(id);
@@ -1732,13 +1722,6 @@ void biblioteq::replacePhotographCollection
 {
   Q_UNUSED(id);
   Q_UNUSED(photograph);
-}
-
-void biblioteq::replaceVideoGame(const QString &id,
-				 biblioteq_videogame *videogame)
-{
-  Q_UNUSED(id);
-  Q_UNUSED(videogame);
 }
 
 void biblioteq::resetAdminBrowser(void)
@@ -2617,8 +2600,7 @@ void biblioteq::slotDelete(void)
 	 itemType == "grey_literature" ||
 	 itemType == "journal" ||
 	 itemType == "magazine" ||
-	 itemType == "photograph_collection" ||
-	 itemType == "videogame")
+     itemType == "photograph_collection")
 	query.prepare(QString("DELETE FROM %1 WHERE myoid = ?").arg(itemType));
 
       query.bindValue(0, str);
@@ -2662,13 +2644,6 @@ void biblioteq::slotDelete(void)
 	  else if(itemType == "photograph_collection")
 	    {
 	      query.prepare("DELETE FROM photograph WHERE collection_oid = ?");
-	      query.bindValue(0, str);
-	      query.exec();
-	    }
-	  else if(itemType == "videogame")
-	    {
-	      query.prepare
-		("DELETE FROM videogame_copy_info WHERE item_oid = ?");
 	      query.bindValue(0, str);
 	      query.exec();
 	    }
@@ -2890,7 +2865,6 @@ void biblioteq::slotDuplicate(void)
   biblioteq_magazine *magazine = nullptr;
   biblioteq_main_table *table = ui.table;
   biblioteq_photographcollection *photograph = nullptr;
-  biblioteq_videogame *video_game = nullptr;
   int i = 0;
 
   if(list.isEmpty())
@@ -2960,11 +2934,6 @@ void biblioteq::slotDuplicate(void)
 	{
 	  photograph = new biblioteq_photographcollection(this, oid, index);
 	  photograph->duplicate(id, EDITABLE);
-	}
-      else if(type.toLower() == "video game")
-	{
-	  video_game = new biblioteq_videogame(this, oid, index);
-	  video_game->duplicate(id, EDITABLE);
 	}
       else
 	{
@@ -3163,17 +3132,6 @@ void biblioteq::slotInsertPhotograph(void)
   photograph->insert();
 }
 
-void biblioteq::slotInsertVideoGame(void)
-{
-  QString id("");
-  biblioteq_videogame *videogame = nullptr;
-
-  m_idCt += 1;
-  id = QString("insert_%1").arg(m_idCt);
-  videogame = new biblioteq_videogame(this, id, QModelIndex());
-  videogame->insert();
-}
-
 void biblioteq::slotLanguageChanged(void)
 {
   auto action = qobject_cast<QAction *> (sender());
@@ -3246,7 +3204,6 @@ void biblioteq::slotModify(void)
   biblioteq_journal *journal = nullptr;
   biblioteq_magazine *magazine = nullptr;
   biblioteq_photographcollection *photograph = nullptr;
-  biblioteq_videogame *videogame = nullptr;
   int i = 0;
 
   if(list.isEmpty())
@@ -3291,7 +3248,6 @@ void biblioteq::slotModify(void)
       journal = nullptr;
       magazine = nullptr;
       photograph = nullptr;
-      videogame = nullptr;
 
       if(type.toLower() == "book")
 	{
@@ -3387,24 +3343,6 @@ void biblioteq::slotModify(void)
 	    photograph = new biblioteq_photographcollection(this, oid, index);
 
 	  photograph->modify(EDITABLE);
-	}
-      else if(type.toLower() == "video game")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto v = qobject_cast<biblioteq_videogame *> (w);
-
-	      if(v && v->getID() == oid)
-		{
-		  videogame = v;
-		  break;
-		}
-	    }
-
-	  if(!videogame)
-	    videogame = new biblioteq_videogame(this, oid, index);
-
-	  videogame->modify(EDITABLE);
 	}
       else
 	{
@@ -4478,8 +4416,6 @@ void biblioteq::slotShowMenu(void)
       // menu.addAction(tr("Add &Newspaper..."));
       connect(menu.addAction(tr("Add &Photograph Collection...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotInsertPhotograph(void)));
-      connect(menu.addAction(tr("Add &Video Game...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotInsertVideoGame(void)));
       // menu.addAction(tr("Add &VHS..."));
       // menu.addAction(tr("Add &Vinyl Record..."));
       menu.exec(point);
@@ -4515,12 +4451,8 @@ void biblioteq::slotShowMenu(void)
 	      SIGNAL(triggered(void)), this, SLOT(slotJournSearch(void)));
       connect(menu.addAction(tr("&Magazine Search...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotMagSearch(void)));
-      connect
-	(menu.addAction(tr("&Photograph Collection Search...")),
-	 SIGNAL(triggered(void)), this, SLOT(slotPhotographSearch(void)));
-      connect
-	(menu.addAction(tr("&Video Game Search...")),
-	 SIGNAL(triggered(void)), this, SLOT(slotVideoGameSearch(void)));
+      connect(menu.addAction(tr("&Photograph Collection Search...")),
+          SIGNAL(triggered(void)), this, SLOT(slotPhotographSearch(void)));
       menu.exec(point);
     }
   else if(sender() == userinfo_diag->m_userinfo.menu)
@@ -4654,6 +4586,7 @@ void biblioteq::slotSqliteFileSelected(bool state)
     }
 
   slotConnectDB();
+    slotRefresh();
 }
 
 void biblioteq::slotUpdateIndicesAfterSort(int column)
@@ -4684,7 +4617,6 @@ void biblioteq::slotViewDetails(void)
   biblioteq_journal *journal = nullptr;
   biblioteq_magazine *magazine = nullptr;
   biblioteq_photographcollection *photograph = nullptr;
-  biblioteq_videogame *videogame = nullptr;
   int i = 0;
 
   if(list.isEmpty())
@@ -4728,7 +4660,6 @@ void biblioteq::slotViewDetails(void)
       journal = nullptr;
       magazine = nullptr;
       photograph = nullptr;
-      videogame = nullptr;
 
       if(type.toLower() == "book")
 	{
@@ -4825,24 +4756,6 @@ void biblioteq::slotViewDetails(void)
 
 	  photograph->modify(VIEW_ONLY);
 	}
-      else if(type.toLower() == "video game")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto v = qobject_cast<biblioteq_videogame *> (w);
-
-	      if(v && v->getID() == oid)
-		{
-		  videogame = v;
-		  break;
-		}
-	    }
-
-	  if(!videogame)
-	    videogame = new biblioteq_videogame(this, oid, index);
-
-	  videogame->modify(VIEW_ONLY);
-	}
       else
 	{
 	  error = true;
@@ -4874,7 +4787,6 @@ void biblioteq::updateItemWindows(void)
       auto journal = qobject_cast<biblioteq_journal *> (w);
       auto magazine = qobject_cast<biblioteq_magazine *> (w);
       auto photograph = qobject_cast<biblioteq_photographcollection *> (w);
-      auto videogame = qobject_cast<biblioteq_videogame *> (w);
 
       if(book)
 	book->updateWindow(EDITABLE);
@@ -4891,9 +4803,6 @@ void biblioteq::updateItemWindows(void)
 
       if(photograph)
 	photograph->updateWindow(EDITABLE);
-
-      if(videogame)
-	videogame->updateWindow(EDITABLE);
     }
 
   QApplication::restoreOverrideCursor();
@@ -4975,19 +4884,6 @@ void biblioteq::updateRows
 	    }
 	}
     }
-  else if(itemType == "videogame")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto videogame = qobject_cast<biblioteq_videogame *> (w);
-
-	  if(videogame && videogame->getID() == oid)
-	    {
-	      videogame->updateRow(index);
-	      break;
-	    }
-	}
-    }
 }
 
 void biblioteq::updateMembersBrowser(const QString &memberid)
@@ -5042,10 +4938,6 @@ void biblioteq::updateMembersBrowser(const QString &memberid)
 		(bb.table, i,
 		 m_bbColumnHeaderIndexes.indexOf("Total Reserved"),
 		 QString::number(counts.value("numtotal")));
-	      biblioteq_misc_functions::updateColumn
-		(bb.table, i,
-		 m_bbColumnHeaderIndexes.indexOf("Video Games Reserved"),
-		 QString::number(counts.value("numvideogames")));
 	      break;
 	    }
 	}
@@ -5099,10 +4991,6 @@ void biblioteq::updateMembersBrowser(void)
       biblioteq_misc_functions::updateColumn
 	(bb.table, row, m_bbColumnHeaderIndexes.indexOf("Total Reserved"),
 	 QString::number(counts.value("numtotal")));
-      biblioteq_misc_functions::updateColumn
-	(bb.table, row,
-	 m_bbColumnHeaderIndexes.indexOf("Video Games Reserved"),
-	 QString::number(counts.value("numvideogames")));
       counts.clear();
 
       if(m_history_diag->isVisible())

@@ -11,7 +11,6 @@ QT		-= webkit
 QMAKE_CLEAN	+= BiblioteQ.exe
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3 \
-                          -Wall \
                           -Wcast-align \
                           -Wcast-qual \
                           -Wdouble-promotion \
@@ -20,7 +19,7 @@ QMAKE_CXXFLAGS_RELEASE += -O3 \
                           -Woverloaded-virtual \
                           -Wpointer-arith \
                           -Wstrict-overflow=1 \
-                          -Wnodeprecated-declarations \
+                          -Wno-deprecated \
                           -fwrapv \
                           -pedantic \
                           -pie \
@@ -36,6 +35,7 @@ win32-msvc* {
                             -Wstrict-overflow=1 \
                             -Wcast-align \
                             -fwrapv \
+                            -Wno-deprecated \
                             -pedantic \
                             -pie \
                             -Wall \

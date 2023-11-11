@@ -15,7 +15,6 @@
 #include "biblioteq_myqstring.h"
 #include "biblioteq_numeric_table_item.h"
 #include "biblioteq_photographcollection.h"
-#include "biblioteq_videogame.h"
 #include "ui_biblioteq_adminsetup.h"
 #include "ui_biblioteq_allinfo.h"
 #include "ui_biblioteq_branch_s.h"
@@ -271,14 +270,12 @@ class biblioteq: public QMainWindow
   void removeJournal(biblioteq_journal *journal);
   void removeMagazine(biblioteq_magazine *magazine);
   void removePhotographCollection(biblioteq_photographcollection *pc);
-  void removeVideoGame(biblioteq_videogame *videogame);
   void replaceBook(const QString &id, biblioteq_book *book);
   void replaceGreyLiterature(const QString &id, biblioteq_grey_literature *gl);
   void replaceJournal(const QString &id, biblioteq_journal *journal);
   void replaceMagazine(const QString &id, biblioteq_magazine *magazine);
   void replacePhotographCollection(const QString &id,
 				   biblioteq_photographcollection *photograph);
-  void replaceVideoGame(const QString &id, biblioteq_videogame *videogame);
   void setGlobalFonts(const QFont &font);
   void setSummaryImages(const QImage &back, const QImage &front);
   void showMain(void);
@@ -476,7 +473,6 @@ class biblioteq: public QMainWindow
   void slotInsertJourn(void);
   void slotInsertMag(void);
   void slotInsertPhotograph(void);
-  void slotInsertVideoGame(void);
   void slotItemChanged(QTableWidgetItem *item);
   void slotJournSearch(void);
   void slotLanguageChanged(void);
@@ -558,7 +554,6 @@ class biblioteq: public QMainWindow
   void slotUpdateIndicesAfterSort(int column);
   void slotUpgradeSqliteScheme(void);
   void slotVacuum(void);
-  void slotVideoGameSearch(void);
   void slotViewDetails(void);
   void slotViewFullOrNormalScreen(void);
 

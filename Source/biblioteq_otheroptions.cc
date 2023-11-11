@@ -53,9 +53,6 @@ QColor biblioteq_otheroptions::availabilityColor(const QString &it) const
   else if(itemType == "magazine" || itemType == "magazines")
     value = settings.value
       ("otheroptions/magazine_availability_color").toString();
-  else if(itemType == "videogame" || itemType == "videogames")
-    value = settings.value
-      ("otheroptions/videogame_availability_color").toString();
 
   return QColor(value);
 }
@@ -81,9 +78,6 @@ QString biblioteq_otheroptions::publicationDateFormat
   else if(itemType == "photographcollections")
     return settings.value
       ("otheroptions/photograph_publication_date_format").toString();
-  else if(itemType == "videogames")
-    return settings.value
-      ("otheroptions/videogame_publication_date_format").toString();
   else
     return "MM/dd/yyyy";
 }
@@ -173,20 +167,16 @@ void biblioteq_otheroptions::prepareAvailability(void)
   list1 << tr("Books")
 	<< tr("Grey Literature")
 	<< tr("Journals")
-	<< tr("Magazines")
-	<< tr("Video Games");
+    << tr("Magazines");
   list2 << settings.value("otheroptions/book_availability_color").toString()
 	<< settings.value("otheroptions/grey_literature_availability_color").
            toString()
 	<< settings.value("otheroptions/journal_availability_color").toString()
-	<< settings.value("otheroptions/magazine_availability_color").toString()
-	<< settings.value("otheroptions/videogame_availability_color").
-           toString();
+    << settings.value("otheroptions/magazine_availability_color").toString();
   list3 << "books"
 	<< "greyliterature"
 	<< "journals"
-	<< "magazines"
-	<< "videogames";
+    << "magazines";
   m_ui.availability_color->setRowCount(list1.size());
   m_ui.availability_colors->setChecked
     (settings.value("otheroptions/availability_colors", false).toBool());
@@ -239,8 +229,7 @@ void biblioteq_otheroptions::prepareSettings(void)
 	<< tr("Grey Literature")
 	<< tr("Journals")
 	<< tr("Magazines")
-	<< tr("Photograph Collections")
-	<< tr("Video Games");
+    << tr("Photograph Collections");
   list2 << settings.value("otheroptions/book_publication_date_format").
            toString()
 	<< settings.value("otheroptions/grey_literature_date_format").toString()
@@ -249,15 +238,12 @@ void biblioteq_otheroptions::prepareSettings(void)
 	<< settings.value("otheroptions/magazine_publication_date_format").
            toString()
 	<< settings.value("otheroptions/photograph_publication_date_format").
-           toString()
-	<< settings.value("otheroptions/videogame_publication_date_format").
            toString();
   list3 << "books"
 	<< "greyliterature"
 	<< "journals"
 	<< "magazines"
-	<< "photographcollections"
-	<< "videogames";
+	<< "photographcollections";
   m_ui.book_read_status->setChecked
     (settings.value("otheroptions/book_read_status", false).toBool());
   m_ui.books_accession_number->setCurrentIndex
@@ -403,8 +389,7 @@ void biblioteq_otheroptions::slotSave(void)
   list << "otheroptions/book_availability_color"
        << "otheroptions/grey_literature_availability_color"
        << "otheroptions/journal_availability_color"
-       << "otheroptions/magazine_availability_color"
-       << "otheroptions/videogame_availability_color";
+       << "otheroptions/magazine_availability_color";
 
   for(int i = 0; i < list.size(); i++)
     {
@@ -428,8 +413,7 @@ void biblioteq_otheroptions::slotSave(void)
        << "otheroptions/grey_literature_date_format"
        << "otheroptions/journal_publication_date_format"
        << "otheroptions/magazine_publication_date_format"
-       << "otheroptions/photograph_publication_date_format"
-       << "otheroptions/videogame_publication_date_format";
+       << "otheroptions/photograph_publication_date_format";
 
   for(int i = 0; i < list.size(); i++)
     {
