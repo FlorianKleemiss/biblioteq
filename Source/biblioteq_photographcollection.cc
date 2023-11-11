@@ -135,10 +135,10 @@ biblioteq_photographcollection::biblioteq_photographcollection
   QString errorstr("");
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  //pc.location->addItems
-  //  (biblioteq_misc_functions::getLocations(qmain->getDB(),
-//					    "Photograph Collection",
-//					    errorstr));
+  /*pc.location->addItems
+    (biblioteq_misc_functions::getLocations(qmain->getDB(),
+                        "Photograph Collection",
+                        errorstr));*/
   QApplication::restoreOverrideCursor();
 
   if(!errorstr.isEmpty())
@@ -592,6 +592,12 @@ void biblioteq_photographcollection::modify(const int state,
 		"title, "
 		"location, "
 		"about, "
+        "creation_date, "
+        "circulation_height, "
+        "total_number, "
+        "by_artist, "
+        "publisher, "
+        "keywords, "
 		"notes, "
 		"image, "
 		"accession_number "
@@ -652,11 +658,33 @@ void biblioteq_photographcollection::modify(const int state,
 		  setWindowTitle(str);
 		}
 	    }
-	  else if(fieldname == "title")
-	    pc.title_collection->setText(var.toString().trimmed());
-
+      else if(fieldname == "title")
+      {
+        pc.title_collection->setText(var.toString().trimmed());
+      }
+      else if(fieldname == "creation_date"){
+        pc.creation_date->setText(var.toString().trimmed());
+      }
+      else if(fieldname == "circulation_height"){
+        pc.circulation_height->setText(var.toString().trimmed());
+      }
+      else if(fieldname == "keywords"){
+        pc.keywords->setText(var.toString().trimmed());
+      }
+      else if(fieldname == "notes"){
+        pc.notes->setText(var.toString().trimmed());
+      }
+      else if(fieldname == "by_artis"){
+        pc.by_artist->setText(var.toString().trimmed());
+      }
+      else if(fieldname == "publisher"){
+        pc.publisher->setText(var.toString().trimmed());
+      }
+      else if(fieldname == "total_number"){
+        pc.total_number->setText(var.toString().trimmed());
+      }
 	  else if(fieldname == "image")
-	    {
+      {
 	      if(!record.field(i).isNull())
 		{
 		  pc.thumbnail_collection->loadFromData
@@ -665,7 +693,7 @@ void biblioteq_photographcollection::modify(const int state,
 		  if(pc.thumbnail_collection->m_image.isNull())
 		    pc.thumbnail_collection->loadFromData(var.toByteArray());
 		}
-	    }
+      }
 	}
 
       int pages = 1;
@@ -1173,10 +1201,10 @@ void biblioteq_photographcollection::slotGo(void)
 	  return;
 	}
 
-      str = pc.title_collection->text().trimmed();
+      str = pc.title_collection->toPlainText().trimmed();
       pc.title_collection->setText(str);
 
-      if(pc.title_collection->text().isEmpty())
+      if(pc.title_collection->toPlainText().isEmpty())
 	{
 	  QMessageBox::critical(this, tr("BiblioteQ: User Error"),
 				tr("Please complete the collection's "
@@ -1188,8 +1216,22 @@ void biblioteq_photographcollection::slotGo(void)
 
     //  pc.about_collection->setPlainText
     //(pc.about_collection->toPlainText().trimmed());
-    //  pc.notes_collection->setPlainText
-    //(pc.notes_collection->toPlainText().trimmed());
+    pc.notes->setPlainText
+        (pc.notes->toPlainText().trimmed());
+    pc.creation_date->setText
+        (pc.creation_date->text().trimmed());
+    pc.circulation_height->setText
+        (pc.circulation_height->text().trimmed());
+    pc.total_number->setText
+        (pc.total_number->text().trimmed());
+    pc.by_artist->setText
+        (pc.by_artist->text().trimmed());
+    pc.publisher->setPlainText
+        (pc.publisher->toPlainText().trimmed());
+    pc.keywords->setPlainText
+        (pc.keywords->toPlainText().trimmed());
+
+
     //  pc.accession_number->setText
     //(pc.accession_number->text().trimmed());
     //  QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -1216,8 +1258,12 @@ void biblioteq_photographcollection::slotGo(void)
 	query.prepare("UPDATE photograph_collection SET "
 		      "id = ?, "
 		      "title = ?, "
-		      "location = ?, "
-		      "about = ?, "
+              "creation_date = ?, "
+              "circulation_height = ?, "
+              "total_number = ?, "
+              "by_artist = ?, "
+              "publisher = ?, "
+              "keywords = ?, "
 		      "notes = ?, "
 		      "image = ?, "
 		      "image_scaled = ?, "
@@ -1226,20 +1272,26 @@ void biblioteq_photographcollection::slotGo(void)
 		      "myoid = ?");
       else if(qmain->getDB().driverName() != "QSQLITE")
 	query.prepare("INSERT INTO photograph_collection "
-		      "(id, title, location, about, notes, image, "
+              "(id, title, creation_date, circulation_height, total_number, by_artist, "
+              "publisher, keywords, notes, image,"
 		      "image_scaled, accession_number) VALUES (?, "
-		      "?, ?, ?, ?, ?, ?, ?)");
+              "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
       else
 	query.prepare("INSERT INTO photograph_collection "
-		      "(id, title, location, about, notes, image, "
-		      "image_scaled, accession_number, myoid) "
-		      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+              "(id, title, creation_date, circulation_height, total_number, by_artist, "
+              "publisher, keywords, notes, image,"
+              "image_scaled, accession_number, myoid) "
+              "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
       query.bindValue(0, pc.id_collection->text().trimmed());
-      query.bindValue(1, pc.title_collection->text().trimmed());
-      //query.bindValue(2, pc.location->currentText().trimmed());
-      //query.bindValue(3, pc.about_collection->toPlainText().trimmed());
-      //query.bindValue(4, pc.notes_collection->toPlainText().trimmed());
+      query.bindValue(1, pc.title_collection->toPlainText().trimmed());
+      query.bindValue(2, pc.creation_date->text().trimmed());
+      query.bindValue(3, pc.circulation_height->text().trimmed());
+      query.bindValue(4, pc.total_number->text().trimmed());
+      query.bindValue(5, pc.by_artist->text().trimmed());
+      query.bindValue(6, pc.publisher->toPlainText().trimmed());
+      query.bindValue(7, pc.keywords->toPlainText().trimmed());
+      query.bindValue(8, pc.notes->toPlainText().trimmed());
 
       if(!pc.thumbnail_collection->m_image.isNull())
 	{
@@ -1251,16 +1303,14 @@ void biblioteq_photographcollection::slotGo(void)
 
 	  if(buffer.open(QIODevice::WriteOnly))
 	    {
-	      pc.thumbnail_collection->m_image.save
-		(&buffer, pc.thumbnail_collection->m_imageFormat.toLatin1(),
-		 100);
-	      query.bindValue(5, bytes.toBase64());
+          pc.thumbnail_collection->m_image.save(&buffer, pc.thumbnail_collection->m_imageFormat.toLatin1(), 100);
+          query.bindValue(9, bytes.toBase64());
 	    }
 	  else
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	    query.bindValue(5, QVariant(QMetaType(QMetaType::QByteArray)));
+        query.bindValue(9, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-	    query.bindValue(5, QVariant(QVariant::ByteArray));
+        query.bindValue(9, QVariant(QVariant::ByteArray));
 #endif
 
 	  buffer.close();
@@ -1276,38 +1326,38 @@ void biblioteq_photographcollection::slotGo(void)
 	      image.save
 		(&buffer, pc.thumbnail_collection->m_imageFormat.toLatin1(),
 		 100);
-	      query.bindValue(6, bytes.toBase64());
+          query.bindValue(10, bytes.toBase64());
 	    }
 	  else
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	    query.bindValue(6, QVariant(QMetaType(QMetaType::QByteArray)));
+        query.bindValue(10, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-	    query.bindValue(6, QVariant(QVariant::ByteArray));
+        query.bindValue(10, QVariant(QVariant::ByteArray));
 #endif
 	}
       else
 	{
 	  pc.thumbnail_collection->m_imageFormat = "";
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	  query.bindValue(5, QVariant(QMetaType(QMetaType::QByteArray)));
-	  query.bindValue(6, QVariant(QMetaType(QMetaType::QByteArray)));
+      query.bindValue(9, QVariant(QMetaType(QMetaType::QByteArray)));
+      query.bindValue(10, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-	  query.bindValue(5, QVariant(QVariant::ByteArray));
-	  query.bindValue(6, QVariant(QVariant::ByteArray));
+      query.bindValue(9, QVariant(QVariant::ByteArray));
+      query.bindValue(10, QVariant(QVariant::ByteArray));
 #endif
 	}
-
-      //query.bindValue(7, pc.accession_number->text().trimmed());
+    QString empty(' ');
+    query.bindValue(11, empty.trimmed());
 
       if(m_engWindowTitle.contains("Modify"))
-	query.bindValue(8, m_oid);
+    query.bindValue(12, m_oid);
       else if(qmain->getDB().driverName() == "QSQLITE")
 	{
 	  auto value = biblioteq_misc_functions::getSqliteUniqueId
 	    (qmain->getDB(), errorstr);
 
 	  if(errorstr.isEmpty())
-	    query.bindValue(8, value);
+        query.bindValue(12, value);
 	  else
 	    qmain->addError(QString(tr("Database Error")),
 			    QString(tr("Unable to generate a unique "
@@ -1386,7 +1436,7 @@ void biblioteq_photographcollection::slotGo(void)
               (pc.id_collection->text());
 		      else if(names.at(i) == "Title")
 			qmain->getUI().table->item(m_index->row(), i)->setText
-              (pc.title_collection->text());
+              (pc.title_collection->toPlainText());
             //  else if(names.at(i) == "Location")
             //qmain->getUI().table->item(m_index->row(), i)->setText
             //  (pc.location->currentText().trimmed());
@@ -1480,9 +1530,7 @@ void biblioteq_photographcollection::slotGo(void)
 
       searchstr = "SELECT DISTINCT photograph_collection.title, "
 	"photograph_collection.id, "
-	"photograph_collection.location, "
 	"COUNT(photograph.myoid) AS photograph_count, "
-	"photograph_collection.about, "
 	"photograph_collection.accession_number, "
 	"photograph_collection.type, "
 	"photograph_collection.myoid, " +
@@ -1536,7 +1584,7 @@ void biblioteq_photographcollection::slotGo(void)
       query.prepare(searchstr);
       query.addBindValue(pc.id_collection->text().trimmed());
       query.addBindValue
-	(biblioteq_myqstring::escape(pc.title_collection->text().trimmed()));
+    (biblioteq_myqstring::escape(pc.title_collection->toPlainText().trimmed()));
     //  query.addBindValue
     //(biblioteq_myqstring::escape(pc.about_collection->toPlainText().
     //			     trimmed()));
@@ -2054,13 +2102,19 @@ void biblioteq_photographcollection::slotPrint(void)
   m_html += "<b>" + tr("Collection ID:") + "</b> " +
     pc.id_collection->text().trimmed() + "<br>";
   m_html += "<b>" + tr("Collection Title:") + "</b> " +
-    pc.title_collection->text().trimmed() + "<br>";
- //m_html += "<b>" + tr("Collection Location:") + "</b> " +
-  //  pc.location->currentText().trimmed() + "<br>";
-  //m_html += "<b>" + tr("Collection About:") + "</b> " +
-  //  pc.about_collection->toPlainText().trimmed() + "<br>";
-  //m_html += "<b>" + tr("Collection Notes:") + "</b> " +
-  //  pc.notes_collection->toPlainText().trimmed() + "<br>";
+    pc.title_collection->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Creation Date:") + "</b> " +
+            pc.creation_date->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Circulation height:") + "</b> " +
+            pc.circulation_height->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Total Number of Pictures:") + "</b> " +
+            pc.total_number->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("By Artist:") + "</b> " +
+            pc.by_artist->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Publisher:") + "</b> " +
+            pc.publisher->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Keywords:") + "</b> " +
+            pc.keywords->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item ID:") + "</b> " +
     pc.id_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Title:") + "</b> " +
@@ -2072,7 +2126,7 @@ void biblioteq_photographcollection::slotPrint(void)
   m_html += "<b>" + tr("Item Copies:") + "</b> " +
     pc.quantity->text() + "<br>";
   m_html += "<b>" + tr("Item Medium:") + "</b> " +
-            pc.medium_item->toPlainText().trimmed() + "<br>";
+    pc.medium_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Reproduction Number:") + "</b> " +
     pc.reproduction_number_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Copyright:") + "</b> " +
@@ -2086,7 +2140,7 @@ void biblioteq_photographcollection::slotPrint(void)
   m_html += "<b>" + tr("Item Subjects:") + "</b> " +
     pc.subjects_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Format:") + "</b> " +
-            pc.format_item->toPlainText().trimmed() + "<br>";
+    pc.format_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Accession Number:") + "</b> " +
     pc.accession_number_item->toPlainText().trimmed();
   m_html += "</html>";
@@ -2241,9 +2295,8 @@ void biblioteq_photographcollection::slotSceneSelectionChanged(void)
       m_itemOid.clear();
 
       if(pc.exportPhotographsToolButton->menu() &&
-	 pc.exportPhotographsToolButton->menu()->actions().size() >= 3)
-	pc.exportPhotographsToolButton->menu()->actions()[2]->
-	  setEnabled(false);
+         pc.exportPhotographsToolButton->menu()->actions().size() >= 3)
+            pc.exportPhotographsToolButton->menu()->actions()[2]->setEnabled(false);
 
       pc.thumbnail_item->clear();
       pc.id_item->clear();
@@ -2260,6 +2313,12 @@ void biblioteq_photographcollection::slotSceneSelectionChanged(void)
       pc.notes_item->clear();
       pc.subjects_item->clear();
       pc.format_item->clear();
+      pc.creation_date->clear();
+      pc.circulation_height->clear();
+      pc.total_number->clear();
+      pc.by_artist->clear();
+      pc.publisher->clear();
+      pc.keywords->clear();
       pc.accession_number_item->clear();
       return;
     }
@@ -2850,11 +2909,14 @@ void biblioteq_photographcollection::storeData(void)
   m_widgetValues.clear();
   list << pc.thumbnail_collection
        << pc.id_collection
-       << pc.title_collection;
-       //<< pc.location
-       //<< pc.about_collection
-       //<< pc.notes_collection
-       //<< pc.accession_number;
+       << pc.title_collection
+       << pc.creation_date
+       << pc.total_number
+       << pc.notes
+       << pc.by_artist
+       << pc.publisher
+       << pc.keywords
+       << pc.circulation_height;
 
   foreach(auto widget, list)
     {
@@ -2934,7 +2996,7 @@ void biblioteq_photographcollection::updateWindow(const int state)
       pc.importItems->setEnabled(false);
       //pc.resetButton->setVisible(false);
       str = QString(tr("BiblioteQ: View Photograph Collection Details (")) +
-	pc.id_collection->text() + tr(")");
+      pc.id_collection->text() + tr(")");
       m_engWindowTitle = "View";
     }
 

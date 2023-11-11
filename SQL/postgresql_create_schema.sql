@@ -207,16 +207,22 @@ CREATE TABLE magazine_files
 
 CREATE TABLE photograph_collection
 (
-	about		 TEXT,
-	accession_number TEXT,
-	id		 TEXT PRIMARY KEY NOT NULL,
-	image		 BYTEA,
-	image_scaled	 BYTEA,
-	location	 TEXT NOT NULL,
-	myoid		 BIGSERIAL UNIQUE,
-	notes		 TEXT,
-	title		 TEXT NOT NULL,
-	type		 VARCHAR(32) NOT NULL DEFAULT 'Photograph Collection'
+        id                  TEXT PRIMARY KEY NOT NULL,
+        accesion_number     TEXT,
+        about		    TEXT,
+        location	    TEXT NOT NULL,
+        image               BYTEA,
+        image_scaled        BYTEA,
+        myoid               BIGSERIAL UNIQUE,
+        notes               TEXT,
+        title               TEXT NOT NULL,
+        creation_date       TEXT,
+        circulation_height  TEXT,
+        total_number        TEXT,
+        by_artist           TEXT,
+        publisher           TEXT,
+        keywords            TEXT,
+        type		    VARCHAR(32) NOT NULL DEFAULT 'Photograph Collection'
 );
 
 CREATE TABLE photograph

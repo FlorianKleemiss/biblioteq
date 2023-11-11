@@ -1729,7 +1729,7 @@ void biblioteq::slotAllGo(void)
 	  "0.00, "
 	  "'', "
 	  "1 AS quantity, "
-	  "photograph_collection.location, "
+      "'' AS location,  "
 	  "0 AS availability, "
 	  "0 AS total_reserved, "
 	  "photograph_collection.accession_number, "
@@ -2401,7 +2401,7 @@ void biblioteq::slotCheckout(void)
 	  QMessageBox::critical
 	    (m_members_diag,
 	     tr("BiblioteQ: User Error"),
-	     tr("Unable to determine the selected item's type."));
+         tr("Unable to determine the selected item's type."));
 	  QApplication::processEvents();
 	  delete item;
 	  return;
@@ -3313,7 +3313,7 @@ void biblioteq::slotDisplaySummary(void)
 	    biblioteq_misc_functions::getColumnString
 	    (ui.table, i, ui.table->columnNumber("Title")) +
 	    "</b>";
-	  summary += "<br>";
+      summary += "<br>ID: ";
 	  tmpstr = biblioteq_misc_functions::getColumnString
 	    (ui.table, i, ui.table->columnNumber("ID"));
 
@@ -3324,9 +3324,17 @@ void biblioteq::slotDisplaySummary(void)
 	  if(tmpstr.isEmpty())
 	    tmpstr = "<br>";
 
-	  summary += tmpstr;
+      summary += tmpstr;
+
+      summary += "<br>Creation Date: ";
+      tmpstr = biblioteq_misc_functions::getColumnString
+          (ui.table, i, ui.table->columnNumber("Creation Date"));
+      if(tmpstr.isEmpty())
+        tmpstr = "Unknown";
+      tmpstr += "<br>";
+      summary += tmpstr;
 	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Photograph Count"));
+        (ui.table, i, ui.table->columnNumber("Element Count"));
 
 	  if(!tmpstr.isEmpty())
 	    summary += "<br>" + QString(tr("%1 Photograph(s)")).arg(tmpstr);
@@ -3364,6 +3372,14 @@ void biblioteq::slotDisplaySummary(void)
 	    summary += tr("<b>Read</b>");
 	  }
 
+
+      if(type == "Photograph Collection")
+      {
+        QString about = "<html>" + biblioteq_misc_functions::getColumnString
+                 (ui.table, i, ui.table->columnNumber("About")) + "</html>";
+        ui.about->setText(about);
+        ui.about->setVisible(true);
+      }
       summary += "</html>";
       ui.summary->setText(summary);
       ui.summary->setVisible(true);
@@ -4372,7 +4388,7 @@ void biblioteq::slotRefreshCustomQuery(void)
 	 << "minimum_days"
 	 << "monetary_units"
      << "photograph"
-         << "photograph_collection";
+     << "photograph_collection";
   else
     list << "admin"
 	 << "book"
@@ -4397,7 +4413,7 @@ void biblioteq::slotRefreshCustomQuery(void)
 	 << "minimum_days"
 	 << "monetary_units"
      << "photograph"
-         << "photograph_collection";
+     << "photograph_collection";
 
   list.sort();
   cq.tables_t->setSortingEnabled(false);

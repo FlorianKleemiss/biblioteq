@@ -353,7 +353,7 @@ int biblioteq::populateTable(const int search_type_arg,
 	       "0.00, "
 	       "'', "
 	       "1 AS quantity, "
-	       "photograph_collection.location, "
+           "'' AS location, "
 	       "0 AS availability, "
 	       "0 AS total_reserved, "
 	       "photograph_collection.accession_number, "
@@ -364,8 +364,7 @@ int biblioteq::populateTable(const int search_type_arg,
 	       "GROUP BY "
 	       "photograph_collection.title, "
 	       "photograph_collection.id, "
-	       "photograph_collection.location, "
-	       "photograph_collection.accession_number, "
+           "photograph_collection.creation_date, "
 	       "photograph_collection.type, "
 	       "photograph_collection.myoid, " +
            "photograph_collection.image_scaled "
@@ -1782,11 +1781,12 @@ int biblioteq::populateTable(const int search_type_arg,
 	else if(typefilter == "Photograph Collections")
 	  {
 	    searchstr = "SELECT DISTINCT photograph_collection.title, "
-	      "photograph_collection.id, "
-	      "photograph_collection.location, "
+          "photograph_collection.creation_date, "
+          "photograph_collection.total_number, "
 	      "COUNT(photograph.myoid) AS photograph_count, "
-	      "photograph_collection.about, "
-	      "photograph_collection.accession_number, "
+          "photograph_collection.by_artist, "
+          "photograph_collection.notes, "
+          "photograph_collection.id, "
 	      "photograph_collection.type, "
 	      "photograph_collection.myoid, " +
 	      photographCollectionFrontCover +
@@ -1797,8 +1797,6 @@ int biblioteq::populateTable(const int search_type_arg,
 	      "GROUP BY "
 	      "photograph_collection.title, "
 	      "photograph_collection.id, "
-	      "photograph_collection.location, "
-	      "photograph_collection.about, "
 	      "photograph_collection.accession_number, "
 	      "photograph_collection.type, "
 	      "photograph_collection.myoid, "
@@ -2018,8 +2016,6 @@ int biblioteq::populateTable(const int search_type_arg,
 		searchstr.append(searchstrArg);
 		searchstr.append("GROUP BY photograph_collection.title, "
 				 "photograph_collection.id, "
-				 "photograph_collection.location, "
-				 "photograph_collection.about, "
 				 "photograph_collection.accession_number, "
 				 "photograph_collection.type, "
 				 "photograph_collection.myoid, "

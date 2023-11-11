@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
+    <width>1400</width>
     <height>1232</height>
    </rect>
   </property>
@@ -31,8 +31,8 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-71</y>
-         <width>968</width>
+         <y>0</y>
+         <width>1368</width>
          <height>1253</height>
         </rect>
        </property>
@@ -58,6 +58,12 @@
            <enum>Qt::Horizontal</enum>
           </property>
           <widget class="QGroupBox" name="coverImages">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>20</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="title">
             <string>About Collection</string>
            </property>
@@ -127,24 +133,10 @@
             </item>
             <item>
              <layout class="QGridLayout" name="gridLayout">
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_20">
-                <property name="text">
-                 <string>Total Number</string>
-                </property>
-               </widget>
-              </item>
               <item row="3" column="0">
                <widget class="QLabel" name="label_21">
                 <property name="text">
                  <string>Creation Date</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_24">
-                <property name="text">
-                 <string>Available Number</string>
                 </property>
                </widget>
               </item>
@@ -162,30 +154,6 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="1">
-               <widget class="QLineEdit" name="available_number">
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-                <property name="placeholderText">
-                 <string>Available Number</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="title_collection">
-                <property name="placeholderText">
-                 <string>Title</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
-               <widget class="QLineEdit" name="total_number">
-                <property name="placeholderText">
-                 <string>Total Number</string>
-                </property>
-               </widget>
-              </item>
               <item row="3" column="1">
                <widget class="QLineEdit" name="creation_date">
                 <property name="placeholderText">
@@ -200,7 +168,28 @@
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
+              <item row="4" column="1">
+               <widget class="QLineEdit" name="total_number">
+                <property name="placeholderText">
+                 <string>Total Number</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_20">
+                <property name="text">
+                 <string>Total Number</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QLineEdit" name="by_artist">
+                <property name="placeholderText">
+                 <string>By Artist</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
                <widget class="QLabel" name="label">
                 <property name="text">
                  <string>By Artist</string>
@@ -208,23 +197,119 @@
                </widget>
               </item>
               <item row="6" column="1">
-               <widget class="QLineEdit" name="lineEdit">
+               <widget class="QLineEdit" name="circulation_height">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="placeholderText">
-                 <string>By Artist</string>
+                 <string>Circulation Height</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>Circulation Height</string>
                 </property>
                </widget>
               </item>
               <item row="7" column="0">
-               <widget class="QLabel" name="label_23">
+               <widget class="QLabel" name="label_24">
                 <property name="text">
-                 <string>Type</string>
+                 <string>Publisher</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_25">
+                <property name="text">
+                 <string>Keywords</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <widget class="QTextEdit" name="notes">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>100</height>
+                 </size>
+                </property>
+                <property name="placeholderText">
+                 <string>Notes</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_26">
+                <property name="text">
+                 <string>Notes</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1">
+               <widget class="QTextEdit" name="title_collection">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>100</height>
+                 </size>
+                </property>
+                <property name="placeholderText">
+                 <string>Title</string>
                 </property>
                </widget>
               </item>
               <item row="7" column="1">
-               <widget class="QLineEdit" name="type">
+               <widget class="QTextEdit" name="publisher">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>100</height>
+                 </size>
+                </property>
                 <property name="placeholderText">
-                 <string>Type</string>
+                 <string>Publisher</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="QTextEdit" name="keywords">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>100</height>
+                 </size>
+                </property>
+                <property name="placeholderText">
+                 <string>Keywords</string>
                 </property>
                </widget>
               </item>
@@ -246,6 +331,12 @@
            </layout>
           </widget>
           <widget class="QGroupBox" name="collectionGroup">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>150</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="title">
             <string>Collection Items</string>
            </property>
@@ -302,6 +393,12 @@
             </item>
             <item>
              <widget class="QGraphicsView" name="graphicsView">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                <horstretch>150</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="renderHints">
                <set>QPainter::Antialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
               </property>
@@ -313,6 +410,12 @@
            </layout>
           </widget>
           <widget class="QGroupBox" name="itemGroup">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>20</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="title">
             <string>Item Information</string>
            </property>
@@ -703,7 +806,6 @@
   <tabstop>scrollArea</tabstop>
   <tabstop>thumbnail_collection</tabstop>
   <tabstop>select_image_collection</tabstop>
-  <tabstop>title_collection</tabstop>
   <tabstop>page</tabstop>
   <tabstop>graphicsView</tabstop>
   <tabstop>thumbnail_item</tabstop>
