@@ -233,8 +233,7 @@ void biblioteq_dbenumerations::populateWidgets(void)
 		   << tr("Grey Literature")
 		   << tr("Journal")
 		   << tr("Magazine")
-		   << tr("Photograph Collection")
-		   << tr("Video Game");
+           << tr("Photograph Collection");
 	      comboBox->addItems(list);
 
 	      if(pairList.at(j).first == "Book")
@@ -247,8 +246,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
         comboBox->setCurrentIndex(3);
 	      else if(pairList.at(j).first == "Photograph Collection")
         comboBox->setCurrentIndex(4);
-	      else if(pairList.at(j).first == "Video Game")
-        comboBox->setCurrentIndex(5);
 
 	      comboBox->setSizePolicy
 		(QSizePolicy::Preferred, QSizePolicy::Minimum);
@@ -432,8 +429,7 @@ void biblioteq_dbenumerations::slotAdd(void)
 	   << tr("Grey Literature")
 	   << tr("Journal")
 	   << tr("Magazine")
-	   << tr("Photograph Collection")
-	   << tr("Video Game");
+       << tr("Photograph Collection");
       comboBox->addItems(list);
       comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
       list.clear();
@@ -657,14 +653,6 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }
-        else if(index == 5)
-		  {
-		    query.prepare("INSERT INTO locations "
-				  "(location, type) VALUES "
-				  "(?, 'Video Game')");
-		    query.bindValue(0,
-				    tablewidget->item(j, 1)->text().trimmed());
-		  }
 
 		if(!query.exec())
 		  {
@@ -714,14 +702,6 @@ void biblioteq_dbenumerations::slotSave(void)
 		    query.prepare("INSERT INTO minimum_days "
 				  "(days, type) VALUES "
 				  "(?, 'Magazine')");
-		    query.bindValue(0,
-				    tablewidget->item(j, 1)->text().trimmed());
-		  }
-        else if(j == 4)
-		  {
-		    query.prepare("INSERT INTO minimum_days "
-				  "(days, type) VALUES "
-				  "(?, 'Video Game')");
 		    query.bindValue(0,
 				    tablewidget->item(j, 1)->text().trimmed());
 		  }

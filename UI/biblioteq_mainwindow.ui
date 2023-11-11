@@ -487,7 +487,6 @@
      <addaction name="action_Journal"/>
      <addaction name="action_Magazine"/>
      <addaction name="action_Photograph_Collection"/>
-     <addaction name="action_Video_Game"/>
     </widget>
     <addaction name="menu_Add_Item"/>
     <addaction name="actionDeleteEntry"/>
@@ -1195,11 +1194,6 @@
   <action name="action_Magazine">
    <property name="text">
     <string>&amp;Magazine...</string>
-   </property>
-  </action>
-  <action name="action_Video_Game">
-   <property name="text">
-    <string>&amp;Video Game...</string>
    </property>
   </action>
   <action name="action_Photograph_Collection">

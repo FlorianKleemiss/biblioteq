@@ -163,8 +163,7 @@ QString biblioteq_misc_functions::getAbstractInfo(const QString &oid,
 
   if(type == "book" ||
      type == "journal" ||
-     type == "magazine" ||
-     type == "video game")
+     type == "magazine")
     {
       type = type.remove(" ");
       querystr = QString("SELECT description FROM %1 WHERE myoid = ?").arg
@@ -210,8 +209,7 @@ QString biblioteq_misc_functions::getAvailability(const QString &oid,
 
   if(itemType.toLower() == "book" ||
      itemType.toLower() == "journal" ||
-     itemType.toLower() == "magazine" ||
-     itemType.toLower() == "video game")
+     itemType.toLower() == "magazine")
     querystr = QString("SELECT %1.quantity - "
 		       "COUNT(item_borrower.item_oid) "
 		       "FROM "
@@ -425,8 +423,7 @@ QString biblioteq_misc_functions::getTotalReserved(const QSqlDatabase &db,
 
   if(itemType == "book" ||
      itemType == "journal" ||
-     itemType == "magazine" ||
-     itemType == "video game")
+     itemType == "magazine")
     querystr = QString("SELECT COUNT(item_borrower.item_oid) "
 		       "FROM item_borrower WHERE "
 		       "item_borrower.item_oid = %1 AND "
@@ -658,9 +655,6 @@ QStringList biblioteq_misc_functions::getMinimumDays(const QSqlDatabase &db,
 
   if(!map.contains("Magazine"))
     map["Magazine"] = "1";
-
-  if(!map.contains("Video Game"))
-    map["Video Game"] = "1";
 
   for(int i = 0; i < map.values().size(); i++)
     minimumdays.append(map.values().at(i));
@@ -945,8 +939,7 @@ bool biblioteq_misc_functions::isCopyAvailable(const QSqlDatabase &db,
 
   if(itemType.toLower() == "book" ||
      itemType.toLower() == "journal" ||
-     itemType.toLower() == "magazine" ||
-     itemType.toLower() == "video game")
+     itemType.toLower() == "magazine")
     querystr = QString
       ("SELECT EXISTS(SELECT 1 FROM %1_copy_info "
        "WHERE copyid = ? AND item_oid = ? "

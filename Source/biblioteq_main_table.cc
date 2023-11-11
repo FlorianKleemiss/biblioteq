@@ -416,60 +416,21 @@ void biblioteq_main_table::setColumns(const QString &username,
   else if(type == "Photograph Collections")
     {
       list.append(tr("Title"));
-      list.append(tr("ID"));
-      list.append(tr("Location"));
-      list.append(tr("Photograph Count"));
+      list.append(tr("Creation Date"));
+      list.append(tr("Total Size"));
+      list.append(tr("Element Count"));
+      list.append(tr("Element Count Strixner"));
       list.append(tr("About"));
-      list.append(tr("Accession Number"));
+      list.append(tr("ID"));
       list.append(tr("Type"));
       list.append("MYOID");
       m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("ID");
-      m_columnHeaderIndexes.append("Location");
-      m_columnHeaderIndexes.append("Photograph Count");
+      m_columnHeaderIndexes.append("Creation date");
+      m_columnHeaderIndexes.append("Total Size");
+      m_columnHeaderIndexes.append("Element Count");
+      m_columnHeaderIndexes.append("Element Count Strixner");
       m_columnHeaderIndexes.append("About");
-      m_columnHeaderIndexes.append("Accession Number");
-      m_columnHeaderIndexes.append("Type");
-      m_columnHeaderIndexes.append("MYOID");
-    }
-  else if(type == "Video Games")
-    {
-      list.append(tr("Title"));
-      list.append(tr("Game Rating"));
-      list.append(tr("Platform"));
-      list.append(tr("Mode"));
-      list.append(tr("Publisher"));
-      list.append(tr("Release Date"));
-      list.append(tr("Place of Publication"));
-      list.append(tr("Genres"));
-      list.append(tr("Language"));
-      list.append(tr("UPC"));
-      list.append(tr("Price"));
-      list.append(tr("Monetary Units"));
-      list.append(tr("Quantity"));
-      list.append(tr("Location"));
-      list.append(tr("Availability"));
-      list.append(tr("Total Reserved"));
-      list.append(tr("Accession Number"));
-      list.append(tr("Type"));
-      list.append("MYOID");
-      m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("Game Rating");
-      m_columnHeaderIndexes.append("Platform");
-      m_columnHeaderIndexes.append("Mode");
-      m_columnHeaderIndexes.append("Publisher");
-      m_columnHeaderIndexes.append("Release Date");
-      m_columnHeaderIndexes.append("Place of Publication");
-      m_columnHeaderIndexes.append("Genres");
-      m_columnHeaderIndexes.append("Language");
-      m_columnHeaderIndexes.append("UPC");
-      m_columnHeaderIndexes.append("Price");
-      m_columnHeaderIndexes.append("Monetary Units");
-      m_columnHeaderIndexes.append("Quantity");
-      m_columnHeaderIndexes.append("Location");
-      m_columnHeaderIndexes.append("Availability");
-      m_columnHeaderIndexes.append("Total Reserved");
-      m_columnHeaderIndexes.append("Accession Number");
+      m_columnHeaderIndexes.append("ID");
       m_columnHeaderIndexes.append("Type");
       m_columnHeaderIndexes.append("MYOID");
     }

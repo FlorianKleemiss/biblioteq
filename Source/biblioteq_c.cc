@@ -603,8 +603,7 @@ int biblioteq::populateTable(const QSqlQuery &query,
      typefilter == "Grey Literature" ||
      typefilter == "Journals" ||
      typefilter == "Magazines" ||
-     typefilter == "Photograph Collections" ||
-     typefilter == "Video Games")
+     typefilter == "Photograph Collections")
     dateFormat = publicationDateFormat
       (QString(typefilter).remove(' ').toLower());
 
@@ -1695,7 +1694,7 @@ void biblioteq::slotAllGo(void)
     {
       type = types.at(i);
 
-      if(type == "Grey Literature")
+      if(type == "Grey Literature"){
 	str = "SELECT DISTINCT grey_literature.document_title, "
 	  "grey_literature.document_id, "
 	  "'', "
@@ -1717,8 +1716,10 @@ void biblioteq::slotAllGo(void)
 	  "grey_literature.myoid = "
 	  "item_borrower.item_oid "
 	  "AND item_borrower.type = 'Grey Literature' "
-	  "WHERE ";
+      "WHERE ";
+      }
       else if(type == "Photograph Collection")
+      {
 	str = "SELECT DISTINCT photograph_collection.title, "
 	  "photograph_collection.id, "
 	  "'', "
@@ -1736,7 +1737,8 @@ void biblioteq::slotAllGo(void)
 	  "photograph_collection.myoid, " +
 	  photographCollectionFrontCover +
 	  "FROM photograph_collection "
-	  "WHERE ";
+      "WHERE ";
+      }
       else
 	{
 	  str = QString
@@ -2234,12 +2236,6 @@ void biblioteq::slotAllGo(void)
 	    "photograph_collection.image_scaled ";
 	}
 
-      else if(type == "Video Game")
-	{
-	  str = str.replace("pdate", "rdate");
-	  str = str.replace("category", "genre");
-	}
-
       if(type != "Photograph Collection")
 	{
 	  if(al.available->isChecked())
@@ -2255,10 +2251,7 @@ void biblioteq::slotAllGo(void)
 	    }
 	}
 
-      if(type != "Video Game")
 	str += "UNION ALL ";
-      else
-	str += " ";
 
       searchstr += str;
     }
@@ -2403,9 +2396,6 @@ void biblioteq::slotCheckout(void)
 	      type.toLower() == "magazine")
 	itemid = biblioteq_misc_functions::getColumnString
 	  (ui.table, row2.row(), ui.table->columnNumber("ISSN"));
-      else if(type.toLower() == "video game")
-	itemid = biblioteq_misc_functions::getColumnString
-	  (ui.table, row2.row(), ui.table->columnNumber("UPC"));
       else
 	{
 	  QMessageBox::critical
@@ -3343,41 +3333,6 @@ void biblioteq::slotDisplaySummary(void)
 
 	  summary += "<br>";
 	}
-      else if(type == "Video Game")
-	{
-	  summary += "<b>" +
-	    biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Title")) +
-	    "</b>";
-	  summary += "<br>";
-	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("UPC"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = biblioteq_misc_functions::getColumnString
-	      (ui.table, i, ui.table->columnNumber("ID Number"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = "<br>";
-
-	  summary += tmpstr;
-	  summary += "<br>";
-	  tmpstr = biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Publication Date"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = biblioteq_misc_functions::getColumnString
-	      (ui.table, i, ui.table->columnNumber("Release Date"));
-
-	  if(tmpstr.isEmpty())
-	    tmpstr = "<br>";
-
-	  summary += tmpstr;
-	  summary += "<br>";
-	  summary += biblioteq_misc_functions::getColumnString
-	    (ui.table, i, ui.table->columnNumber("Publisher"));
-	  summary += "<br>";
-	}
 
       summary += biblioteq_misc_functions::getAbstractInfo(oid, type, m_db);
       summary += "<br>";
@@ -4109,9 +4064,7 @@ void biblioteq::slotPopulateMembersBrowser(void)
     "LEFT JOIN item_borrower ib3 ON "
     "member.memberid = ib3.memberid AND ib3.type = 'Journal' "
     "LEFT JOIN item_borrower ib4 ON "
-    "member.memberid = ib4.memberid AND ib4.type = 'Magazine' "
-    "LEFT JOIN item_borrower ib5 ON "
-    "member.memberid = ib5.memberid AND ib5.type = 'Video Game' ";
+    "member.memberid = ib4.memberid AND ib4.type = 'Magazine' ";
 
   if(bb.filterBox->isChecked())
     {

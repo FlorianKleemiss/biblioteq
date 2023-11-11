@@ -2300,8 +2300,7 @@ int biblioteq::populateTable(const int search_type_arg,
      typefilter == "Grey Literature" ||
      typefilter == "Journals" ||
      typefilter == "Magazines" ||
-     typefilter == "Photograph Collections" ||
-     typefilter == "Video Games")
+     typefilter == "Photograph Collections")
     dateFormat = publicationDateFormat
       (QString(typefilter).remove(' ').toLower());
 
@@ -3525,26 +3524,18 @@ void biblioteq::slotSearchBasic(void)
 	  "grey_literature.type, "
 	  "grey_literature.myoid, "
 	  "grey_literature.front_cover ";
-      else
+      else{
 	str += "GROUP BY "
 	  "photograph_collection.title, "
 	  "photograph_collection.id, "
 	  "photograph_collection.location, "
 	  "photograph_collection.accession_number, "
 	  "photograph_collection.type, "
-	  "photograph_collection.myoid, "
-	  "photograph_collection.image_scaled ";
+      "photograph_collection.myoid, "
+           "photograph_collection.image_scaled ";
+      }
 
-      if(type == "Video Game")
-	{
-	  str = str.replace("pdate", "rdate");
-	  str = str.replace("category", "genre");
-	}
-
-      if(type != "Video Game")
 	str += "UNION ALL ";
-      else
-	str += " ";
 
       searchstr += str;
     }

@@ -1433,8 +1433,7 @@ void biblioteq::prepareFilter(void)
 	       << "Grey Literature"
 	       << "Journals"
 	       << "Magazines"
-	       << "Photograph Collections"
-	       << "Video Games";
+           << "Photograph Collections";
       tmplist2 << tr("All")
 	       << tr("All Available")
 	       << tr("All Overdue")
@@ -1443,8 +1442,7 @@ void biblioteq::prepareFilter(void)
 	       << tr("Grey Literature")
 	       << tr("Journals")
 	       << tr("Magazines")
-	       << tr("Photograph Collections")
-	       << tr("Video Games");
+	       << tr("Photograph Collections");
     }
   else if(m_roles.contains("administrator") ||
 	  m_roles.contains("circulation"))
@@ -1458,8 +1456,7 @@ void biblioteq::prepareFilter(void)
 	       << "Grey Literature"
 	       << "Journals"
 	       << "Magazines"
-	       << "Photograph Collections"
-	       << "Video Games";
+	       << "Photograph Collections";
       tmplist2 << tr("All")
 	       << tr("All Available")
 	       << tr("All Overdue")
@@ -1469,8 +1466,7 @@ void biblioteq::prepareFilter(void)
 	       << tr("Grey Literature")
 	       << tr("Journals")
 	       << tr("Magazines")
-	       << tr("Photograph Collections")
-	       << tr("Video Games");
+           << tr("Photograph Collections");
     }
   else
     {
@@ -1484,16 +1480,14 @@ void biblioteq::prepareFilter(void)
 		   << "Grey Literature"
 		   << "Journals"
 		   << "Magazines"
-		   << "Photograph Collections"
-		   << "Video Games";
+           << "Photograph Collections";
 	  tmplist2 << tr("All")
 		   << tr("All Available")
 		   << tr("Books")
 		   << tr("Grey Literature")
 		   << tr("Journals")
 		   << tr("Magazines")
-		   << tr("Photograph Collections")
-		   << tr("Video Games");
+           << tr("Photograph Collections");
 	}
       else
 	{
@@ -1506,8 +1500,7 @@ void biblioteq::prepareFilter(void)
 		   << "Grey Literature"
 		   << "Journals"
 		   << "Magazines"
-		   << "Photograph Collections"
-		   << "Video Games";
+           << "Photograph Collections";
 	  tmplist2 << tr("All")
 		   << tr("All Available")
 		   << tr("All Overdue")
@@ -1517,8 +1510,7 @@ void biblioteq::prepareFilter(void)
 		   << tr("Grey Literature")
 		   << tr("Journals")
 		   << tr("Magazines")
-		   << tr("Photograph Collections")
-		   << tr("Video Games");
+           << tr("Photograph Collections");
 	}
     }
 
@@ -1575,8 +1567,7 @@ void biblioteq::prepareRequestToolButton(const QString &typefilter)
 	       typefilter == "Grey Literature" ||
 	       typefilter == "Books" ||
 	       typefilter == "Journals" ||
-	       typefilter == "Magazines" ||
-	       typefilter == "Video Games"))
+           typefilter == "Magazines"))
 	{
 	  ui.actionRequests->setData(RequestActionItems::REQUEST_SELECTED);
 	  ui.actionRequests->setEnabled(true);
@@ -1774,7 +1765,6 @@ void biblioteq::resetMembersBrowser(void)
   list.append(tr("Grey Literatures Reserved"));
   list.append(tr("Journals Reserved"));
   list.append(tr("Magazines Reserved"));
-  list.append(tr("Video Games Reserved"));
   list.append(tr("Total Reserved"));
   m_bbColumnHeaderIndexes.append("Member ID");
   m_bbColumnHeaderIndexes.append("First Name");
@@ -1790,7 +1780,6 @@ void biblioteq::resetMembersBrowser(void)
   m_bbColumnHeaderIndexes.append("Grey Literatures Reserved");
   m_bbColumnHeaderIndexes.append("Journals Reserved");
   m_bbColumnHeaderIndexes.append("Magazines Reserved");
-  m_bbColumnHeaderIndexes.append("Video Games Reserved");
   m_bbColumnHeaderIndexes.append("Total Reserved");
   bb.table->setColumnCount(list.size());
   bb.table->setHorizontalHeaderLabels(list);
@@ -3124,12 +3113,12 @@ void biblioteq::slotInsertMag(void)
 void biblioteq::slotInsertPhotograph(void)
 {
   QString id("");
-  biblioteq_photographcollection *photograph = nullptr;
+  biblioteq_photographcollection *photograph_collection = nullptr;
 
   m_idCt += 1;
   id = QString("insert_%1").arg(m_idCt);
-  photograph = new biblioteq_photographcollection(this, id, QModelIndex());
-  photograph->insert();
+  photograph_collection = new biblioteq_photographcollection(this, id, QModelIndex());
+  photograph_collection->insert();
 }
 
 void biblioteq::slotLanguageChanged(void)
@@ -3547,9 +3536,6 @@ void biblioteq::slotPrintReserved(void)
     toInt() +
     biblioteq_misc_functions::getColumnString
     (bb.table, row, m_bbColumnHeaderIndexes.indexOf("Magazines Reserved")).
-    toInt() +
-    biblioteq_misc_functions::getColumnString
-    (bb.table, row, m_bbColumnHeaderIndexes.indexOf("Video Games Reserved")).
     toInt();
   memberid = biblioteq_misc_functions::getColumnString
     (bb.table, row, m_bbColumnHeaderIndexes.indexOf("Member ID"));
