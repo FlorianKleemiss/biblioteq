@@ -27,9 +27,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-551</y>
+        <y>-542</y>
         <width>516</width>
-        <height>1349</height>
+        <height>1348</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -196,16 +196,6 @@ Catalogue</string>
            </property>
           </widget>
          </item>
-         <item row="10" column="1">
-          <widget class="QDateEdit" name="creation_date_original_item">
-           <property name="displayFormat">
-            <string>yyyy</string>
-           </property>
-           <property name="calendarPopup">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
          <item row="12" column="0">
           <widget class="QLabel" name="label_20">
            <property name="text">
@@ -293,16 +283,6 @@ Place of Storage</string>
           <widget class="QLineEdit" name="page_number_item">
            <property name="placeholderText">
             <string>Page Number</string>
-           </property>
-          </widget>
-         </item>
-         <item row="9" column="1">
-          <widget class="QDateEdit" name="creation_date_item">
-           <property name="displayFormat">
-            <string>yyyy</string>
-           </property>
-           <property name="calendarPopup">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -560,6 +540,20 @@ Place of Storage</string>
            </property>
            <property name="wordWrap">
             <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QLineEdit" name="creation_date_original_item">
+           <property name="placeholderText">
+            <string>Creation Date of the Original</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QLineEdit" name="creation_date_item">
+           <property name="placeholderText">
+            <string>Creation Date</string>
            </property>
           </widget>
          </item>

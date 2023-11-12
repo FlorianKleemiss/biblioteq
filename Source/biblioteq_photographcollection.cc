@@ -49,7 +49,7 @@ biblioteq_photographcollection::biblioteq_photographcollection
   m_parentWid = parentArg;
   photo.setupUi(m_photo_diag);
   //photo.quantity->setMaximum(static_cast<int> (biblioteq::Limits::QUANTITY));
-  photo.thumbnail_item->enableDoubleClickResize(false);
+  photo.thumbnail_item->enableDoubleClickResize(true);
   pc.graphicsView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(pc.graphicsView,
       SIGNAL(customContextMenuRequested(QPoint)),
@@ -1024,8 +1024,8 @@ void biblioteq_photographcollection::slotAddItem(void)
   photo.title_item->clear();
   photo.title_old_item->clear();
   photo.executing_artist_item->clear();
-  photo.creation_date_item->setDate(QDate::fromString("2000","yyyy"));
-  photo.creation_date_original_item->setDate(QDate::fromString("2000","yyyy"));
+  photo.creation_date_item->clear();
+  photo.creation_date_original_item->clear();
   photo.technique_item->clear();
   photo.title_original_picture_item->clear();
   photo.title_collection_item->setPlainText(pc.title_collection->toPlainText());
@@ -2033,11 +2033,11 @@ void biblioteq_photographcollection::slotInsertItem(void)
   query.bindValue(1, m_oid);
   query.bindValue(2, photo.title_item->text());
   query.bindValue(3, photo.executing_artist_item->toPlainText());
-  query.bindValue(4, photo.creation_date_item->date().toString("yyyy"));
-  query.bindValue(5, photo.creation_date_original_item->date().toString("yyyy"));
-  query.bindValue(6, photo.technique_item->text());
+  query.bindValue(4, photo.creation_date_item->text().trimmed());
+  query.bindValue(5, photo.creation_date_original_item->text().trimmed());
+  query.bindValue(6, photo.technique_item->text().trimmed());
   query.bindValue(7, photo.title_original_picture_item->toPlainText());
-  query.bindValue(8, photo.based_on_artist_item->text());
+  query.bindValue(8, photo.based_on_artist_item->text().trimmed());
   query.bindValue(9, photo.title_old_item->text().trimmed());
   query.bindValue(10, photo.delivery_number_item->text().trimmed());
   query.bindValue(11, photo.notes_item->toPlainText().trimmed());
@@ -2545,12 +2545,12 @@ void biblioteq_photographcollection::slotSceneSelectionChanged(void)
             else if(fieldname == "creation_date")
             {
                 pc.creation_date_item->setText(var.toString().trimmed());
-                photo.creation_date_item->setDate(QDate::fromString(var.toString().trimmed(),"yyyy"));
+                photo.creation_date_item->setText(var.toString().trimmed());
             }
             else if(fieldname == "creation_date_original")
             {
                 pc.creation_date_original_item->setText(var.toString().trimmed());
-                photo.creation_date_original_item->setDate(QDate::fromString(var.toString().trimmed(),"yyyy"));
+                photo.creation_date_original_item->setText(var.toString().trimmed());
             }
             else if(fieldname == "technique")
             {
@@ -2834,12 +2834,12 @@ void biblioteq_photographcollection::slotUpdateItem(void)
 		"WHERE collection_oid = ? AND myoid = ?");
   query.bindValue(0, photo.id_item->text());
   query.bindValue(1, photo.title_item->text());
-  query.bindValue(2, photo.executing_artist_item->toPlainText());
-  query.bindValue(3, photo.creation_date_item->date().toString("yyyy"));
-  query.bindValue(4, photo.creation_date_original_item->date().toString("yyyy"));
-  query.bindValue(5, photo.technique_item->text());
-  query.bindValue(6, photo.title_original_picture_item->toPlainText());
-  query.bindValue(7, photo.based_on_artist_item->text());
+  query.bindValue(2, photo.executing_artist_item->toPlainText().trimmed());
+  query.bindValue(3, photo.creation_date_item->text().trimmed());
+  query.bindValue(4, photo.creation_date_original_item->text().trimmed());
+  query.bindValue(5, photo.technique_item->text().trimmed());
+  query.bindValue(6, photo.title_original_picture_item->toPlainText().trimmed());
+  query.bindValue(7, photo.based_on_artist_item->text().trimmed());
   query.bindValue(8, photo.title_old_item->text().trimmed());
   query.bindValue(9, photo.delivery_number_item->text().trimmed());
   query.bindValue(10, photo.notes_item->toPlainText().trimmed());
@@ -2937,18 +2937,18 @@ void biblioteq_photographcollection::slotUpdateItem(void)
 	}
 
       QApplication::restoreOverrideCursor();
-      pc.id_item->setText(photo.id_item->text());
-      pc.title_old_item->setText(photo.title_item->text());
+      pc.id_item->setText(photo.id_item->text().trimmed());
+      pc.title_old_item->setText(photo.title_item->text().trimmed());
       pc.executing_artist_item->setText(photo.executing_artist_item->toPlainText());
-      pc.creation_date_item->setText(photo.creation_date_item->date().toString("yyyy"));
-      pc.technique_item->setText(photo.technique_item->text());
-      pc.notes_item->setText(photo.notes_item->toPlainText());
-      pc.signed_item->setText(photo.signed_item->text());
-      pc.format_item->setText(photo.format_item->toPlainText());
+      pc.creation_date_item->setText(photo.creation_date_item->text().trimmed());
+      pc.technique_item->setText(photo.technique_item->text().trimmed());
+      pc.notes_item->setText(photo.notes_item->toPlainText().trimmed());
+      pc.signed_item->setText(photo.signed_item->text().trimmed());
+      pc.format_item->setText(photo.format_item->toPlainText().trimmed());
       pc.thumbnail_item->setImage(photo.thumbnail_item->m_image);
-      pc.creation_date_item->setText(photo.creation_date_original_item->date().toString("yyyy"));
-      pc.title_old_item->setText(photo.title_original_picture_item->toPlainText());
-      pc.based_on_artist_item->setText(photo.based_on_artist_item->text());
+      pc.creation_date_item->setText(photo.creation_date_original_item->text().trimmed());
+      pc.title_old_item->setText(photo.title_original_picture_item->toPlainText().trimmed());
+      pc.based_on_artist_item->setText(photo.based_on_artist_item->text().trimmed());
       pc.title_old_item->setText(photo.title_old_item->text().trimmed());
       pc.delivery_number_item->setText(photo.delivery_number_item->text().trimmed());
       pc.printer_item->setText(photo.printer_item->text().trimmed());
