@@ -59,10 +59,10 @@ biblioteq_photographcollection::biblioteq_photographcollection
   pc.graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
   pc.graphicsView->setRubberBandSelectionMode(Qt::IntersectsItemShape);
 
-  if(photographsPerPage() != -1) // Unlimited.
-    pc.graphicsView->setSceneRect(0, 0,
-				  5 * 150,
-				  photographsPerPage() / 5 * 200 + 15);
+  //if(photographsPerPage() != -1) // Unlimited.
+  //  pc.graphicsView->setSceneRect(0, 0,
+//				  5 * 150,
+//				  photographsPerPage() / 5 * 200 + 15);
 
   pc.thumbnail_item->setReadOnly(true);
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -156,9 +156,9 @@ biblioteq_photographcollection::biblioteq_photographcollection
   //if(pc.location->findText(biblioteq::s_unknown) == -1)
   //  pc.location->addItem(biblioteq::s_unknown);
 
-  if(m_parentWid)
-    resize(qRound(0.95 * m_parentWid->size().width()),
-	   qRound(0.95 * m_parentWid->size().height()));
+  //if(m_parentWid)
+  //  resize(qRound(0.95 * m_parentWid->size().width()),
+//	   qRound(0.95 * m_parentWid->size().height()));
 
 #ifdef Q_OS_MACOS
   foreach(auto tool_button, findChildren<QToolButton *> ())
@@ -625,9 +625,9 @@ void biblioteq_photographcollection::loadPhotographFromItemInNewWindow
 	      ui.view,
           SLOT(slotSave()));
       connect(ui.view_size,
-          SIGNAL(currentIndexChanged(QString)),
+          SIGNAL(currentIndexChanged(int)),
 	      this,
-          SLOT(slotImageViewSizeChanged(QString)));
+          SLOT(slotImageViewSizeChanged(int)));
       ui.save->setVisible(m_engWindowTitle.contains("Modify"));
 
       auto scene = new QGraphicsScene(mainWindow);
@@ -903,11 +903,10 @@ void biblioteq_photographcollection::search(const QString &field,
 
 void biblioteq_photographcollection::setSceneRect(const int size)
 {
-  if(size > 0 && (size / 250 <= std::numeric_limits<int>::max()))
+  if(size > 0 && (size * 250 + 15 <= std::numeric_limits<int>::max()))
     pc.graphicsView->setSceneRect(0, 0, 5 * 150, size * 250 + 15);
   else
-    pc.graphicsView->setSceneRect
-      (0, 0, 5 * 150, std::numeric_limits<int>::max());
+    pc.graphicsView->setSceneRect(0, 0, 5 * 150, std::numeric_limits<int>::max());
 }
 
 void biblioteq_photographcollection::showPhotographs(const int& page)
@@ -1719,7 +1718,7 @@ void biblioteq_photographcollection::slotGo(void)
 }
 
 void biblioteq_photographcollection::slotImageViewSizeChanged
-(const QString &text)
+(const int &text)
 {
   auto comboBox = qobject_cast<QComboBox *> (sender());
 
@@ -1756,7 +1755,7 @@ void biblioteq_photographcollection::slotImageViewSizeChanged
       if(image.loadFromData(item->data(1).toByteArray()))
       {
         QSize size;
-        auto percent = QString(text).remove("%").toInt();
+        auto percent = comboBox->itemText(text).remove("%").toInt();
 
         if(percent == 0)
         {
@@ -2708,9 +2707,9 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow
               ui.view,
               SLOT(slotSave()));
       connect(ui.view_size,
-              SIGNAL(currentIndexChanged(QString)),
+              SIGNAL(currentIndexChanged(int)),
               this,
-              SLOT(slotImageViewSizeChanged(QString)));
+              SLOT(slotImageViewSizeChanged(int)));
       ui.save->setVisible(m_engWindowTitle.contains("Modify"));
 
       auto scene = new QGraphicsScene(mainWindow);

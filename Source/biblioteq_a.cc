@@ -2066,7 +2066,10 @@ void biblioteq::slotAbout(void)
 #endif
 	"Qt version %6 (runtime %7).<br>"
 	"SQLite version %9.<br>"
-	"YAZ version %8.<br><br>"
+    "This is a heavily modified version of the original Biblioteq Version,<br>"
+    "It was created for the use during a PhD Thesis on lithography."
+    "Modifications performed by Florian Kleemiss, see "
+    "<a href=\"https://github.com/FlorianKleemiss/biblioteq/tree/Strixner_Project\">https://github.com/FlorianKleemiss/biblioteq/tree/Strixner_Project<\a> for changes details."
 	"Please visit <a href=\"https://biblioteq.sourceforge.io\">"
 	"https://biblioteq.sourceforge.io</a> or "
 	"<a href=\"https://textbrowser.github.io/biblioteq/\">"
@@ -2079,7 +2082,7 @@ void biblioteq::slotAbout(void)
 #ifdef BIBLIOTEQ_POPPLER_VERSION_DEFINED
      arg(POPPLER_VERSION).
 #else
-     arg(tr("Poppler version is not available.")).
+     arg(tr("0.1.")).
 #endif
      arg(QT_VERSION_STR).
      arg(qversion).

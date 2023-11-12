@@ -3326,11 +3326,11 @@ void biblioteq::slotDisplaySummary(void)
 
       summary += tmpstr;
 
-      summary += "<br>Creation Date: ";
+      summary += "<br>" + tr("Creation Date: ");
       tmpstr = biblioteq_misc_functions::getColumnString
           (ui.table, i, ui.table->columnNumber("Creation Date"));
       if(tmpstr.isEmpty())
-        tmpstr = "Unknown";
+        tmpstr = tr("Unknown");
       tmpstr += "<br>";
       summary += tmpstr;
 	  tmpstr = biblioteq_misc_functions::getColumnString

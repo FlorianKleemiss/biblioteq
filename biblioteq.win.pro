@@ -97,6 +97,7 @@ qtlibraries.files = $$[QT_INSTALL_BINS]\\Qt6Concurrent.dll \
                     $$[QT_INSTALL_BINS]\\Qt6Xml.dll \
                     $$[QT_INSTALL_BINS]\\libgcc_s_dw2-1.dll \
                     $$[QT_INSTALL_BINS]\\libstdc++-6.dll \
+                    $$[QT_INSTALL_BINS]\\libgcc_s_seh-1.dll \
                     $$[QT_INSTALL_BINS]\\libwinpthread-1.dll
 qtlibraries.path = release\\.
 sql1.files = SQL\\README*
