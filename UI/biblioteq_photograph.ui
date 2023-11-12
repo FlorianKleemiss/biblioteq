@@ -197,7 +197,14 @@ Catalogue</string>
           </widget>
          </item>
          <item row="10" column="1">
-          <widget class="QDateEdit" name="creation_date_original_item"/>
+          <widget class="QDateEdit" name="creation_date_original_item">
+           <property name="displayFormat">
+            <string>yyyy</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="12" column="0">
           <widget class="QLabel" name="label_20">
@@ -290,7 +297,14 @@ Place of Storage</string>
           </widget>
          </item>
          <item row="9" column="1">
-          <widget class="QDateEdit" name="creation_date_item"/>
+          <widget class="QDateEdit" name="creation_date_item">
+           <property name="displayFormat">
+            <string>yyyy</string>
+           </property>
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="label_7">
@@ -499,7 +513,7 @@ Place of Storage</string>
           </widget>
          </item>
          <item row="12" column="1">
-          <widget class="QTextEdit" name="invernotry_number_item">
+          <widget class="QTextEdit" name="inventory_number_item">
            <property name="placeholderText">
             <string>Inventory Number/ Place of Storage of the Original</string>
            </property>

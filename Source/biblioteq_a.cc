@@ -735,6 +735,7 @@ biblioteq::biblioteq(void):QMainWindow()
   ui.actionConfigureAdministratorPrivileges->setEnabled(false);
   ui.graphicsView->scene()->clear();
   ui.summary->setVisible(false);
+  ui.about->setVisible(false);
   ui.table->resetTable(dbUserName(), m_lastCategory, m_roles);
 
   if(m_otheroptions->showMainTableImages())

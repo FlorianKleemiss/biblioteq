@@ -4,6 +4,7 @@
 #include "biblioteq_item.h"
 #include "ui_biblioteq_photograph.h"
 #include "ui_biblioteq_photographinfo.h"
+#include "ui_biblioteq_photographcompare.h"
 
 class biblioteq_bgraphicsscene;
 
@@ -29,6 +30,7 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   QString m_itemOid;
   Ui_pcDialog pc;
   Ui_photographDialog photo;
+  Ui_photographCompare p_compare;
   biblioteq_bgraphicsscene *m_scene;
   bool verifyItemFields(void);
   int photographsPerPage(void);
@@ -37,11 +39,18 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   void loadPhotographFromItem(QGraphicsScene *scene,
 			      QGraphicsPixmapItem *item,
 			      const int percent);
+  void loadTwoPhotographFromItem(QGraphicsScene *scene1,
+                              QGraphicsScene *scene2,
+                              QGraphicsPixmapItem *item1,
+                              QGraphicsPixmapItem *item2,
+                              const int percent);
   void loadPhotographFromItemInNewWindow(QGraphicsPixmapItem *item);
+  void loadcompareFromItemInNewWindow(QGraphicsPixmapItem *item1, QGraphicsPixmapItem *item2);
   void setSceneRect(const int size);
-  void showPhotographs(const int page);
+  void showPhotographs(const int &page);
   void storeData(void);
   void updateTablePhotographCount(const int count);
+  bool eventFilter(QObject *object, QEvent *event);
 
  private slots:
   void slotAddItem(void);
@@ -55,7 +64,7 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   void slotImportItems(void);
   void slotInsertItem(void);
   void slotModifyItem(void);
-  void slotPageChanged(const QString &text);
+  void slotPageChanged(const int &nr);
   void slotPrint(void);
   void slotQuery(void);
   void slotReset(void);
@@ -65,6 +74,7 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   void slotSceneSelectionChanged(void);
   void slotSelectAll(void);
   void slotSelectImage(void);
+  void slotShowCompare(void);
   void slotUpdateItem(void);
   void slotViewContextMenu(const QPoint &pos);
   void slotViewNextPhotograph(void);

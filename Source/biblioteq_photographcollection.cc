@@ -3,7 +3,7 @@
 #include "biblioteq_graphicsitempixmap.h"
 #include "biblioteq_photographcollection.h"
 #include "ui_biblioteq_photographview.h"
-//#include "ui_biblioteq_photographcompare.h"
+#include "ui_biblioteq_photographcompare.h"
 
 #include <QFileDialog>
 #include <QScrollBar>
@@ -38,12 +38,12 @@ biblioteq_photographcollection::biblioteq_photographcollection
   setQMain(this);
   //pc.creation_date_item->setDisplayFormat (qmain->publicationDateFormat("photographcollections"));
   //pc.quantity->setMaximum(static_cast<int> (biblioteq::Limits::QUANTITY));
-  pc.thumbnail_item->enableDoubleClickResize(false);
+  pc.thumbnail_item->enableDoubleClickResize(true);
   m_scene = new biblioteq_bgraphicsscene(pc.graphicsView);
   connect(m_scene,
-	  SIGNAL(selectionChanged(void)),
+      SIGNAL(selectionChanged()),
 	  this,
-	  SLOT(slotSceneSelectionChanged(void)));
+      SLOT(slotSceneSelectionChanged()));
   m_oid = oidArg;
   m_isQueryEnabled = false;
   m_parentWid = parentArg;
@@ -52,9 +52,9 @@ biblioteq_photographcollection::biblioteq_photographcollection
   photo.thumbnail_item->enableDoubleClickResize(false);
   pc.graphicsView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(pc.graphicsView,
-	  SIGNAL(customContextMenuRequested(const QPoint &)),
+      SIGNAL(customContextMenuRequested(QPoint)),
 	  this,
-	  SLOT(slotViewContextMenu(const QPoint &)));
+      SLOT(slotViewContextMenu(QPoint)));
   pc.graphicsView->setScene(m_scene);
   pc.graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
   pc.graphicsView->setRubberBandSelectionMode(Qt::IntersectsItemShape);
@@ -83,51 +83,53 @@ biblioteq_photographcollection::biblioteq_photographcollection
   updateFont(QApplication::font(), qobject_cast<QWidget *> (this));
   m_photo_diag->setWindowModality(Qt::WindowModal);
   updateFont(QApplication::font(), qobject_cast<QWidget *> (m_photo_diag));
-  connect(pc.select_image_collection, SIGNAL(clicked(void)),
-          this, SLOT(slotSelectImage(void)));
-  connect(photo.select_image_item, SIGNAL(clicked(void)),
-          this, SLOT(slotSelectImage(void)));
-  connect(pc.okButton, SIGNAL(clicked(void)),
-          this, SLOT(slotGo(void)));
-  connect(pc.cancelButton, SIGNAL(clicked(void)),
-          this, SLOT(slotCancel(void)));
-  connect(pc.importItems, SIGNAL(clicked(void)),
-          this, SLOT(slotImportItems(void)));
-  connect(pc.printButton, SIGNAL(clicked(void)),
-          this, SLOT(slotPrint(void)));
-  connect(pc.addItemButton, SIGNAL(clicked(void)),
-          this, SLOT(slotAddItem(void)));
-  connect(photo.cancelButton, SIGNAL(clicked(void)),
-          this, SLOT(slotClosePhoto(void)));
-  connect(menu1->addAction(tr("Reset Collection Image")), SIGNAL(triggered(void)),
-          this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection ID")), SIGNAL(triggered(void)),
-          this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection Title")), SIGNAL(triggered(void)),
-          this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection Location")), SIGNAL(triggered(void)),
-          this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection About")), SIGNAL(triggered(void)),
-          this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Collection Notes")), SIGNAL(triggered(void)),
-          this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Accession Number")), SIGNAL(triggered(void)),
-          this, SLOT(slotReset(void)));
-  connect(menu2->addAction(tr("&All...")), SIGNAL(triggered(void)),
-          this, SLOT(slotExportPhotographs(void)));
-  connect(menu2->addAction(tr("&Current Page...")), SIGNAL(triggered(void)),
-          this, SLOT(slotExportPhotographs(void)));
-  connect(menu2->addAction(tr("&Selected...")), SIGNAL(triggered(void)),
-          this, SLOT(slotExportPhotographs(void)));
-  connect(pc.page, SIGNAL(currentIndexChanged(const QString &)),
-          this, SLOT(slotPageChanged(const QString &)));
-  connect(pc.graphicsView->scene(), SIGNAL(itemDoubleClicked(void)),
-      this, SLOT(slotModifyItem(void)));
+  connect(pc.select_image_collection, SIGNAL(clicked()),
+          this, SLOT(slotSelectImage()));
+  connect(photo.select_image_item, SIGNAL(clicked()),
+          this, SLOT(slotSelectImage()));
+  connect(pc.okButton, SIGNAL(clicked()),
+          this, SLOT(slotGo()));
+  connect(pc.cancelButton, SIGNAL(clicked()),
+          this, SLOT(slotCancel()));
+  connect(pc.importItems, SIGNAL(clicked()),
+          this, SLOT(slotImportItems()));
+  connect(pc.printButton, SIGNAL(clicked()),
+          this, SLOT(slotPrint()));
+  connect(pc.addItemButton, SIGNAL(clicked()),
+          this, SLOT(slotAddItem()));
+  connect(photo.cancelButton, SIGNAL(clicked()),
+          this, SLOT(slotClosePhoto()));
+  connect(menu1->addAction(tr("Reset Collection Image")), SIGNAL(triggered()),
+          this, SLOT(slotReset()));
+  connect(menu1->addAction(tr("Reset Collection ID")), SIGNAL(triggered()),
+          this, SLOT(slotReset()));
+  connect(menu1->addAction(tr("Reset Collection Title")), SIGNAL(triggered()),
+          this, SLOT(slotReset()));
+  connect(menu1->addAction(tr("Reset Collection Location")), SIGNAL(triggered()),
+          this, SLOT(slotReset()));
+  connect(menu1->addAction(tr("Reset Collection About")), SIGNAL(triggered()),
+          this, SLOT(slotReset()));
+  connect(menu1->addAction(tr("Reset Collection Notes")), SIGNAL(triggered()),
+          this, SLOT(slotReset()));
+  connect(menu1->addAction(tr("Reset Accession Number")), SIGNAL(triggered()),
+          this, SLOT(slotReset()));
+  connect(menu2->addAction(tr("&All...")), SIGNAL(triggered()),
+          this, SLOT(slotExportPhotographs()));
+  connect(menu2->addAction(tr("&Current Page...")), SIGNAL(triggered()),
+          this, SLOT(slotExportPhotographs()));
+  connect(menu2->addAction(tr("&Selected...")), SIGNAL(triggered()),
+          this, SLOT(slotExportPhotographs()));
+  connect(pc.page, SIGNAL(currentIndexChanged(int)),
+          this, SLOT(slotPageChanged(int)));
+  connect(pc.graphicsView->scene(), SIGNAL(itemDoubleClicked()),
+      this, SLOT(slotModifyItem()));
   pc.exportPhotographsToolButton->setMenu(menu2);
   connect(pc.exportPhotographsToolButton,
-	  SIGNAL(clicked(void)),
+      SIGNAL(clicked()),
 	  pc.exportPhotographsToolButton,
-	  SLOT(showMenu(void)));
+      SLOT(showMenu()));
+  connect(pc.linked_picture_button, SIGNAL(clicked()),
+          this, SLOT(slotShowCompare()));
 
   if(menu2->actions().size() >= 3)
     menu2->actions().at(2)->setEnabled(false);
@@ -181,14 +183,23 @@ biblioteq_photographcollection::biblioteq_photographcollection
   biblioteq_misc_functions::highlightWidget
     (photo.title_item, QColor(255, 248, 220));
   biblioteq_misc_functions::highlightWidget
-      (photo.executing_artist_item->viewport(), QColor(255, 248, 220));
-  biblioteq_misc_functions::highlightWidget
-    (photo.technique_item, QColor(255, 248, 220));
-  biblioteq_misc_functions::highlightWidget
-      (photo.title_original_picture_item->viewport(), QColor(255, 248, 220));
-  biblioteq_misc_functions::highlightWidget
-      (photo.title_collection_item->viewport(), QColor(255, 248, 220));
+    (photo.executing_artist_item->viewport(), QColor(255, 248, 220));
 }
+
+bool biblioteq_photographcollection::eventFilter(QObject *object, QEvent *event){
+  if ( object == photo.creation_date_item &&  ( event->type() == QEvent::Wheel )  ) {
+    return true;
+  }
+
+
+  if ( object == photo.creation_date_original_item &&  (event->type() == QEvent::Wheel )  ) {
+    return true;
+  }
+
+  // false means it should be send to target also. as in , we dont remove it.
+  // if you return true , you will take the event and widget never sees it so be carefull with that.
+  return false;
+};
 
 biblioteq_photographcollection::~biblioteq_photographcollection()
 {
@@ -231,7 +242,7 @@ bool biblioteq_photographcollection::verifyItemFields(void)
     {
       QMessageBox::critical(m_photo_diag, tr("BiblioteQ: User Error"),
 			    tr("Please complete the item's "
-			       "Creators field."));
+                   "Executing Artist(s) field."));
       QApplication::processEvents();
       photo.executing_artist_item->setFocus();
       return false;
@@ -240,41 +251,11 @@ bool biblioteq_photographcollection::verifyItemFields(void)
   str = photo.technique_item->text().trimmed();
   photo.technique_item->setText(str);
 
-  if(photo.technique_item->text().isEmpty())
-    {
-      QMessageBox::critical(m_photo_diag, tr("BiblioteQ: User Error"),
-			    tr("Please complete the item's "
-			       "Medium field."));
-      QApplication::processEvents();
-      photo.technique_item->setFocus();
-      return false;
-    }
-
   str = photo.title_original_picture_item->toPlainText().trimmed();
     photo.title_original_picture_item->setPlainText(str);
 
-  if(photo.title_original_picture_item->toPlainText().isEmpty())
-    {
-      QMessageBox::critical(m_photo_diag, tr("BiblioteQ: User Error"),
-			    tr("Please complete the item's "
-			       "Reproduction Number field."));
-      QApplication::processEvents();
-      photo.title_original_picture_item->setFocus();
-      return false;
-    }
-
   str = photo.title_collection_item->toPlainText().trimmed();
     photo.title_collection_item->setPlainText(str);
-
-  if(photo.title_collection_item->toPlainText().isEmpty())
-    {
-      QMessageBox::critical(m_photo_diag, tr("BiblioteQ: User Error"),
-			    tr("Please complete the item's "
-			       "Copyright field."));
-      QApplication::processEvents();
-      photo.title_collection_item->setFocus();
-      return false;
-    }
   
   str = photo.place_of_storage_item->text().trimmed();
     photo.place_of_storage_item->setText(str);
@@ -458,15 +439,146 @@ void biblioteq_photographcollection::loadPhotographFromItem
       if(view)
 	  {
 	    connect(view,
-            SIGNAL(save(const QImage &, const QString &, const qint64)),
+            SIGNAL(save(QImage,QString,qint64)),
 		    this,
-            SLOT(slotSaveRotatedImage(const QImage &, const QString &, const qint64)),
+            SLOT(slotSaveRotatedImage(QImage,QString,qint64)),
 		    Qt::UniqueConnection);
 	    view->horizontalScrollBar()->setValue(0);
 	    view->setBestFit(percent == 0);
 	    view->setImage(image, format, item->data(0).toLongLong());
 	    view->verticalScrollBar()->setValue(0);
 	  }
+    }
+  }
+
+  QApplication::restoreOverrideCursor();
+}
+
+void biblioteq_photographcollection::loadTwoPhotographFromItem
+    (QGraphicsScene *scene1, QGraphicsScene *scene2, QGraphicsPixmapItem *item1, QGraphicsPixmapItem *item2, const int percent)
+{
+  if(!item1 || !item2 || !scene1 || !scene1->views().value(0) || !scene2 || !scene2->views().value(0))
+    return;
+
+  QSqlQuery query(qmain->getDB());
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  query.setForwardOnly(true);
+  query.prepare("SELECT image, image_original FROM "
+                "photograph WHERE "
+                "collection_oid = ? AND "
+                "myoid = ?");
+  query.bindValue(0, m_oid);
+  query.bindValue(1, item1->data(0).toLongLong());
+
+  if(query.exec())
+  {
+    if(query.next())
+    {
+      QImage image1, image2;
+      auto bytes1(QByteArray::fromBase64(query.value(0).toByteArray()));
+      auto bytes2(QByteArray::fromBase64(query.value(1).toByteArray()));
+      auto format1(biblioteq_misc_functions::imageFormatGuess(bytes1));
+      auto format2(biblioteq_misc_functions::imageFormatGuess(bytes2));
+
+      image1.loadFromData(bytes1);
+      image2.loadFromData(bytes2);
+
+      if(image1.isNull())
+      {
+        bytes1 = query.value(0).toByteArray();
+        image1.loadFromData(bytes1);
+      }
+      if(image2.isNull())
+      {
+        bytes2 = query.value(1).toByteArray();
+        image2.loadFromData(bytes2);
+      }
+
+      if(image1.isNull())
+        image1 = QImage(":/no_image.png");
+      if(image2.isNull())
+        image2 = QImage(":/no_image.png");
+
+      QSize size1, size2;
+
+      if(percent == 0){
+        size1 = scene1->views().value(0)->size();
+        size2 = scene2->views().value(0)->size();
+      }
+      else
+      {
+        size1 = image1.size();
+        size1.setHeight((percent * size1.height()) / 100);
+        size1.setWidth((percent * size1.width()) / 100);
+        size2 = image2.size();
+        size2.setHeight((percent * size2.height()) / 100);
+        size2.setWidth((percent * size2.width()) / 100);
+      }
+
+      if(!image1.isNull())
+        image1 = image1.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+      if(!image2.isNull())
+        image2 = image2.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+
+      QGraphicsPixmapItem *pixmapItem1 = nullptr;
+
+      if(!scene1->items().isEmpty())
+      {
+        pixmapItem1 = qgraphicsitem_cast<QGraphicsPixmapItem *> (scene1->items().at(0));
+
+        if(pixmapItem1)
+          pixmapItem1->setPixmap(QPixmap::fromImage(image1));
+      }
+      else
+        pixmapItem1 = scene1->addPixmap(QPixmap::fromImage(image1));
+
+      if(pixmapItem1)
+        pixmapItem1->setData(1, bytes1);
+
+      QGraphicsPixmapItem *pixmapItem2 = nullptr;
+
+      if(!scene1->items().isEmpty())
+      {
+        pixmapItem2 = qgraphicsitem_cast<QGraphicsPixmapItem *> (scene1->items().at(0));
+
+        if(pixmapItem2)
+          pixmapItem2->setPixmap(QPixmap::fromImage(image2));
+      }
+      else
+        pixmapItem2 = scene2->addPixmap(QPixmap::fromImage(image2));
+
+      if(pixmapItem2)
+        pixmapItem2->setData(1, bytes2);
+
+      item1->setSelected(true);
+
+      if(!scene1->items().isEmpty())
+      {
+        scene1->items().at(0)->setData(0, item1->data(0)); // myoid
+        scene1->items().at(0)->setData(2, item1->data(2)); // Navigation.
+      }
+
+      scene1->setSceneRect(scene1->itemsBoundingRect());
+
+      auto view1 = qobject_cast<biblioteq_photograph_view *> (scene1->views().value(0));
+      auto view2 = qobject_cast<biblioteq_photograph_view *> (scene2->views().value(0));
+
+      if(view1)
+      {
+        view1->horizontalScrollBar()->setValue(0);
+        view1->setBestFit(percent == 0);
+        view1->setImage(image1, format1, item1->data(0).toLongLong());
+        view1->verticalScrollBar()->setValue(0);
+      }
+      if(view2)
+      {
+        view2->horizontalScrollBar()->setValue(0);
+        view2->setBestFit(percent == 0);
+        view2->setImage(image2, format2, item2->data(0).toLongLong());
+        view2->verticalScrollBar()->setValue(0);
+      }
     }
   }
 
@@ -485,37 +597,37 @@ void biblioteq_photographcollection::loadPhotographFromItemInNewWindow
       mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
       ui.setupUi(mainWindow);
       connect(ui.closeButton,
-	      SIGNAL(clicked(void)),
+          SIGNAL(clicked()),
 	      mainWindow,
-	      SLOT(close(void)));
+          SLOT(close()));
       connect(ui.exportItem,
-	      SIGNAL(clicked(void)),
+          SIGNAL(clicked()),
 	      this,
-	      SLOT(slotExportItem(void)));
+          SLOT(slotExportItem()));
       connect(ui.next,
-	      SIGNAL(clicked(void)),
+          SIGNAL(clicked()),
 	      this,
-	      SLOT(slotViewNextPhotograph(void)));
+          SLOT(slotViewNextPhotograph()));
       connect(ui.previous,
-	      SIGNAL(clicked(void)),
+          SIGNAL(clicked()),
 	      this,
-	      SLOT(slotViewPreviousPhotograph(void)));
+          SLOT(slotViewPreviousPhotograph()));
       connect(ui.rotate_left,
-	      SIGNAL(clicked(void)),
+          SIGNAL(clicked()),
 	      ui.view,
-	      SLOT(slotRotateLeft(void)));
+          SLOT(slotRotateLeft()));
       connect(ui.rotate_right,
-	      SIGNAL(clicked(void)),
+          SIGNAL(clicked()),
 	      ui.view,
-	      SLOT(slotRotateRight(void)));
+          SLOT(slotRotateRight()));
       connect(ui.save,
-	      SIGNAL(clicked(void)),
+          SIGNAL(clicked()),
 	      ui.view,
-	      SLOT(slotSave(void)));
+          SLOT(slotSave()));
       connect(ui.view_size,
-	      SIGNAL(currentIndexChanged(const QString &)),
+          SIGNAL(currentIndexChanged(QString)),
 	      this,
-	      SLOT(slotImageViewSizeChanged(const QString &)));
+          SLOT(slotImageViewSizeChanged(QString)));
       ui.save->setVisible(m_engWindowTitle.contains("Modify"));
 
       auto scene = new QGraphicsScene(mainWindow);
@@ -525,8 +637,7 @@ void biblioteq_photographcollection::loadPhotographFromItemInNewWindow
       mainWindow->hide();
       scene->setProperty("view_size", ui.view->viewport()->size());
       ui.view->setScene(scene);
-      loadPhotographFromItem
-	(scene, item, ui.view_size->currentText().remove("%").toInt());
+      loadPhotographFromItem(scene, item, ui.view_size->currentText().remove("%").toInt());
       mainWindow->show();
     }
 }
@@ -542,13 +653,13 @@ void biblioteq_photographcollection::modify(const int state,
   if(state == biblioteq::EDITABLE)
     {
       disconnect(m_scene,
-		 SIGNAL(deleteKeyPressed(void)),
+         SIGNAL(deleteKeyPressed()),
 		 this,
-		 SLOT(slotDeleteItem(void)));
+         SLOT(slotDeleteItem()));
       connect(m_scene,
-	      SIGNAL(deleteKeyPressed(void)),
+          SIGNAL(deleteKeyPressed()),
 	      this,
-	      SLOT(slotDeleteItem(void)));
+          SLOT(slotDeleteItem()));
 
       if(behavior.isEmpty())
 	{
@@ -799,7 +910,7 @@ void biblioteq_photographcollection::setSceneRect(const int size)
       (0, 0, 5 * 150, std::numeric_limits<int>::max());
 }
 
-void biblioteq_photographcollection::showPhotographs(const int page)
+void biblioteq_photographcollection::showPhotographs(const int& page)
 {
   QProgressDialog progress(this);
 
@@ -903,28 +1014,35 @@ void biblioteq_photographcollection::showPhotographs(const int page)
 void biblioteq_photographcollection::slotAddItem(void)
 {
   photo.saveButton->disconnect(SIGNAL(clicked(void)));
-  connect(photo.saveButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotInsertItem(void)));
+  connect(photo.saveButton, SIGNAL(clicked()), this,
+      SLOT(slotInsertItem()));
   m_photo_diag->resize(m_photo_diag->width(),
 		       qRound(0.95 * size().height()));
   biblioteq_misc_functions::center(m_photo_diag, this);
   photo.thumbnail_item->clear();
   photo.id_item->setText(QString::number(QDateTime::currentMSecsSinceEpoch()));
-  photo.title_item->setText("N/A");
-  photo.executing_artist_item->setPlainText("N/A");
-  photo.creation_date_item->setDate(QDate::fromString("01/01/2000",
-						    "MM/dd/yyyy"));
-  //photo.quantity->setValue(1);
-  photo.technique_item->setText("N/A");
-  photo.title_original_picture_item->setPlainText("N/A");
-  photo.title_collection_item->setPlainText("N/A");
+  photo.title_item->clear();
   photo.title_old_item->clear();
+  photo.executing_artist_item->clear();
+  photo.creation_date_item->setDate(QDate::fromString("2000","yyyy"));
+  photo.creation_date_original_item->setDate(QDate::fromString("2000","yyyy"));
+  photo.technique_item->clear();
+  photo.title_original_picture_item->clear();
+  photo.title_collection_item->setPlainText(pc.title_collection->toPlainText());
+  photo.based_on_artist_item->clear();
   photo.delivery_number_item->clear();
+  photo.page_number_item->clear();
   photo.notes_item->clear();
   photo.signed_item->clear();
   photo.format_item->clear();
-  photo.scrollArea->ensureVisible(0, 0);
+  photo.technique_item->clear();
   photo.place_of_storage_item->clear();
+  photo.inventor_new_item->clear();
+  photo.inventor_old_item->clear();
+  photo.printer_item->clear();
+  photo.inventory_number_item->clear();
+  photo.keywords_item->clear();
+  photo.scrollArea->ensureVisible(0, 0);
   photo.id_item->setFocus();
   m_photo_diag->show();
 }
@@ -1428,7 +1546,7 @@ void biblioteq_photographcollection::slotGo(void)
 
 		      if(names.at(i) == "Call Number")
 			qmain->getUI().table->item(m_index->row(), i)->setText
-              (pc.executing_artist_item->text());
+              (pc.executing_artist_item->toPlainText());
 		      else if(names.at(i) == "ID" ||
 			      names.at(i) == "ID Number")
 			qmain->getUI().table->item(m_index->row(), i)->setText
@@ -1897,32 +2015,47 @@ void biblioteq_photographcollection::slotInsertItem(void)
 		  "(id, collection_oid, title, creators, pdate, "
 		  "quantity, medium, reproduction_number, "
 		  "copyright, callnumber, other_number, notes, subjects, "
-		  "format, image, image_scaled, accession_number) "
-		  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "
-		  "?, ?, ?, ?, ?, ?, ?, ?)");
+          "format, image, image_scaled, accession_number, "
+          "creators, copyright, reproduction_number) "
+          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
   else
     query.prepare("INSERT INTO photograph "
-		  "(id, collection_oid, title, creators, pdate, "
-		  "quantity, medium, reproduction_number, "
-		  "copyright, callnumber, other_number, notes, subjects, "
-		  "format, image, image_scaled, accession_number, myoid) "
-		  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "
-		  "?, ?, ?, ?, ?, ?, ?, ?, ?)");
+          "(id, collection_oid, title, executing_artist, creation_date, "
+          "creation_date_original, technique, title_original_picture, "
+          "based_on_artist, title_old, delivery_number, notes, signed, "
+          "format, printer, catalogue, inventor_new, inventor_old, inventory_number, "
+          "keywords, material, page_number, place_of_storage, image, image_scaled, "
+          "creators, copyright, reproduction_number, myoid) "
+          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
+  QString blanky(' ');
   query.bindValue(0, photo.id_item->text());
   query.bindValue(1, m_oid);
   query.bindValue(2, photo.title_item->text());
   query.bindValue(3, photo.executing_artist_item->toPlainText());
-  query.bindValue(4, photo.creation_date_item->date().toString("MM/dd/yyyy"));
-  //query.bindValue(5, photo.quantity->value());
+  query.bindValue(4, photo.creation_date_item->date().toString("yyyy"));
+  query.bindValue(5, photo.creation_date_original_item->date().toString("yyyy"));
   query.bindValue(6, photo.technique_item->text());
   query.bindValue(7, photo.title_original_picture_item->toPlainText());
-  query.bindValue(8, photo.title_collection_item->toPlainText());
+  query.bindValue(8, photo.based_on_artist_item->text());
   query.bindValue(9, photo.title_old_item->text().trimmed());
   query.bindValue(10, photo.delivery_number_item->text().trimmed());
   query.bindValue(11, photo.notes_item->toPlainText().trimmed());
   query.bindValue(12, photo.signed_item->text().trimmed());
   query.bindValue(13, photo.format_item->toPlainText().trimmed());
+  query.bindValue(14, photo.printer_item->text().trimmed());
+  query.bindValue(15, photo.catalogue_item->toPlainText().trimmed());
+  query.bindValue(16, photo.inventor_new_item->text().trimmed());
+  query.bindValue(17, photo.inventor_old_item->text().trimmed());
+  query.bindValue(18, photo.inventory_number_item->toPlainText().trimmed());
+  query.bindValue(19, photo.keywords_item->toPlainText().trimmed());
+  query.bindValue(20, photo.material_item->text().trimmed());
+  query.bindValue(21, photo.page_number_item->text().trimmed());
+  query.bindValue(22, photo.place_of_storage_item->text().trimmed());
+
+  query.bindValue(25, blanky.trimmed());
+  query.bindValue(26, blanky.trimmed());
+  query.bindValue(27, blanky.trimmed());
 
   if(!photo.thumbnail_item->m_image.isNull())
     {
@@ -1936,13 +2069,13 @@ void biblioteq_photographcollection::slotInsertItem(void)
 	{
 	  photo.thumbnail_item->m_image.save
 	    (&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
-	  query.bindValue(14, bytes.toBase64());
+      query.bindValue(23, bytes.toBase64());
 	}
       else
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	query.bindValue(14, QVariant(QMetaType(QMetaType::QByteArray)));
+    query.bindValue(23, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-	query.bindValue(14, QVariant(QVariant::ByteArray));
+    query.bindValue(23, QVariant(QVariant::ByteArray));
 #endif
 
       buffer.close();
@@ -1957,42 +2090,42 @@ void biblioteq_photographcollection::slotInsertItem(void)
 	{
 	  image.save
 	    (&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
-	  query.bindValue(15, bytes.toBase64());
+      query.bindValue(24, bytes.toBase64());
 	}
       else
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	query.bindValue(15, QVariant(QMetaType(QMetaType::QByteArray)));
+    query.bindValue(24, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-	query.bindValue(15, QVariant(QVariant::ByteArray));
+    query.bindValue(24, QVariant(QVariant::ByteArray));
 #endif
     }
   else
     {
       photo.thumbnail_item->m_imageFormat = "";
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-      query.bindValue(14, QVariant(QMetaType(QMetaType::QByteArray)));
-      query.bindValue(15, QVariant(QMetaType(QMetaType::QByteArray)));
+      query.bindValue(23, QVariant(QMetaType(QMetaType::QByteArray)));
+      query.bindValue(24, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-      query.bindValue(14, QVariant(QVariant::ByteArray));
-      query.bindValue(15, QVariant(QVariant::ByteArray));
+      query.bindValue(23, QVariant(QVariant::ByteArray));
+      query.bindValue(24, QVariant(QVariant::ByteArray));
 #endif
     }
-    
-    query.bindValue(16, photo.place_of_storage_item->text().trimmed());
 
   if(qmain->getDB().driverName() == "QSQLITE")
-    {
-      auto value = biblioteq_misc_functions::getSqliteUniqueId
-	(qmain->getDB(), errorstr);
+  {
+    auto value = biblioteq_misc_functions::getSqliteUniqueId(qmain->getDB(), errorstr);
 
-      if(errorstr.isEmpty())
-	query.bindValue(17, value);
-      else
-	qmain->addError(QString(tr("Database Error")),
+    if(errorstr.isEmpty()) {
+    query.bindValue(28, value);
+    }
+
+    else{
+    qmain->addError(QString(tr("Database Error")),
 			QString(tr("Unable to generate a unique "
 				   "integer.")),
 			errorstr);
     }
+  }
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -2001,7 +2134,11 @@ void biblioteq_photographcollection::slotInsertItem(void)
       QApplication::restoreOverrideCursor();
       qmain->addError(QString(tr("Database Error")),
 		      QString(tr("Unable to create or update the entry.")),
-		      query.lastError().text(), __FILE__, __LINE__);
+              query.lastError().text(), __FILE__, __LINE__);
+      QMessageBox msgBox;
+      auto temp = query.lastError();
+      msgBox.setText(temp.text());
+      msgBox.exec();
       goto db_rollback;
     }
   else
@@ -2028,20 +2165,29 @@ void biblioteq_photographcollection::slotInsertItem(void)
   query.bindValue(0, m_oid);
 
   if(query.exec())
+  {
     if(query.next())
-      {
-	updateTablePhotographCount(query.value(0).toInt());
+    {
+      updateTablePhotographCount(query.value(0).toInt());
 
-	auto i = photographsPerPage();
+      auto i = photographsPerPage();
 
-	if(i == -1) // Unlimited.
+      if(i == -1) // Unlimited.
 	  {
 	    pages = 1;
 	    setSceneRect(query.value(0).toInt());
-	  }
-	else
-	  pages = qCeil(query.value(0).toDouble() / qMax(1, i));
       }
+      else
+        pages = qCeil(query.value(0).toDouble() / qMax(1, i));
+    }
+  }
+  else
+  {
+    QMessageBox msgBox;
+    auto temp = query.lastError();
+    msgBox.setText(temp.text());
+    msgBox.exec();
+  }
 
   QApplication::restoreOverrideCursor();
   pages = qMax(1, pages);
@@ -2054,8 +2200,8 @@ void biblioteq_photographcollection::slotInsertItem(void)
   pc.page->blockSignals(false);
   showPhotographs(pc.page->currentText().toInt());
   photo.saveButton->disconnect(SIGNAL(clicked(void)));
-  connect(photo.saveButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotModifyItem(void)));
+  connect(photo.saveButton, SIGNAL(clicked()), this,
+      SLOT(slotModifyItem()));
   return;
 
  db_rollback:
@@ -2078,8 +2224,8 @@ void biblioteq_photographcollection::slotInsertItem(void)
 void biblioteq_photographcollection::slotModifyItem(void)
 {
   photo.saveButton->disconnect(SIGNAL(clicked(void)));
-  connect(photo.saveButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotUpdateItem(void)));
+  connect(photo.saveButton, SIGNAL(clicked()), this,
+      SLOT(slotUpdateItem()));
   m_photo_diag->resize(m_photo_diag->width(),
 		       qRound(0.95 * size().height()));
   biblioteq_misc_functions::center(m_photo_diag, this);
@@ -2088,11 +2234,11 @@ void biblioteq_photographcollection::slotModifyItem(void)
   m_photo_diag->show();
 }
 
-void biblioteq_photographcollection::slotPageChanged(const QString &text)
+void biblioteq_photographcollection::slotPageChanged(const int &nr)
 {
   pc.page->repaint();
   QApplication::processEvents();
-  showPhotographs(text.toInt());
+  showPhotographs(nr);
 }
 
 void biblioteq_photographcollection::slotPrint(void)
@@ -2115,17 +2261,17 @@ void biblioteq_photographcollection::slotPrint(void)
   m_html += "<b>" + tr("Keywords:") + "</b> " +
             pc.keywords->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item ID:") + "</b> " +
-    pc.id_item->text().trimmed() + "<br>";
+    pc.id_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Title:") + "</b> " +
-    pc.title_new_item->text().trimmed() + "<br>";
+            pc.title_old_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Creators:") + "</b> " +
-    pc.executing_artist_item->text().trimmed() + "<br>";
+    pc.executing_artist_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Publication Date:") + "</b> " +
-    pc.creation_date_item->text() + "<br>";
+    pc.creation_date_item->toPlainText() + "<br>";
   //m_html += "<b>" + tr("Item Copies:") + "</b> " +
   //  pc.quantity->text() + "<br>";
   m_html += "<b>" + tr("Item Medium:") + "</b> " +
-    pc.technique_item->text().trimmed() + "<br>";
+    pc.technique_item->toPlainText().trimmed() + "<br>";
   //m_html += "<b>" + tr("Item Reproduction Number:") + "</b> " +
   //  pc.reproduction_number_item->toPlainText().trimmed() + "<br>";
   //m_html += "<b>" + tr("Item Copyright:") + "</b> " +
@@ -2135,11 +2281,11 @@ void biblioteq_photographcollection::slotPrint(void)
   //m_html += "<b>" + tr("Item Other Number:") + "</b> " +
   //  pc.other_number_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Notes:") + "</b> " +
-    pc.notes_item->text().trimmed() + "<br>";
+    pc.notes_item->toPlainText().trimmed() + "<br>";
   //m_html += "<b>" + tr("Item Subjects:") + "</b> " +
  //   pc.subjects_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Format:") + "</b> " +
-    pc.format_item->text().trimmed() + "<br>";
+            pc.format_item->toPlainText().trimmed() + "<br>";
   //m_html += "<b>" + tr("Accession Number:") + "</b> " +
   //  pc.accession_number_item->toPlainText().trimmed();
   m_html += "</html>";
@@ -2299,34 +2445,38 @@ void biblioteq_photographcollection::slotSceneSelectionChanged(void)
 
       pc.thumbnail_item->clear();
       pc.id_item->clear();
-      pc.title_new_item->clear();
-      //pc.creators_item->clear();
+      pc.title_old_item->clear();
       pc.creation_date_item->clear();
-      //pc.quantity->setValue(1);
       pc.technique_item->clear();
-      //pc.reproduction_number_item->clear();
-      //pc.copyright_item->clear();
-      //pc.call_number_item->clear();
-      //pc.other_number_item->clear();
       pc.notes_item->clear();
-      //pc.subjects_item->clear();
+      pc.title_new_item->clear();
+      pc.keywords_item->clear();
+      pc.based_on_artist_item->clear();
+      pc.executing_artist_item->clear();
+      pc.catalogue_item->clear();
+      pc.creation_date_original_item->clear();
+      pc.delivery_number_item->clear();
       pc.format_item->clear();
+      pc.inventor_new_item->clear();
+      pc.inventor_old_item->clear();
+      pc.page_number_item->clear();
+      pc.material_item->clear();
+      pc.title_original_picture_item->clear();
+
       pc.creation_date->clear();
       pc.circulation_height->clear();
       pc.total_number->clear();
       pc.by_artist->clear();
       pc.publisher->clear();
       pc.keywords->clear();
-      //pc.accession_number_item->clear();
+
       return;
     }
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  if(pc.exportPhotographsToolButton->menu() &&
-     pc.exportPhotographsToolButton->menu()->actions().size() >= 3)
-    pc.exportPhotographsToolButton->menu()->actions()[2]->
-      setEnabled(true);
+  if(pc.exportPhotographsToolButton->menu() && pc.exportPhotographsToolButton->menu()->actions().size() >= 3)
+    pc.exportPhotographsToolButton->menu()->actions()[2]->setEnabled(true);
 
   QGraphicsPixmapItem *item = nullptr;
 
@@ -2339,138 +2489,183 @@ void biblioteq_photographcollection::slotSceneSelectionChanged(void)
       query.setForwardOnly(true);
       query.prepare("SELECT id, "
 		    "title, "
-		    "creators, "
-		    "pdate, "
-		    "quantity, "
-		    "medium, "
-		    "reproduction_number, "
-		    "copyright, "
-		    "callnumber, "
-		    "other_number, "
-		    "notes, "
-		    "subjects, "
-		    "format, "
-		    "image, "
-		    "accession_number "
+            "executing_artist, "
+            "creation_date, "
+            "creation_date_original, "
+            "technique, "
+            "title_original_picture, "
+            "based_on_artist, "
+            "title_old, "
+            "delivery_number, "
+            "notes, "
+            "signed, "
+            "format, "
+            "printer, "
+            "catalogue, "
+            "inventor_new, "
+            "inventor_old, "
+            "inventory_number, "
+            "keywords, "
+            "material, "
+            "page_number, "
+            "place_of_storage, "
+            "image "
 		    "FROM photograph "
 		    "WHERE collection_oid = ? AND "
 		    "myoid = ?");
       query.bindValue(0, m_oid);
-      query.bindValue(1, item->data(0).toString());
+      query.bindValue(1, m_itemOid);
 
-      if(query.exec())
-	if(query.next())
-	  {
-	    auto record(query.record());
+      if(query.exec()){
+        if(query.next())
+        {
+          auto record(query.record());
+          photo.title_collection_item->setText(pc.title_collection->toPlainText().trimmed());
 
-	    for(int i = 0; i < record.count(); i++)
+          for(int i = 0; i < record.count(); i++)
 	      {
-		auto fieldname(record.fieldName(i));
-		auto var(record.field(i).value());
+            auto fieldname(record.fieldName(i));
+            auto var(record.field(i).value());
 
-		if(fieldname == "id")
-		  {
-		    pc.id_item->setText(var.toString().trimmed());
-		    photo.id_item->setText(var.toString().trimmed());
-		  }
-		else if(fieldname == "title")
-		  {
-            pc.title_new_item->setText(var.toString().trimmed());
-		    photo.title_item->setText(var.toString().trimmed());
-		  }
-        else if(fieldname == "executing_artist")
-		  {
-            pc.executing_artist_item->setText(var.toString().trimmed());
-            photo.executing_artist_item->setPlainText(var.toString().trimmed());
-		  }
-		else if(fieldname == "pdate")
-		  {
-            pc.creation_date_item->setText(var.toString().trimmed());
-            photo.creation_date_item->setDate
-		      (QDate::fromString(var.toString().trimmed(),
-					 "MM/dd/yyyy"));
-		  }
-		else if(fieldname == "quantity")
-		  {
-            //pc.quantity->setValue(var.toInt());
-            //photo.quantity->setValue(var.toInt());
-		  }
-		else if(fieldname == "medium")
-          {
-            pc.technique_item->setText(var.toString().trimmed());
-            photo.technique_item->setText(var.toString().trimmed());
-		  }
-        //else if(fieldname == "reproduction_number")
-        //  {
-        //    pc.reproduction_number_item->setPlainText
-        //      (var.toString().trimmed());
-        //    photo.title_original_pciture_item->setPlainText
-        //      (var.toString().trimmed());
-        //  }
-        //else if(fieldname == "copyright")
-        //  {
-        //    pc.copyright_item->setPlainText(var.toString().trimmed());
-        //    photo.title_collection_item->setPlainText
-        //      (var.toString().trimmed());
-        //  }
-        //else if(fieldname == "callnumber")
-        //  {
-        //    pc.call_number_item->setText(var.toString().trimmed());
-        //    photo.title_old_item->setText(var.toString().trimmed());
-        //  }
-        //else if(fieldname == "other_number")
-        //  {
-        //    pc.other_number_item->setText(var.toString().trimmed());
-        //    photo.delivery_number_item->setText(var.toString().trimmed());
-        //  }
-		else if(fieldname == "notes")
-		  {
-            pc.notes_item->setText(var.toString().trimmed());
-		    photo.notes_item->setPlainText(var.toString().trimmed());
-		  }
-        //else if(fieldname == "subjects")
-        //  {
-        //    pc.subjects_item->setPlainText(var.toString().trimmed());
-        //    photo.signed_item->setText
-        //      (var.toString().trimmed());
-        //  }
-		else if(fieldname == "format")
-          {
-            pc.format_item->setText(var.toString().trimmed());
-		    photo.format_item->setPlainText(var.toString().trimmed());
-		  }
-		else if(fieldname == "image")
-		  {
-		    if(!record.field(i).isNull())
-		      {
-			pc.thumbnail_item->loadFromData
-			  (QByteArray::fromBase64(var.toByteArray()));
+            if(fieldname == "id")
+            {
+                pc.id_item->setText(var.toString().trimmed());
+                photo.id_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "title")
+            {
+                pc.title_old_item->setText(var.toString().trimmed());
+                photo.title_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "executing_artist")
+            {
+                pc.executing_artist_item->setText(var.toString().trimmed());
+                photo.executing_artist_item->setPlainText(var.toString().trimmed());
+            }
+            else if(fieldname == "creation_date")
+            {
+                pc.creation_date_item->setText(var.toString().trimmed());
+                photo.creation_date_item->setDate(QDate::fromString(var.toString().trimmed(),"yyyy"));
+            }
+            else if(fieldname == "creation_date_original")
+            {
+                pc.creation_date_original_item->setText(var.toString().trimmed());
+                photo.creation_date_original_item->setDate(QDate::fromString(var.toString().trimmed(),"yyyy"));
+            }
+            else if(fieldname == "technique")
+            {
+                pc.technique_item->setText(var.toString().trimmed());
+                photo.technique_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "notes")
+            {
+                pc.notes_item->setText(var.toString().trimmed());
+                photo.notes_item->setPlainText(var.toString().trimmed());
+            }
+            else if(fieldname == "format")
+            {
+                pc.format_item->setText(var.toString().trimmed());
+                photo.format_item->setPlainText(var.toString().trimmed());
+            }
+            else if(fieldname == "title_original_picture")
+            {
+                pc.title_original_picture_item->setText(var.toString().trimmed());
+                photo.title_original_picture_item->setPlainText(var.toString().trimmed());
+            }
+            else if(fieldname == "based_on_artist")
+            {
+                pc.based_on_artist_item->setText(var.toString().trimmed());
+                photo.based_on_artist_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "title_old")
+            {
+                pc.title_old_item->setText(var.toString().trimmed());
+                photo.title_old_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "delivery_number")
+            {
+                pc.delivery_number_item->setText(var.toString().trimmed());
+                photo.delivery_number_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "signed")
+            {
+                pc.signed_item->setText(var.toString().trimmed());
+                photo.signed_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "printer")
+            {
+                pc.printer_item->setText(var.toString().trimmed());
+                photo.printer_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "catalogue")
+            {
+                pc.catalogue_item->setText(var.toString().trimmed());
+                photo.catalogue_item->setPlainText(var.toString().trimmed());
+            }
+            else if(fieldname == "inventor_new")
+            {
+                pc.inventor_new_item->setText(var.toString().trimmed());
+                photo.inventor_new_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "inventor_old")
+            {
+                pc.inventor_old_item->setText(var.toString().trimmed());
+                photo.inventor_old_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "inventory_number")
+            {
+                pc.inventory_number_item->setText(var.toString().trimmed());
+                photo.inventory_number_item->setPlainText(var.toString().trimmed());
+            }
+            else if(fieldname == "keywords")
+            {
+                pc.keywords_item->setText(var.toString().trimmed());
+                photo.keywords_item->setPlainText(var.toString().trimmed());
+            }
+            else if(fieldname == "material")
+            {
+                pc.material_item->setText(var.toString().trimmed());
+                photo.material_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "page_number")
+            {
+                pc.page_number_item->setText(var.toString().trimmed());
+                photo.page_number_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "place_of_storage")
+            {
+                pc.place_of_storage_item->setText(var.toString().trimmed());
+                photo.place_of_storage_item->setText(var.toString().trimmed());
+            }
+            else if(fieldname == "image")
+            {
+                if(!record.field(i).isNull())
+                {
+                    pc.thumbnail_item->loadFromData(QByteArray::fromBase64(var.toByteArray()));
 
-			if(pc.thumbnail_item->m_image.isNull())
-			  pc.thumbnail_item->loadFromData
-			    (var.toByteArray());
+                    if(pc.thumbnail_item->m_image.isNull())
+                        pc.thumbnail_item->loadFromData(var.toByteArray());
 
-			photo.thumbnail_item->loadFromData
-			  (QByteArray::fromBase64(var.toByteArray()));
+                    photo.thumbnail_item->loadFromData(QByteArray::fromBase64(var.toByteArray()));
 
-			if(photo.thumbnail_item->m_image.isNull())
-			  photo.thumbnail_item->loadFromData
-			    (var.toByteArray());
-		      }
-		    else
-		      {
-			pc.thumbnail_item->clear();
-			photo.thumbnail_item->clear();
-		      }
-		  }
-        //else if(fieldname == "accession_number")
-        //  {
-        //    pc.accession_number_item->setText(var.toString().trimmed());
-         //     photo.place_of_storage_item->setText
-         //     (var.toString().trimmed());
-         // }
+                    if(photo.thumbnail_item->m_image.isNull())
+                        photo.thumbnail_item->loadFromData(var.toByteArray());
+                }
+                else
+                {
+                    pc.thumbnail_item->clear();
+                    photo.thumbnail_item->clear();
+                }
+            }
 	      }
-	  }
+        }
+      }
+      else{
+        QMessageBox msgBox;
+        auto temp = query.lastError();
+        msgBox.setText(temp.text());
+        msgBox.exec();
+      }
     }
 
   QApplication::restoreOverrideCursor();
@@ -2485,6 +2680,55 @@ void biblioteq_photographcollection::slotSelectAll(void)
   painterPath.addRect(pc.graphicsView->sceneRect());
   pc.graphicsView->scene()->setSelectionArea(painterPath, QTransform());
   QApplication::restoreOverrideCursor();
+}
+
+void biblioteq_photographcollection::loadcompareFromItemInNewWindow
+    (QGraphicsPixmapItem *item1, QGraphicsPixmapItem *item2)
+{
+  if(item1 && item2)
+  {
+      QMainWindow *mainWindow = nullptr;
+      Ui_photographCompare ui;
+
+      mainWindow = new QMainWindow(this);
+      mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
+      ui.setupUi(mainWindow);
+      connect(ui.closeButton,
+              SIGNAL(clicked()),
+              mainWindow,
+              SLOT(close()));
+      connect(ui.exportItem,
+              SIGNAL(clicked()),
+              this,
+              SLOT(slotExportItem()));
+      connect(ui.next,
+              SIGNAL(clicked()),
+              this,
+              SLOT(slotViewNextPhotograph()));
+      connect(ui.previous,
+              SIGNAL(clicked()),
+              this,
+              SLOT(slotViewPreviousPhotograph()));
+      connect(ui.save,
+              SIGNAL(clicked()),
+              ui.view,
+              SLOT(slotSave()));
+      connect(ui.view_size,
+              SIGNAL(currentIndexChanged(QString)),
+              this,
+              SLOT(slotImageViewSizeChanged(QString)));
+      ui.save->setVisible(m_engWindowTitle.contains("Modify"));
+
+      auto scene = new QGraphicsScene(mainWindow);
+
+      mainWindow->show();
+      biblioteq_misc_functions::center(mainWindow, this);
+      mainWindow->hide();
+      scene->setProperty("view_size", ui.view->viewport()->size());
+      ui.view->setScene(scene);
+      loadTwoPhotographFromItem(scene, scene, item1, item2, ui.view_size->currentText().remove("%").toInt());
+      mainWindow->show();
+  }
 }
 
 void biblioteq_photographcollection::slotSelectImage(void)
@@ -2580,84 +2824,90 @@ void biblioteq_photographcollection::slotUpdateItem(void)
 
   query.prepare("UPDATE photograph SET "
 		"id = ?, title = ?, "
-		"creators = ?, pdate = ?, "
-		"quantity = ?, medium = ?, reproduction_number = ?, "
-		"copyright = ?, callnumber = ?, other_number = ?, "
-		"notes = ?, subjects = ?, "
-		"format = ?, image = ?, image_scaled = ?, "
-		"accession_number = ? "
+        "executing_artist = ?, creation_date = ?, creation_date_original = ?,"
+        "technique = ?, title_original_picture = ?, "
+        "based_on_artist = ?, title_old = ?, delivery_number = ?, "
+        "notes = ?, signed = ?, format = ?, printer = ?, "
+        "catalogue = ?, inventor_new = ?, inventor_old = ?, "
+        "inventory_number = ?, keywords = ?, material = ?,  page_number = ?, "
+        "place_of_storage = ?, image = ?, image_scaled = ? "
 		"WHERE collection_oid = ? AND myoid = ?");
   query.bindValue(0, photo.id_item->text());
   query.bindValue(1, photo.title_item->text());
   query.bindValue(2, photo.executing_artist_item->toPlainText());
-  query.bindValue(3, photo.creation_date_item->date().toString("MM/dd/yyyy"));
-  //query.bindValue(4, photo.quantity->value());
+  query.bindValue(3, photo.creation_date_item->date().toString("yyyy"));
+  query.bindValue(4, photo.creation_date_original_item->date().toString("yyyy"));
   query.bindValue(5, photo.technique_item->text());
   query.bindValue(6, photo.title_original_picture_item->toPlainText());
-  query.bindValue(7, photo.title_collection_item->toPlainText());
+  query.bindValue(7, photo.based_on_artist_item->text());
   query.bindValue(8, photo.title_old_item->text().trimmed());
   query.bindValue(9, photo.delivery_number_item->text().trimmed());
   query.bindValue(10, photo.notes_item->toPlainText().trimmed());
   query.bindValue(11, photo.signed_item->text().trimmed());
   query.bindValue(12, photo.format_item->toPlainText().trimmed());
+  query.bindValue(13, photo.printer_item->text().trimmed());
+  query.bindValue(14, photo.catalogue_item->toPlainText().trimmed());
+  query.bindValue(15, photo.inventor_new_item->text().trimmed());
+  query.bindValue(16, photo.inventor_old_item->text().trimmed());
+  query.bindValue(17, photo.inventory_number_item->toPlainText().trimmed());
+  query.bindValue(18, photo.keywords_item->toPlainText().trimmed());
+  query.bindValue(19, photo.material_item->text().trimmed());
+  query.bindValue(20, photo.page_number_item->text().trimmed());
+  query.bindValue(21, photo.place_of_storage_item->text().trimmed());
 
   if(!photo.thumbnail_item->m_image.isNull())
-    {
-      QBuffer buffer;
-      QByteArray bytes;
-      QImage image;
+  {
+    QBuffer buffer;
+    QByteArray bytes;
+    QImage image;
 
-      buffer.setBuffer(&bytes);
+    buffer.setBuffer(&bytes);
 
-      if(buffer.open(QIODevice::WriteOnly))
+    if(buffer.open(QIODevice::WriteOnly))
 	{
-	  photo.thumbnail_item->m_image.save
-	    (&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
-	  query.bindValue(13, bytes.toBase64());
+      photo.thumbnail_item->m_image.save(&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
+      query.bindValue(22, bytes.toBase64());
 	}
-      else
+    else
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	query.bindValue(13, QVariant(QMetaType(QMetaType::QByteArray)));
+      query.bindValue(22, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-        query.bindValue(13, QVariant(QVariant::ByteArray));
+      query.bindValue(22, QVariant(QVariant::ByteArray));
 #endif
 
       buffer.close();
       bytes.clear();
       image = photo.thumbnail_item->m_image;
 
-      if(!image.isNull())
-	image = image.scaled
-	  (126, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    if(!image.isNull())
+      image = image.scaled(126, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-      if(buffer.open(QIODevice::WriteOnly))
+    if(buffer.open(QIODevice::WriteOnly))
 	{
-	  image.save
-	    (&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
-	  query.bindValue(14, bytes.toBase64());
+      image.save(&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
+      query.bindValue(23, bytes.toBase64());
 	}
-      else
+    else
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-	query.bindValue(14, QVariant(QMetaType(QMetaType::QByteArray)));
+      query.bindValue(23, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-        query.bindValue(14, QVariant(QVariant::ByteArray));
+      query.bindValue(23, QVariant(QVariant::ByteArray));
 #endif
-    }
+  }
   else
-    {
+  {
       photo.thumbnail_item->m_imageFormat = "";
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-      query.bindValue(13, QVariant(QMetaType(QMetaType::QByteArray)));
-      query.bindValue(14, QVariant(QMetaType(QMetaType::QByteArray)));
+      query.bindValue(22, QVariant(QMetaType(QMetaType::QByteArray)));
+      query.bindValue(23, QVariant(QMetaType(QMetaType::QByteArray)));
 #else
-      query.bindValue(13, QVariant(QVariant::ByteArray));
-      query.bindValue(14, QVariant(QVariant::ByteArray));
+      query.bindValue(22, QVariant(QVariant::ByteArray));
+      query.bindValue(23, QVariant(QVariant::ByteArray));
 #endif
-    }
+  }
     
-    query.bindValue(15, photo.place_of_storage_item->text().trimmed());
-  query.bindValue(16, m_oid);
-  query.bindValue(17, m_itemOid);
+  query.bindValue(24, m_oid);
+  query.bindValue(25, m_itemOid);
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if(!query.exec())
@@ -2666,6 +2916,10 @@ void biblioteq_photographcollection::slotUpdateItem(void)
       qmain->addError(QString(tr("Database Error")),
 		      QString(tr("Unable to create or update the entry.")),
 		      query.lastError().text(), __FILE__, __LINE__);
+      QMessageBox msgBox;
+      auto temp = query.lastError();
+      msgBox.setText(temp.text());
+      msgBox.exec();
       goto db_rollback;
     }
   else
@@ -2684,21 +2938,29 @@ void biblioteq_photographcollection::slotUpdateItem(void)
 
       QApplication::restoreOverrideCursor();
       pc.id_item->setText(photo.id_item->text());
-      pc.title_new_item->setText(photo.title_item->text());
+      pc.title_old_item->setText(photo.title_item->text());
       pc.executing_artist_item->setText(photo.executing_artist_item->toPlainText());
-      pc.creation_date_item->setText(photo.creation_date_item->date().toString());
-      //pc.quantity->setValue(photo.quantity->value());
+      pc.creation_date_item->setText(photo.creation_date_item->date().toString("yyyy"));
       pc.technique_item->setText(photo.technique_item->text());
-      //pc.reproduction_number_item->setPlainText
-      //    (photo.title_original_pciture_item->toPlainText());
-      //pc.copyright_item->setPlainText(photo.title_collection_item->toPlainText());
-      //pc.call_number_item->setText(photo.title_old_item->text());
-      //pc.other_number_item->setText(photo.delivery_number_item->text());
       pc.notes_item->setText(photo.notes_item->toPlainText());
       pc.signed_item->setText(photo.signed_item->text());
       pc.format_item->setText(photo.format_item->toPlainText());
       pc.thumbnail_item->setImage(photo.thumbnail_item->m_image);
-      //pc.accession_number_item->setText(photo.place_of_storage_item->text());
+      pc.creation_date_item->setText(photo.creation_date_original_item->date().toString("yyyy"));
+      pc.title_old_item->setText(photo.title_original_picture_item->toPlainText());
+      pc.based_on_artist_item->setText(photo.based_on_artist_item->text());
+      pc.title_old_item->setText(photo.title_old_item->text().trimmed());
+      pc.delivery_number_item->setText(photo.delivery_number_item->text().trimmed());
+      pc.printer_item->setText(photo.printer_item->text().trimmed());
+      pc.catalogue_item->setText(photo.catalogue_item->toPlainText().trimmed());
+      pc.inventor_new_item->setText(photo.inventor_new_item->text().trimmed());
+      pc.title_old_item->setText(photo.inventor_old_item->text().trimmed());
+      pc.inventory_number_item->setText(photo.inventory_number_item->toPlainText().trimmed());
+      pc.keywords->setText(photo.keywords_item->toPlainText().trimmed());
+      pc.material_item->setText(photo.material_item->text().trimmed());
+      pc.page_number_item->setText(photo.page_number_item->text().trimmed());
+      pc.place_of_storage_item->setText(photo.place_of_storage_item->text().trimmed());
+
     }
 
   return;
@@ -2832,6 +3094,19 @@ void biblioteq_photographcollection::slotViewPhotograph(void)
   loadPhotographFromItemInNewWindow
     (qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->
 							 itemAt(pos)));
+}
+
+void biblioteq_photographcollection::slotShowCompare(void)
+{
+  auto action = qobject_cast<QAction *> (sender());
+  QPoint pos;
+
+  if(action)
+    pos = action->data().toPoint();
+
+  loadcompareFromItemInNewWindow
+      (qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->itemAt(pos)),
+       qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->itemAt(pos)));
 }
 
 void biblioteq_photographcollection::slotViewPreviousPhotograph(void)
@@ -2980,9 +3255,9 @@ void biblioteq_photographcollection::updateWindow(const int state)
 		 this,
 		 SLOT(slotDeleteItem(void)));
       connect(m_scene,
-	      SIGNAL(deleteKeyPressed(void)),
+          SIGNAL(deleteKeyPressed()),
 	      this,
-	      SLOT(slotDeleteItem(void)));
+          SLOT(slotDeleteItem()));
     }
   else
     {

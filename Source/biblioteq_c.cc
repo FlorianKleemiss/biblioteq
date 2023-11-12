@@ -3458,6 +3458,8 @@ void biblioteq::slotDisplaySummary(void)
       ui.frontImage->setVisible(false);
       ui.summary->clear();
       ui.summary->setVisible(false);
+      ui.about->clear();
+      ui.about->setVisible(false);
     }
 }
 
