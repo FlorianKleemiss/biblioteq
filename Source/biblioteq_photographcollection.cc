@@ -174,8 +174,8 @@ biblioteq_photographcollection::biblioteq_photographcollection
 #endif
 
   pc.splitter->setStretchFactor(0, 0);
-  pc.splitter->setStretchFactor(1, 1);
-  pc.splitter->setStretchFactor(2, 0);
+  pc.splitter->setStretchFactor(1, 2);
+  pc.splitter->setStretchFactor(2, 1);
   biblioteq_misc_functions::center(this, m_parentWid);
   biblioteq_misc_functions::hideAdminFields(this, qmain->getRoles());
   biblioteq_misc_functions::highlightWidget
@@ -2067,8 +2067,7 @@ void biblioteq_photographcollection::slotInsertItem(void)
 
       if(buffer.open(QIODevice::WriteOnly))
 	{
-	  photo.thumbnail_item->m_image.save
-	    (&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
+      photo.thumbnail_item->m_image.save(&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
       query.bindValue(23, bytes.toBase64());
 	}
       else
@@ -2088,8 +2087,7 @@ void biblioteq_photographcollection::slotInsertItem(void)
 
       if(buffer.open(QIODevice::WriteOnly))
 	{
-	  image.save
-	    (&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
+      image.save(&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
       query.bindValue(24, bytes.toBase64());
 	}
       else
@@ -2697,10 +2695,6 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow
               SIGNAL(clicked()),
               mainWindow,
               SLOT(close()));
-      connect(ui.exportItem,
-              SIGNAL(clicked()),
-              this,
-              SLOT(slotExportItem()));
       connect(ui.next,
               SIGNAL(clicked()),
               this,
@@ -2777,24 +2771,19 @@ void biblioteq_photographcollection::slotSelectImage(void)
       else
 	{
 	  photo.thumbnail_item->clear();
-	  photo.thumbnail_item->m_image = QImage(dialog.selectedFiles().
-						 value(0));
+      photo.thumbnail_item->m_image = QImage(dialog.selectedFiles().value(0));
 
 	  if(dialog.selectedFiles().value(0).lastIndexOf(".") > -1)
-	    photo.thumbnail_item->m_imageFormat = dialog.selectedFiles().
-	      value(0).mid
-	      (dialog.selectedFiles().value(0).lastIndexOf(".") + 1).
-	      toUpper();
+        photo.thumbnail_item->m_imageFormat = dialog.selectedFiles().value(0).mid
+          (dialog.selectedFiles().value(0).lastIndexOf(".") + 1).toUpper();
 
-	  photo.thumbnail_item->scene()->addPixmap
-	    (QPixmap::fromImage(photo.thumbnail_item->m_image));
+      photo.thumbnail_item->scene()->addPixmap(QPixmap::fromImage(photo.thumbnail_item->m_image));
 
 	  if(!photo.thumbnail_item->scene()->items().isEmpty())
 	    photo.thumbnail_item->scene()->items().at(0)->setFlags
 	      (QGraphicsItem::ItemIsSelectable);
 
-	  photo.thumbnail_item->scene()->setSceneRect
-	    (photo.thumbnail_item->scene()->itemsBoundingRect());
+      photo.thumbnail_item->scene()->setSceneRect(photo.thumbnail_item->scene()->itemsBoundingRect());
 	}
     }
 }

@@ -177,23 +177,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="exportItem">
-        <property name="minimumSize">
-         <size>
-          <width>125</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>&amp;Export...</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../Icons/icons.qrc">
-          <normaloff>:/16x16/fileexport.png</normaloff>:/16x16/fileexport.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QPushButton" name="closeButton">
         <property name="minimumSize">
          <size>
@@ -265,7 +248,6 @@
   <tabstop>view_size</tabstop>
   <tabstop>previous</tabstop>
   <tabstop>save</tabstop>
-  <tabstop>exportItem</tabstop>
   <tabstop>closeButton</tabstop>
   <tabstop>next</tabstop>
  </tabstops>

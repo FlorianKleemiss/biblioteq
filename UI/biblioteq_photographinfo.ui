@@ -456,6 +456,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="alignment">
+               <set>Qt::AlignHCenter|Qt::AlignTop</set>
+              </property>
               <property name="renderHints">
                <set>QPainter::Antialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
               </property>
@@ -474,6 +477,9 @@
             <string>Item Information</string>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <item>
              <widget class="biblioteq_image_drop_site" name="thumbnail_item">
               <property name="minimumSize">
@@ -1418,6 +1424,9 @@ Catalogue</string>
               </item>
               <item row="22" column="1">
                <widget class="QPushButton" name="linked_picture_button">
+                <property name="enabled">
+                 <bool>false</bool>
+                </property>
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                   <horstretch>50</horstretch>
