@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>850</height>
+    <height>806</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-550</y>
+        <y>0</y>
         <width>516</width>
         <height>1348</height>
        </rect>
@@ -640,15 +640,35 @@ Place of Storage</string>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>scrollArea</tabstop>
-  <tabstop>thumbnail_item</tabstop>
-  <tabstop>select_image_item</tabstop>
   <tabstop>id_item</tabstop>
+  <tabstop>title_collection_item</tabstop>
   <tabstop>title_item</tabstop>
+  <tabstop>title_old_item</tabstop>
+  <tabstop>inventor_old_item</tabstop>
+  <tabstop>inventor_new_item</tabstop>
+  <tabstop>based_on_artist_item</tabstop>
   <tabstop>executing_artist_item</tabstop>
+  <tabstop>printer_item</tabstop>
+  <tabstop>creation_date_item</tabstop>
+  <tabstop>creation_date_original_item</tabstop>
+  <tabstop>title_original_picture_item</tabstop>
+  <tabstop>inventory_number_item</tabstop>
+  <tabstop>delivery_number_item</tabstop>
+  <tabstop>page_number_item</tabstop>
+  <tabstop>technique_item</tabstop>
+  <tabstop>material_item</tabstop>
+  <tabstop>format_item</tabstop>
+  <tabstop>signed_item</tabstop>
+  <tabstop>keywords_item</tabstop>
+  <tabstop>catalogue_item</tabstop>
   <tabstop>notes_item</tabstop>
+  <tabstop>place_of_storage_item</tabstop>
+  <tabstop>link_button</tabstop>
+  <tabstop>select_image_item</tabstop>
   <tabstop>saveButton</tabstop>
   <tabstop>cancelButton</tabstop>
+  <tabstop>thumbnail_item</tabstop>
+  <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources>
   <include location="../Icons/icons.qrc"/>
