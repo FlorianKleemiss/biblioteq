@@ -6,7 +6,7 @@ purge.commands = del /Q *~ && del /Q *\\*~
 CONFIG		+= qt release thread warn_on windows
 LANGUAGE	= C++
 QT		+= network sql printsupport widgets
-QT		-= webkit
+QT		-= webkit d-bus test
 
 QMAKE_CLEAN	+= BiblioteQ.exe
 QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -70,8 +70,6 @@ documentation.files = Documentation\\*.html \
                       Documentation\\TO-DO
 documentation.path = release\\Documentation\\.
 libraries.files = Libraries.win32\\miscellaneous\\*.dll \
-                  Libraries.win32\\postgresql\\*.dll \
-                  Libraries.win32\\postgresql\\*.manifest \
                   Libraries.win32\\sqlite3\\*.dll \
                   Libraries.win64\\*.exe
 libraries.path = release\\.

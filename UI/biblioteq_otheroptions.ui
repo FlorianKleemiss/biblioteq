@@ -32,8 +32,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>588</width>
-         <height>546</height>
+         <width>582</width>
+         <height>550</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -50,7 +50,7 @@
         <item>
          <widget class="QTabWidget" name="tabWidget">
           <property name="currentIndex">
-           <number>0</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab_1">
            <attribute name="title">
@@ -368,30 +368,6 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="tab_3">
-           <attribute name="title">
-            <string>Members</string>
-           </attribute>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
-            <item>
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Generated Letter</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPlainTextEdit" name="generated_letter">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dear Last Name (%1), First Name (%2),&lt;/p&gt;&lt;p&gt;Your Membership Fees of %3 are currently due.&lt;/p&gt;&lt;p&gt;Thank you for your continued support.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="plainText">
-               <string/>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
           <widget class="QWidget" name="tab_4">
            <attribute name="title">
             <string>Sort</string>
@@ -568,7 +544,6 @@
   <tabstop>show_maintable_progress_dialogs</tabstop>
   <tabstop>show_maintable_images</tabstop>
   <tabstop>show_maintable_tooltips</tabstop>
-  <tabstop>generated_letter</tabstop>
   <tabstop>books_accession_number</tabstop>
   <tabstop>save</tabstop>
   <tabstop>close</tabstop>
