@@ -523,7 +523,6 @@
     <addaction name="separator"/>
     <addaction name="action_Full_Screen"/>
     <addaction name="separator"/>
-    <addaction name="actionMembersBrowser"/>
     <addaction name="actionViewDetails"/>
     <addaction name="separator"/>
    </widget>
@@ -564,7 +563,6 @@
     <addaction name="actionShowGrid"/>
     <addaction name="actionPopulate_Administrator_Browser_Table_on_Display"/>
     <addaction name="actionPopulate_Database_Enumerations_Browser_on_Display"/>
-    <addaction name="actionPopulate_Members_Browser_Table_on_Display"/>
     <addaction name="actionPopulateOnStart"/>
     <addaction name="actionAutoPopulateOnCreation"/>
     <addaction name="actionPreserveGeometry"/>
@@ -820,18 +818,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
-   </property>
-  </action>
-  <action name="actionMembersBrowser">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/16x16/members.png</normaloff>:/16x16/members.png</iconset>
-   </property>
-   <property name="text">
-    <string>&amp;Members Browser...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+M</string>
    </property>
   </action>
   <action name="actionDatabaseSearch">

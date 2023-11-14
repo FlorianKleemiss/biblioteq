@@ -158,51 +158,6 @@ void biblioteq::slotExportAsPNG(void)
     }
 }
 
-void biblioteq::slotGenerateAndCopyMemberLetter(void)
-{
-  auto clipboard = QApplication::clipboard();
-
-  if(!clipboard)
-    return;
-
-  QSettings settings;
-  QString str
-    (QString::
-     fromUtf8(QByteArray::
-	      fromBase64(settings.value("otheroptions/generated_letter").
-			 toByteArray()).constData()));
-
-  str.replace("%1", userinfo_diag->m_userinfo.lastName->text().trimmed());
-  str.replace("%2", userinfo_diag->m_userinfo.firstName->text().trimmed());
-  str.replace("%3", userinfo_diag->m_userinfo.membershipfees->text());
-  clipboard->setText(str);
-}
-
-void biblioteq::slotLaunchEmailSoftware(void)
-{
-  QSettings settings;
-  QString str
-    (QString::
-     fromUtf8(QByteArray::
-	      fromBase64(settings.value("otheroptions/generated_letter").
-			 toByteArray()).constData()));
-
-  str.replace("%1", userinfo_diag->m_userinfo.lastName->text().trimmed());
-  str.replace("%2", userinfo_diag->m_userinfo.firstName->text().trimmed());
-  str.replace("%3", userinfo_diag->m_userinfo.membershipfees->text());
-  QDesktopServices::openUrl
-    (QUrl::fromUserInput(QString("mailto:%1?body=%2&subject=BiblioteQ").
-			 arg(userinfo_diag->m_userinfo.email->text().trimmed()).
-			 arg(str)));
-}
-
-void biblioteq::slotMembersPagesChanged(int value)
-{
-  QSettings settings;
-
-  settings.setValue("membersPerPage", value);
-}
-
 void biblioteq::slotMergeSQLiteDatabases(void)
 {
   if(!m_sqliteMergeDatabases)
@@ -248,75 +203,6 @@ void biblioteq::slotSaveGeneralSearchCaseSensitivity(bool state)
   QSettings settings;
 
   settings.setValue("generalSearchCaseSensitivity", state);
-}
-
-void biblioteq::slotSetMembershipFees(void)
-{
-  auto ok = true;
-  double value = 0.0;
-
-  value = QInputDialog::getDouble(m_members_diag,
-				  tr("BiblioteQ: Set Membership Dues"),
-				  tr("Membership Dues"),
-				  0.0,
-				  0.0,
-				  std::numeric_limits<double>::max(),
-				  2,
-				  &ok);
-
-  if(!ok)
-    return;
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  QSqlQuery query(m_db);
-  auto list(bb.table->selectionModel()->selectedRows(0));
-
-  if(list.isEmpty())
-    {
-      query.prepare("UPDATE member SET membership_fees = ?");
-      query.addBindValue(value);
-
-      if(!query.exec())
-	{
-	  QApplication::restoreOverrideCursor();
-	  addError
-	    (tr("Database Error"),
-	     tr("Unable to update the entries."),
-	     query.lastError().text(),
-	     __FILE__,
-	     __LINE__);
-	  QMessageBox::critical
-	    (this,
-	     tr("BiblioteQ: Database Error"),
-	     tr("Unable to update the entries."));
-	  QApplication::processEvents();
-	}
-      else
-	QApplication::restoreOverrideCursor();
-    }
-  else
-    {
-      foreach(const auto &index, list)
-	{
-	  auto str(index.data().toString());
-
-	  query.prepare
-	    ("UPDATE member SET membership_fees = ? WHERE memberid = ?");
-	  query.addBindValue(value);
-	  query.addBindValue(str);
-
-	  if(!query.exec())
-	    addError
-	      (tr("Database Error"),
-	       tr("Unable to update the entry %1.").arg(str),
-	       query.lastError().text(),
-	       __FILE__,
-	       __LINE__);
-	}
-
-      QApplication::restoreOverrideCursor();
-    }
 }
 
 void biblioteq::slotShowDocumentation(void)

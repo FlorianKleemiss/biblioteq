@@ -264,10 +264,10 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
       m_cb.dueDate->setMinimumDate(duedate);
       m_cb.saveButton->setText(tr("&Reserve"));
       disconnect(m_cb.saveButton, SIGNAL(clicked(void)));
-      connect(m_cb.saveButton,
-	      SIGNAL(clicked(void)),
-	      this,
-	      SLOT(slotCheckoutCopy(void)));
+      //connect(m_cb.saveButton,
+      //    SIGNAL(clicked(void)),
+      //    this,
+      //    SLOT(slotCheckoutCopy(void)));
     }
 
   disconnect(m_cb.cancelButton, SIGNAL(clicked(void)));

@@ -2910,22 +2910,6 @@ void biblioteq::setSummaryImages(const QImage &back, const QImage &front)
     ui.frontImage->clear();
 }
 
-void biblioteq::slotAllowAnyUserEmail(bool state)
-{
-  userinfo_diag->m_userinfo.email->setValidator(nullptr);
-
-  if(!state)
-    {
-      QRegularExpression rx
-	("^[-!#$%&'*+/0-9=?A-Z^_a-z{|}~](\\.?[-!#$%&'*+/0-9=?A-Z^_a-z{|}~])*"
-	 "@[a-zA-Z](-?[a-zA-Z0-9])*(\\.[a-zA-Z](-?[a-zA-Z0-9])*)+$",
-	 QRegularExpression::CaseInsensitiveOption);
-
-      userinfo_diag->m_userinfo.email->setValidator
-	(new QRegularExpressionValidator(rx, this));
-    }
-}
-
 void biblioteq::slotBookSearch(void)
 {
   biblioteq_book *book = nullptr;

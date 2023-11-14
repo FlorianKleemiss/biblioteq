@@ -265,11 +265,11 @@ void biblioteq_copy_editor::populateCopiesEditor(void)
       QString errorstr1("");
       QString errorstr2("");
       auto duedate = QDate::currentDate();
-      auto memberid
-	(biblioteq_misc_functions::
-	 getColumnString(qmain->getBB().table,
-			 qmain->getBB().table->currentRow(),
-			 qmain->getBBColumnIndexes().indexOf("Member ID")));
+    //  auto memberid
+    //(biblioteq_misc_functions::
+    // getColumnString(qmain->getBB().table,
+    //		 qmain->getBB().table->currentRow(),
+    //		 qmain->getBBColumnIndexes().indexOf("Member ID")));
       int maximumReserved = 0;
       qint64 totalReserved = 0;
 
@@ -277,12 +277,12 @@ void biblioteq_copy_editor::populateCopiesEditor(void)
       duedate = duedate.addDays
 	(biblioteq_misc_functions::
 	 getMinimumDays(qmain->getDB(), m_itemType, errorstr1));
-      maximumReserved = biblioteq_misc_functions::maximumReserved
-	(qmain->getDB(), memberid, m_itemType);
+    //  maximumReserved = biblioteq_misc_functions::maximumReserved
+    //(qmain->getDB(), memberid, m_itemType);
 
       if(m_itemType == "Book")
-	totalReserved = biblioteq_misc_functions::getItemsReservedCounts
-	  (qmain->getDB(), memberid, errorstr2).value("numbooks");
+    //totalReserved = biblioteq_misc_functions::getItemsReservedCounts
+    //  (qmain->getDB(), memberid, errorstr2).value("numbooks");
 
       QApplication::restoreOverrideCursor();
 
@@ -299,10 +299,10 @@ void biblioteq_copy_editor::populateCopiesEditor(void)
 	 arg(m_itemType).arg(maximumReserved).arg(totalReserved));
       m_cb.saveButton->setText(tr("&Reserve"));
       disconnect(m_cb.saveButton, SIGNAL(clicked(void)));
-      connect(m_cb.saveButton,
-	      SIGNAL(clicked(void)),
-	      this,
-	      SLOT(slotCheckoutCopy(void)));
+      //connect(m_cb.saveButton,
+      //    SIGNAL(clicked(void)),
+      //    this,
+      //    SLOT(slotCheckoutCopy(void)));
     }
 
   disconnect(m_cb.cancelButton, SIGNAL(clicked(void)));
@@ -570,8 +570,8 @@ void biblioteq_copy_editor::populateCopiesEditor(void)
   for(int i = 0; i < m_cb.table->columnCount() - 1; i++)
     m_cb.table->resizeColumnToContents(i);
 
-  if(m_speedy)
-    QTimer::singleShot(250, this, SLOT(slotCheckoutCopy(void)));
+  //if(m_speedy)
+  //  QTimer::singleShot(250, this, SLOT(slotCheckoutCopy(void)));
 }
 
 void biblioteq_copy_editor::setGlobalFonts(const QFont &font)
@@ -585,223 +585,6 @@ void biblioteq_copy_editor::setGlobalFonts(const QFont &font)
     }
 
   update();
-}
-
-void biblioteq_copy_editor::slotCheckoutCopy(void)
-{
-  QDate now(QDate::currentDate());
-  QSqlQuery query(qmain->getDB());
-  QString copyid = "";
-  QString copynumber = "";
-  QString errorstr = "";
-  QString memberid = "";
-  auto available = false;
-  auto checkedout = now.toString("MM/dd/yyyy");
-  auto copyrow = m_cb.table->currentRow();
-  auto dnt = true;
-  auto duedate = m_cb.dueDate->date().toString("MM/dd/yyyy");
-  auto memberrow = qmain->getBB().table->currentRow();
-
-  if(copyrow < 0 || m_cb.table->item(copyrow, BARCODE) == nullptr)
-    {
-      QMessageBox::critical(this,
-			    tr("BiblioteQ: User Error"),
-			    tr("Please select a copy to reserve."));
-      QApplication::processEvents();
-      return;
-    }
-  else if((m_cb.table->item(copyrow, BARCODE)->flags() &
-	   Qt::ItemIsEnabled) == 0)
-    {
-      QMessageBox::critical(this,
-			    tr("BiblioteQ: User Error"),
-			    tr("It appears that the copy you've selected "
-			       "is either unavailable or does not exist."));
-      QApplication::processEvents();
-      return;
-    }
-  else if(m_cb.dueDate->date() <= now)
-    {
-      QMessageBox::critical(this,
-			    tr("BiblioteQ: User Error"),
-			    tr("Please select a future Due Date."));
-      QApplication::processEvents();
-      return;
-    }
-
-  memberid = biblioteq_misc_functions::getColumnString
-    (qmain->getBB().table,
-     memberrow,
-     qmain->getBBColumnIndexes().indexOf("Member ID"));
-  copyid = biblioteq_misc_functions::getColumnString
-    (m_cb.table, copyrow, m_columnHeaderIndexes.indexOf("Barcode"));
-  copynumber = biblioteq_misc_functions::getColumnString
-    (m_cb.table, copyrow, m_columnHeaderIndexes.indexOf("Copy Number"));
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  available = biblioteq_misc_functions::isCopyAvailable
-    (qmain->getDB(), m_ioid, copyid, m_itemType, errorstr);
-  QApplication::restoreOverrideCursor();
-
-  if(!available && errorstr.length() > 0)
-    {
-      qmain->addError(tr("Database Error"),
-		      tr("Unable to determine the selected copy's "
-			 "availability."),
-		      errorstr,
-		      __FILE__,
-		      __LINE__);
-      QMessageBox::critical(this,
-			    tr("BiblioteQ: Database Error"),
-			    tr("Unable to determine the selected copy's "
-			       "availability."));
-      QApplication::processEvents();
-      return;
-    }
-  else if(!available)
-    {
-      QMessageBox::critical(this,
-			    tr("BiblioteQ: User Error"),
-			    tr("The copy that you have selected is either "
-			       "unavailable or is reserved."));
-      QApplication::processEvents();
-      return;
-    }
-
-  query.prepare("INSERT INTO item_borrower "
-		"(item_oid, "
-		"memberid, "
-		"reserved_date, "
-		"duedate, "
-		"copyid, "
-		"copy_number, "
-		"reserved_by, "
-		"type) "
-		"VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-  query.addBindValue(m_ioid);
-  query.addBindValue(memberid);
-  query.addBindValue(checkedout);
-  query.addBindValue(duedate);
-  query.addBindValue(copyid);
-  query.addBindValue(copynumber);
-  query.addBindValue(qmain->getAdminID());
-  query.addBindValue(m_itemType);
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  if(!query.exec())
-    {
-      QApplication::restoreOverrideCursor();
-      qmain->addError(tr("Database Error"),
-		      tr("Unable to create a reserve record."),
-		      query.lastError().text(),
-		      __FILE__,
-		      __LINE__);
-      QMessageBox::critical(this,
-			    tr("BiblioteQ: Database Error"),
-			    tr("Unable to create a reserve record."));
-      QApplication::processEvents();
-      return;
-    }
-
-  /*
-  ** Record the reservation in the member's history table.
-  */
-
-  dnt = biblioteq_misc_functions::dnt(qmain->getDB(), memberid, errorstr);
-
-  if(!dnt)
-    {
-      query.prepare("INSERT INTO member_history "
-		    "(memberid, "
-		    "item_oid, "
-		    "copyid, "
-		    "reserved_date, "
-		    "duedate, "
-		    "returned_date, "
-		    "reserved_by, "
-		    "type) "
-		    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-      query.addBindValue(memberid);
-      query.addBindValue(m_ioid);
-      query.addBindValue(copyid);
-      query.addBindValue(checkedout);
-      query.addBindValue(duedate);
-      query.addBindValue(QString("N/A"));
-      query.addBindValue(qmain->getAdminID());
-      query.addBindValue(m_itemType);
-
-      if(!query.exec())
-	qmain->addError(tr("Database Error"),
-			tr("Unable to create a history record."),
-			query.lastError().text(),
-			__FILE__,
-			__LINE__);
-    }
-
-  /*
-  ** Update the Reserved Items count on the Members Browser.
-  */
-
-  qmain->updateMembersBrowser();
-  QApplication::restoreOverrideCursor();
-
-  /*
-  ** Update the Availability and Total Reserved columns.
-  */
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  auto availability = biblioteq_misc_functions::getAvailability
-    (m_ioid, qmain->getDB(), m_itemType, errorstr);
-  auto reserved = biblioteq_misc_functions::getTotalReserved
-    (qmain->getDB(), m_itemType, m_ioid);
-
-  QApplication::restoreOverrideCursor();
-
-  if(!availability.isEmpty())
-    biblioteq_misc_functions::updateColumn
-      (qmain->getUI().table,
-       m_bitem->getRow(),
-       qmain->getUI().table->columnNumber("Availability"),
-       availability);
-
-  if(qmain->availabilityColors())
-    {
-      QColor color(Qt::white);
-
-      if(availability.toInt() > 0)
-	color = qmain->availabilityColor(m_itemType);
-
-      biblioteq_misc_functions::updateColumnColor
-	(qmain->getUI().table,
-	 m_bitem->getRow(),
-	 qmain->getUI().table->columnNumber("Availability"),
-	 color);
-    }
-
-  if(!reserved.isEmpty())
-    biblioteq_misc_functions::updateColumn
-      (qmain->getUI().table,
-       m_bitem->getRow(),
-       qmain->getUI().table->columnNumber("Total Reserved"),
-       reserved);
-
-  slotCloseCopyEditor();
-
-  /*
-  ** Update the main window's summary panel, if necessary.
-  */
-
-  if(m_bitem &&
-     m_ioid ==
-     biblioteq_misc_functions::getColumnString(qmain->getUI().table,
-					       m_bitem->getRow(),
-					       "MYOID") &&
-     m_itemType ==
-     biblioteq_misc_functions::getColumnString(qmain->getUI().table,
-					       m_bitem->getRow(),
-					       qmain->getUI().table->
-					       columnNumber("Type")))
-    qmain->slotDisplaySummary();
 }
 
 void biblioteq_copy_editor::slotCloseCopyEditor(void)

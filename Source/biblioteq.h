@@ -20,11 +20,8 @@
 #include "ui_biblioteq_branch_s.h"
 #include "ui_biblioteq_customquery.h"
 #include "ui_biblioteq_errordiag.h"
-#include "ui_biblioteq_history.h"
 #include "ui_biblioteq_mainwindow.h"
-#include "ui_biblioteq_members_browser.h"
 #include "ui_biblioteq_password.h"
-#include "ui_biblioteq_userinfo.h"
 
 #include <QMessageBox>
 
@@ -32,157 +29,6 @@ class biblioteq_documentationwindow;
 class biblioteq_files;
 class biblioteq_otheroptions;
 class biblioteq_sqlite_merge_databases;
-
-class userinfo_diag_class: public QDialog
-{
-  Q_OBJECT
-
- public:
-  userinfo_diag_class(QMainWindow *parent):QDialog(parent)
-  {
-    m_userinfo.setupUi(this);
-  }
-
-  ~userinfo_diag_class()
-  {
-  }
-
-  QHash<QString, QString> m_memberProperties;
-  Ui_UserInfo m_userinfo;
-
-  bool haveMemberChanges(QString &str)
-  {
-    QStringList list;
-
-    if(m_memberProperties.value("city") != m_userinfo.city->text().trimmed())
-      list << "city";
-
-    if(m_memberProperties.value("comments") !=
-       m_userinfo.comments->toPlainText().
-       trimmed())
-      list << "comments";
-
-    if(m_memberProperties.value("dob") !=
-       m_userinfo.dob->date().toString(Qt::ISODate))
-      list << "dob";
-
-    if(m_memberProperties.value("email") != m_userinfo.email->text())
-      list << "email";
-
-    if(m_memberProperties.value("expiration_date") !=
-       m_userinfo.expirationdate->date().toString(Qt::ISODate))
-      list << "expiration_date";
-
-    if(m_memberProperties.value("first_name") != m_userinfo.firstName->text().
-       trimmed())
-      list << "first_name";
-
-    if(m_memberProperties.value("general_registration_number") !=
-       m_userinfo.generalregistrationnumber->text().trimmed())
-      list << "general_registration_number";
-
-    if(m_memberProperties.value("last_name") != m_userinfo.lastName->text().
-       trimmed())
-      list << "last_name";
-
-    if(m_memberProperties.value("maximum_reserved_books") !=
-       m_userinfo.maximum_reserved_books->text())
-      list << "maximum_reserved_books";
-
-    if(m_memberProperties.value("memberclass") !=
-       m_userinfo.memberclass->text().trimmed())
-      list << "memberclass";
-
-    if(m_memberProperties.value("membership_fees") !=
-       m_userinfo.membershipfees->text())
-      list << "membership_fees";
-
-    if(m_memberProperties.value("membersince") !=
-       m_userinfo.membersince->date().toString(Qt::ISODate))
-      list << "membersince";
-
-    if(m_memberProperties.value("middle_init") != m_userinfo.middle->text().
-       trimmed())
-      list << "middle_init";
-
-    if(m_memberProperties.value("overdue_fees") !=
-       m_userinfo.overduefees->text())
-      list << "overdue_fees";
-
-    if(m_memberProperties.value("sex") != m_userinfo.sex->currentText())
-      list << "sex";
-
-    if(m_memberProperties.value("state_abbr") !=
-       m_userinfo.state->currentText())
-      list << "state_abbr";
-
-    if(m_memberProperties.value("street") !=
-       m_userinfo.street->text().trimmed())
-      list << "street";
-
-    if(m_memberProperties.value("telephone_num") !=
-       m_userinfo.telephoneNumber->text())
-      list << "telephone_num";
-
-    if(m_memberProperties.value("zip") != m_userinfo.zip->text())
-      list << "zip";
-
-    std::sort(list.begin(), list.end());
-
-    for(int i = 0; i < list.size(); i++)
-      str += list.at(i) + ", ";
-
-    if(!str.isEmpty())
-      {
-	str.prepend("(");
-	str = str.mid(0, str.length() - 2);
-	str.append(")");
-      }
-
-    return !str.isEmpty();
-  }
-
- private:
-  void changeEvent(QEvent *event)
-  {
-    if(event)
-      switch(event->type())
-	{
-	case QEvent::LanguageChange:
-	  {
-	    m_userinfo.retranslateUi(this);
-	    break;
-	  }
-	default:
-	  {
-	    break;
-	  }
-	}
-
-    QDialog::changeEvent(event);
-  }
-
- private slots:
-  void done(int result)
-  {
-    QString str("");
-
-    if(haveMemberChanges(str))
-      if(QMessageBox::
-	 question(this,
-		  tr("BiblioteQ: Question"),
-		  tr("Your changes have not been saved. Continue "
-		     "closing?\n%1").arg(str),
-		  QMessageBox::No | QMessageBox::Yes,
-		  QMessageBox::No) == QMessageBox::No)
-	{
-	  QApplication::processEvents();
-	  return;
-	}
-
-    QDialog::done(result);
-  }
-};
 
 class biblioteq: public QMainWindow
 {
@@ -237,7 +83,6 @@ class biblioteq: public QMainWindow
   QVariant setting(const QString &name) const;
   QVector<QString> getBBColumnIndexes(void) const;
   Ui_mainWindow getUI(void) const;
-  Ui_membersBrowser getBB(void) const;
   bool availabilityColors(void) const;
   bool isGuest(void) const;
   bool isPatron(void) const;
@@ -280,13 +125,6 @@ class biblioteq: public QMainWindow
   void setSummaryImages(const QImage &back, const QImage &front);
   void showMain(void);
   void updateItemWindows(void);
-  void updateMembersBrowser(const QString &memberid);
-  void updateMembersBrowser(void);
-  void updateReservationHistoryBrowser(const QString &memberid,
-				       const QString &ioid,
-				       const QString &copyid,
-				       const QString &itemType,
-				       const QString &returnedDate);
   void updateRows
     (const QString &oid, const QTableWidgetItem *item, const QString &it);
   void updateSceneItem(const QString &oid,
@@ -364,8 +202,8 @@ class biblioteq: public QMainWindow
   QMainWindow *m_all_diag;
   QMainWindow *m_customquery_diag;
   QMainWindow *m_error_diag;
-  QMainWindow *m_history_diag;
-  QMainWindow *m_members_diag;
+  //QMainWindow *m_history_diag;
+  //QMainWindow *m_members_diag;
   QMap<QString, QHash<QString, QString> > m_branches;
   QMap<QString, QHash<QString, QString> > m_sruMaps;
   QMultiMap<QString, QHash<QString, QString> > m_z3950Maps;
@@ -390,9 +228,7 @@ class biblioteq: public QMainWindow
   Ui_branchSelect br;
   Ui_customquery cq;
   Ui_errordialog er;
-  Ui_historyDialog history;
   Ui_mainWindow ui;
-  Ui_membersBrowser bb;
   Ui_passSelect pass;
   biblioteq_files *m_files;
   biblioteq_import *m_import;
@@ -403,7 +239,6 @@ class biblioteq: public QMainWindow
   qint64 m_pages;
   qint64 m_queryOffset;
   quint64 m_idCt;
-  userinfo_diag_class *userinfo_diag;
   QString dbUserName(void) const;
   QString reservationHistoryHtml(void) const;
   QString viewHtml(void) const;
@@ -424,30 +259,23 @@ class biblioteq: public QMainWindow
   void prepareFilter(void);
   void preparePhotographsPerPageMenu(void);
   void prepareRequestToolButton(const QString &typefilter);
-  void prepareReservationHistoryMenu(void);
   void prepareUpgradeNotification(void);
   void readConfig(void);
   void readGlobalSetup(void);
   void resetAdminBrowser(void);
-  void resetMembersBrowser(void);
 
  private slots:
   void slotAbout(void);
   void slotAddAdmin(void);
-  void slotAddBorrower(void);
   void slotAdminCheckBoxClicked(int state);
   void slotAdminContextMenu(const QPoint &point);
   void slotAllGo(void);
-  void slotAllowAnyUserEmail(bool state);
   void slotAutoPopOnFilter(QAction *action);
   void slotBookSearch(void);
   void slotBranchChanged(void);
-  void slotCancelAddUser(void);
   void slotChangeView(bool checked);
-  void slotCheckout(void);
   void slotClearSqliteMenu(bool state);
   void slotCloseCustomQueryDialog(void);
-  void slotCloseMembersBrowser(void);
   void slotClosePasswordDialog(void);
   void slotConnectDB(void);
   void slotContextMenu(const QPoint &point);
@@ -462,10 +290,7 @@ class biblioteq: public QMainWindow
   void slotExit(void);
   void slotExportAsCSV(void);
   void slotExportAsPNG(void);
-  void slotExportMembersAsCSV(void);
   void slotGeneralSearchPublicationDateEnabled(bool state);
-  void slotGenerateAndCopyMemberLetter(void);
-  void slotGrantPrivileges(void);
   void slotGraphicsSceneEnterKeyPressed(void);
   void slotGreyLiteratureSearch(void);
   void slotInsertBook(void);
@@ -477,17 +302,11 @@ class biblioteq: public QMainWindow
   void slotJournSearch(void);
   void slotLanguageChanged(void);
   void slotLastWindowClosed(void);
-  void slotLaunchEmailSoftware(void);
-  void slotListOverdueItems(void);
-  void slotListReservedItems(void);
   void slotMagSearch(void);
   void slotMainTableEnterKeyPressed(void);
   void slotMainWindowCanvasBackgroundColorChanged(const QColor &color);
-  void slotMembersContextMenu(const QPoint &point);
-  void slotMembersPagesChanged(int value);
   void slotMergeSQLiteDatabases(void);
   void slotModify(void);
-  void slotModifyBorrower(void);
   void slotNextPage(void);
   void slotOpenOnlineDocumentation(void);
   void slotOpenPDFFiles(void);
@@ -495,23 +314,17 @@ class biblioteq: public QMainWindow
   void slotPageClicked(const QString &link);
   void slotPhotographSearch(void);
   void slotPhotographsPerPageChanged(void);
-  void slotPopulateMembersBrowser(void);
   void slotPreviewCanvasBackgroundColor(const QColor &color);
   void slotPreviousPage(void);
   void slotPrintIconsView(void);
   void slotPrintPreview(QPrinter *printer);
-  void slotPrintReservationHistory(void);
-  void slotPrintReservationHistoryPreview(void);
-  void slotPrintReserved(void);
   void slotPrintView(void);
   void slotPrintViewPreview(void);
   void slotRefresh(void);
   void slotRefreshAdminList(void);
   void slotRefreshCustomQuery(void);
   void slotReloadBiblioteqConf(void);
-  void slotRemoveMember(void);
   void slotRequest(void);
-  void slotReserveCopy(void);
   void slotReset(void);
   void slotResetAllSearch(void);
   void slotResetErrorLog(void);
@@ -523,7 +336,6 @@ class biblioteq: public QMainWindow
   void slotSaveDnt(bool state);
   void slotSaveGeneralSearchCaseSensitivity(bool state);
   void slotSavePassword(void);
-  void slotSaveUser(void);
   void slotSceneSelectionChanged(void);
   void slotSearch(void);
   void slotSearchBasic(void);
@@ -531,7 +343,6 @@ class biblioteq: public QMainWindow
   void slotSelectDatabaseFile(void);
   void slotSetColumns(void);
   void slotSetFonts(void);
-  void slotSetMembershipFees(void);
   void slotShowAdminDialog(void);
   void slotShowChangePassword(void);
   void slotShowConnectionDB(void);
@@ -541,14 +352,10 @@ class biblioteq: public QMainWindow
   void slotShowErrorDialog(void);
   void slotShowFiles(void);
   void slotShowGrid(void);
-  void slotShowHistory(void);
   void slotShowImport(void);
-  void slotShowMembersBrowser(void);
   void slotShowMenu(void);
-  void slotShowNext(void);
   void slotShowOtherOptions(void);
   void slotShowPassword(bool state);
-  void slotShowPrev(void);
   void slotShowReleaseNotes(void);
   void slotSqliteFileSelected(bool state);
   void slotUpdateIndicesAfterSort(int column);

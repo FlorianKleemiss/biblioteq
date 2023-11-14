@@ -87,7 +87,6 @@ class biblioteq_copy_editor: public QDialog
   void slotCloseCopyEditor(void);
 
  private slots:
-  void slotCheckoutCopy(void);
   void slotDeleteCopy(void);
   void slotSaveCopies(void);
 };
