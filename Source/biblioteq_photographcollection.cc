@@ -434,10 +434,10 @@ void biblioteq_photographcollection::loadPhotographFromItem
 
       scene->setSceneRect(scene->itemsBoundingRect());
 
-      auto view = qobject_cast<biblioteq_photograph_view *> (scene->views().value(0));
+	auto view = qobject_cast<biblioteq_photograph_view *>(scene->views().value(0));
 
-      if(view)
-	  {
+	if(view)
+    {
 	    connect(view,
             SIGNAL(save(QImage,QString,qint64)),
 		    this,
@@ -662,32 +662,30 @@ void biblioteq_photographcollection::modify(const int state,
           SLOT(slotDeleteItem()));
 
       if(behavior.isEmpty())
-	{
-	  setWindowTitle(tr("BiblioteQ: Modify Photograph Collection Entry"));
-	  m_engWindowTitle = "Modify";
-	}
+      {
+        setWindowTitle(tr("BiblioteQ: Modify Photograph Collection Entry"));
+        m_engWindowTitle = "Modify";
+      }
       else
-	m_engWindowTitle = behavior;
+        m_engWindowTitle = behavior;
 
       setReadOnlyFields(this, false);
       pc.okButton->setVisible(true);
       pc.addItemButton->setEnabled(true);
       pc.importItems->setEnabled(true);
       pc.select_image_collection->setVisible(true);
-      biblioteq_misc_functions::highlightWidget
-	(pc.id_collection, QColor(255, 248, 220));
-      biblioteq_misc_functions::highlightWidget
-	(pc.title_collection, QColor(255, 248, 220));
+      biblioteq_misc_functions::highlightWidget(pc.id_collection, QColor(255, 248, 220));
+      biblioteq_misc_functions::highlightWidget(pc.title_collection, QColor(255, 248, 220));
     }
   else
     {
       if(behavior.isEmpty())
-	{
-	  setWindowTitle(tr("BiblioteQ: View Photograph Collection Details"));
-	  m_engWindowTitle = "View";
-	}
+      {
+        setWindowTitle(tr("BiblioteQ: View Photograph Collection Details"));
+        m_engWindowTitle = "View";
+      }
       else
-	m_engWindowTitle = behavior;
+        m_engWindowTitle = behavior;
 
       setReadOnlyFields(this, true);
       pc.okButton->setVisible(false);
@@ -719,51 +717,46 @@ void biblioteq_photographcollection::modify(const int state,
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if(!query.exec() || !query.next())
-    {
-      QApplication::restoreOverrideCursor();
-      qmain->addError(QString(tr("Database Error")),
-		      QString(tr("Unable to retrieve the selected photograph "
-				 "collection's data.")),
-		      query.lastError().text(), __FILE__, __LINE__);
-      QMessageBox::critical(this, tr("BiblioteQ: Database Error"),
-			    tr("Unable to retrieve the selected photograph "
-			       "collection's data."));
-      QApplication::processEvents();
-      close();
-      return;
-    }
+  {
+    QApplication::restoreOverrideCursor();
+    qmain->addError(QString(tr("Database Error")),
+         QString(tr("Unable to retrieve the selected photograph "
+             "collection's data.")),
+          query.lastError().text(), __FILE__, __LINE__);
+    QMessageBox::critical(this, tr("BiblioteQ: Database Error"),
+            tr("Unable to retrieve the selected photograph "
+               "collection's data."));
+    QApplication::processEvents();
+    close();
+    return;
+  }
   else
-    {
-      QApplication::restoreOverrideCursor();
+  {
+    QApplication::restoreOverrideCursor();
 
-      auto record(query.record());
+    auto record(query.record());
 
-      for(int i = 0; i < record.count(); i++)
+    for(int i = 0; i < record.count(); i++)
 	{
 	  var = record.field(i).value();
 	  fieldname = record.fieldName(i);
 
 	  if(fieldname == "id")
-	    {
-	      pc.id_collection->setText(var.toString().trimmed());
+      {
+        pc.id_collection->setText(var.toString().trimmed());
 
-	      if(behavior.isEmpty())
-		{
-		  if(state == biblioteq::EDITABLE)
-		    {
-		      str = QString
-			(tr("BiblioteQ: Modify Photograph Collection "
-			    "Entry (")) +
-			var.toString().trimmed() + tr(")");
-		      m_engWindowTitle = "Modify";
-		    }
-		  else
-		    {
-		      str = QString(tr("BiblioteQ: View Photograph "
-				       "Collection Details (")) +
-			var.toString().trimmed() + tr(")");
-		      m_engWindowTitle = "View";
-		    }
+        if(behavior.isEmpty())
+        {
+          if(state == biblioteq::EDITABLE)
+          {
+            str = QString(tr("BiblioteQ: Modify Photograph Collection " "Entry (")) + var.toString().trimmed() + tr(")");
+            m_engWindowTitle = "Modify";
+          }
+          else
+          {
+            str = QString(tr("BiblioteQ: View Photograph " "Collection Details (")) + var.toString().trimmed() + tr(")");
+            m_engWindowTitle = "View";
+          }
 
 		  setWindowTitle(str);
 		}
@@ -806,9 +799,9 @@ void biblioteq_photographcollection::modify(const int state,
       }
 	}
 
-      int pages = 1;
+    int pages = 1;
 
-      if(!m_engWindowTitle.contains("Create"))
+    if(!m_engWindowTitle.contains("Create"))
 	{
 	  QApplication::setOverrideCursor(Qt::WaitCursor);
 	  query.prepare("SELECT COUNT(*) "
@@ -818,48 +811,48 @@ void biblioteq_photographcollection::modify(const int state,
 
 	  if(query.exec())
 	    if(query.next())
-	      {
-		auto i = photographsPerPage();
+        {
+          auto i = photographsPerPage();
 
-		if(i == -1) // Unlimited.
+          if(i == -1) // Unlimited.
 		  {
 		    pages = 1;
 		    setSceneRect(query.value(0).toInt());
 		  }
-		else
-		  pages = qCeil(query.value(0).toDouble() / qMax(1, i));
-	      }
+          else
+            pages = qCeil(query.value(0).toDouble() / qMax(1, i));
+        }
 
 	  QApplication::restoreOverrideCursor();
 	  pages = qMax(1, pages);
 	}
 
-      pc.page->blockSignals(true);
-      pc.page->clear();
+    pc.page->blockSignals(true);
+    pc.page->clear();
 
-      for(int i = 1; i <= pages; i++)
-	pc.page->addItem(QString::number(i));
+    for(int i = 1; i <= pages; i++)
+      pc.page->addItem(QString::number(i));
 
-      pc.page->blockSignals(false);
+    pc.page->blockSignals(false);
 
-      foreach(auto textfield, findChildren<QLineEdit *> ())
-	textfield->setCursorPosition(0);
+    foreach(auto textfield, findChildren<QLineEdit *> ())
+      textfield->setCursorPosition(0);
 
-      storeData();
+    storeData();
 #ifdef Q_OS_ANDROID
       showMaximized();
 #else
-      biblioteq_misc_functions::center(this, m_parentWid);
-      showNormal();
+    biblioteq_misc_functions::center(this, m_parentWid);
+    showNormal();
 #endif
-      activateWindow();
-      raise();
-      repaint();
-      QApplication::processEvents();
+    activateWindow();
+    raise();
+    repaint();
+    QApplication::processEvents();
 
-      if(!m_engWindowTitle.contains("Create"))
-	showPhotographs(pc.page->currentText().toInt());
-    }
+    if(!m_engWindowTitle.contains("Create"))
+      showPhotographs(pc.page->currentText().toInt());
+  }
 
   pc.id_collection->setFocus();
 }
@@ -2988,7 +2981,7 @@ void biblioteq_photographcollection::slotViewContextMenu(const QPoint &pos)
       action->setData(pos);
 
       if(m_engWindowTitle != "Modify")
-	action->setEnabled(false);
+        action->setEnabled(false);
 
       action = menu.addAction(tr("&Modify Photograph..."),
 			      this,
@@ -2996,7 +2989,7 @@ void biblioteq_photographcollection::slotViewContextMenu(const QPoint &pos)
       action->setData(pos);
 
       if(m_engWindowTitle != "Modify")
-	action->setEnabled(false);
+        action->setEnabled(false);
 
       menu.addSeparator();
       action = menu.addAction(tr("&View Photograph..."),
@@ -3079,9 +3072,7 @@ void biblioteq_photographcollection::slotViewPhotograph(void)
   if(pos.isNull())
     pos = pc.graphicsView->mapFromGlobal(QCursor::pos());
 
-  loadPhotographFromItemInNewWindow
-    (qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->
-							 itemAt(pos)));
+  loadPhotographFromItemInNewWindow(qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->itemAt(pos)));
 }
 
 void biblioteq_photographcollection::slotShowCompare(void)

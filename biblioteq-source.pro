@@ -47,6 +47,7 @@ HEADERS		= Source/biblioteq.h \
                   Source/biblioteq_myqstring.h \
                   Source/biblioteq_otheroptions.h \
                   Source/biblioteq_pdfreader.h \
+                  Source/biblioteq_photograph_compare.h \
 		  Source/biblioteq_photographcollection.h \
                   Source/biblioteq_photograph_view.h \
                   Source/biblioteq_sqlite_merge_databases.h \
@@ -86,6 +87,7 @@ SOURCES		= Source/biblioteq_a.cc \
                   Source/biblioteq_open_library.cc \
                   Source/biblioteq_otheroptions.cc \
                   Source/biblioteq_pdfreader.cc \
+                  Source/biblioteq_photograph_compare.cc \
                   Source/biblioteq_photographcollection.cc \
                   Source/biblioteq_photograph_view.cc \
                   Source/biblioteq_sqlite_merge_databases.cc \
