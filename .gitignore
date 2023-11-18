@@ -12,3 +12,4 @@ java*
 *.user.*
 *.user
 release*
+android*

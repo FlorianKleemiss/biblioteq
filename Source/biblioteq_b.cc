@@ -2752,15 +2752,6 @@ void biblioteq::prepareContextMenus()
       m_menu->addAction(tr("Print Current View..."),
 			this,
 			SLOT(slotPrintView(void)));
-
-      if(!m_roles.contains("librarian"))
-	{
-	  m_menu->addSeparator();
-	  m_menu->addAction(tr("Reserve Selected Item..."),
-			    this,
-			    SLOT(slotReserveCopy(void)))->setEnabled
-	    (!isCurrentItemAPhotograph());
-	}
     }
   else if(m_roles.contains("circulation"))
     {
@@ -2775,11 +2766,6 @@ void biblioteq::prepareContextMenus()
       m_menu->addAction(tr("Print Current View..."),
 			this,
 			SLOT(slotPrintView(void)));
-      m_menu->addSeparator();
-      m_menu->addAction(tr("Reserve Selected Item..."),
-			this,
-			SLOT(slotReserveCopy(void)))->
-	setEnabled(isCurrentItemAPhotograph());
       m_menu->addSeparator();
       m_menu->addAction(tr("View Selected Item(s)..."),
 			this,

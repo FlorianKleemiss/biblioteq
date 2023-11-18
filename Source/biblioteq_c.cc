@@ -204,7 +204,7 @@ bool biblioteq::emptyContainers(void)
   return true;
 }
 
-int biblioteq::populateTable(const QSqlQuery &query,
+int biblioteq::populateTable(QSqlQuery &query,
 			     const QString &typefilter,
 			     const int pagingType,
 			     const int searchType)
@@ -214,8 +214,8 @@ int biblioteq::populateTable(const QSqlQuery &query,
       if(m_searchQuery.isActive())
         m_searchQuery.clear();
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-      m_searchQuery = std::move(query);
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 2, 0))
+      m_searchQuery.swap(query);
 #else
       m_searchQuery = query;
 #endif
