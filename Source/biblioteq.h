@@ -89,7 +89,7 @@ class biblioteq: public QMainWindow
   bool showBookReadStatus(void) const;
   bool showMainTableImages(void) const;
   int pageLimit(void) const;
-  int populateTable(const QSqlQuery &query,
+  int populateTable(QSqlQuery &query,
 		    const QString &typefilter,
 		    const int pagingType,
 		    const int searchType);

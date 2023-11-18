@@ -450,10 +450,6 @@ biblioteq::biblioteq(void):QMainWindow()
 	  SLOT(slotShowGrid(void)));
   connect(ui.actionResizeColumns, SIGNAL(triggered(void)), this,
 	  SLOT(slotResizeColumns(void)));
-  connect(ui.userTool, SIGNAL(triggered(void)), this,
-	  SLOT(slotShowMembersBrowser(void)));
-  connect(ui.reserveTool, SIGNAL(triggered(void)), this,
-	  SLOT(slotReserveCopy(void)));
   connect(ui.actionChangePassword, SIGNAL(triggered(void)), this,
 	  SLOT(slotShowChangePassword(void)));
   connect(ui.actionSaveSettings, SIGNAL(triggered(void)), this,
