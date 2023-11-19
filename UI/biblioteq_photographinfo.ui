@@ -519,9 +519,9 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>0</y>
-                 <width>292</width>
-                 <height>923</height>
+                 <y>-671</y>
+                 <width>347</width>
+                 <height>1594</height>
                 </rect>
                </property>
                <property name="minimumSize">
@@ -1494,7 +1494,7 @@ Catalogue</string>
                   <item row="22" column="1">
                    <widget class="QPushButton" name="linked_picture_button">
                     <property name="enabled">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">

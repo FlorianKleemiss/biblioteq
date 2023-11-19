@@ -25,19 +25,18 @@ biblioteq_photographcollection::biblioteq_photographcollection
   QGraphicsScene *scene1 = nullptr;
   QGraphicsScene *scene2 = nullptr;
   QGraphicsScene *scene3 = nullptr;
-  QMenu *menu1 = nullptr;
+  //QMenu *menu1 = nullptr;
   QMenu *menu2 = nullptr;
 
   m_photo_diag = new QDialog(this);
-  menu1 = new QMenu(this);
+  m_photo_compare_diag = new QDialog(this);
+  //menu1 = new QMenu(this);
   menu2 = new QMenu(this);
   scene1 = new QGraphicsScene(this);
   scene2 = new QGraphicsScene(this);
   scene3 = new QGraphicsScene(this);
   pc.setupUi(this);
   setQMain(this);
-  //pc.creation_date_item->setDisplayFormat (qmain->publicationDateFormat("photographcollections"));
-  //pc.quantity->setMaximum(static_cast<int> (biblioteq::Limits::QUANTITY));
   pc.thumbnail_item->enableDoubleClickResize(true);
   m_scene = new biblioteq_bgraphicsscene(pc.graphicsView);
   connect(m_scene,
@@ -50,6 +49,8 @@ biblioteq_photographcollection::biblioteq_photographcollection
   photo.setupUi(m_photo_diag);
   //photo.quantity->setMaximum(static_cast<int> (biblioteq::Limits::QUANTITY));
   photo.thumbnail_item->enableDoubleClickResize(true);
+  p_compare.setupUi(m_photo_compare_diag);
+
   pc.graphicsView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(pc.graphicsView,
       SIGNAL(customContextMenuRequested(QPoint)),
@@ -82,6 +83,7 @@ biblioteq_photographcollection::biblioteq_photographcollection
 #endif
   updateFont(QApplication::font(), qobject_cast<QWidget *> (this));
   m_photo_diag->setWindowModality(Qt::WindowModal);
+  m_photo_compare_diag->setWindowModality(Qt::WindowModal);
   updateFont(QApplication::font(), qobject_cast<QWidget *> (m_photo_diag));
   connect(pc.select_image_collection, SIGNAL(clicked()),
           this, SLOT(slotSelectImage()));
@@ -99,20 +101,6 @@ biblioteq_photographcollection::biblioteq_photographcollection
           this, SLOT(slotAddItem()));
   connect(photo.cancelButton, SIGNAL(clicked()),
           this, SLOT(slotClosePhoto()));
-  connect(menu1->addAction(tr("Reset Collection Image")), SIGNAL(triggered()),
-          this, SLOT(slotReset()));
-  connect(menu1->addAction(tr("Reset Collection ID")), SIGNAL(triggered()),
-          this, SLOT(slotReset()));
-  connect(menu1->addAction(tr("Reset Collection Title")), SIGNAL(triggered()),
-          this, SLOT(slotReset()));
-  connect(menu1->addAction(tr("Reset Collection Location")), SIGNAL(triggered()),
-          this, SLOT(slotReset()));
-  connect(menu1->addAction(tr("Reset Collection About")), SIGNAL(triggered()),
-          this, SLOT(slotReset()));
-  connect(menu1->addAction(tr("Reset Collection Notes")), SIGNAL(triggered()),
-          this, SLOT(slotReset()));
-  connect(menu1->addAction(tr("Reset Accession Number")), SIGNAL(triggered()),
-          this, SLOT(slotReset()));
   connect(menu2->addAction(tr("&All...")), SIGNAL(triggered()),
           this, SLOT(slotExportPhotographs()));
   connect(menu2->addAction(tr("&Current Page...")), SIGNAL(triggered()),
@@ -122,7 +110,7 @@ biblioteq_photographcollection::biblioteq_photographcollection
   connect(pc.page, SIGNAL(currentIndexChanged(int)),
           this, SLOT(slotPageChanged(int)));
   connect(pc.graphicsView->scene(), SIGNAL(itemDoubleClicked()),
-      this, SLOT(slotModifyItem()));
+          this, SLOT(slotModifyItem()));
   pc.exportPhotographsToolButton->setMenu(menu2);
   connect(pc.exportPhotographsToolButton,
       SIGNAL(clicked()),
@@ -457,7 +445,7 @@ void biblioteq_photographcollection::loadPhotographFromItem
 void biblioteq_photographcollection::loadTwoPhotographFromItem
     (QGraphicsScene *scene1, QGraphicsScene *scene2, QGraphicsPixmapItem *item1, QGraphicsPixmapItem *item2, const int percent)
 {
-  if(!item1 || !item2 || !scene1 || !scene1->views().value(0) || !scene2 || !scene2->views().value(0))
+  if(!item1 || !item2 || !scene1 || !scene1->views().value(0))
     return;
 
   QSqlQuery query(qmain->getDB());
@@ -477,7 +465,7 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem
     {
       QImage image1, image2;
       auto bytes1(QByteArray::fromBase64(query.value(0).toByteArray()));
-      auto bytes2(QByteArray::fromBase64(query.value(1).toByteArray()));
+      auto bytes2(QByteArray::fromBase64(query.value(0).toByteArray()));
       auto format1(biblioteq_misc_functions::imageFormatGuess(bytes1));
       auto format2(biblioteq_misc_functions::imageFormatGuess(bytes2));
 
@@ -519,7 +507,7 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem
       if(!image1.isNull())
         image1 = image1.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
       if(!image2.isNull())
-        image2 = image2.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        image2 = image2.scaled(size2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
 
       QGraphicsPixmapItem *pixmapItem1 = nullptr;
@@ -539,9 +527,9 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem
 
       QGraphicsPixmapItem *pixmapItem2 = nullptr;
 
-      if(!scene1->items().isEmpty())
+      if(!scene2->items().isEmpty())
       {
-        pixmapItem2 = qgraphicsitem_cast<QGraphicsPixmapItem *> (scene1->items().at(0));
+        pixmapItem2 = qgraphicsitem_cast<QGraphicsPixmapItem *> (scene2->items().at(0));
 
         if(pixmapItem2)
           pixmapItem2->setPixmap(QPixmap::fromImage(image2));
@@ -553,14 +541,21 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem
         pixmapItem2->setData(1, bytes2);
 
       item1->setSelected(true);
+      item2->setSelected(true);
 
       if(!scene1->items().isEmpty())
       {
         scene1->items().at(0)->setData(0, item1->data(0)); // myoid
         scene1->items().at(0)->setData(2, item1->data(2)); // Navigation.
       }
+      if(!scene2->items().isEmpty())
+      {
+        scene2->items().at(0)->setData(0, item2->data(0)); // myoid
+        scene2->items().at(0)->setData(2, item2->data(2)); // Navigation.
+      }
 
       scene1->setSceneRect(scene1->itemsBoundingRect());
+      scene2->setSceneRect(scene2->itemsBoundingRect());
 
       auto view1 = qobject_cast<biblioteq_photograph_view *> (scene1->views().value(0));
       auto view2 = qobject_cast<biblioteq_photograph_view *> (scene2->views().value(0));
@@ -869,17 +864,6 @@ void biblioteq_photographcollection::search(const QString &field,
   pc.collectionGroup->setVisible(false);
   pc.itemGroup->setVisible(false);
   pc.exportPhotographsToolButton->setVisible(false);
-  //pc.location->insertItem(0, tr("Any"));
-  //pc.location->setCurrentIndex(0);
-  //pc.accession_number->clear();
-
-  //if(!actions.isEmpty())
-  //  actions[0]->setVisible(false);
-
-  //for(int i = 7; i < actions.size(); i++)
-  //  actions.at(i)->setVisible(false);
-
-  //actions.clear();
   setWindowTitle(tr("BiblioteQ: Database Photograph Collection Search"));
   m_engWindowTitle = "Search";
   pc.okButton->setText(tr("&Search"));
@@ -1323,8 +1307,6 @@ void biblioteq_photographcollection::slotGo(void)
 	  return;
 	}
 
-    //  pc.about_collection->setPlainText
-    //(pc.about_collection->toPlainText().trimmed());
     pc.notes->setPlainText
         (pc.notes->toPlainText().trimmed());
     pc.creation_date->setText
@@ -1339,11 +1321,6 @@ void biblioteq_photographcollection::slotGo(void)
         (pc.publisher->toPlainText().trimmed());
     pc.keywords->setPlainText
         (pc.keywords->toPlainText().trimmed());
-
-
-    //  pc.accession_number->setText
-    //(pc.accession_number->text().trimmed());
-    //  QApplication::setOverrideCursor(Qt::WaitCursor);
 
       if(!qmain->getDB().transaction())
 	{
@@ -1546,15 +1523,6 @@ void biblioteq_photographcollection::slotGo(void)
 		      else if(names.at(i) == "Title")
 			qmain->getUI().table->item(m_index->row(), i)->setText
               (pc.title_collection->toPlainText());
-            //  else if(names.at(i) == "Location")
-            //qmain->getUI().table->item(m_index->row(), i)->setText
-            //  (pc.location->currentText().trimmed());
-            //  else if(names.at(i) == "About")
-            //qmain->getUI().table->item(m_index->row(), i)->setText
-            //  (pc.about_collection->toPlainText().trimmed());
-            //  else if(names.at(i) == "Accession Number")
-            //qmain->getUI().table->item(m_index->row(), i)->setText
-            //  (pc.accession_number->text());
 		    }
 
 		  qmain->getUI().table->setSortingEnabled(true);
@@ -1663,30 +1631,8 @@ void biblioteq_photographcollection::slotGo(void)
 	(UNACCENT + "(LOWER(photograph_collection.title)) LIKE " +
 	 UNACCENT + "(LOWER(" + ESCAPE + "'%' || ? || '%')) AND ");
 
-    //  if(pc.location->currentIndex() != 0)
-    //searchstr.append
-    //  (UNACCENT + "(photograph_collection.location) = " + UNACCENT +
-    //   "(" + ESCAPE + "'" +
-    //   biblioteq_myqstring::escape(pc.location->currentText().
-    //			       trimmed()) + "') AND ");
-
-    //  searchstr.append
-    //(UNACCENT + "(LOWER(COALESCE(photograph_collection.about, ''))) " +
-//	 "LIKE " + UNACCENT + "(LOWER(" +
-//	 ESCAPE + "'%' || ? || '%')) AND ");
- //     searchstr.append
-//	(UNACCENT + "(LOWER(COALESCE(photograph_collection.notes, ''))) " +
-//	 "LIKE " + UNACCENT + "(LOWER(" +
-//	 ESCAPE + "'%' || ? || '%')) AND ");
-//      searchstr.append
-//	(UNACCENT +
-//	 "(LOWER(COALESCE(photograph_collection.accession_number, ''))) "
-//	 "LIKE " + UNACCENT + "(LOWER(" + ESCAPE + "'%' || ? || '%'))");
       searchstr.append("GROUP BY photograph_collection.title, "
 		       "photograph_collection.id, "
-              // "photograph_collection.location, "
-               //"photograph_collection.about, "
-               //"photograph_collection.accession_number, "
 		       "photograph_collection.type, "
 		       "photograph_collection.myoid, "
 		       "photograph_collection.image_scaled");
@@ -1694,14 +1640,6 @@ void biblioteq_photographcollection::slotGo(void)
       query.addBindValue(pc.id_collection->text().trimmed());
       query.addBindValue
     (biblioteq_myqstring::escape(pc.title_collection->toPlainText().trimmed()));
-    //  query.addBindValue
-    //(biblioteq_myqstring::escape(pc.about_collection->toPlainText().
-    //			     trimmed()));
-    //  query.addBindValue
-    //(biblioteq_myqstring::escape(pc.notes_collection->toPlainText().
-    //			     trimmed()));
-    //  query.addBindValue
-    //(biblioteq_myqstring::escape(pc.accession_number->text().trimmed()));
       (void) qmain->populateTable
 	(query,
 	 "Photograph Collections",
@@ -2282,75 +2220,6 @@ void biblioteq_photographcollection::slotPrint(void)
   print(this);
 }
 
-void biblioteq_photographcollection::slotQuery(void)
-{
-}
-
-void biblioteq_photographcollection::slotReset(void)
-{
-  auto action = qobject_cast<QAction *> (sender());
-
-  if(action != nullptr)
-    {
-      /*auto actions = pc.resetButton->menu()->actions();
-
-      if(actions.size() < 7)
-	{
-	  // Error.
-	}
-      else if(action == actions[0])
-	pc.thumbnail_collection->clear();
-      else if(action == actions[1])
-	{
-	  pc.id_collection->clear();
-	  pc.id_collection->setFocus();
-	}
-      else if(action == actions[2])
-	{
-	  pc.title_collection->clear();
-	  pc.title_collection->setFocus();
-	}
-      else if(action == actions[3])
-	{
-      //pc.location->setCurrentIndex(0);
-      //pc.location->setFocus();
-	}
-      else if(action == actions[4])
-	{
-      //pc.about_collection->clear();
-      //pc.about_collection->setFocus();
-	}
-      else if(action == actions[5])
-	{
-      //pc.notes_collection->clear();
-      //pc.notes_collection->setFocus();
-	}
-      else if(action == actions[6])
-	{
-      //pc.accession_number->clear();
-      //pc.accession_number->setFocus();
-	}
-
-      actions.clear();
-*/
-    }
-  else
-    {
-      /*
-      ** Reset all.
-      */
-
-      pc.thumbnail_collection->clear();
-      pc.id_collection->clear();
-      pc.title_collection->clear();
-      //pc.about_collection->clear();
-      //pc.notes_collection->clear();
-      //pc.location->setCurrentIndex(0);
-      //pc.accession_number->clear();
-      pc.id_collection->setFocus();
-    }
-}
-
 void biblioteq_photographcollection::slotSaveRotatedImage
 (const QImage &image, const QString &format, const qint64 oid)
 {
@@ -2677,42 +2546,32 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow
 {
   if(item1 && item2)
   {
-      QMainWindow *mainWindow = nullptr;
+      QDialog *mainWindow = nullptr;
       Ui_photographCompare ui;
 
-      mainWindow = new QMainWindow(this);
+      mainWindow = new QDialog(this);
       mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
       ui.setupUi(mainWindow);
       connect(ui.closeButton,
               SIGNAL(clicked()),
               mainWindow,
               SLOT(close()));
-      connect(ui.next,
-              SIGNAL(clicked()),
-              this,
-              SLOT(slotViewNextPhotograph()));
-      connect(ui.previous,
-              SIGNAL(clicked()),
-              this,
-              SLOT(slotViewPreviousPhotograph()));
-      connect(ui.save,
-              SIGNAL(clicked()),
-              ui.view,
-              SLOT(slotSave()));
       connect(ui.view_size,
               SIGNAL(currentIndexChanged(int)),
               this,
               SLOT(slotImageViewSizeChanged(int)));
-      ui.save->setVisible(m_engWindowTitle.contains("Modify"));
 
       auto scene = new QGraphicsScene(mainWindow);
+      auto scene2 = new QGraphicsScene(mainWindow);
 
-      mainWindow->show();
+      //mainWindow->show();
       biblioteq_misc_functions::center(mainWindow, this);
       mainWindow->hide();
       scene->setProperty("view_size", ui.view->viewport()->size());
+      scene2->setProperty("view_size", ui.view_2->viewport()->size());
       ui.view->setScene(scene);
-      loadTwoPhotographFromItem(scene, scene, item1, item2, ui.view_size->currentText().remove("%").toInt());
+      ui.view_2->setScene(scene2);
+      loadTwoPhotographFromItem(scene, scene2, item1, item2, ui.view_size->currentText().remove("%").toInt());
       mainWindow->show();
   }
 }
@@ -2996,6 +2855,10 @@ void biblioteq_photographcollection::slotViewContextMenu(const QPoint &pos)
 			      this,
 			      SLOT(slotViewPhotograph(void)));
       action->setData(pos);
+      action = menu.addAction(tr("&Show Comparison..."),
+                              this,
+                              SLOT(slotViewCompare(void)));
+      action->setData(pos);
       menu.exec(QCursor::pos());
     }
 }
@@ -3030,34 +2893,29 @@ void biblioteq_photographcollection::slotViewNextPhotograph(void)
 
   if(scene)
     {
-      auto item = qgraphicsitem_cast<QGraphicsPixmapItem *>
-	(scene->items().value(0));
+      auto item = qgraphicsitem_cast<QGraphicsPixmapItem *>(scene->items().value(0));
 
       if(item)
-	{
-	  QApplication::setOverrideCursor(Qt::WaitCursor);
+      {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        auto list(pc.graphicsView->scene()->items(Qt::AscendingOrder));
+        int idx = -1;
 
-	  auto list(pc.graphicsView->scene()->items(Qt::AscendingOrder));
-	  int idx = -1;
+        for(int i = 0; i < list.size(); i++)
+          if(item->data(0) == list.at(i)->data(0))
+          {
+              idx = i;
+              break;
+          }
 
-	  for(int i = 0; i < list.size(); i++)
-	    if(item->data(0) == list.at(i)->data(0))
-	      {
-		idx = i;
-		break;
-	      }
+        idx += 1;
 
-	  idx += 1;
+        if(idx >= list.size())
+            idx = 0;
 
-	  if(idx >= list.size())
-	    idx = 0;
-
-	  QApplication::restoreOverrideCursor();
-	  loadPhotographFromItem
-	    (scene,
-	     qgraphicsitem_cast<QGraphicsPixmapItem *> (list.value(idx)),
-	     percent);
-	}
+        QApplication::restoreOverrideCursor();
+        loadPhotographFromItem(scene, qgraphicsitem_cast<QGraphicsPixmapItem *> (list.value(idx)), percent);
+      }
     }
 }
 
@@ -3072,10 +2930,24 @@ void biblioteq_photographcollection::slotViewPhotograph(void)
   if(pos.isNull())
     pos = pc.graphicsView->mapFromGlobal(QCursor::pos());
 
-  loadPhotographFromItemInNewWindow(qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->itemAt(pos)));
+  auto i = qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->itemAt(pos));
+
+  loadPhotographFromItemInNewWindow(i);
 }
 
 void biblioteq_photographcollection::slotShowCompare(void)
+{
+  QList tl = pc.graphicsView->scene()->selectedItems();
+  auto temp = tl[0];
+  auto i1 = qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (temp);
+  tl = pc.thumbnail_collection->items();
+  temp = tl[0];
+  auto i2 = qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (temp);
+
+  loadcompareFromItemInNewWindow(i1,i2);
+}
+
+void biblioteq_photographcollection::slotViewCompare(void)
 {
   auto action = qobject_cast<QAction *> (sender());
   QPoint pos;
@@ -3083,9 +2955,16 @@ void biblioteq_photographcollection::slotShowCompare(void)
   if(action)
     pos = action->data().toPoint();
 
-  loadcompareFromItemInNewWindow
-      (qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->itemAt(pos)),
-       qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->itemAt(pos)));
+  if(pos.isNull())
+    pos = pc.graphicsView->mapFromGlobal(QCursor::pos());
+
+  auto i = qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (pc.graphicsView->itemAt(pos));
+
+  QList tl = pc.thumbnail_collection->items();
+  auto temp = tl[0];
+  auto i2 = qgraphicsitem_cast<biblioteq_graphicsitempixmap *> (temp);
+
+  loadcompareFromItemInNewWindow(i,i2);
 }
 
 void biblioteq_photographcollection::slotViewPreviousPhotograph(void)
@@ -3141,10 +3020,7 @@ void biblioteq_photographcollection::slotViewPreviousPhotograph(void)
 	    idx = list.size() - 1;
 
 	  QApplication::restoreOverrideCursor();
-	  loadPhotographFromItem
-	    (scene,
-	     qgraphicsitem_cast<QGraphicsPixmapItem *> (list.value(idx)),
-	     percent);
+      loadPhotographFromItem(scene, qgraphicsitem_cast<QGraphicsPixmapItem *> (list.value(idx)), percent);
 	}
     }
 }

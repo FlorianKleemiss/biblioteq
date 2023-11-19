@@ -26,6 +26,7 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
 
  private:
   QDialog *m_photo_diag;
+  QDialog *m_photo_compare_diag;
   QString m_engWindowTitle;
   QString m_itemOid;
   Ui_pcDialog pc;
@@ -66,8 +67,6 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   void slotModifyItem(void);
   void slotPageChanged(const int &nr);
   void slotPrint(void);
-  void slotQuery(void);
-  void slotReset(void);
   void slotSaveRotatedImage(const QImage &image,
 			    const QString &format,
 			    const qint64 oid);
@@ -75,6 +74,7 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   void slotSelectAll(void);
   void slotSelectImage(void);
   void slotShowCompare(void);
+  void slotViewCompare(void);
   void slotUpdateItem(void);
   void slotViewContextMenu(const QPoint &pos);
   void slotViewNextPhotograph(void);

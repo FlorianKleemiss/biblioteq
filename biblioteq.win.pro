@@ -3,12 +3,13 @@ include(biblioteq-source.pro)
 
 purge.commands = del /Q *~ && del /Q *\\*~
 
-CONFIG		+= qt release thread warn_on windows
+CONFIG		+= qt thread warn_on windows
 LANGUAGE	= C++
 QT		+= network sql printsupport widgets
 QT		-= webkit d-bus test
 
 QMAKE_CLEAN	+= BiblioteQ.exe
+QMAKE_CXXFLAGS += -std=c++17
 QMAKE_CXXFLAGS_RELEASE -= -O2
 QMAKE_CXXFLAGS_RELEASE += -O3 \
                           -Wcast-align \
@@ -22,8 +23,7 @@ QMAKE_CXXFLAGS_RELEASE += -O3 \
                           -Wno-deprecated \
                           -fwrapv \
                           -pedantic \
-                          -pie \
-                          -std=c++17
+                          -pie
 win32-msvc* {
   QMAKE_CXXFLAGS_RELEASE -= -O3 \
                             -Wcast-qual \
@@ -38,10 +38,10 @@ win32-msvc* {
                             -Wno-deprecated \
                             -pedantic \
                             -pie \
-                            -Wall \
-                            -std=c++17
-  QMAKE_CXXFLAGS_RELEASE += /std:c++17 \
-                            /O2 \
+                            -Wall
+  QMAKE_CXXFLAGS -= -std=c++17
+  QMAKE_CXXFLAGS += /std:c++17
+  QMAKE_CXXFLAGS_RELEASE += /O2 \
                             /wd5219
   CONFIG += entrypoint
 }
