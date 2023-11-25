@@ -1419,9 +1419,6 @@ void biblioteq::prepareFilter(void)
     {
       tmplist1 << "All"
 	       << "All Available"
-	       << "All Overdue"
-	       << "All Requested"
-	       << "All Reserved"
 	       << "Books"
 	       << "Grey Literature"
 	       << "Journals"
@@ -1429,9 +1426,6 @@ void biblioteq::prepareFilter(void)
 	       << "Photograph Collections";
       tmplist2 << tr("All")
 	       << tr("All Available")
-	       << tr("All Overdue")
-	       << tr("All Requested")
-	       << tr("All Reserved")
 	       << tr("Books")
 	       << tr("Grey Literature")
 	       << tr("Journals")
@@ -1462,20 +1456,12 @@ void biblioteq::prepareFilter(void)
       else
 	{
 	  tmplist1 << "All"
-		   << "All Available"
-		   << "All Overdue"
-		   << "All Requested"
-		   << "All Reserved"
 		   << "Books"
 		   << "Grey Literature"
 		   << "Journals"
 		   << "Magazines"
            << "Photograph Collections";
 	  tmplist2 << tr("All")
-		   << tr("All Available")
-		   << tr("All Overdue")
-		   << tr("All Requested")
-		   << tr("All Reserved")
 		   << tr("Books")
 		   << tr("Grey Literature")
 		   << tr("Journals")

@@ -3101,7 +3101,6 @@ void biblioteq_photographcollection::updateWindow(const int state)
       pc.okButton->setVisible(true);
       pc.addItemButton->setEnabled(true);
       pc.importItems->setEnabled(true);
-      //pc.resetButton->setVisible(true);
       str = QString(tr("BiblioteQ: Modify Photograph Collection Entry (")) +
 	pc.id_collection->text() + tr(")");
       m_engWindowTitle = "Modify";
@@ -3119,7 +3118,6 @@ void biblioteq_photographcollection::updateWindow(const int state)
       pc.okButton->setVisible(false);
       pc.addItemButton->setEnabled(false);
       pc.importItems->setEnabled(false);
-      //pc.resetButton->setVisible(false);
       str = QString(tr("BiblioteQ: View Photograph Collection Details (")) +
       pc.id_collection->text() + tr(")");
       m_engWindowTitle = "View";
