@@ -144,9 +144,10 @@ biblioteq_photographcollection::biblioteq_photographcollection
   //if(pc.location->findText(biblioteq::s_unknown) == -1)
   //  pc.location->addItem(biblioteq::s_unknown);
 
-  //if(m_parentWid)
+  if(m_parentWid)
   //  resize(qRound(0.95 * m_parentWid->size().width()),
-//	   qRound(0.95 * m_parentWid->size().height()));
+  //     qRound(0.95 * m_parentWid->size().height()));
+      biblioteq_misc_functions::center(this,m_parentWid);
 
 #ifdef Q_OS_MACOS
   foreach(auto tool_button, findChildren<QToolButton *> ())
