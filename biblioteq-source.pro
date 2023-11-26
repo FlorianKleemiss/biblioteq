@@ -1,5 +1,4 @@
-FORMS           = UI/biblioteq_adminsetup.ui \
-		  UI/biblioteq_allinfo.ui \
+FORMS           = \
                   UI/biblioteq_bookcopybrowser.ui \
                   UI/biblioteq_bookinfo.ui \
                   UI/biblioteq_branch_s.ui \
@@ -10,9 +9,7 @@ FORMS           = UI/biblioteq_adminsetup.ui \
                   UI/biblioteq_errordiag.ui \
                   UI/biblioteq_files.ui \
                   UI/biblioteq_generalmessagediag.ui \
-		  UI/biblioteq_greyliteratureinfo.ui \
                   UI/biblioteq_import.ui \
-                  UI/biblioteq_maginfo.ui \
                   UI/biblioteq_mainwindow.ui \
                   UI/biblioteq_merge_sqlite_databases.ui \
                   UI/biblioteq_otheroptions.ui \
@@ -37,12 +34,10 @@ HEADERS		= Source/biblioteq.h \
                   Source/biblioteq_files.h \
 		  Source/biblioteq_filesize_table_item.h \
                   Source/biblioteq_generic_thread.h \
-                  Source/biblioteq_grey_literature.h \
 		  Source/biblioteq_hyperlinked_text_edit.h \
                   Source/biblioteq_image_drop_site.h \
                   Source/biblioteq_import.h \
 		  Source/biblioteq_item.h \
-		  Source/biblioteq_magazine.h \
                   Source/biblioteq_main_table.h \
                   Source/biblioteq_myqstring.h \
                   Source/biblioteq_otheroptions.h \
@@ -72,13 +67,10 @@ SOURCES		= Source/biblioteq_a.cc \
                   Source/biblioteq_files.cc \
 		  Source/biblioteq_filesize_table_item.cc \
                   Source/biblioteq_generic_thread.cc \
-                  Source/biblioteq_grey_literature.cc \
                   Source/biblioteq_hyperlinked_text_edit.cc \
                   Source/biblioteq_image_drop_site.cc \
                   Source/biblioteq_import.cc \
                   Source/biblioteq_item.cc \
-                  Source/biblioteq_journal.cc \
-                  Source/biblioteq_magazine.cc \
                   Source/biblioteq_main_table.cc \
                   Source/biblioteq_marc.cc \
                   Source/biblioteq_misc_functions.cc \

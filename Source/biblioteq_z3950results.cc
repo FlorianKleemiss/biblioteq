@@ -1,5 +1,5 @@
-#include "biblioteq_magazine.h"
 #include "biblioteq_z3950results.h"
+#include "qevent.h"
 
 biblioteq_z3950results::biblioteq_z3950results
 (QWidget *parent,
@@ -38,10 +38,6 @@ biblioteq_z3950results::biblioteq_z3950results
 
 	    if(issn.length() >= 9)
 	      issn = issn.mid(0, 9).trimmed();
-
-	    if(row == -1)
-	      if(m_magazine && m_magazine->dialog().id->text() == issn)
-		row = i;
 
 	    break;
 	  }
@@ -138,9 +134,6 @@ void biblioteq_z3950results::slotSelectRecord(void)
   QStringList list;
 
   list = m_ui.textarea->toPlainText().split("\n");
-
-  if(m_magazine)
-    m_magazine->populateDisplayAfterZ3950(list, m_recordSyntax);
 
   list.clear();
   close();

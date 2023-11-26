@@ -195,16 +195,6 @@ biblioteq::biblioteq(void):QMainWindow()
   m_printPreview = new QTextBrowser(this);
   m_printPreview->setVisible(false);
 #ifdef Q_OS_ANDROID
-  m_all_diag = new QMainWindow(this);
-#else
-  m_all_diag = new QMainWindow();
-#endif
-#ifdef Q_OS_ANDROID
-  m_admin_diag = new QMainWindow(this);
-#else
-  m_admin_diag = new QMainWindow();
-#endif
-#ifdef Q_OS_ANDROID
   m_customquery_diag = new QMainWindow(this);
 #else
   m_customquery_diag = new QMainWindow();
@@ -276,10 +266,6 @@ biblioteq::biblioteq(void):QMainWindow()
 	  SIGNAL(triggered(void)),
 	  this,
 	  SLOT(slotShowReleaseNotes(void)));
-  connect(ui.action_Grey_Literature,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(slotInsertGreyLiterature(void)));
   connect(ui.action_Online_Documentation,
 	  SIGNAL(triggered(void)),
 	  this,
@@ -304,14 +290,6 @@ biblioteq::biblioteq(void):QMainWindow()
 	  SIGNAL(triggered(void)),
 	  this,
 	  SLOT(slotViewFullOrNormalScreen(void)));
-  connect(ui.action_Journal,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(slotInsertJourn(void)));
-  connect(ui.action_Magazine,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(slotInsertMag(void)));
   connect(ui.action_Merge_SQLite_Databases,
 	  SIGNAL(triggered(void)),
 	  this,
@@ -350,13 +328,9 @@ biblioteq::biblioteq(void):QMainWindow()
   //history.setupUi(m_history_diag);
   br.setupUi(m_branch_diag);
   pass.setupUi(m_pass_diag);
-  al.setupUi(m_all_diag);
-  al.quantity->setMaximum(static_cast<int> (biblioteq::Limits::QUANTITY));
+  //al.quantity->setMaximum(static_cast<int> (biblioteq::Limits::QUANTITY));
   cq.setupUi(m_customquery_diag);
   er.setupUi(m_error_diag);
-  ab.setupUi(m_admin_diag);
-  ab.splitter->setStretchFactor(0, 0);
-  ab.splitter->setStretchFactor(1, 1);
 #ifdef Q_OS_ANDROID
   ui.action_Full_Screen->setEnabled(false);
 #endif
@@ -364,12 +338,7 @@ biblioteq::biblioteq(void):QMainWindow()
   ui.actionSetGlobalFonts->setVisible(false);
 #endif
   m_pass_diag->setModal(true);
-  //userinfo_diag->setModal(true);
   m_branch_diag->setModal(true);
-  //connect(bb.action_Set_Membership_Fees,
-//	  SIGNAL(triggered(void)),
-//	  this,
-//	  SLOT(slotSetMembershipFees(void)));
   connect(ui.graphicsView->scene(),
 	  SIGNAL(enterKeyPressed(void)),
 	  this,
@@ -388,35 +357,8 @@ biblioteq::biblioteq(void):QMainWindow()
 	  this, SLOT(slotResizeColumnsAfterSort(void)));
   connect(er.copyButton, SIGNAL(clicked(void)), this,
 	  SLOT(slotCopyError(void)));
-  //connect(bb.action_Export,
-//	  SIGNAL(triggered(void)),
-//	  this,
-//	  SLOT(slotExportMembersAsCSV(void)));
-  //connect(bb.pages,
-//	  SIGNAL(valueChanged(int)),
-//	  this,
-//	  SLOT(slotMembersPagesChanged(int)));
-//  connect(bb.table->horizontalHeader(), SIGNAL(sectionClicked(int)),
-//	  this, SLOT(slotResizeColumnsAfterSort(void)));
-//  connect(history.table->horizontalHeader(), SIGNAL(sectionClicked(int)),
-//	  this, SLOT(slotResizeColumnsAfterSort(void)));
   connect(ui.table, SIGNAL(itemSelectionChanged(void)), this,
 	  SLOT(slotDisplaySummary(void)));
-//  connect(bb.modifyButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotModifyBorrower(void)));
-//  connect(bb.historyButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotShowHistory(void)));
-//  connect(history.reloadButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotShowHistory(void)));
-//  connect(history.printButton,
-//	  SIGNAL(clicked(void)),
-//	  history.printButton,
-//	  SLOT(showMenu(void)));
-  connect(al.caseinsensitive,
-	  SIGNAL(toggled(bool)),
-	  this,
-	  SLOT(slotSaveGeneralSearchCaseSensitivity(bool)));
-  connect(al.okButton, SIGNAL(clicked(void)), this, SLOT(slotAllGo(void)));
   connect(ui.exitTool, SIGNAL(triggered(void)), this, SLOT(slotExit(void)));
   connect(ui.actionExit, SIGNAL(triggered(void)), this,
 	  SLOT(slotExit(void)));
@@ -464,27 +406,6 @@ biblioteq::biblioteq(void):QMainWindow()
 	  SLOT(slotDisconnect(void)));
   connect(ui.actionDisconnect, SIGNAL(triggered(void)), this,
 	  SLOT(slotDisconnect(void)));
-  //connect(userinfo_diag->m_userinfo.menu,
-//	  SIGNAL(clicked(void)),
-//	  this,
-//	  SLOT(slotShowMenu(void)));
-//  connect(userinfo_diag->m_userinfo.nextTool, SIGNAL(clicked(void)), this,
-//	  SLOT(slotShowNext(void)));
- // connect(userinfo_diag->m_userinfo.prevTool, SIGNAL(clicked(void)), this,
-//	  SLOT(slotShowPrev(void)));
-// connect(history.nextTool, SIGNAL(clicked(void)), this,
-//	  SLOT(slotShowNext(void)));
-//  connect(history.prevTool, SIGNAL(clicked(void)), this,
-//	  SLOT(slotShowPrev(void)));
-#ifdef Q_OS_ANDROID
-//  connect(history.cancelButton, SIGNAL(clicked(void)),
-//	  m_history_diag, SLOT(hide(void)));
-#else
-//  connect(history.cancelButton, SIGNAL(clicked(void)),
-//	  m_history_diag, SLOT(close(void)));
-#endif
-//  connect(history.dnt, SIGNAL(toggled(bool)),
-//	  this, SLOT(slotSaveDnt(bool)));
   connect(br.okButton, SIGNAL(clicked(void)), this,
 	  SLOT(slotConnectDB(void)));
   connect(br.branch_name, SIGNAL(activated(int)), this,
@@ -493,35 +414,6 @@ biblioteq::biblioteq(void):QMainWindow()
 	  SLOT(slotRoleChanged(int)));
   connect(br.show_password, SIGNAL(toggled(bool)), this,
 	  SLOT(slotShowPassword(bool)));
-//  connect(bb.printButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotPrintReserved(void)));
-//  connect(bb.addButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotAddBorrower(void)));
-//  connect(bb.reloadButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotPopulateMembersBrowser(void)));
-//  connect(bb.deleteButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotRemoveMember(void)));
-//  connect(userinfo_diag->m_userinfo.cancelButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotCancelAddUser(void)));
-//  connect(bb.cancelButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotCloseMembersBrowser(void)));
-//  connect(bb.checkoutButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotCheckout(void)));
-//  connect(bb.listButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotListReservedItems(void)));
-//  connect(bb.overdueButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotListOverdueItems(void)));
-  connect(al.resetButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotReset(void)));
-#ifdef Q_OS_ANDROID
-  connect(al.cancelButton, SIGNAL(clicked(void)),
-	  m_all_diag, SLOT(hide(void)));
-#else
-  connect(al.cancelButton, SIGNAL(clicked(void)),
-	  m_all_diag, SLOT(close(void)));
-#endif
-  //connect(ui.actionReservationHistory, SIGNAL(triggered(void)), this,
-//	  SLOT(slotShowHistory(void)));
   connect(ui.filesTool, SIGNAL(triggered(void)), this,
 	  SLOT(slotShowFiles(void)));
   connect(ui.searchTool, SIGNAL(triggered(void)), this,
@@ -547,10 +439,6 @@ biblioteq::biblioteq(void):QMainWindow()
   connect(er.cancelButton, SIGNAL(clicked(void)),
 	  m_error_diag, SLOT(close(void)));
 #endif
-//  connect(bb.filter, SIGNAL(returnPressed(void)), this,
-//	  SLOT(slotPopulateMembersBrowser(void)));
-//  connect(bb.grantButton, SIGNAL(clicked(void)), this,
-//	  SLOT(slotGrantPrivileges(void)));
   connect(ui.configTool, SIGNAL(triggered(void)), this,
 	  SLOT(slotShowMenu(void)));
   connect(ui.printTool, SIGNAL(triggered(void)), this,
@@ -598,21 +486,6 @@ biblioteq::biblioteq(void):QMainWindow()
 #endif
   connect(ui.actionConfigureAdministratorPrivileges,
 	  SIGNAL(triggered(void)), this, SLOT(slotShowAdminDialog(void)));
-  connect(ab.reloadButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotRefreshAdminList(void)));
-  connect(ab.addButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotAddAdmin(void)));
-  connect(ab.deleteButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotDeleteAdmin(void)));
-  connect(ab.saveButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotSaveAdministrators(void)));
-#ifdef Q_OS_ANDROID
-  connect(ab.cancelButton, SIGNAL(clicked(void)),
-	  m_admin_diag, SLOT(close(void)));
-#else
-  connect(ab.cancelButton, SIGNAL(clicked(void)),
-	  m_admin_diag, SLOT(close(void)));
-#endif
   connect(ui.action_New_SQLite_Database,
 	  SIGNAL(triggered(void)),
 	  this,
@@ -633,27 +506,11 @@ biblioteq::biblioteq(void):QMainWindow()
 	  SIGNAL(triggered(void)),
 	  this,
 	  SLOT(slotShowDbEnumerations(void)));
-  ab.table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-  //bb.table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-  er.table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-  //history.table->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-  ab.table->setContextMenuPolicy(Qt::CustomContextMenu);
-  //bb.table->setContextMenuPolicy(Qt::CustomContextMenu);
   ui.table->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(ab.table,
-	  SIGNAL(customContextMenuRequested(const QPoint &)),
-	  this,
-	  SLOT(slotAdminContextMenu(const QPoint &)));
-  //connect(bb.table,
-//	  SIGNAL(customContextMenuRequested(const QPoint &)),
-//	  this,
-//	  SLOT(slotMembersContextMenu(const QPoint &)));
   connect(ui.table,
 	  SIGNAL(customContextMenuRequested(const QPoint &)),
 	  this,
 	  SLOT(slotContextMenu(const QPoint &)));
-  al.publication_date_enabled->setChecked(false);
-  al.resetButton->setMenu(menu1);
 
 #ifdef Q_OS_MACOS
   foreach(auto tool_button, m_all_diag->findChildren<QToolButton *> ())
@@ -791,7 +648,6 @@ biblioteq::biblioteq(void):QMainWindow()
     }
 
   preparePhotographsPerPageMenu();
-  //prepareReservationHistoryMenu();
 
   QAction *action = nullptr;
   QActionGroup *group2 = nullptr;
@@ -950,11 +806,6 @@ QSqlDatabase biblioteq::getDB(void) const
   return m_db;
 }
 
-QString biblioteq::getAdminID(void) const
-{
-  return dbUserName();
-}
-
 QString biblioteq::getPreferredSRUSite(void) const
 {
   for(int i = 0; i < ui.menuPreferredSRUSite->actions().size(); i++)
@@ -1109,15 +960,6 @@ void biblioteq::addError(const QString &type,
 
 void biblioteq::adminSetup(void)
 {
-  //bb.addButton->setEnabled(true);
-  //bb.checkoutButton->setEnabled(true);
-  //bb.deleteButton->setEnabled(true);
-  //bb.grantButton->setEnabled(true);
-  //bb.historyButton->setEnabled(true);
-  //bb.listButton->setEnabled(true);
-  //bb.modifyButton->setEnabled(true);
-  //bb.overdueButton->setEnabled(true);
-  //bb.printButton->setEnabled(true);
 
   if(m_db.driverName() == "QSQLITE")
     ui.actionChangePassword->setEnabled(false);
@@ -1202,7 +1044,6 @@ void biblioteq::adminSetup(void)
     }
   else
     {
-      //bb.grantButton->setEnabled(false);
       ui.actionDatabase_Enumerations->setEnabled(true);
       ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled
 	(true);
@@ -1216,47 +1057,17 @@ void biblioteq::adminSetup(void)
   ** Hide certain fields in the Members Browser.
   */
 
-  if(m_roles == "membership")
-    {
-      //bb.historyButton->setEnabled(false);
-      //bb.listButton->setEnabled(false);
-      //bb.printButton->setEnabled(false);
-      //bb.checkoutButton->setEnabled(false);
-      //bb.overdueButton->setEnabled(false);
-    }
-
   if(m_roles == "circulation" || m_roles == "librarian")
     {
-      //bb.addButton->setEnabled(false);
-      //bb.grantButton->setEnabled(false);
-      //bb.deleteButton->setEnabled(false);
-      //bb.modifyButton->setEnabled(false);
 
       if(m_roles == "librarian")
 	{
-      //bb.checkoutButton->setEnabled(false);
 	  ui.actionDatabase_Enumerations->setEnabled(true);
 	  ui.actionPopulate_Database_Enumerations_Browser_on_Display->
 	    setEnabled(true);
 	  ui.action_Database_Enumerations->setEnabled(true);
 	}
     }
-  else
-    {
-      //disconnect(bb.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this,
-    //	 SLOT(slotModifyBorrower(void)));
-    //  connect(bb.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this,
-     //     SLOT(slotModifyBorrower(void)));
-     // bb.addButton->setEnabled(true);
-
-      //if(m_db.driverName() != "QSQLITE")
-    //bb.grantButton->setEnabled(true);
-
-      //bb.deleteButton->setEnabled(true);
-      //bb.modifyButton->setEnabled(true);
-    }
-
-  resetAdminBrowser();
 }
 
 void biblioteq::changeEvent(QEvent *event)
@@ -1266,9 +1077,6 @@ void biblioteq::changeEvent(QEvent *event)
       {
       case QEvent::LanguageChange:
 	{
-	  ab.retranslateUi(m_admin_diag);
-	  al.retranslateUi(m_all_diag);
-      //bb.retranslateUi(m_members_diag);
 	  br.retranslateUi(m_branch_diag);
 	  cq.retranslateUi(m_customquery_diag);
 	  er.retranslateUi(m_error_diag);
@@ -1396,40 +1204,20 @@ void biblioteq::prepareFilter(void)
   if(m_db.driverName() == "QSQLITE")
     {
       tmplist1 << "All"
-	       << "All Available"
-	       << "All Overdue"
-	       << "All Reserved"
 	       << "Books"
-	       << "Grey Literature"
-	       << "Journals"
-	       << "Magazines"
            << "Photograph Collections";
       tmplist2 << tr("All")
-	       << tr("All Available")
-	       << tr("All Overdue")
-	       << tr("All Reserved")
 	       << tr("Books")
-	       << tr("Grey Literature")
-	       << tr("Journals")
-	       << tr("Magazines")
 	       << tr("Photograph Collections");
     }
   else if(m_roles.contains("administrator") ||
 	  m_roles.contains("circulation"))
     {
       tmplist1 << "All"
-	       << "All Available"
 	       << "Books"
-	       << "Grey Literature"
-	       << "Journals"
-	       << "Magazines"
 	       << "Photograph Collections";
       tmplist2 << tr("All")
-	       << tr("All Available")
 	       << tr("Books")
-	       << tr("Grey Literature")
-	       << tr("Journals")
-	       << tr("Magazines")
            << tr("Photograph Collections");
     }
   else
@@ -1439,33 +1227,20 @@ void biblioteq::prepareFilter(void)
 	 m_roles == "membership")
 	{
 	  tmplist1 << "All"
-		   << "All Available"
 		   << "Books"
-		   << "Grey Literature"
-		   << "Journals"
-		   << "Magazines"
            << "Photograph Collections";
 	  tmplist2 << tr("All")
 		   << tr("All Available")
 		   << tr("Books")
-		   << tr("Grey Literature")
-		   << tr("Journals")
-		   << tr("Magazines")
            << tr("Photograph Collections");
 	}
       else
 	{
 	  tmplist1 << "All"
 		   << "Books"
-		   << "Grey Literature"
-		   << "Journals"
-		   << "Magazines"
            << "Photograph Collections";
 	  tmplist2 << tr("All")
 		   << tr("Books")
-		   << tr("Grey Literature")
-		   << tr("Journals")
-		   << tr("Magazines")
            << tr("Photograph Collections");
 	}
     }
@@ -1508,43 +1283,14 @@ void biblioteq::prepareRequestToolButton(const QString &typefilter)
 	  ui.actionRequests->setIcon(QIcon(":/32x32/request.png"));
 	  ui.actionRequests->setToolTip(tr("Item Requests"));
 	}
-      else if((m_roles == "administrator" ||
-	       m_roles == "circulation") &&
-	      typefilter == "All Requested")
-	{
-	  ui.actionRequests->setData(RequestActionItems::CANCEL_REQUESTED);
-	  ui.actionRequests->setEnabled(true);
-	  ui.actionRequests->setIcon(QIcon(":/32x32/remove_request.png"));
-	  ui.actionRequests->setToolTip(tr("Cancel Selected Request(s)"));
-	  }
       else if(m_roles.isEmpty() &&
 	      (typefilter == "All" ||
-	       typefilter == "All Available" ||
-	       typefilter == "Grey Literature" ||
-	       typefilter == "Books" ||
-	       typefilter == "Journals" ||
-           typefilter == "Magazines"))
+           typefilter == "Books"))
 	{
 	  ui.actionRequests->setData(RequestActionItems::REQUEST_SELECTED);
 	  ui.actionRequests->setEnabled(true);
 	  ui.actionRequests->setIcon(QIcon(":/32x32/request.png"));
 	  ui.actionRequests->setToolTip(tr("Request Selected Item(s)"));
-	}
-      else if(m_roles.isEmpty() && typefilter == "All Requested")
-	{
-	  ui.actionRequests->setData(RequestActionItems::CANCEL_REQUESTED);
-	  ui.actionRequests->setEnabled(true);
-	  ui.actionRequests->setIcon(QIcon(":/32x32/remove_request.png"));
-	  ui.actionRequests->setToolTip(tr("Cancel Selected Request(s)"));
-	}
-      else if((m_roles == "administrator" ||
-	       m_roles == "circulation") &&
-	      typefilter == "All Reserved")
-	{
-	  ui.actionRequests->setData(RequestActionItems::RETURN_RESERVED);
-	  ui.actionRequests->setEnabled(true);
-	  ui.actionRequests->setIcon(QIcon(":/32x32/remove_request.png"));
-	  ui.actionRequests->setToolTip(tr("Return Selected Item(s)"));
 	}
       else
 	{
@@ -1556,21 +1302,9 @@ void biblioteq::prepareRequestToolButton(const QString &typefilter)
 
   if(m_db.driverName() == "QSQLITE")
     {
-      if((m_roles == "administrator" ||
-	  m_roles == "circulation") &&
-	 typefilter == "All Reserved")
-	{
-	  ui.actionRequests->setData(RequestActionItems::RETURN_RESERVED);
-	  ui.actionRequests->setEnabled(true);
-	  ui.actionRequests->setIcon(QIcon(":/32x32/remove_request.png"));
-	  ui.actionRequests->setToolTip(tr("Return Selected Item(s)"));
-	}
-      else
-	{
 	  ui.actionRequests->setEnabled(false);
 	  ui.actionRequests->setIcon(QIcon(":/32x32/request.png"));
 	  ui.actionRequests->setToolTip(tr("Item Requests (PostgreSQL)"));
-	}
     }
 }
 
@@ -1614,24 +1348,6 @@ void biblioteq::removeBook(biblioteq_book *book)
     book->deleteLater();
 }
 
-void biblioteq::removeGreyLiterature(biblioteq_grey_literature *gl)
-{
-  if(gl)
-    gl->deleteLater();
-}
-
-void biblioteq::removeJournal(biblioteq_journal *journal)
-{
-  if(journal)
-    journal->deleteLater();
-}
-
-void biblioteq::removeMagazine(biblioteq_magazine *magazine)
-{
-  if(magazine)
-    magazine->deleteLater();
-}
-
 void biblioteq::removePhotographCollection(biblioteq_photographcollection *pc)
 {
   if(pc)
@@ -1644,57 +1360,11 @@ void biblioteq::replaceBook(const QString &id, biblioteq_book *book)
   Q_UNUSED(book);
 }
 
-void biblioteq::replaceGreyLiterature(const QString &id,
-				      biblioteq_grey_literature *gl)
-{
-  Q_UNUSED(gl);
-  Q_UNUSED(id);
-}
-
-void biblioteq::replaceJournal(const QString &id, biblioteq_journal *journal)
-{
-  Q_UNUSED(id);
-  Q_UNUSED(journal);
-}
-
-void biblioteq::replaceMagazine(const QString &id,
-				biblioteq_magazine *magazine)
-{
-  Q_UNUSED(id);
-  Q_UNUSED(magazine);
-}
-
 void biblioteq::replacePhotographCollection
 (const QString &id, biblioteq_photographcollection *photograph)
 {
   Q_UNUSED(id);
   Q_UNUSED(photograph);
-}
-
-void biblioteq::resetAdminBrowser(void)
-{
-  QStringList list;
-
-  ab.table->setCurrentItem(nullptr);
-  ab.table->setColumnCount(0);
-  ab.table->setRowCount(0);
-  ab.table->scrollToTop();
-  ab.table->horizontalScrollBar()->setValue(0);
-  list.clear();
-  list.append(tr("ID"));
-  list.append(tr("Administrator"));
-  list.append(tr("Circulation"));
-  list.append(tr("Librarian"));
-  list.append(tr("Membership"));
-  ab.table->setColumnCount(list.size());
-  ab.table->setHorizontalHeaderLabels(list);
-  m_abColumnHeaderIndexes.clear();
-  m_abColumnHeaderIndexes.append("ID");
-  m_abColumnHeaderIndexes.append("Administrator");
-  m_abColumnHeaderIndexes.append("Circulation");
-  m_abColumnHeaderIndexes.append("Librarian");
-  m_abColumnHeaderIndexes.append("Membership");
-  list.clear();
 }
 
 void biblioteq::setGlobalFonts(const QFont &font)
@@ -2005,67 +1675,6 @@ void biblioteq::slotAbout(void)
 				  Qt::SmoothTransformation));
   mb.exec();
   QApplication::processEvents();
-}
-
-void biblioteq::slotAddAdmin(void)
-{
-  QCheckBox *checkBox = nullptr;
-  QTableWidgetItem *item = nullptr;
-  int i = 0;
-
-  ab.table->setRowCount(ab.table->rowCount() + 1);
-
-  for(i = 0; i < ab.table->columnCount(); i++)
-    if(i == AdminSetupColumns::ID)
-      {
-	item = new QTableWidgetItem();
-	item->setFlags(item->flags() | Qt::ItemIsEditable);
-	ab.table->setItem(ab.table->rowCount() - 1, i, item);
-      }
-    else
-      {
-	checkBox = new QCheckBox();
-	ab.table->setCellWidget(ab.table->rowCount() - 1, i, checkBox);
-	connect(checkBox, SIGNAL(stateChanged(int)), this,
-		SLOT(slotAdminCheckBoxClicked(int)));
-      }
-}
-
-void biblioteq::slotAdminCheckBoxClicked(int state)
-{
-  Q_UNUSED(state);
-
-  auto box = qobject_cast<QCheckBox *> (sender());
-  int column = -1;
-  int i = 0;
-  int j = 0;
-  int row = -1;
-
-  for(i = 0; i < ab.table->rowCount(); i++)
-    for(j = AdminSetupColumns::ADMINISTRATOR; j < ab.table->columnCount(); j++)
-      if(ab.table->cellWidget(i, j) == box)
-	{
-	  row = i;
-	  column = j;
-	  break;
-	}
-
-  if(row > -1)
-    {
-      if(column == AdminSetupColumns::ADMINISTRATOR)
-	{
-	  for(i = AdminSetupColumns::CIRCULATION;
-	      i < ab.table->columnCount();
-	      i++)
-	    if(box->isChecked())
-	      (qobject_cast<QCheckBox *> (ab.table->cellWidget(row, i)))->
-		setChecked(false);
-	}
-      else
-	if(box->isChecked())
-	  (qobject_cast<QCheckBox *> (ab.table->cellWidget(row, 1)))->
-	    setChecked(false);
-    }
 }
 
 void biblioteq::slotAutoPopOnFilter(QAction *action)
@@ -2471,45 +2080,6 @@ void biblioteq::slotDelete(void)
   list.clear();
 }
 
-void biblioteq::slotDeleteAdmin(void)
-{
-  QString str = "";
-  auto row = ab.table->currentRow();
-
-  if(row < 0)
-    {
-      QMessageBox::critical
-	(m_admin_diag, tr("BiblioteQ: User Error"),
-	 tr("To delete an entry, you must first select it."));
-      QApplication::processEvents();
-      return;
-    }
-
-  str = ab.table->item(row, AdminSetupColumns::ID)->text().toLower().trimmed();
-
-  if((ab.table->item(row, AdminSetupColumns::ID)->flags() &
-      Qt::ItemIsEditable) == 0 &&
-     str == getAdminID())
-    {
-      QMessageBox::critical(m_admin_diag, tr("BiblioteQ: User Error"),
-			    tr("As an administrator, you may not delete "
-			       "your account."));
-      QApplication::processEvents();
-      return;
-    }
-  else
-    {
-      if(!str.isEmpty() && !m_deletedAdmins.contains(str))
-	m_deletedAdmins.append(str);
-
-      ab.table->removeRow(row);
-#ifdef Q_OS_MACOS
-      ab.table->hide();
-      ab.table->show();
-#endif
-    }
-}
-
 void biblioteq::slotDisplayNewSqliteDialog(void)
 {
   QFileDialog dialog(this);
@@ -2661,9 +2231,6 @@ void biblioteq::slotDuplicate(void)
   auto error = false;
   auto list(ui.table->selectionModel()->selectedRows());
   biblioteq_book *book = nullptr;
-  biblioteq_grey_literature *gl = nullptr;
-  biblioteq_journal *journal = nullptr;
-  biblioteq_magazine *magazine = nullptr;
   biblioteq_main_table *table = ui.table;
   biblioteq_photographcollection *photograph = nullptr;
   int i = 0;
@@ -2715,21 +2282,6 @@ void biblioteq::slotDuplicate(void)
 	{
 	  book = new biblioteq_book(this, oid, index);
 	  book->duplicate(id, EDITABLE);
-	}
-      else if(type.toLower() == "grey literature")
-	{
-	  gl = new biblioteq_grey_literature(this, oid, index);
-	  gl->duplicate(id, EDITABLE);
-	}
-      else if(type.toLower() == "journal")
-	{
-	  journal = new biblioteq_journal(this, oid, index);
-	  journal->duplicate(id, EDITABLE);
-	}
-      else if(type.toLower() == "magazine")
-	{
-	  magazine = new biblioteq_magazine(this, oid, index, "magazine");
-	  magazine->duplicate(id, EDITABLE);
 	}
       else if(type.toLower() == "photograph collection")
 	{
@@ -2842,28 +2394,6 @@ void biblioteq::slotInsertBook(void)
   book->insert();
 }
 
-void biblioteq::slotInsertJourn(void)
-{
-  QString id("");
-  biblioteq_journal *journal = nullptr;
-
-  m_idCt += 1;
-  id = QString("insert_%1").arg(m_idCt);
-  journal = new biblioteq_journal(this, id, QModelIndex());
-  journal->insert();
-}
-
-void biblioteq::slotInsertMag(void)
-{
-  QString id("");
-  biblioteq_magazine *magazine = nullptr;
-
-  m_idCt += 1;
-  id = QString("insert_%1").arg(m_idCt);
-  magazine = new biblioteq_magazine(this, id, QModelIndex(), "magazine");
-  magazine->insert();
-}
-
 void biblioteq::slotInsertPhotograph(void)
 {
   QString id("");
@@ -2904,9 +2434,6 @@ void biblioteq::slotModify(void)
   auto list(ui.table->selectionModel()->selectedRows());
   auto table = ui.table;
   biblioteq_book *book = nullptr;
-  biblioteq_grey_literature *gl = nullptr;
-  biblioteq_journal *journal = nullptr;
-  biblioteq_magazine *magazine = nullptr;
   biblioteq_photographcollection *photograph = nullptr;
   int i = 0;
 
@@ -2948,9 +2475,6 @@ void biblioteq::slotModify(void)
       type = biblioteq_misc_functions::getColumnString
 	(table, i, table->columnNumber("Type"));
       book = nullptr;
-      gl = nullptr;
-      journal = nullptr;
-      magazine = nullptr;
       photograph = nullptr;
 
       if(type.toLower() == "book")
@@ -2970,66 +2494,7 @@ void biblioteq::slotModify(void)
 	    book = new biblioteq_book(this, oid, index);
 
 	  book->modify(EDITABLE);
-	}
-      else if(type.toLower() == "grey literature")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto g = qobject_cast<biblioteq_grey_literature *> (w);
-
-	      if(g && g->getID() == oid)
-		{
-		  gl = g;
-		  break;
-		}
-	    }
-
-	  if(!gl)
-	    gl = new biblioteq_grey_literature(this, oid, index);
-
-	  gl->modify(EDITABLE);
-	}
-      else if(type.toLower() == "journal")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto j = qobject_cast<biblioteq_journal *> (w);
-
-	      if(j && j->getID() == oid)
-		{
-		  journal = j;
-		  break;
-		}
-	    }
-
-	  if(!journal)
-	    journal = new biblioteq_journal(this, oid, index);
-
-	  journal->modify(EDITABLE);
-	}
-      else if(type.toLower() == "magazine")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto m = qobject_cast<biblioteq_magazine *> (w);
-
-	      /*
-	      ** The class biblioteq_journal inherits biblioteq_magazine.
-	      */
-
-	      if(!qobject_cast<biblioteq_journal *> (w))
-		if(m && m->getID() == oid)
-		  {
-		    magazine = m;
-		    break;
-		  }
-	    }
-
-	  if(!magazine)
-	    magazine = new biblioteq_magazine(this, oid, index, "magazine");
-
-	  magazine->modify(EDITABLE);
-	}
+    }
       else if(type.toLower() == "photograph collection")
 	{
 	  foreach(auto w, QApplication::topLevelWidgets())
@@ -3204,124 +2669,6 @@ void biblioteq::slotRefresh(void)
     }
 }
 
-void biblioteq::slotReset(void)
-{
-  if(m_all_diag->isVisible())
-    {
-      auto action = qobject_cast<QAction *> (sender());
-
-      if(action != nullptr)
-	{
-	  auto actions(al.resetButton->menu()->actions());
-
-	  if(actions.size() < 14)
-	    {
-	      // Error.
-	    }
-	  else if(action == actions[0])
-	    {
-	      al.idnumber->clear();
-	      al.idnumber->setFocus();
-	    }
-	  else if(action == actions[1])
-	    {
-	      al.title->clear();
-	      al.title->setFocus();
-	    }
-	  else if(action == actions[2])
-	    {
-	      al.publication_date->setDate(QDate::fromString("2001", "yyyy"));
-	      al.publication_date->setFocus();
-	      al.publication_date_enabled->setChecked(false);
-	    }
-	  else if(action == actions[3])
-	    {
-	      al.publisher->clear();
-	      al.publisher->setFocus();
-	    }
-	  else if(action == actions[4])
-	    {
-	      al.categories_checkbox->setChecked(false);
-	      al.category->clear();
-	      al.category->setFocus();
-	    }
-	  else if(action == actions[5])
-	    {
-	      al.price->setValue(-0.01);
-	      al.price->setFocus();
-	    }
-	  else if(action == actions[6])
-	    {
-	      al.language->setCurrentIndex(0);
-	      al.language->setFocus();
-	    }
-	  else if(action == actions[7])
-	    {
-	      al.monetary_units->setCurrentIndex(0);
-	      al.monetary_units->setFocus();
-	    }
-	  else if(action == actions[8])
-	    {
-	      al.abstract_checkbox->setChecked(false);
-	      al.description->clear();
-	      al.description->setFocus();
-	    }
-	  else if(action == actions[9])
-	    {
-	      al.quantity->setValue(0);
-	      al.quantity->setFocus();
-	    }
-	  else if(action == actions[10])
-	    {
-	      al.location->setCurrentIndex(0);
-	      al.location->setFocus();
-	    }
-	  else if(action == actions[11])
-	    {
-	      al.keyword->clear();
-	      al.keyword->setFocus();
-	      al.keywords_checkbox->setChecked(false);
-	    }
-	  else if(action == actions[12])
-	    {
-	      al.available->setChecked(false);
-	      al.available->setFocus();
-	    }
-	  else if(action == actions[13])
-	    {
-	      al.caseinsensitive->setChecked(false);
-	      al.caseinsensitive->setFocus();
-	    }
-
-	  actions.clear();
-	}
-      else
-	{
-	  al.abstract_checkbox->setChecked(false);
-	  al.available->setChecked(false);
-	  al.caseinsensitive->setChecked(false);
-	  al.categories_checkbox->setChecked(false);
-	  al.category->clear();
-	  al.description->clear();
-	  al.idnumber->clear();
-	  al.idnumber->setFocus();
-	  al.keyword->clear();
-	  al.keywords_checkbox->setChecked(false);
-	  al.language->setCurrentIndex(0);
-	  al.location->setCurrentIndex(0);
-	  al.monetary_units->clear();
-	  al.price->setMinimum(-0.01);
-	  al.price->setValue(-0.01);
-	  al.publication_date->setDate(QDate::fromString("2001", "yyyy"));
-	  al.publication_date_enabled->setChecked(false);
-	  al.publisher->clear();
-	  al.quantity->setMinimum(0);
-	  al.quantity->setValue(0);
-	  al.title->clear();
-	}
-    }
-}
-
 void biblioteq::slotResetErrorLog(void)
 {
   QStringList list;
@@ -3471,21 +2818,6 @@ void biblioteq::slotSearch(void)
 {
   if(!m_db.isOpen())
     return;
-  else if(!al.resetButton->isEnabled())
-    {
-#ifdef Q_OS_ANDROID
-      m_all_diag->showMaximized();
-#else
-      if(!m_all_diag->isVisible())
-	m_all_diag->updateGeometry();
-
-      biblioteq_misc_functions::center(m_all_diag, this);
-      m_all_diag->showNormal();
-#endif
-      m_all_diag->activateWindow();
-      m_all_diag->raise();
-      return;
-    }
 
   QString errorstr("");
 
@@ -3496,38 +2828,11 @@ void biblioteq::slotSearch(void)
   ** Hide certain fields if we're a regular user.
   */
 
-  biblioteq_misc_functions::hideAdminFields(m_all_diag, m_roles);
-  al.abstract_checkbox->setChecked(false);
-  al.available->setChecked(false);
-  al.categories_checkbox->setChecked(false);
-  al.category->clear();
-  al.description->clear();
-  al.idnumber->clear();
-  al.keyword->clear();
-  al.keywords_checkbox->setChecked(false);
-  al.language->clear();
-  al.location->clear();
-  al.monetary_units->clear();
-  al.photograph_reminder_label->setVisible(true); /*
-						  ** Hidden by
-						  ** hideAdminFields().
-						  */
-  al.price->setMinimum(-0.01);
-  al.price->setValue(-0.01);
-  al.publication_date->setDate(QDate::fromString("2001", "yyyy"));
-  al.publication_date_enabled->setChecked(false);
-  al.publisher->clear();
-  al.quantity->setMinimum(0);
-  al.quantity->setValue(0);
-  al.title->clear();
-
   /*
   ** Populate combination boxes.
   */
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  al.language->addItems
-    (biblioteq_misc_functions::getLanguages(m_db, errorstr));
   QApplication::restoreOverrideCursor();
 
   if(!errorstr.isEmpty())
@@ -3538,8 +2843,6 @@ void biblioteq::slotSearch(void)
 	     __LINE__);
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  al.monetary_units->addItems
-    (biblioteq_misc_functions::getMonetaryUnits(m_db, errorstr));
   QApplication::restoreOverrideCursor();
 
   if(!errorstr.isEmpty())
@@ -3550,8 +2853,6 @@ void biblioteq::slotSearch(void)
 	     __LINE__);
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  al.location->addItems
-    (biblioteq_misc_functions::getLocations(m_db, "", errorstr));
   QApplication::restoreOverrideCursor();
 
   if(!errorstr.isEmpty())
@@ -3561,41 +2862,9 @@ void biblioteq::slotSearch(void)
        errorstr,
        __FILE__,
        __LINE__);
-
-  al.language->insertItem(0, tr("Any"));
-  al.monetary_units->insertItem(0, tr("Any"));
-  al.location->insertItem(0, tr("Any"));
-  al.language->addItem(s_unknown);
-  al.monetary_units->addItem(s_unknown);
-  al.location->addItem(s_unknown);
-  al.location->setCurrentIndex(0);
-  al.language->setCurrentIndex(0);
-  al.monetary_units->setCurrentIndex(0);
-  al.idnumber->setFocus();
  done_label:
   m_allSearchShown = true;
 
-  if(!m_all_diag->isVisible())
-    m_all_diag->updateGeometry();
-
-#ifdef Q_OS_ANDROID
-  m_all_diag->showMaximized();
-#else
-  static auto resized = false;
-
-  if(!resized)
-    m_all_diag->resize
-      (qRound(0.85 * size().width()), qRound(0.85 * size().height()));
-
-  resized = true;
-
-  if(!m_all_diag->isVisible())
-    biblioteq_misc_functions::center(m_all_diag, this);
-
-  m_all_diag->showNormal();
-#endif
-  m_all_diag->activateWindow();
-  m_all_diag->raise();
 }
 
 void biblioteq::slotSectionResized(int logicalIndex, int oldSize, int newSize)
@@ -3652,24 +2921,6 @@ void biblioteq::slotSetFonts(void)
     }
 
   QApplication::processEvents();
-}
-
-void biblioteq::slotShowAdminDialog(void)
-{
-  static auto resized = false;
-
-  if(!resized)
-    m_admin_diag->resize(qRound(0.85 * size().width()),
-			 qRound(0.85 * size().height()));
-
-  resized = true;
-  biblioteq_misc_functions::center(m_admin_diag, this);
-  m_admin_diag->showNormal();
-  m_admin_diag->activateWindow();
-  m_admin_diag->raise();
-
-  if(ui.actionPopulate_Administrator_Browser_Table_on_Display->isChecked())
-    slotRefreshAdminList();
 }
 
 void biblioteq::slotShowChangePassword(void)
@@ -3768,20 +3019,8 @@ void biblioteq::slotShowMenu(void)
 
       connect(menu.addAction(tr("Add &Book...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotInsertBook(void)));
-      // menu.addAction(tr("Add &Cassette Tape..."));
-      connect(menu.addAction(tr("Add &Grey Literature...")),
-	      SIGNAL(triggered(void)),
-	      this,
-	      SLOT(slotInsertGreyLiterature(void)));
-      connect(menu.addAction(tr("Add &Journal...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotInsertJourn(void)));
-      connect(menu.addAction(tr("Add &Magazine...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotInsertMag(void)));
-      // menu.addAction(tr("Add &Newspaper..."));
       connect(menu.addAction(tr("Add &Photograph Collection...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotInsertPhotograph(void)));
-      // menu.addAction(tr("Add &VHS..."));
-      // menu.addAction(tr("Add &Vinyl Record..."));
       menu.exec(point);
     }
   else if(sender() == ui.printTool)
@@ -3807,14 +3046,6 @@ void biblioteq::slotShowMenu(void)
       menu.addSeparator();
       connect(menu.addAction(tr("&Book Search...")),
 	      SIGNAL(triggered(void)), this, SLOT(slotBookSearch(void)));
-      connect(menu.addAction(tr("&Grey Literature Search...")),
-	      SIGNAL(triggered(void)),
-	      this,
-	      SLOT(slotGreyLiteratureSearch(void)));
-      connect(menu.addAction(tr("&Journal Search...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotJournSearch(void)));
-      connect(menu.addAction(tr("&Magazine Search...")),
-	      SIGNAL(triggered(void)), this, SLOT(slotMagSearch(void)));
       connect(menu.addAction(tr("&Photograph Collection Search...")),
           SIGNAL(triggered(void)), this, SLOT(slotPhotographSearch(void)));
       menu.exec(point);
@@ -3872,9 +3103,6 @@ void biblioteq::slotViewDetails(void)
   auto list(ui.table->selectionModel()->selectedRows());
   auto table = ui.table;
   biblioteq_book *book = nullptr;
-  biblioteq_grey_literature *gl = nullptr;
-  biblioteq_journal *journal = nullptr;
-  biblioteq_magazine *magazine = nullptr;
   biblioteq_photographcollection *photograph = nullptr;
   int i = 0;
 
@@ -3915,9 +3143,6 @@ void biblioteq::slotViewDetails(void)
       type = biblioteq_misc_functions::getColumnString
 	(table, i, table->columnNumber("Type"));
       book = nullptr;
-      gl = nullptr;
-      journal = nullptr;
-      magazine = nullptr;
       photograph = nullptr;
 
       if(type.toLower() == "book")
@@ -3937,65 +3162,6 @@ void biblioteq::slotViewDetails(void)
 	    book = new biblioteq_book(this, oid, index);
 
 	  book->modify(VIEW_ONLY);
-	}
-      else if(type.toLower() == "grey literature")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto g = qobject_cast<biblioteq_grey_literature *> (w);
-
-	      if(g && g->getID() == oid)
-		{
-		  gl = g;
-		  break;
-		}
-	    }
-
-	  if(!gl)
-	    gl = new biblioteq_grey_literature(this, oid, index);
-
-	  gl->modify(VIEW_ONLY);
-	}
-      else if(type.toLower() == "journal")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto j = qobject_cast<biblioteq_journal *> (w);
-
-	      if(j && j->getID() == oid)
-		{
-		  journal = j;
-		  break;
-		}
-	    }
-
-	  if(!journal)
-	    journal = new biblioteq_journal(this, oid, index);
-
-	  journal->modify(VIEW_ONLY);
-	}
-      else if(type.toLower() == "magazine")
-	{
-	  foreach(auto w, QApplication::topLevelWidgets())
-	    {
-	      auto m = qobject_cast<biblioteq_magazine *> (w);
-
-	      /*
-	      ** The class biblioteq_journal inherits biblioteq_magazine.
-	      */
-
-	      if(!qobject_cast<biblioteq_journal *> (w))
-		if(m && m->getID() == oid)
-		  {
-		    magazine = m;
-		    break;
-		  }
-	    }
-
-	  if(!magazine)
-	    magazine = new biblioteq_magazine(this, oid, index, "magazine");
-
-	  magazine->modify(VIEW_ONLY);
 	}
       else if(type.toLower() == "photograph collection")
 	{
@@ -4042,23 +3208,10 @@ void biblioteq::updateItemWindows(void)
   foreach(auto w, QApplication::topLevelWidgets())
     {
       auto book = qobject_cast<biblioteq_book *> (w);
-      auto gl = qobject_cast<biblioteq_grey_literature *> (w);
-      auto journal = qobject_cast<biblioteq_journal *> (w);
-      auto magazine = qobject_cast<biblioteq_magazine *> (w);
       auto photograph = qobject_cast<biblioteq_photographcollection *> (w);
 
       if(book)
 	book->updateWindow(EDITABLE);
-
-      if(gl)
-	gl->updateWindow(EDITABLE);
-
-      if(journal)
-	journal->updateWindow(EDITABLE);
-
-      if(!qobject_cast<biblioteq_journal *> (w))
-	if(magazine)
-	  magazine->updateWindow(EDITABLE);
 
       if(photograph)
 	photograph->updateWindow(EDITABLE);
@@ -4084,50 +3237,6 @@ void biblioteq::updateRows
 	      book->updateRow(index);
 	      break;
 	    }
-	}
-    }
-  else if(itemType == "greyliterature")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto gl = qobject_cast<biblioteq_grey_literature *> (w);
-
-	  if(gl && gl->getID() == oid)
-	    {
-	      gl->updateRow(index);
-	      break;
-	    }
-	}
-    }
-  else if(itemType == "journal")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto journal = qobject_cast<biblioteq_journal *> (w);
-
-	  if(journal && journal->getID() == oid)
-	    {
-	      journal->updateRow(index);
-	      break;
-	    }
-	}
-    }
-  else if(itemType == "magazine")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto magazine = qobject_cast<biblioteq_magazine *> (w);
-
-	  /*
-	  ** The class biblioteq_journal inherits biblioteq_magazine.
-	  */
-
-	  if(!qobject_cast<biblioteq_journal *> (w))
-	    if(magazine && magazine->getID() == oid)
-	      {
-		magazine->updateRow(index);
-		break;
-	      }
 	}
     }
   else if(itemType == "photographcollection")

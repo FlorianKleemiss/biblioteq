@@ -154,9 +154,6 @@ bool biblioteq::emptyContainers(void)
   foreach(auto w, QApplication::topLevelWidgets())
     {
       auto book = qobject_cast<biblioteq_book *> (w);
-      auto gl = qobject_cast<biblioteq_grey_literature *> (w);
-      auto journal = qobject_cast<biblioteq_journal *> (w);
-      auto magazine = qobject_cast<biblioteq_magazine *> (w);
       auto photograph = qobject_cast<biblioteq_photographcollection *> (w);
 
       if(book)
@@ -166,31 +163,6 @@ bool biblioteq::emptyContainers(void)
 	  else
 	    book->deleteLater();
 	}
-
-      if(gl)
-	{
-	  if(gl->isVisible() && !gl->close())
-	    return false;
-	  else
-	    gl->deleteLater();
-	}
-
-      if(journal)
-	{
-	  if(journal->isVisible() && !journal->close())
-	    return false;
-	  else
-	    journal->deleteLater();
-	}
-
-      if(!qobject_cast<biblioteq_journal *> (w))
-	if(magazine)
-	  {
-	    if(magazine->isVisible() && !magazine->close())
-	      return false;
-	    else
-	      magazine->deleteLater();
-	  }
 
       if(photograph)
 	{
@@ -972,50 +944,6 @@ void biblioteq::deleteItem(const QString &oid, const QString &itemType)
 	    }
 	}
     }
-  else if(itemType == "grey_literature")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto gl = qobject_cast<biblioteq_grey_literature *> (w);
-
-	  if(gl && gl->getID() == oid)
-	    {
-	      removeGreyLiterature(gl);
-	      break;
-	    }
-	}
-    }
-  else if(itemType == "journal")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto journal = qobject_cast<biblioteq_journal *> (w);
-
-	  if(journal && journal->getID() == oid)
-	    {
-	      removeJournal(journal);
-	      break;
-	    }
-	}
-    }
-  else if(itemType == "magazine")
-    {
-      foreach(auto w, QApplication::topLevelWidgets())
-	{
-	  auto magazine = qobject_cast<biblioteq_magazine *> (w);
-
-	  /*
-	  ** The class biblioteq_journal inherits biblioteq_magazine.
-	  */
-
-	  if(!qobject_cast<biblioteq_journal *> (w))
-	    if(magazine && magazine->getID() == oid)
-	      {
-		removeMagazine(magazine);
-		break;
-	      }
-	}
-    }
   else if(itemType == "photograph_collection")
     {
       foreach(auto w, QApplication::topLevelWidgets())
@@ -1149,30 +1077,6 @@ void biblioteq::exportAsCSV(biblioteq_main_table *table, const QString &title)
     }
 }
 
-void biblioteq::greyLiteratureSearch(const QString &field, const QString &value)
-{
-  auto gl = new biblioteq_grey_literature(this, "", QModelIndex());
-
-  gl->search(field, value);
-  gl->deleteLater();
-}
-
-void biblioteq::journSearch(const QString &field, const QString &value)
-{
-  auto journal = new biblioteq_journal(this, "", QModelIndex());
-
-  journal->search(field, value);
-  journal->deleteLater();
-}
-
-void biblioteq::magSearch(const QString &field, const QString &value)
-{
-  auto magazine = new biblioteq_magazine(this, "", QModelIndex(), "magazine");
-
-  magazine->search(field, value);
-  magazine->deleteLater();
-}
-
 void biblioteq::pcSearch(const QString &field, const QString &value)
 {
   auto photograph = new biblioteq_photographcollection(this, "", QModelIndex());
@@ -1186,8 +1090,6 @@ void biblioteq::readConfig(void)
   QFont font;
   QSettings settings;
 
-  al.caseinsensitive->setChecked
-    (settings.value("generalSearchCaseSensitivity", false).toBool());
   ui.actionAutoPopulateOnCreation->setChecked
     (settings.value("automatically_populate_on_create", false).toBool());
   ui.actionAutomatically_Resize_Column_Widths->setChecked
@@ -1542,23 +1444,6 @@ void biblioteq::readGlobalSetup(void)
     }
 }
 
-void biblioteq::slotAdminContextMenu(const QPoint &point)
-{
-  QMenu menu(m_admin_diag);
-
-  menu.addAction(tr("Add Administrator"),
-		 this,
-		 SLOT(slotAddAdmin(void)));
-  menu.addAction(tr("Delete Selected Administrator"),
-		 this,
-		 SLOT(slotDeleteAdmin(void)));
-  menu.addSeparator();
-  menu.addAction(tr("Refresh Table"),
-		 this,
-		 SLOT(slotRefreshAdminList(void)));
-  menu.exec(ab.table->mapToGlobal(point));
-}
-
 void biblioteq::slotAllGo(void)
 {
   if(!m_db.isOpen())
@@ -1577,7 +1462,6 @@ void biblioteq::slotAllGo(void)
   QString str("");
   QString type("");
   QStringList types;
-  auto caseinsensitive = al.caseinsensitive->isChecked();
 
   if(m_otheroptions->showMainTableImages())
     {
@@ -1598,31 +1482,7 @@ void biblioteq::slotAllGo(void)
     {
       type = types.at(i);
 
-      if(type == "Grey Literature"){
-	str = "SELECT DISTINCT grey_literature.document_title, "
-	  "grey_literature.document_id, "
-	  "'', "
-	  "grey_literature.document_date, "
-	  "'', "
-	  "'', "
-	  "0.00, "
-	  "'', "
-	  "grey_literature.quantity, "
-	  "grey_literature.location, "
-	  "1 - COUNT(item_borrower.item_oid) AS availability, "
-	  "COUNT(item_borrower.item_oid) AS total_reserved, "
-	  "grey_literature.job_number, "
-	  "grey_literature.type, "
-	  "grey_literature.myoid, " +
-	  greyLiteratureFrontCover +
-	  "FROM "
-	  "grey_literature LEFT JOIN item_borrower ON "
-	  "grey_literature.myoid = "
-	  "item_borrower.item_oid "
-	  "AND item_borrower.type = 'Grey Literature' "
-      "WHERE ";
-      }
-      else if(type == "Photograph Collection")
+      if(type == "Photograph Collection")
       {
 	str = "SELECT DISTINCT photograph_collection.title, "
 	  "photograph_collection.id, "
@@ -1663,10 +1523,6 @@ void biblioteq::slotAllGo(void)
 
 	  if(type == "Book")
 	    str.append(bookFrontCover);
-	  else if(type == "Journal")
-	    str.append(journalFrontCover);
-	  else if(type == "Magazine")
-	    str.append(magazineFrontCover);
 
 	  str += QString("FROM "
 			 "%1 LEFT JOIN item_borrower ON "
@@ -1683,479 +1539,12 @@ void biblioteq::slotAllGo(void)
 	ESCAPE = "E";
 
       QString idField("id");
-
-      if(type == "Grey Literature")
-	idField = "document_id";
-
-      if(caseinsensitive)
-	{
-	  str.append
-	    (QString("(%1 IS NULL OR " + UNACCENT +
-		     "(LOWER(%1)) LIKE " + UNACCENT + "(" +
-		     ESCAPE + "'%' || ? || '%') ").arg(idField));
-	  values.append
-	    (biblioteq_myqstring::escape(al.idnumber->text().trimmed(), true));
-	}
-      else
-	{
-	  str.append
-	    (QString("(%1 IS NULL OR " + UNACCENT + "(%1) LIKE " +
-		     UNACCENT + "(" +
-		     ESCAPE + "'%' || ? || '%') ").arg(idField));
-	  values.append
-	    (biblioteq_myqstring::escape(al.idnumber->text().trimmed()));
-	}
-
-      if(type == "Book")
-	{
-	  if(caseinsensitive)
-	    {
-	      str.append
-		("OR LOWER(isbn13) LIKE " + ESCAPE + "'%' || ? || '%')");
-	      values.append
-		(biblioteq_myqstring::
-		 escape(al.idnumber->text().trimmed(), true));
-	    }
-	  else
-	    {
-	      str.append("OR isbn13 LIKE " + ESCAPE + "'%' || ? || '%')");
-	      values.append
-		(biblioteq_myqstring::escape(al.idnumber->text().trimmed()));
-	    }
-	}
-      else
 	str.append(")");
 
-      str.append(" AND ");
 
       QString titleField("title");
 
-      if(type == "Grey Literature")
-	titleField = "document_title";
-
-      if(caseinsensitive)
-	{
-	  str.append
-	    (QString(UNACCENT + "(LOWER(%1)) LIKE " + UNACCENT + "(" +
-		     ESCAPE + "'%' || ? || '%')").arg(titleField));
-	  values.append
-	    (biblioteq_myqstring::escape(al.title->text().trimmed(), true));
-	}
-      else
-	{
-	  str.append(QString(UNACCENT + "(%1) LIKE " + UNACCENT + "(" +
-			     ESCAPE + "'%' || ? || '%')").arg(titleField));
-	  values.append
-	    (biblioteq_myqstring::escape(al.title->text().trimmed()));
-	}
-
-      if(type != "Grey Literature" &&
-	 type != "Photograph Collection")
-	{
-	  str.append(" AND ");
-
-	  if(al.publication_date_enabled->isChecked())
-	    str.append("SUBSTR(pdate, 7) = '" +
-		       al.publication_date->date().
-		       toString("yyyy") + "' AND ");
-
-	  if(al.categories_checkbox->isChecked())
-	    {
-	      auto words
-		(al.category->toPlainText().trimmed().
-		 split(QRegularExpression("\\s+"),
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-		       Qt::SkipEmptyParts
-#else
-		       QString::SkipEmptyParts
-#endif
-		       ));
-
-	      if(!words.isEmpty())
-		{
-		  str.append("(");
-
-		  while(!words.isEmpty())
-		    {
-		      auto word(words.takeFirst());
-
-		      if(caseinsensitive)
-			{
-			  str.append
-			    (UNACCENT +
-			     "(LOWER(category)) LIKE " +
-			     UNACCENT + "(" + ESCAPE + "'%' || ? || '%')" +
-			     (words.isEmpty() ? "" : " OR "));
-			  values.append
-			    (biblioteq_myqstring::escape(word.trimmed(), true));
-			}
-		      else
-			{
-			  str.append
-			    (UNACCENT +
-			     "(category) LIKE " + UNACCENT + "(" +
-			     ESCAPE + "'%' || ? || '%')" +
-			     (words.isEmpty() ? "" : " OR "));
-			  values.append
-			    (biblioteq_myqstring::escape(word.trimmed()));
-			}
-		    }
-
-		  str.append(") AND ");
-		}
-	    }
-	  else
-	    {
-	      if(caseinsensitive)
-		{
-		  str.append(UNACCENT + "(LOWER(category)) LIKE " +
-			     UNACCENT + "(" + ESCAPE + "'%' || ? || '%') AND ");
-		  values.append
-		    (biblioteq_myqstring::
-		     escape(al.category->toPlainText().trimmed(), true));
-		}
-	      else
-		{
-		  str.append(UNACCENT + "(category) LIKE " +
-			     UNACCENT + "(" + ESCAPE + "'%' || ? || '%') AND ");
-		  values.append
-		    (biblioteq_myqstring::
-		     escape(al.category->toPlainText().trimmed()));
-		}
-	    }
-
-	  if(caseinsensitive)
-	    {
-	      str.append
-		(UNACCENT + "(LOWER(publisher)) LIKE " + UNACCENT +
-		 "(" + ESCAPE + "'%' || ? || '%') AND ");
-	      values.append
-		(biblioteq_myqstring::
-		 escape(al.publisher->text().trimmed(), true));
-	    }
-	  else
-	    {
-	      str.append
-		(UNACCENT + "(publisher) LIKE " + UNACCENT + "(" +
-		 ESCAPE + "'%' || ? || '%') AND ");
-	      values.append
-		(biblioteq_myqstring::escape(al.publisher->text().trimmed()));
-	    }
-
-	  if(al.price->value() > -0.01)
-	    {
-	      str.append("price = ");
-	      str.append(QString::number(al.price->value()));
-	      str.append(" AND ");
-	    }
-
-	  if(al.language->currentIndex() != 0)
-	    {
-	      if(caseinsensitive)
-		{
-		  str.append
-		    (UNACCENT + "(LOWER(language)) = " + UNACCENT + "(?) AND ");
-		  values.append
-		    (biblioteq_myqstring::
-		     escape(al.language->currentText().trimmed(), true));
-		}
-	      else
-		{
-		  str.append
-		    (UNACCENT + "(language) = " + UNACCENT + "(?) AND ");
-		  values.append
-		    (biblioteq_myqstring::
-		     escape(al.language->currentText().trimmed()));
-		}
-	    }
-
-	  if(al.monetary_units->currentIndex() != 0)
-	    {
-	      if(caseinsensitive)
-		{
-		  str.append
-		    (UNACCENT + "(LOWER(monetary_units)) = " +
-		     UNACCENT + "(?) AND ");
-		  values.append
-		    (biblioteq_myqstring::
-		     escape(al.monetary_units->currentText().trimmed(), true));
-		}
-	      else
-		{
-		  str.append
-		    (UNACCENT + "(monetary_units) = " + UNACCENT + "(?) AND ");
-		  values.append
-		    (biblioteq_myqstring::
-		     escape(al.monetary_units->currentText().trimmed()));
-		}
-	    }
-
-	  if(al.abstract_checkbox->isChecked())
-	    {
-	      auto words
-		(al.description->toPlainText().trimmed().
-		 split(QRegularExpression("\\s+"),
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-		       Qt::SkipEmptyParts
-#else
-		       QString::SkipEmptyParts
-#endif
-		       ));
-
-	      if(!words.isEmpty())
-		{
-		  str.append("(");
-
-		  while(!words.isEmpty())
-		    {
-		      auto word(words.takeFirst());
-
-		      if(caseinsensitive)
-			{
-			  str.append
-			    (UNACCENT + "(LOWER(description)) LIKE " +
-			     UNACCENT + "(" + ESCAPE
-			     + "'%' || ? || '%')" +
-			     (words.isEmpty() ? "" : " OR "));
-			  values.append
-			    (biblioteq_myqstring::escape(word.trimmed(), true));
-			}
-		      else
-			{
-			  str.append
-			    (UNACCENT + "(description) LIKE " +
-			     UNACCENT + "(" + ESCAPE + "'%' || ? || '%')" +
-			     (words.isEmpty() ? "" : " OR "));
-			  values.append
-			    (biblioteq_myqstring::escape(word.trimmed()));
-			}
-		    }
-
-		  str.append(") ");
-		}
-	      else
-		{
-		  if(caseinsensitive)
-		    {
-		      str.append
-			(UNACCENT + "(LOWER(description)) LIKE " +
-			 UNACCENT + "(" + ESCAPE + "'%' || ? || '%') ");
-		      values.append
-			(biblioteq_myqstring::
-			 escape(al.description->toPlainText().trimmed(), true));
-		    }
-		  else
-		    {
-		      str.append
-			(UNACCENT + "(description) LIKE " +
-			 UNACCENT + "(" + ESCAPE + "'%' || ? || '%') ");
-		      values.append
-			(biblioteq_myqstring::
-			 escape(al.description->toPlainText().trimmed()));
-		    }
-		}
-	    }
-	  else
-	    {
-	      if(caseinsensitive)
-		{
-		  str.append
-		    (UNACCENT + "(LOWER(description)) LIKE " +
-		     UNACCENT + "(" + ESCAPE + "'%' || ? || '%') ");
-		  values.append
-		    (biblioteq_myqstring::
-		     escape(al.description->toPlainText().trimmed(), true));
-		}
-	      else
-		{
-		  str.append
-		    (UNACCENT + "(description) LIKE " + UNACCENT +
-		     "(" + ESCAPE + "'%' || ? || '%') ");
-		  values.append
-		    (biblioteq_myqstring::
-		     escape(al.description->toPlainText().trimmed()));
-		}
-	    }
-
-	  if(al.keywords_checkbox->isChecked())
-	    {
-	      auto words
-		(al.keyword->toPlainText().trimmed().
-		 split(QRegularExpression("\\s+"),
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-		       Qt::SkipEmptyParts
-#else
-		       QString::SkipEmptyParts
-#endif
-		       ));
-
-	      if(!words.isEmpty())
-		{
-		  str.append(" AND (");
-
-		  while(!words.isEmpty())
-		    {
-		      auto word(words.takeFirst());
-
-		      if(caseinsensitive)
-			{
-			  str.append
-			    (UNACCENT +
-			     "(COALESCE(LOWER(keyword), '')) LIKE " +
-			     UNACCENT + "(" + ESCAPE + "'%' || ? || '%')" +
-			     (words.isEmpty() ? "" : " OR "));
-			  values.append
-			    (biblioteq_myqstring::escape(word.trimmed(), true));
-			}
-		      else
-			{
-			  str.append
-			    (UNACCENT +
-			     "(COALESCE(keyword, '')) LIKE " +
-			     UNACCENT + "(" + ESCAPE + "'%' || ? || '%')" +
-			     (words.isEmpty() ? "" : " OR "));
-			  values.append
-			    (biblioteq_myqstring::escape(word.trimmed()));
-			}
-		    }
-
-		  str.append(") ");
-		}
-	    }
-	  else
-	    {
-	      if(caseinsensitive)
-		{
-		  str.append("AND " + UNACCENT +
-			     "(COALESCE(LOWER(keyword), '')) LIKE " +
-			     UNACCENT + "(" + ESCAPE + "'%' || ? || '%') ");
-		  values.append
-		    (biblioteq_myqstring::escape(al.keyword->toPlainText().
-						 trimmed(), true));
-		}
-	      else
-		{
-		  str.append("AND " + UNACCENT +
-			     "(COALESCE(keyword, '')) LIKE " +
-			     UNACCENT + "(" + ESCAPE + "'%' || ? || '%') ");
-		  values.append
-		    (biblioteq_myqstring::escape(al.keyword->toPlainText().
-						 trimmed()));
-		}
-	    }
-
-	  if(al.quantity->value() != 0)
-	    str.append("AND quantity = " +
-		       al.quantity->text() + " ");
-
-	  if(al.location->currentIndex() != 0)
-	    {
-	      if(caseinsensitive)
-		str.append
-		  ("AND " + UNACCENT + "(LOWER(location)) = " +
-		   UNACCENT + "(" + ESCAPE + "'" +
-		   biblioteq_myqstring::escape
-		   (al.location->currentText().trimmed(),
-		    true) + "') ");
-	      else
-		str.append
-		  ("AND " + UNACCENT + "(location) = " +
-		   UNACCENT + "(" + ESCAPE + "'" +
-		   biblioteq_myqstring::escape
-		   (al.location->currentText().trimmed()) + "') ");
-	    }
-
-	  str += QString("GROUP BY "
-			 "%1.title, "
-			 "%1.id, "
-			 "%1.publisher, %1.pdate, "
-			 "%1.category, "
-			 "%1.language, "
-			 "%1.price, "
-			 "%1.monetary_units, "
-			 "%1.quantity, "
-			 "%1.location, "
-			 "%1.keyword, "
-			 "%1.accession_number, "
-			 "%1.type, "
-			 "%1.myoid, "
-			 "%1.front_cover "
-			 ).arg
-	    (type.toLower().remove(" "));
-	}
-      else if(type == "Grey Literature")
-	{
-	  if(al.location->currentIndex() != 0)
-	    {
-	      if(caseinsensitive)
-		str.append
-		  ("AND " + UNACCENT + "(LOWER(location)) = " +
-		   UNACCENT + "(" + ESCAPE + "'" +
-		   biblioteq_myqstring::escape
-		   (al.location->currentText().trimmed(),
-		    true) + "') ");
-	      else
-		str.append
-		  ("AND " + UNACCENT + "(location) = " +
-		   UNACCENT + "(" + ESCAPE + "'" +
-		   biblioteq_myqstring::escape
-		   (al.location->currentText().trimmed()) + "') ");
-	    }
-
-	  str += "GROUP BY grey_literature.document_title, "
-	    "grey_literature.document_id, "
-	    "grey_literature.document_date, "
-	    "grey_literature.location, "
-	    "grey_literature.job_number, "
-	    "grey_literature.type, "
-	    "grey_literature.myoid, "
-	    "grey_literature.front_cover ";
-	}
-      else if(type == "Photograph Collection")
-	{
-	  if(al.location->currentIndex() != 0)
-	    {
-	      if(caseinsensitive)
-		str.append
-		  ("AND " + UNACCENT + "(LOWER(location)) = " +
-		   UNACCENT + "(" + ESCAPE + "'" +
-		   biblioteq_myqstring::escape
-		   (al.location->currentText().trimmed(),
-		    true) + "') ");
-	      else
-		str.append
-		  ("AND " + UNACCENT + "(location) = " +
-		   UNACCENT + "(" + ESCAPE + "'" +
-		   biblioteq_myqstring::escape
-		   (al.location->currentText().trimmed()) + "') ");
-	    }
-
-	  str += "GROUP BY "
-	    "photograph_collection.title, "
-	    "photograph_collection.id, "
-	    "photograph_collection.location, "
-	    "photograph_collection.accession_number, "
-	    "photograph_collection.type, "
-	    "photograph_collection.myoid, "
-	    "photograph_collection.image_scaled ";
-	}
-
-      if(type != "Photograph Collection")
-	{
-	  if(al.available->isChecked())
-	    {
-	      if(type == "Grey Literature")
-		str.append
-		  ("HAVING (quantity - COUNT(item_borrower.item_oid)) > 0 ");
-	      else
-		str.append
-		  (QString("HAVING (%1.quantity - "
-			   "COUNT(item_borrower.item_oid)) > 0 ").
-		   arg(type.toLower().remove(" ")));
-	    }
-	}
-
-	str += "UNION ALL ";
+    str += " UNION ALL ";
 
       searchstr += str;
     }
@@ -2714,19 +2103,11 @@ void biblioteq::slotDisconnect(void)
 
   //userinfo_diag->m_memberProperties.clear();
 #ifdef Q_OS_ANDROID
-  m_admin_diag->hide();
-  m_all_diag->hide();
   m_customquery_diag->hide();
-  m_history_diag->hide();
   m_import->hide();
-  m_members_diag->hide();
 #else
-  m_admin_diag->close();
-  m_all_diag->close();
   m_customquery_diag->close();
-  //m_history_diag->close();
   m_import->close();
-  //m_members_diag->close();
 #endif
   m_unaccent.clear();
   cq.tables_t->clear();
@@ -2740,7 +2121,6 @@ void biblioteq::slotDisconnect(void)
   if(db_enumerations)
     db_enumerations->clear();
 
-  resetAdminBrowser();
   ui.actionAutoPopulateOnCreation->setEnabled(false);
   ui.actionChangePassword->setEnabled(false);
   ui.actionDatabaseSearch->setEnabled(false);
@@ -2865,7 +2245,6 @@ void biblioteq::slotDisconnect(void)
 
   addConfigOptions(m_previousTypeFilter);
   slotDisplaySummary();
-  m_deletedAdmins.clear();
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if(m_db.isOpen())
@@ -3196,58 +2575,9 @@ void biblioteq::slotDisplaySummary(void)
     }
 }
 
-void biblioteq::slotGeneralSearchPublicationDateEnabled(bool state)
-{
-  al.publication_date->setEnabled(state);
-
-  if(!state)
-    al.publication_date->setDate(QDate::fromString("2001", "yyyy"));
-}
-
 void biblioteq::slotGraphicsSceneEnterKeyPressed(void)
 {
   slotMainTableEnterKeyPressed();
-}
-
-void biblioteq::slotGreyLiteratureSearch(void)
-{
-  biblioteq_grey_literature *gl = nullptr;
-
-  foreach(auto w, QApplication::topLevelWidgets())
-    {
-      auto g = qobject_cast<biblioteq_grey_literature *> (w);
-
-      if(g && g->getID() == "search")
-	{
-	  gl = g;
-	  break;
-	}
-    }
-
-  if(!gl)
-    {
-      gl = new biblioteq_grey_literature(this, "search", QModelIndex());
-      gl->search();
-    }
-
-#ifdef Q_OS_ANDROID
-  gl->showMaximized();
-#else
-  gl->showNormal();
-#endif
-  gl->activateWindow();
-  gl->raise();
-}
-
-void biblioteq::slotInsertGreyLiterature(void)
-{
-  QString id("");
-  biblioteq_grey_literature *gl = nullptr;
-
-  m_idCt += 1;
-  id = QString("insert_%1").arg(m_idCt);
-  gl = new biblioteq_grey_literature(this, id, QModelIndex());
-  gl->insert();
 }
 
 void biblioteq::slotItemChanged(QTableWidgetItem *item)
@@ -3362,16 +2692,6 @@ void biblioteq::slotOtherOptionsSaved(void)
     if(qobject_cast<biblioteq_book *> (widget))
       qobject_cast<biblioteq_book *> (widget)->setPublicationDateFormat
 	(m_otheroptions->publicationDateFormat("books"));
-    else if(qobject_cast<biblioteq_grey_literature *> (widget))
-      qobject_cast<biblioteq_grey_literature *> (widget)->
-	setPublicationDateFormat(m_otheroptions->
-				 publicationDateFormat("greyliterature"));
-    else if(qobject_cast<biblioteq_journal *> (widget))
-      qobject_cast<biblioteq_journal *> (widget)->setPublicationDateFormat
-	(m_otheroptions->publicationDateFormat("journals"));
-    else if(qobject_cast<biblioteq_magazine *> (widget))
-      qobject_cast<biblioteq_magazine *> (widget)->setPublicationDateFormat
-	(m_otheroptions->publicationDateFormat("magazines"));
 
   if(m_otheroptions->showMainTableImages())
     ui.table->setIconSize(QSize(64, 94));
@@ -3390,114 +2710,6 @@ void biblioteq::slotOtherOptionsSaved(void)
 void biblioteq::slotPreviewCanvasBackgroundColor(const QColor &color)
 {
   ui.graphicsView->scene()->setBackgroundBrush(color);
-}
-
-void biblioteq::slotRefreshAdminList(void)
-{
-  QScopedPointer<QProgressDialog> progress;
-
-  if(m_admin_diag->isVisible())
-    progress.reset(new QProgressDialog(m_admin_diag));
-  else
-    progress.reset(new QProgressDialog(this));
-
-  if(!progress)
-    return;
-  else
-    progress->hide();
-
-  QCheckBox *checkBox = nullptr;
-  QSqlQuery query(m_db);
-  QString columnname = "";
-  QString str = "";
-  QStringList list;
-  QTableWidgetItem *item = nullptr;
-  int i = -1;
-  int j = 0;
-
-  query.prepare("SELECT username, LOWER(roles) FROM admin ORDER BY username");
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  if(!query.exec())
-    {
-      QApplication::restoreOverrideCursor();
-      addError(QString(tr("Database Error")),
-	       QString(tr("Unable to retrieve administrator data for table "
-			  "populating.")),
-	       query.lastError().text(),
-	       __FILE__, __LINE__);
-      QMessageBox::critical(m_admin_diag, tr("BiblioteQ: Database Error"),
-			    tr("Unable to retrieve administrator "
-			       "data for table populating."));
-      QApplication::processEvents();
-      return;
-    }
-
-  QApplication::restoreOverrideCursor();
-  resetAdminBrowser();
-  ab.table->setRowCount(query.size());
-  progress->setModal(true);
-  progress->setWindowTitle(tr("BiblioteQ: Progress Dialog"));
-  progress->setLabelText(tr("Populating the table..."));
-  progress->setMaximum(query.size());
-  progress->setMinimum(0);
-  progress->show();
-  progress->repaint();
-  QApplication::processEvents();
-  i = -1;
-
-  while(i++, !progress->wasCanceled() && query.next())
-    {
-      if(query.isValid())
-	{
-	  item = new QTableWidgetItem();
-	  str = query.value(0).toString().trimmed();
-	  item->setText(str);
-	  item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-	  str = query.value(1).toString().trimmed();
-	  ab.table->setItem(i, AdminSetupColumns::ID, item);
-
-	  for(j = AdminSetupColumns::ADMINISTRATOR;
-	      j < ab.table->columnCount();
-	      j++)
-	    if(query.value(0).toString().trimmed() == getAdminID() &&
-	       j > 1)
-	      {
-		item = new QTableWidgetItem();
-		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		ab.table->setItem(i, j, item);
-	      }
-	    else
-	      {
-		checkBox = new QCheckBox();
-		ab.table->setCellWidget(i, j, checkBox);
-		columnname = m_abColumnHeaderIndexes.value(j).toLower();
-
-		if(str.toLower().contains(columnname))
-		  checkBox->setChecked(true);
-
-		if(query.value(0).toString().trimmed() == getAdminID())
-		  checkBox->setEnabled(false);
-		else
-		  connect(checkBox, SIGNAL(stateChanged(int)), this,
-			  SLOT(slotAdminCheckBoxClicked(int)));
-	      }
-	}
-
-      if(i + 1 <= progress->maximum())
-	progress->setValue(i + 1);
-
-      progress->repaint();
-      QApplication::processEvents();
-    }
-
-  progress->close();
-  ab.table->setRowCount(i); // Support cancellation.
-
-  for(int i = 0; i < ab.table->columnCount() - 1; i++)
-    ab.table->resizeColumnToContents(i);
-
-  m_deletedAdmins.clear();
 }
 
 void biblioteq::slotRefreshCustomQuery(void)
@@ -3843,338 +3055,6 @@ void biblioteq::slotRequest(void)
     if(task == RequestActionItems::CANCEL_REQUESTED ||
        task == RequestActionItems::RETURN_RESERVED)
       slotRefresh();
-}
-
-void biblioteq::slotSaveAdministrators(void)
-{
-  QCheckBox *checkBox = nullptr;
-  QProgressDialog progress(m_admin_diag);
-  QSqlQuery query(m_db);
-  QString adminStr = "";
-  QString errorstr = "";
-  QString str = "";
-  QStringList tmplist;
-  auto adminCreated = false;
-  auto uexists = false;
-  int i = 0;
-  int j = 0;
-
-  /*
-  ** 1. Prohibit duplicate administrator ids and administrators
-  **    without privileges.
-  ** 2. Create a database transaction.
-  ** 3. Delete required entries from the admin table.
-  ** 4. Remove all deleted database accounts.
-  ** 5. Create new entries in the admin table.
-  ** 6. Create new database accounts with correct privileges.
-  ** 7. Commit or rollback the current database transaction.
-  */
-
-  ab.saveButton->setFocus();
-  progress.hide();
-
-  for(i = 0; i < ab.table->rowCount(); i++)
-    {
-      if(ab.table->item(i, AdminSetupColumns::ID)->text().trimmed().isEmpty())
-	continue;
-
-      if(!(qobject_cast<QCheckBox *>
-	   (ab.table->cellWidget(i, AdminSetupColumns::ADMINISTRATOR))->
-	   isChecked() ||
-	   qobject_cast<QCheckBox *>
-	   (ab.table->cellWidget(i, AdminSetupColumns::CIRCULATION))->
-	   isChecked() ||
-	   qobject_cast<QCheckBox *>
-	   (ab.table->cellWidget(i, AdminSetupColumns::LIBRARIAN))->
-	   isChecked() ||
-	   qobject_cast<QCheckBox *>
-	   (ab.table->cellWidget(i, AdminSetupColumns::MEMBERSHIP))->
-	   isChecked()))
-	{
-	  tmplist.clear();
-	  ab.table->selectRow(i);
-	  ab.table->horizontalScrollBar()->setValue(i);
-	  QMessageBox::critical
-	    (m_admin_diag, tr("BiblioteQ: User Error"),
-	     tr("Administrators must belong to at least one category."));
-	  QApplication::processEvents();
-	  return;
-	}
-
-      if(!tmplist.contains(ab.table->item(i, AdminSetupColumns::ID)->
-			   text().toLower().trimmed()))
-	tmplist.append(ab.table->item(i, AdminSetupColumns::ID)->
-		       text().toLower().trimmed());
-      else
-	{
-	  tmplist.clear();
-	  ab.table->selectRow(i);
-	  ab.table->horizontalScrollBar()->setValue(i);
-	  QMessageBox::critical
-	    (m_admin_diag, tr("BiblioteQ: User Error"),
-	     tr("Duplicate administrator ids are not allowed."));
-	  QApplication::processEvents();
-	  return;
-	}
-    }
-
-  tmplist.clear();
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  if(!m_db.transaction())
-    {
-      QApplication::restoreOverrideCursor();
-      addError
-	(QString(tr("Database Error")),
-	 QString(tr("Unable to create a database transaction.")),
-	 m_db.lastError().text(), __FILE__, __LINE__);
-      QMessageBox::critical
-	(m_admin_diag, tr("BiblioteQ: Database Error"),
-	 tr("Unable to create a database transaction."));
-      QApplication::processEvents();
-      return;
-    }
-
-  /*
-  ** Remove database accounts.
-  */
-
-  for(i = 0; i < m_deletedAdmins.size(); i++)
-    {
-      query.prepare("DELETE FROM admin WHERE LOWER(username) = LOWER(?)");
-      query.bindValue(0, m_deletedAdmins[i].toLower());
-
-      if(!query.exec())
-	{
-	  QApplication::restoreOverrideCursor();
-	  addError(QString(tr("Database Error")),
-		   QString(tr("An error occurred while attempting to "
-			      "remove ")) + m_deletedAdmins[i].toLower() +
-		   QString(tr(".")),
-		   query.lastError().text(), __FILE__, __LINE__);
-	  goto db_rollback;
-	}
-
-      biblioteq_misc_functions::DBAccount
-	(m_deletedAdmins[i].toLower(),
-	 m_db,
-	 biblioteq_misc_functions::DELETE_USER,
-	 errorstr);
-
-      if(!errorstr.isEmpty())
-	{
-	  QApplication::restoreOverrideCursor();
-	  addError
-	    (QString(tr("Database Error")),
-	     QString(tr("An error occurred while attempting to "
-			"remove the database account ")) +
-	     m_deletedAdmins[i].toLower() + QString(tr(".")),
-	     errorstr, __FILE__, __LINE__);
-	  goto db_rollback;
-	}
-    }
-
-  QApplication::restoreOverrideCursor();
-  progress.setCancelButton(nullptr);
-  progress.setModal(true);
-  progress.setWindowTitle(tr("BiblioteQ: Progress Dialog"));
-  progress.setLabelText(tr("Saving administrator information..."));
-  progress.setMaximum(ab.table->rowCount());
-  progress.setMinimum(0);
-  progress.show();
-  progress.repaint();
-  QApplication::processEvents();
-
-  /*
-  ** Add or modify administrators.
-  */
-
-  for(i = 0; i < ab.table->rowCount(); i++)
-    {
-      str = "";
-      adminStr = ab.table->item(i, AdminSetupColumns::ID)->
-	text().toLower().trimmed();
-
-      if(i + 1 <= progress.maximum())
-	progress.setValue(i + 1);
-
-      progress.repaint();
-      QApplication::processEvents();
-
-      if(adminStr.isEmpty())
-	continue; // Ignore empty administrator ids.
-      else if(adminStr == getAdminID())
-	continue; // Ignore current administrator.
-
-      if((qobject_cast<QCheckBox *> (ab.table->cellWidget(i,
-							  AdminSetupColumns::
-							  ADMINISTRATOR)))->
-	 isChecked())
-	str = "administrator";
-      else
-	for(j = AdminSetupColumns::CIRCULATION;
-	    j < ab.table->columnCount();
-	    j++)
-	  {
-	    checkBox = qobject_cast<QCheckBox *> (ab.table->cellWidget(i, j));
-
-	    if(checkBox->isChecked())
-	      str += m_abColumnHeaderIndexes.value(j).toLower() +
-		" ";
-	  }
-
-      str = str.trimmed();
-
-      if(str.isEmpty())
-	str = "none";
-
-      uexists = biblioteq_misc_functions::userExists(adminStr, m_db, errorstr);
-
-      if(!errorstr.isEmpty())
-	{
-	  progress.close();
-	  addError
-	    (QString(tr("Database Error")),
-	     QString(tr("The function biblioteq_misc_functions::"
-			"userExists() failed "
-			"for ")) + adminStr + QString(tr(".")),
-	     errorstr, __FILE__, __LINE__);
-	  goto db_rollback;
-	}
-
-      if(!uexists)
-	{
-	  query.prepare("INSERT INTO admin (username, roles) "
-			"VALUES (LOWER(?), LOWER(?))");
-	  query.bindValue(0, adminStr);
-	  query.bindValue(1, str);
-	}
-      else
-	{
-	  query.prepare
-	    ("UPDATE admin SET roles = LOWER(?), username = LOWER(?) WHERE "
-	     "LOWER(username) = LOWER(?)");
-	  query.bindValue(0, str);
-	  query.bindValue(1, adminStr);
-	  query.bindValue(2, adminStr);
-	}
-
-      if(!query.exec())
-	{
-	  progress.close();
-	  addError
-	    (QString(tr("Database Error")),
-	     QString(tr("Unable to create or update the administrator entry "
-			"for ")) + adminStr + QString(tr(".")),
-	     query.lastError().text(), __FILE__, __LINE__);
-	  goto db_rollback;
-	}
-
-      if(!uexists)
-	{
-	  biblioteq_misc_functions::DBAccount
-	    (adminStr,
-	     m_db,
-	     biblioteq_misc_functions::CREATE_USER,
-	     errorstr,
-	     str);
-
-	  if(!errorstr.isEmpty())
-	    {
-	      progress.close();
-	      addError
-		(QString(tr("Database Error")),
-		 QString(tr("An error occurred while attempting to "
-			    "create a database account for ")) + adminStr +
-		 QString(tr(".")),
-		 errorstr, __FILE__, __LINE__);
-	      goto db_rollback;
-	    }
-
-	  adminCreated = true;
-	}
-      else
-	{
-	  biblioteq_misc_functions::revokeAll(adminStr, m_db, errorstr);
-
-	  if(!errorstr.isEmpty())
-	    {
-	      progress.close();
-	      addError
-		(QString(tr("Database Error")),
-		 QString(tr("An error occurred while attempting to "
-			    "revoke privileges from ")) + adminStr +
-		 QString(tr(".")),
-		 errorstr, __FILE__, __LINE__);
-	      goto db_rollback;
-	    }
-
-	  biblioteq_misc_functions::grantPrivs(adminStr, str, m_db, errorstr);
-
-	  if(!errorstr.isEmpty())
-	    {
-	      progress.close();
-	      addError
-		(QString(tr("Database Error")),
-		 QString(tr("An error occurred while attempting to "
-			    "grant privileges to ")) + adminStr +
-		 QString(tr(".")),
-		 errorstr, __FILE__, __LINE__);
-	      goto db_rollback;
-	    }
-	}
-    }
-
-  progress.close();
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  if(!m_db.commit())
-    {
-      addError
-	(QString(tr("Database Error")),
-	 QString(tr("Unable to commit the current database "
-		    "transaction.")),
-	 m_db.lastError().text(), __FILE__,
-	 __LINE__);
-      m_db.rollback();
-      QApplication::restoreOverrideCursor();
-      QMessageBox::critical(m_admin_diag,
-			    tr("BiblioteQ: Database Error"),
-			    tr("Unable to commit the current "
-			       "database transaction."));
-      QApplication::processEvents();
-      return;
-    }
-
-  QApplication::restoreOverrideCursor();
-  m_deletedAdmins.clear();
-
-  if(adminCreated)
-    {
-      QMessageBox::information
-	(m_admin_diag, tr("BiblioteQ: Information"),
-	 tr("Please notify new administrators that their "
-	    "default password has been set "
-	    "to tempPass."));
-      QApplication::processEvents();
-    }
-
-  slotRefreshAdminList();
-  return;
-
- db_rollback:
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-
-  if(!m_db.rollback())
-    addError(QString(tr("Database Error")), QString(tr("Rollback failure.")),
-	     m_db.lastError().text(), __FILE__, __LINE__);
-
-  QApplication::restoreOverrideCursor();
-  QMessageBox::critical(m_admin_diag, tr("BiblioteQ: Database Error"),
-			tr("An error occurred while attempting to save "
-			   "the administrator information."));
-  QApplication::processEvents();
 }
 
 void biblioteq::slotSaveConfig(void)

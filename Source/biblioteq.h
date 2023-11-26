@@ -8,14 +8,11 @@
 #include "biblioteq_callnum_table_item.h"
 #include "biblioteq_dbenumerations.h"
 #include "biblioteq_generic_thread.h"
-#include "biblioteq_grey_literature.h"
 #include "biblioteq_import.h"
-#include "biblioteq_magazine.h"
 #include "biblioteq_misc_functions.h"
 #include "biblioteq_myqstring.h"
 #include "biblioteq_numeric_table_item.h"
 #include "biblioteq_photographcollection.h"
-#include "ui_biblioteq_adminsetup.h"
 #include "ui_biblioteq_allinfo.h"
 #include "ui_biblioteq_branch_s.h"
 #include "ui_biblioteq_customquery.h"
@@ -71,7 +68,6 @@ class biblioteq: public QMainWindow
   QSqlDatabase getDB(void) const;
   QString formattedISBN10(const QString &str) const;
   QString formattedISBN13(const QString &str) const;
-  QString getAdminID(void) const;
   QString getPreferredSRUSite(void) const;
   QString getPreferredZ3950Site(void) const;
   QString getRoles(void) const;
@@ -111,14 +107,8 @@ class biblioteq: public QMainWindow
   void magSearch(const QString &field, const QString &value);
   void pcSearch(const QString &field, const QString &value);
   void removeBook(biblioteq_book *book);
-  void removeGreyLiterature(biblioteq_grey_literature *gl);
-  void removeJournal(biblioteq_journal *journal);
-  void removeMagazine(biblioteq_magazine *magazine);
   void removePhotographCollection(biblioteq_photographcollection *pc);
   void replaceBook(const QString &id, biblioteq_book *book);
-  void replaceGreyLiterature(const QString &id, biblioteq_grey_literature *gl);
-  void replaceJournal(const QString &id, biblioteq_journal *journal);
-  void replaceMagazine(const QString &id, biblioteq_magazine *magazine);
   void replacePhotographCollection(const QString &id,
 				   biblioteq_photographcollection *photograph);
   void setGlobalFonts(const QFont &font);
@@ -198,12 +188,8 @@ class biblioteq: public QMainWindow
   QHash<QString, QString> m_selectedBranch;
   QLabel *m_connected_bar_label;
   QLabel *m_status_bar_label;
-  QMainWindow *m_admin_diag;
-  QMainWindow *m_all_diag;
   QMainWindow *m_customquery_diag;
   QMainWindow *m_error_diag;
-  //QMainWindow *m_history_diag;
-  //QMainWindow *m_members_diag;
   QMap<QString, QHash<QString, QString> > m_branches;
   QMap<QString, QHash<QString, QString> > m_sruMaps;
   QMultiMap<QString, QHash<QString, QString> > m_z3950Maps;
@@ -217,14 +203,11 @@ class biblioteq: public QMainWindow
   QString m_lastSearchStr;
   QString m_previousTypeFilter;
   QString m_roles;
-  QStringList m_deletedAdmins;
   QTextBrowser *m_printPreview;
   QToolButton *m_error_bar_label;
   QVector<QString> m_abColumnHeaderIndexes;
   QVector<QString> m_bbColumnHeaderIndexes;
   QVector<QString> m_historyColumnHeaderIndexes;
-  Ui_adminBrowser ab;
-  Ui_allDialog al;
   Ui_branchSelect br;
   Ui_customquery cq;
   Ui_errordialog er;
@@ -243,10 +226,10 @@ class biblioteq: public QMainWindow
   QString reservationHistoryHtml(void) const;
   QString viewHtml(void) const;
   QWidget *widgetForAction(QAction *action) const;
+  void adminSetup(void);
   bool emptyContainers(void);
   bool isCurrentItemAPhotograph(void) const;
   void addConfigOptions(const QString &typefilter);
-  void adminSetup(void);
   void changeEvent(QEvent *event);
   void cleanup(void);
   void closeEvent(QCloseEvent *event);
@@ -262,13 +245,9 @@ class biblioteq: public QMainWindow
   void prepareUpgradeNotification(void);
   void readConfig(void);
   void readGlobalSetup(void);
-  void resetAdminBrowser(void);
 
  private slots:
   void slotAbout(void);
-  void slotAddAdmin(void);
-  void slotAdminCheckBoxClicked(int state);
-  void slotAdminContextMenu(const QPoint &point);
   void slotAllGo(void);
   void slotAutoPopOnFilter(QAction *action);
   void slotBookSearch(void);
@@ -282,7 +261,6 @@ class biblioteq: public QMainWindow
   void slotContributors(void);
   void slotCopyError(void);
   void slotDelete(void);
-  void slotDeleteAdmin(void);
   void slotDisconnect(void);
   void slotDisplayNewSqliteDialog(void);
   void slotDuplicate(void);
@@ -290,19 +268,12 @@ class biblioteq: public QMainWindow
   void slotExit(void);
   void slotExportAsCSV(void);
   void slotExportAsPNG(void);
-  void slotGeneralSearchPublicationDateEnabled(bool state);
   void slotGraphicsSceneEnterKeyPressed(void);
-  void slotGreyLiteratureSearch(void);
   void slotInsertBook(void);
-  void slotInsertGreyLiterature(void);
-  void slotInsertJourn(void);
-  void slotInsertMag(void);
   void slotInsertPhotograph(void);
   void slotItemChanged(QTableWidgetItem *item);
-  void slotJournSearch(void);
   void slotLanguageChanged(void);
   void slotLastWindowClosed(void);
-  void slotMagSearch(void);
   void slotMainTableEnterKeyPressed(void);
   void slotMainWindowCanvasBackgroundColorChanged(const QColor &color);
   void slotMergeSQLiteDatabases(void);
@@ -321,17 +292,14 @@ class biblioteq: public QMainWindow
   void slotPrintView(void);
   void slotPrintViewPreview(void);
   void slotRefresh(void);
-  void slotRefreshAdminList(void);
   void slotRefreshCustomQuery(void);
   void slotReloadBiblioteqConf(void);
   void slotRequest(void);
-  void slotReset(void);
   void slotResetAllSearch(void);
   void slotResetErrorLog(void);
   void slotResetLoginDialog(void);
   void slotResizeColumnsAfterSort(void);
   void slotRoleChanged(int index);
-  void slotSaveAdministrators(void);
   void slotSaveConfig(void);
   void slotSaveDnt(bool state);
   void slotSaveGeneralSearchCaseSensitivity(bool state);
@@ -343,7 +311,6 @@ class biblioteq: public QMainWindow
   void slotSelectDatabaseFile(void);
   void slotSetColumns(void);
   void slotSetFonts(void);
-  void slotShowAdminDialog(void);
   void slotShowChangePassword(void);
   void slotShowConnectionDB(void);
   void slotShowCustomQuery(void);

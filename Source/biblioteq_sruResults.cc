@@ -1,5 +1,5 @@
-#include "biblioteq_magazine.h"
 #include "biblioteq_sruResults.h"
+#include "qevent.h"
 
 #include <QXmlStreamReader>
 
@@ -53,11 +53,6 @@ biblioteq_sruresults::biblioteq_sruresults
 		  }
 	      }
 	  }
-
-      if(row == -1)
-	if(m_magazine)
-	  if(issn == m_magazine->dialog().id->text())
-	    row = i;
 
       if(!issn.isEmpty())
 	m_ui.list->addItem(issn);
@@ -145,10 +140,6 @@ void biblioteq_sruresults::slotClose(void)
 
 void biblioteq_sruresults::slotSelectRecord(void)
 {
-  if(m_magazine)
-    m_magazine->populateDisplayAfterSRU
-      (m_records.value(m_ui.list->currentRow()));
-
   close();
 }
 

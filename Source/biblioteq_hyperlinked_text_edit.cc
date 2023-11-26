@@ -67,12 +67,6 @@ void biblioteq_hyperlinked_text_edit::slotAnchorClicked(const QUrl &url)
 
       if(searchType == "book_search")
 	qmain->bookSearch(searchKey, searchValue);
-      else if(searchType == "greyliterature_search")
-	qmain->greyLiteratureSearch(searchKey, searchValue);
-      else if(searchType == "journal_search")
-	qmain->journSearch(searchKey, searchValue);
-      else if(searchType == "magazine_search")
-	qmain->magSearch(searchKey, searchValue);
     }
 
   tmplist.clear();

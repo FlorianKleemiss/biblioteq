@@ -1495,6 +1495,9 @@ void biblioteq_photographcollection::slotGo(void)
 		  qmain->getTypeFilterString() == "Photograph Collections"))
 		{
 		  qmain->getUI().table->setSortingEnabled(false);
+          if(qmain->getTypeFilterString() == "Photograph Collections")
+              qmain->getUI().table->horizontalHeader()->setSortIndicator(6,Qt::AscendingOrder);
+
 
 		  auto names(qmain->getUI().table->columnNames());
 
@@ -1527,6 +1530,8 @@ void biblioteq_photographcollection::slotGo(void)
 		    }
 
 		  qmain->getUI().table->setSortingEnabled(true);
+            if(qmain->getTypeFilterString() == "Photograph Collections")
+                qmain->getUI().table->horizontalHeader()->setSortIndicator(6,Qt::AscendingOrder);
 		  qmain->getUI().table->updateToolTips(m_index->row());
 
 		  foreach(auto textfield, findChildren<QLineEdit *> ())
@@ -3076,6 +3081,8 @@ void biblioteq_photographcollection::updateTablePhotographCount
       qmain->getTypeFilterString() == "Photograph Collections"))
     {
       qmain->getUI().table->setSortingEnabled(false);
+      if(qmain->getTypeFilterString() == "Photograph Collections")
+          qmain->getUI().table->horizontalHeader()->setSortIndicator(6,Qt::AscendingOrder);
 
       auto names(qmain->getUI().table->columnNames());
 
@@ -3090,6 +3097,8 @@ void biblioteq_photographcollection::updateTablePhotographCount
 
       qmain->getUI().table->setSortingEnabled(true);
       qmain->getUI().table->updateToolTips(m_index->row());
+      if(qmain->getTypeFilterString() == "Photograph Collections")
+          qmain->getUI().table->horizontalHeader()->setSortIndicator(6,Qt::AscendingOrder);
     }
 }
 
