@@ -322,15 +322,12 @@ void biblioteq_photographcollection::insert(void)
   pc.importItems->setEnabled(false);
   pc.creation_date_item->setText("01/01/2000");
   //pc.accession_number->clear();
-  biblioteq_misc_functions::highlightWidget
-    (pc.id_collection, QColor(255, 248, 220));
-  biblioteq_misc_functions::highlightWidget
-    (pc.title_collection, QColor(255, 248, 220));
+  biblioteq_misc_functions::highlightWidget (pc.id_collection, QColor(255, 248, 220));
+  biblioteq_misc_functions::highlightWidget (pc.title_collection, QColor(255, 248, 220));
   setWindowTitle(tr("BiblioteQ: Create Photograph Collection Entry"));
   m_engWindowTitle = "Create";
   pc.id_collection->setFocus();
-  pc.id_collection->setText
-    (QUuid::createUuid().toString().remove("{").remove("}"));
+  pc.id_collection->setText (QUuid::createUuid().toString().remove("{").remove("}"));
   pc.page->blockSignals(true);
   pc.page->clear();
   pc.page->addItem("1");
@@ -773,7 +770,7 @@ void biblioteq_photographcollection::modify(const int state,
       else if(fieldname == "notes"){
         pc.notes->setText(var.toString().trimmed());
       }
-      else if(fieldname == "by_artis"){
+      else if(fieldname == "by_artist"){
         pc.by_artist->setText(var.toString().trimmed());
       }
       else if(fieldname == "publisher"){
@@ -3050,23 +3047,19 @@ void biblioteq_photographcollection::storeData(void)
        << pc.circulation_height;
 
   foreach(auto widget, list)
-    {
-      classname = widget->metaObject()->className();
-      objectname = widget->objectName();
+  {
+    classname = widget->metaObject()->className();
+    objectname = widget->objectName();
 
-      if(classname == "QLineEdit")
-	m_widgetValues[objectname] =
-	  (qobject_cast<QLineEdit *> (widget))->text().trimmed();
-      else if(classname == "QComboBox")
-	m_widgetValues[objectname] =
-	  (qobject_cast<QComboBox *> (widget))->currentText().trimmed();
-      else if(classname == "QTextEdit")
-	m_widgetValues[objectname] =
-	  (qobject_cast<QTextEdit *> (widget))->toPlainText().trimmed();
-      else if(classname == "biblioteq_image_drop_site")
-	m_imageValues[objectname] =
-	  (qobject_cast<biblioteq_image_drop_site *> (widget))->m_image;
-    }
+    if(classname == "QLineEdit")
+      m_widgetValues[objectname] = (qobject_cast<QLineEdit *> (widget))->text().trimmed();
+    else if(classname == "QComboBox")
+      m_widgetValues[objectname] = (qobject_cast<QComboBox *> (widget))->currentText().trimmed();
+    else if(classname == "QTextEdit")
+      m_widgetValues[objectname] = (qobject_cast<QTextEdit *> (widget))->toPlainText().trimmed();
+    else if(classname == "biblioteq_image_drop_site")
+      m_imageValues[objectname] = (qobject_cast<biblioteq_image_drop_site *> (widget))->m_image;
+  }
 }
 
 void biblioteq_photographcollection::updateTablePhotographCount
@@ -3111,8 +3104,7 @@ void biblioteq_photographcollection::updateWindow(const int state)
       pc.okButton->setVisible(true);
       pc.addItemButton->setEnabled(true);
       pc.importItems->setEnabled(true);
-      str = QString(tr("BiblioteQ: Modify Photograph Collection Entry (")) +
-	pc.id_collection->text() + tr(")");
+      str = QString(tr("BiblioteQ: Modify Photograph Collection Entry (")) + pc.id_collection->text() + tr(")");
       m_engWindowTitle = "Modify";
       disconnect(m_scene,
 		 SIGNAL(deleteKeyPressed(void)),

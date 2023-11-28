@@ -3,10 +3,31 @@
 
 #include <QScrollBar>
 #include <QSettings>
+#include <QSortFilterProxyModel>
+#include <QStandardItemModel>
+
+class NumericSortModel : public QSortFilterProxyModel
+{
+protected:
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
+    {
+        bool ok1, ok2;
+        int leftNumber = sourceModel()->data(left).toInt(&ok1);
+        int rightNumber = sourceModel()->data(right).toInt(&ok2);
+
+        if (ok1 && ok2)
+            return leftNumber < rightNumber;
+        else
+            return QSortFilterProxyModel::lessThan(left, right);
+    }
+};
 
 biblioteq_main_table::biblioteq_main_table(QWidget *parent):
   QTableWidget(parent)
 {
+  QStandardItemModel *model = new QStandardItemModel;
+  NumericSortModel *proxyModel = new NumericSortModel;
+  proxyModel->setSourceModel(model);
   m_qmain = nullptr;
   setAcceptDrops(false);
   setDragEnabled(false);
