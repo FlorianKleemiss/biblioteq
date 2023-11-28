@@ -3,17 +3,17 @@
 
 #include <QGraphicsView>
 
-class biblioteq_photograph_compare: public QGraphicsView
+class biblioteq_photograph_compare : public QGraphicsView
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_photograph_compare(QWidget *parent);
   void setBestFit(const bool bestFit);
   void setImage1(const QImage &image, const QString &format, const qint64 oid);
   void setImage2(const QImage &image, const QString &format, const qint64 oid);
 
- private:
+private:
   QImage m_image1;
   QString m_format1;
   qint64 m_oid1;
@@ -22,7 +22,6 @@ class biblioteq_photograph_compare: public QGraphicsView
   qint64 m_oid2;
   bool m_bestFit;
   void resizeEvent(QResizeEvent *event);
-
 };
 
 #endif

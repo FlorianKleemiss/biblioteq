@@ -27,15 +27,15 @@ class biblioteq_files;
 class biblioteq_otheroptions;
 class biblioteq_sqlite_merge_databases;
 
-class biblioteq: public QMainWindow
+class biblioteq : public QMainWindow
 {
   Q_OBJECT
 
- public:
+public:
   enum Limits
-    {
-     QUANTITY = 1000 // Copies per item.
-    };
+  {
+    QUANTITY = 1000 // Copies per item.
+  };
 
   static QString s_locale;
   static QString s_unknown;
@@ -53,8 +53,8 @@ class biblioteq: public QMainWindow
   static const int VIEW_ONLY = 1;
   biblioteq(void);
   ~biblioteq();
-  QHash<QAction *, QPointer<biblioteq_documentationwindow> > m_documentation;
-  QHash<QAction *, QPointer<biblioteq_documentationwindow> > m_releaseNotes;
+  QHash<QAction *, QPointer<biblioteq_documentationwindow>> m_documentation;
+  QHash<QAction *, QPointer<biblioteq_documentationwindow>> m_releaseNotes;
   QPointer<QMenu> m_configToolMenu;
   QPointer<biblioteq_documentationwindow> m_contributors;
   QString m_unaccent;
@@ -86,21 +86,21 @@ class biblioteq: public QMainWindow
   bool showMainTableImages(void) const;
   int pageLimit(void) const;
   int populateTable(QSqlQuery &query,
-		    const QString &typefilter,
-		    const int pagingType,
-		    const int searchType);
+                    const QString &typefilter,
+                    const int pagingType,
+                    const int searchType);
   int populateTable(const int search_type_arg,
-		    const QString &typefilter,
-		    const QString &searchstrArg,
-		    const int pagingType = NEW_PAGE);
+                    const QString &typefilter,
+                    const QString &searchstrArg,
+                    const int pagingType = NEW_PAGE);
   static QString homePath(void);
   static void quit(const char *msg, const char *file, const int line);
   static void quit(void);
   void addError(const QString &type,
-		const QString &summary,
-		const QString &error = "",
-		const char *file = "",
-		const int line = 0);
+                const QString &summary,
+                const QString &error = "",
+                const char *file = "",
+                const int line = 0);
   void bookSearch(const QString &field, const QString &value);
   void greyLiteratureSearch(const QString &field, const QString &value);
   void journSearch(const QString &field, const QString &value);
@@ -110,74 +110,73 @@ class biblioteq: public QMainWindow
   void removePhotographCollection(biblioteq_photographcollection *pc);
   void replaceBook(const QString &id, biblioteq_book *book);
   void replacePhotographCollection(const QString &id,
-				   biblioteq_photographcollection *photograph);
+                                   biblioteq_photographcollection *photograph);
   void setGlobalFonts(const QFont &font);
   void setSummaryImages(const QImage &back, const QImage &front);
   void showMain(void);
   void updateItemWindows(void);
-  void updateRows
-    (const QString &oid, const QTableWidgetItem *item, const QString &it);
+  void updateRows(const QString &oid, const QTableWidgetItem *item, const QString &it);
   void updateSceneItem(const QString &oid,
-		       const QString &type,
-		       const QImage &image);
+                       const QString &type,
+                       const QImage &image);
   void vgSearch(const QString &field, const QString &value);
 
- public slots:
+public slots:
   void slotDisplaySummary(void);
   void slotResizeColumns(void);
 
- private:
+private:
   enum AdminSetupColumns
-    {
-     ADMINISTRATOR = 1,
-     CIRCULATION = 2,
-     ID = 0,
-     LIBRARIAN = 3,
-     MEMBERSHIP = 4
-    };
+  {
+    ADMINISTRATOR = 1,
+    CIRCULATION = 2,
+    ID = 0,
+    LIBRARIAN = 3,
+    MEMBERSHIP = 4
+  };
 
   enum ErrorDialogColumns
-    {
-     EVENT_TIME = 0,
-     EVENT_TYPE = 1,
-     FILE = 4,
-     FULL_DESCRIPTION = 3,
-     LINE_NUMBER = 5,
-     SUMMARY = 2
-    };
+  {
+    EVENT_TIME = 0,
+    EVENT_TYPE = 1,
+    FILE = 4,
+    FULL_DESCRIPTION = 3,
+    LINE_NUMBER = 5,
+    SUMMARY = 2
+  };
 
   enum GenericSearchTypes
-    {
-     ACCESSION_NUMBER_GENERIC_SEARCH_TYPE = 0,
-     CATEGORY_GENERIC_SEARCH_TYPE = 1,
-     ID_GENERIC_SEARCH_TYPE = 2,
-     KEYWORD_GENERIC_SEARCH_TYPE = 3,
-     TITLE_GENERIC_SEARCH_TYPE = 4
-    };
+  {
+    ACCESSION_NUMBER_GENERIC_SEARCH_TYPE = 0,
+    CATEGORY_GENERIC_SEARCH_TYPE = 1,
+    ID_GENERIC_SEARCH_TYPE = 2,
+    KEYWORD_GENERIC_SEARCH_TYPE = 3,
+    TITLE_GENERIC_SEARCH_TYPE = 4
+  };
 
   enum HistoryColumns
-    {
-     BARCODE = 5,
-     DUE_DATE = 8,
-     FIRST_NAME = 1,
-     ID_NUMBER = 4,
-     LAST_NAME = 2,
-     LENDER = 10,
-     MEMBER_ID = 0,
-     MYOID = 11,
-     RESERVATION_DATE = 7,
-     RETURNED_DATE = 9,
-     TITLE = 3,
-     TYPE = 6
-    };
+  {
+    BARCODE = 5,
+    DUE_DATE = 8,
+    FIRST_NAME = 1,
+    ID_NUMBER = 4,
+    LAST_NAME = 2,
+    LENDER = 10,
+    MEMBER_ID = 0,
+    MYOID = 11,
+    RESERVATION_DATE = 7,
+    RETURNED_DATE = 9,
+    TITLE = 3,
+    TYPE = 6
+  };
 
   enum RequestActionItems
-    {
-     CANCEL_REQUESTED = 0,
-     INACTIVE,
-     REQUEST_SELECTED,
-     RETURN_RESERVED
-    };
+  {
+    CANCEL_REQUESTED = 0,
+    INACTIVE,
+    REQUEST_SELECTED,
+    RETURN_RESERVED
+  };
 
   QActionGroup *m_menuCategoryActionGroup;
   QDialog *m_branch_diag;
@@ -190,9 +189,9 @@ class biblioteq: public QMainWindow
   QLabel *m_status_bar_label;
   QMainWindow *m_customquery_diag;
   QMainWindow *m_error_diag;
-  QMap<QString, QHash<QString, QString> > m_branches;
-  QMap<QString, QHash<QString, QString> > m_sruMaps;
-  QMultiMap<QString, QHash<QString, QString> > m_z3950Maps;
+  QMap<QString, QHash<QString, QString>> m_branches;
+  QMap<QString, QHash<QString, QString>> m_sruMaps;
+  QMultiMap<QString, QHash<QString, QString>> m_z3950Maps;
   QPointer<QMenu> m_menu;
   QPointer<biblioteq_dbenumerations> db_enumerations;
   QPointer<biblioteq_sqlite_merge_databases> m_sqliteMergeDatabases;
@@ -246,7 +245,7 @@ class biblioteq: public QMainWindow
   void readConfig(void);
   void readGlobalSetup(void);
 
- private slots:
+private slots:
   void slotAbout(void);
   void slotAllGo(void);
   void slotAutoPopOnFilter(QAction *action);
@@ -331,7 +330,7 @@ class biblioteq: public QMainWindow
   void slotViewDetails(void);
   void slotViewFullOrNormalScreen(void);
 
- signals:
+signals:
   void fontChanged(const QFont &font);
 };
 

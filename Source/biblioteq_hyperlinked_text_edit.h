@@ -5,21 +5,21 @@
 
 class biblioteq;
 
-class biblioteq_hyperlinked_text_edit: public QTextBrowser
+class biblioteq_hyperlinked_text_edit : public QTextBrowser
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_hyperlinked_text_edit(QWidget *parent);
   void setMultipleLinks(const QString &searchType,
-			const QString &searchField,
-			const QString &str);
+                        const QString &searchField,
+                        const QString &str);
   void setQMain(biblioteq *biblioteq);
 
- private:
+private:
   biblioteq *qmain;
 
- private slots:
+private slots:
   void slotAnchorClicked(const QUrl &url);
 };
 

@@ -7,11 +7,11 @@
 
 class biblioteq;
 
-class biblioteq_generic_thread: public QThread
+class biblioteq_generic_thread : public QThread
 {
   Q_OBJECT
 
- public:
+public:
   static const int READ_GLOBAL_CONFIG_FILE = 200;
   static const int Z3950_QUERY = 300;
 
@@ -29,7 +29,7 @@ class biblioteq_generic_thread: public QThread
   void setZ3950Name(const QString &name);
   void setZ3950SearchString(const QString &z3950SearchStr);
 
- private:
+private:
   QList<bool> m_outputListBool;
   QPointer<biblioteq> qmain;
   QString m_eType;

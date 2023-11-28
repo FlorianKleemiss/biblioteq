@@ -12,12 +12,12 @@
 class QPersistentModelIndex;
 class biblioteq;
 
-class biblioteq_item_working_dialog: public QProgressDialog
+class biblioteq_item_working_dialog : public QProgressDialog
 {
   Q_OBJECT
 
- public:
-  biblioteq_item_working_dialog(QMainWindow *parent):QProgressDialog(parent)
+public:
+  biblioteq_item_working_dialog(QMainWindow *parent) : QProgressDialog(parent)
   {
   }
 
@@ -25,16 +25,16 @@ class biblioteq_item_working_dialog: public QProgressDialog
   {
   }
 
- protected:
+protected:
   void closeEvent(QCloseEvent *event)
   {
-    if(event)
+    if (event)
       event->ignore();
   }
 
   void keyPressEvent(QKeyEvent *event)
   {
-    if(event && event->key() == Qt::Key_Escape)
+    if (event && event->key() == Qt::Key_Escape)
       event->ignore();
     else
       QProgressDialog::keyPressEvent(event);
@@ -43,7 +43,7 @@ class biblioteq_item_working_dialog: public QProgressDialog
 
 class biblioteq_item
 {
- public:
+public:
   biblioteq_item(const QModelIndex &index);
   biblioteq_item(void);
   virtual ~biblioteq_item();
@@ -54,7 +54,7 @@ class biblioteq_item
   void updateQuantity(const int q);
   void updateRow(const QModelIndex &index);
 
- protected:
+protected:
   QMap<QString, QImage> m_imageValues;
   QMap<QString, QString> m_widgetValues;
   QPersistentModelIndex *m_index;

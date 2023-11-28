@@ -3,7 +3,7 @@
 
 class biblioteq_open_library
 {
- public:
+public:
   biblioteq_open_library(void);
   ~biblioteq_open_library();
 };

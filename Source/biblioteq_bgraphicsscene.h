@@ -3,19 +3,19 @@
 
 #include <QGraphicsScene>
 
-class biblioteq_bgraphicsscene: public QGraphicsScene
+class biblioteq_bgraphicsscene : public QGraphicsScene
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_bgraphicsscene(QObject *parent);
   ~biblioteq_bgraphicsscene();
 
- private:
+private:
   void keyPressEvent(QKeyEvent *event);
   void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
 
- signals:
+signals:
   void deleteKeyPressed(void);
   void enterKeyPressed(void);
   void itemDoubleClicked(void);

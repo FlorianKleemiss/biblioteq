@@ -5,26 +5,26 @@
 
 class biblioteq;
 
-class biblioteq_sqlite_merge_databases: public QMainWindow
+class biblioteq_sqlite_merge_databases : public QMainWindow
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_sqlite_merge_databases(biblioteq *parent);
 
- private:
+private:
   enum Columns
-    {
-     PROGRESS_COLUMN = 2,
-     SELECT_COLUMN = 1,
-     SQLITE_DATABASE_COLUMN = 0
-    };
+  {
+    PROGRESS_COLUMN = 2,
+    SELECT_COLUMN = 1,
+    SQLITE_DATABASE_COLUMN = 0
+  };
 
   Ui_mergeSQLiteDatabases m_ui;
   biblioteq *m_qmain;
   void changeEvent(QEvent *event);
 
- private slots:
+private slots:
   void slotAddRow(void);
   void slotDeleteRow(void);
   void slotMerge(void);

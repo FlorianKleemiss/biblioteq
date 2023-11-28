@@ -3,11 +3,11 @@
 
 #include <QGraphicsView>
 
-class biblioteq_image_drop_site: public QGraphicsView
+class biblioteq_image_drop_site : public QGraphicsView
 {
   Q_OBJECT
 
- public:
+public:
   QImage m_image;
   QString m_imageFormat;
   biblioteq_image_drop_site(QWidget *parent);
@@ -17,7 +17,7 @@ class biblioteq_image_drop_site: public QGraphicsView
   void setImage(const QImage &image);
   void setReadOnly(const bool readOnly);
 
- private:
+private:
   bool m_doubleClickResizeEnabled;
   bool m_doubleclicked;
   QString determineFormat(const QByteArray &bytes) const;

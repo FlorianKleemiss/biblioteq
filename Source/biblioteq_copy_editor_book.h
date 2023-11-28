@@ -6,33 +6,33 @@
 #include "biblioteq_copy_editor.h"
 #include "ui_biblioteq_bookcopybrowser.h"
 
-class biblioteq_copy_editor_book: public biblioteq_copy_editor
+class biblioteq_copy_editor_book : public biblioteq_copy_editor
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_copy_editor_book(QWidget *parent,
-			     biblioteq *biblioteq,
-			     biblioteq_item *bitemArg,
-			     const bool showForLendingArg,
-			     const int quantityArg,
-			     const QString &ioidArg,
-			     QSpinBox *spinboxArg,
-			     const QFont &font,
-			     const QString &uniqueIdArg);
+                             biblioteq *biblioteq,
+                             biblioteq_item *bitemArg,
+                             const bool showForLendingArg,
+                             const int quantityArg,
+                             const QString &ioidArg,
+                             QSpinBox *spinboxArg,
+                             const QFont &font,
+                             const QString &uniqueIdArg);
   ~biblioteq_copy_editor_book();
   void populateCopiesEditor(void);
 
- private:
+private:
   class copy_class
   {
   public:
     copy_class(const QString &condition,
-	       const QString &copyid,
-	       const QString &copynumber,
-	       const QString &itemoid,
-	       const QString &originality,
-	       const QString &status)
+               const QString &copyid,
+               const QString &copynumber,
+               const QString &itemoid,
+               const QString &originality,
+               const QString &status)
     {
       m_condition = condition;
       m_copyid = copyid;
@@ -52,16 +52,16 @@ class biblioteq_copy_editor_book: public biblioteq_copy_editor
   };
 
   enum Columns
-    {
-     AVAILABILITY = 2,
-     BARCODE = 1,
-     CONDITION = 4,
-     COPY_NUMBER = 7,
-     MYOID = 6,
-     ORIGINALITY = 3,
-     STATUS = 5,
-     TITLE = 0
-    };
+  {
+    AVAILABILITY = 2,
+    BARCODE = 1,
+    CONDITION = 4,
+    COPY_NUMBER = 7,
+    MYOID = 6,
+    ORIGINALITY = 3,
+    STATUS = 5,
+    TITLE = 0
+  };
 
   QList<copy_class *> m_copies;
   QPointer<QWidget> m_parent;
@@ -81,7 +81,7 @@ class biblioteq_copy_editor_book: public biblioteq_copy_editor
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
 
- private slots:
+private slots:
   void slotDeleteCopy(void);
   void slotSaveCopies(void);
 };

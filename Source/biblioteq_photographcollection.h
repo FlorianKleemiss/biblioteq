@@ -8,14 +8,14 @@
 
 class biblioteq_bgraphicsscene;
 
-class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
+class biblioteq_photographcollection : public QMainWindow, public biblioteq_item
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_photographcollection(biblioteq *parentArg,
-				 const QString &oidArg,
-				 const QModelIndex &index);
+                                 const QString &oidArg,
+                                 const QModelIndex &index);
   ~biblioteq_photographcollection();
   void duplicate(const QString &p_oid, const int state);
   void insert(void);
@@ -24,7 +24,7 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
 
   void updateWindow(const int state);
 
- private:
+private:
   QDialog *m_photo_diag;
   QDialog *m_photo_compare_diag;
   QString m_engWindowTitle;
@@ -38,13 +38,13 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   void changeEvent(QEvent *event);
   void closeEvent(QCloseEvent *event);
   void loadPhotographFromItem(QGraphicsScene *scene,
-			      QGraphicsPixmapItem *item,
-			      const int percent);
-  void loadTwoPhotographFromItem(QGraphicsScene *scene1,
-                              QGraphicsScene *scene2,
-                              QGraphicsPixmapItem *item1,
-                              QGraphicsPixmapItem *item2,
+                              QGraphicsPixmapItem *item,
                               const int percent);
+  void loadTwoPhotographFromItem(QGraphicsScene *scene1,
+                                 QGraphicsScene *scene2,
+                                 QGraphicsPixmapItem *item1,
+                                 QGraphicsPixmapItem *item2,
+                                 const int percent);
   void loadPhotographFromItemInNewWindow(QGraphicsPixmapItem *item);
   void loadcompareFromItemInNewWindow(QGraphicsPixmapItem *item1, QGraphicsPixmapItem *item2);
   void setSceneRect(const int size);
@@ -53,7 +53,7 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   void updateTablePhotographCount(const int count);
   bool eventFilter(QObject *object, QEvent *event);
 
- private slots:
+private slots:
   void slotAddItem(void);
   void slotCancel(void);
   void slotClosePhoto(void);
@@ -68,8 +68,8 @@ class biblioteq_photographcollection: public QMainWindow, public biblioteq_item
   void slotPageChanged(const int &nr);
   void slotPrint(void);
   void slotSaveRotatedImage(const QImage &image,
-			    const QString &format,
-			    const qint64 oid);
+                            const QString &format,
+                            const qint64 oid);
   void slotSceneSelectionChanged(void);
   void slotSelectAll(void);
   void slotSelectImage(void);

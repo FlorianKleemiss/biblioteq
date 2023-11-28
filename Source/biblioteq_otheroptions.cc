@@ -3,31 +3,30 @@
 
 #include <QColorDialog>
 
-biblioteq_otheroptions::biblioteq_otheroptions(biblioteq *parent):QMainWindow()
+biblioteq_otheroptions::biblioteq_otheroptions(biblioteq *parent) : QMainWindow()
 {
   m_ui.setupUi(this);
   qmain = parent;
   connect(m_ui.close,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotClose(void)));
+          SIGNAL(clicked(void)),
+          this,
+          SLOT(slotClose(void)));
   connect(m_ui.main_window_canvas_background_color,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotSelectMainwindowCanvasBackgroundColor(void)));
+          SIGNAL(clicked(void)),
+          this,
+          SLOT(slotSelectMainwindowCanvasBackgroundColor(void)));
   connect(m_ui.save,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotSave(void)));
+          SIGNAL(clicked(void)),
+          this,
+          SLOT(slotSave(void)));
 
-  if(qmain)
+  if (qmain)
     connect(qmain,
-	    SIGNAL(fontChanged(const QFont &)),
-	    this,
-	    SLOT(setGlobalFonts(const QFont &)));
+            SIGNAL(fontChanged(const QFont &)),
+            this,
+            SLOT(setGlobalFonts(const QFont &)));
 
-  m_ui.publication_date->verticalHeader()->setSectionResizeMode
-    (QHeaderView::Fixed);
+  m_ui.publication_date->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
   prepareSettings();
 }
 
@@ -41,43 +40,33 @@ QColor biblioteq_otheroptions::availabilityColor(const QString &it) const
   QString value("white");
   auto itemType(QString(it).remove(" ").toLower().trimmed());
 
-  if(itemType == "book" || itemType == "books")
-    value = settings.value
-      ("otheroptions/book_availability_color").toString();
-  else if(itemType == "greyliterature")
-    value = settings.value
-      ("otheroptions/grey_literature_availability_color").toString();
-  else if(itemType == "journal" || itemType == "journals")
-    value = settings.value
-      ("otheroptions/journal_availability_color").toString();
-  else if(itemType == "magazine" || itemType == "magazines")
-    value = settings.value
-      ("otheroptions/magazine_availability_color").toString();
+  if (itemType == "book" || itemType == "books")
+    value = settings.value("otheroptions/book_availability_color").toString();
+  else if (itemType == "greyliterature")
+    value = settings.value("otheroptions/grey_literature_availability_color").toString();
+  else if (itemType == "journal" || itemType == "journals")
+    value = settings.value("otheroptions/journal_availability_color").toString();
+  else if (itemType == "magazine" || itemType == "magazines")
+    value = settings.value("otheroptions/magazine_availability_color").toString();
 
   return QColor(value);
 }
 
-QString biblioteq_otheroptions::publicationDateFormat
-(const QString &it) const
+QString biblioteq_otheroptions::publicationDateFormat(const QString &it) const
 {
   QSettings settings;
   auto itemType(it.toLower().trimmed());
 
-  if(itemType == "books")
-    return settings.value
-      ("otheroptions/book_publication_date_format").toString();
-  else if(itemType == "greyliterature")
-    return settings.value
-      ("otheroptions/grey_literature_date_format").toString();
-  else if(itemType == "journals")
-    return settings.value
-      ("otheroptions/journal_publication_date_format").toString();
-  else if(itemType == "magazines")
-    return settings.value
-      ("otheroptions/magazine_publication_date_format").toString();
-  else if(itemType == "photographcollections")
-    return settings.value
-      ("otheroptions/photograph_publication_date_format").toString();
+  if (itemType == "books")
+    return settings.value("otheroptions/book_publication_date_format").toString();
+  else if (itemType == "greyliterature")
+    return settings.value("otheroptions/grey_literature_date_format").toString();
+  else if (itemType == "journals")
+    return settings.value("otheroptions/journal_publication_date_format").toString();
+  else if (itemType == "magazines")
+    return settings.value("otheroptions/magazine_publication_date_format").toString();
+  else if (itemType == "photographcollections")
+    return settings.value("otheroptions/photograph_publication_date_format").toString();
   else
     return "MM/dd/yyyy";
 }
@@ -107,35 +96,33 @@ int biblioteq_otheroptions::booksAccessionNumberIndex(void) const
 {
   QSettings settings;
 
-  return qBound
-    (0,
-     settings.value("otheroptions/books_accession_number_index").toInt(),
-     m_ui.books_accession_number->count() - 1);
+  return qBound(0,
+                settings.value("otheroptions/books_accession_number_index").toInt(),
+                m_ui.books_accession_number->count() - 1);
 }
 
 int biblioteq_otheroptions::iconsViewColumnCount(void) const
 {
   QSettings settings;
 
-  return qBound
-    (m_ui.icons_view_column_count->minimum(),
-     settings.value("otheroptions/icons_view_column_count").toInt(),
-     m_ui.icons_view_column_count->maximum());
+  return qBound(m_ui.icons_view_column_count->minimum(),
+                settings.value("otheroptions/icons_view_column_count").toInt(),
+                m_ui.icons_view_column_count->maximum());
 }
 
 void biblioteq_otheroptions::changeEvent(QEvent *event)
 {
-  if(event)
-    switch(event->type())
-      {
-      case QEvent::LanguageChange:
-	{
-	  m_ui.retranslateUi(this);
-	  break;
-	}
-      default:
-	break;
-      }
+  if (event)
+    switch (event->type())
+    {
+    case QEvent::LanguageChange:
+    {
+      m_ui.retranslateUi(this);
+      break;
+    }
+    default:
+      break;
+    }
 
   QMainWindow::changeEvent(event);
 }
@@ -147,7 +134,7 @@ void biblioteq_otheroptions::closeEvent(QCloseEvent *event)
 
 void biblioteq_otheroptions::keyPressEvent(QKeyEvent *event)
 {
-  if(event && event->key() == Qt::Key_Escape)
+  if (event && event->key() == Qt::Key_Escape)
 #ifdef Q_OS_ANDROID
     hide();
 #else
@@ -165,54 +152,48 @@ void biblioteq_otheroptions::prepareAvailability(void)
   QStringList list3;
 
   list1 << tr("Books")
-	<< tr("Grey Literature")
-	<< tr("Journals")
-    << tr("Magazines");
+        << tr("Grey Literature")
+        << tr("Journals")
+        << tr("Magazines");
   list2 << settings.value("otheroptions/book_availability_color").toString()
-	<< settings.value("otheroptions/grey_literature_availability_color").
-           toString()
-	<< settings.value("otheroptions/journal_availability_color").toString()
-    << settings.value("otheroptions/magazine_availability_color").toString();
+        << settings.value("otheroptions/grey_literature_availability_color").toString()
+        << settings.value("otheroptions/journal_availability_color").toString()
+        << settings.value("otheroptions/magazine_availability_color").toString();
   list3 << "books"
-	<< "greyliterature"
-	<< "journals"
-    << "magazines";
+        << "greyliterature"
+        << "journals"
+        << "magazines";
   m_ui.availability_color->setRowCount(list1.size());
-  m_ui.availability_colors->setChecked
-    (settings.value("otheroptions/availability_colors", false).toBool());
+  m_ui.availability_colors->setChecked(settings.value("otheroptions/availability_colors", false).toBool());
 
-  for(int i = 0; i < list1.size(); i++)
-    {
-      auto item = new QTableWidgetItem(list1.at(i));
-      auto layout = new QHBoxLayout();
-      auto pushButton = new QPushButton();
-      auto spacer1 = new QSpacerItem
-	(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
-      auto spacer2 = new QSpacerItem
-	(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
-      auto widget = new QWidget();
+  for (int i = 0; i < list1.size(); i++)
+  {
+    auto item = new QTableWidgetItem(list1.at(i));
+    auto layout = new QHBoxLayout();
+    auto pushButton = new QPushButton();
+    auto spacer1 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
+    auto spacer2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
+    auto widget = new QWidget();
 
-      connect(pushButton,
-	      SIGNAL(clicked(void)),
-	      this,
-	      SLOT(slotSelectAvailabilityColor(void)));
-      widget->setLayout(layout);
-      layout->addSpacerItem(spacer1);
-      layout->addWidget(pushButton);
-      layout->addSpacerItem(spacer2);
-      layout->setContentsMargins(0, 0, 0, 0);
-      item->setData(Qt::UserRole, list3.at(i));
-      item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-      m_ui.availability_color->setCellWidget(i, AVAILABILITY_COLOR, widget);
-      m_ui.availability_color->setItem(i, ITEM_TYPE, item);
-      pushButton->setText(list2.at(i));
-      pushButton->setStyleSheet
-	(QString("background-color: %1").arg(list2.at(i)));
-    }
+    connect(pushButton,
+            SIGNAL(clicked(void)),
+            this,
+            SLOT(slotSelectAvailabilityColor(void)));
+    widget->setLayout(layout);
+    layout->addSpacerItem(spacer1);
+    layout->addWidget(pushButton);
+    layout->addSpacerItem(spacer2);
+    layout->setContentsMargins(0, 0, 0, 0);
+    item->setData(Qt::UserRole, list3.at(i));
+    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    m_ui.availability_color->setCellWidget(i, AVAILABILITY_COLOR, widget);
+    m_ui.availability_color->setItem(i, ITEM_TYPE, item);
+    pushButton->setText(list2.at(i));
+    pushButton->setStyleSheet(QString("background-color: %1").arg(list2.at(i)));
+  }
 
   m_ui.availability_color->resizeColumnToContents(ITEM_TYPE);
   m_ui.availability_color->resizeRowsToContents();
-
 }
 
 void biblioteq_otheroptions::prepareSettings(void)
@@ -226,110 +207,94 @@ void biblioteq_otheroptions::prepareSettings(void)
   QStringList list3;
 
   list1 << tr("Books")
-	<< tr("Grey Literature")
-	<< tr("Journals")
-	<< tr("Magazines")
-    << tr("Photograph Collections");
-  list2 << settings.value("otheroptions/book_publication_date_format").
-           toString()
-	<< settings.value("otheroptions/grey_literature_date_format").toString()
-	<< settings.value("otheroptions/journal_publication_date_format").
-           toString()
-	<< settings.value("otheroptions/magazine_publication_date_format").
-           toString()
-	<< settings.value("otheroptions/photograph_publication_date_format").
-           toString();
+        << tr("Grey Literature")
+        << tr("Journals")
+        << tr("Magazines")
+        << tr("Photograph Collections");
+  list2 << settings.value("otheroptions/book_publication_date_format").toString()
+        << settings.value("otheroptions/grey_literature_date_format").toString()
+        << settings.value("otheroptions/journal_publication_date_format").toString()
+        << settings.value("otheroptions/magazine_publication_date_format").toString()
+        << settings.value("otheroptions/photograph_publication_date_format").toString();
   list3 << "books"
-	<< "greyliterature"
-	<< "journals"
-	<< "magazines"
-	<< "photographcollections";
-  m_ui.book_read_status->setChecked
-    (settings.value("otheroptions/book_read_status", false).toBool());
-  m_ui.books_accession_number->setCurrentIndex
-    (qBound(0,
-	    settings.value("otheroptions/books_accession_number_index").toInt(),
-	    m_ui.books_accession_number->count() - 1));
-  m_ui.icons_view_column_count->setValue
-    (settings.value("otheroptions/icons_view_column_count").toInt());
-  m_ui.isbn10_display_format->setCurrentIndex
-    (qBound(0,
-	    settings.value("otheroptions/isbn10_display_format_index").toInt(),
-	    m_ui.isbn10_display_format->count() - 1));
-  m_ui.isbn13_display_format->setCurrentIndex
-    (qBound(0,
-	    settings.value("otheroptions/isbn13_display_format_index").toInt(),
-	    m_ui.isbn13_display_format->count() - 1));
+        << "greyliterature"
+        << "journals"
+        << "magazines"
+        << "photographcollections";
+  m_ui.book_read_status->setChecked(settings.value("otheroptions/book_read_status", false).toBool());
+  m_ui.books_accession_number->setCurrentIndex(qBound(0,
+                                                      settings.value("otheroptions/books_accession_number_index").toInt(),
+                                                      m_ui.books_accession_number->count() - 1));
+  m_ui.icons_view_column_count->setValue(settings.value("otheroptions/icons_view_column_count").toInt());
+  m_ui.isbn10_display_format->setCurrentIndex(qBound(0,
+                                                     settings.value("otheroptions/isbn10_display_format_index").toInt(),
+                                                     m_ui.isbn10_display_format->count() - 1));
+  m_ui.isbn13_display_format->setCurrentIndex(qBound(0,
+                                                     settings.value("otheroptions/isbn13_display_format_index").toInt(),
+                                                     m_ui.isbn13_display_format->count() - 1));
   m_ui.publication_date->setRowCount(list1.size());
 
-  for(int i = 0; i < list1.size(); i++)
-    {
-      auto str(list2.at(i).trimmed());
+  for (int i = 0; i < list1.size(); i++)
+  {
+    auto str(list2.at(i).trimmed());
 
-      if(!(str == "MM/dd/yyyy" ||
-	   str == "MM/dd" ||
-	   str == "MM/yyyy" ||
-	   str == "MM" ||
-	   str == "dd/MM/yyyy" ||
-	   str == "yyyy" ||
-	   str == "yyyy/MM/dd"))
-	str = "MM/dd/yyyy";
+    if (!(str == "MM/dd/yyyy" ||
+          str == "MM/dd" ||
+          str == "MM/yyyy" ||
+          str == "MM" ||
+          str == "dd/MM/yyyy" ||
+          str == "yyyy" ||
+          str == "yyyy/MM/dd"))
+      str = "MM/dd/yyyy";
 
-      auto comboBox = new QComboBox();
-      auto item = new QTableWidgetItem(list1.at(i));
+    auto comboBox = new QComboBox();
+    auto item = new QTableWidgetItem(list1.at(i));
 
-      comboBox->addItems(QStringList() << "MM/dd/yyyy"
-			               << "MM/dd"
-			               << "MM/yyyy"
-			               << "MM"
-			               << "dd/MM/yyyy"
-			               << "yyyy"
-			               << "yyyy/MM/dd");
+    comboBox->addItems(QStringList() << "MM/dd/yyyy"
+                                     << "MM/dd"
+                                     << "MM/yyyy"
+                                     << "MM"
+                                     << "dd/MM/yyyy"
+                                     << "yyyy"
+                                     << "yyyy/MM/dd");
 
-      if(comboBox->findText(str) >= 0)
-	comboBox->setCurrentIndex(comboBox->findText(str));
-      else
-	comboBox->setCurrentIndex(0);
+    if (comboBox->findText(str) >= 0)
+      comboBox->setCurrentIndex(comboBox->findText(str));
+    else
+      comboBox->setCurrentIndex(0);
 
-      comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-      comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+    comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+    comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
-      auto layout = new QHBoxLayout();
-      auto spacer1 = new QSpacerItem
-	(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
-      auto spacer2 = new QSpacerItem
-	(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
-      auto widget = new QWidget();
+    auto layout = new QHBoxLayout();
+    auto spacer1 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
+    auto spacer2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
+    auto widget = new QWidget();
 
-      widget->setLayout(layout);
-      layout->addSpacerItem(spacer1);
-      layout->addWidget(comboBox);
-      layout->addSpacerItem(spacer2);
-      layout->setContentsMargins(0, 0, 0, 0);
-      item->setData(Qt::UserRole, list3.at(i));
-      item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-      m_ui.publication_date->setCellWidget(i, PUBLICATION_DATE_FORMAT, widget);
-      m_ui.publication_date->setItem(i, ITEM_TYPE, item);
-    }
+    widget->setLayout(layout);
+    layout->addSpacerItem(spacer1);
+    layout->addWidget(comboBox);
+    layout->addSpacerItem(spacer2);
+    layout->setContentsMargins(0, 0, 0, 0);
+    item->setData(Qt::UserRole, list3.at(i));
+    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+    m_ui.publication_date->setCellWidget(i, PUBLICATION_DATE_FORMAT, widget);
+    m_ui.publication_date->setItem(i, ITEM_TYPE, item);
+  }
 
   m_ui.publication_date->resizeColumnToContents(ITEM_TYPE);
   m_ui.publication_date->resizeRowsToContents();
 
-  QColor color
-    (settings.value("mainwindow_canvas_background_color").toString().trimmed());
+  QColor color(settings.value("mainwindow_canvas_background_color").toString().trimmed());
 
-  if(!color.isValid())
+  if (!color.isValid())
     color = Qt::white;
 
-  m_ui.main_window_canvas_background_color->setStyleSheet
-    (QString("background-color: %1").arg(color.name()));
+  m_ui.main_window_canvas_background_color->setStyleSheet(QString("background-color: %1").arg(color.name()));
   m_ui.main_window_canvas_background_color->setText(color.name());
-  m_ui.show_maintable_images->setChecked
-    (settings.value("show_maintable_images", true).toBool());
-  m_ui.show_maintable_progress_dialogs->setChecked
-    (settings.value("show_maintable_progress_dialogs", true).toBool());
-  m_ui.show_maintable_tooltips->setChecked
-    (settings.value("show_maintable_tooltips", false).toBool());
+  m_ui.show_maintable_images->setChecked(settings.value("show_maintable_images", true).toBool());
+  m_ui.show_maintable_progress_dialogs->setChecked(settings.value("show_maintable_progress_dialogs", true).toBool());
+  m_ui.show_maintable_tooltips->setChecked(settings.value("show_maintable_tooltips", false).toBool());
   QApplication::restoreOverrideCursor();
 }
 
@@ -337,11 +302,11 @@ void biblioteq_otheroptions::setGlobalFonts(const QFont &font)
 {
   setFont(font);
 
-  foreach(auto widget, findChildren<QWidget *> ())
-    {
-      widget->setFont(font);
-      widget->update();
-    }
+  foreach (auto widget, findChildren<QWidget *>())
+  {
+    widget->setFont(font);
+    widget->update();
+  }
 
   m_ui.publication_date->resizeRowsToContents();
   update();
@@ -362,11 +327,9 @@ void biblioteq_otheroptions::slotClose(void)
 #endif
 }
 
-void biblioteq_otheroptions::slotPreviewCanvasBackgroundColor
-(const QColor &color)
+void biblioteq_otheroptions::slotPreviewCanvasBackgroundColor(const QColor &color)
 {
-  m_ui.main_window_canvas_background_color->setStyleSheet
-    (QString("background-color: %1").arg(color.name()));
+  m_ui.main_window_canvas_background_color->setStyleSheet(QString("background-color: %1").arg(color.name()));
   m_ui.main_window_canvas_background_color->setText(color.name());
 }
 
@@ -376,8 +339,7 @@ void biblioteq_otheroptions::slotSave(void)
 
   QSettings settings;
 
-  settings.setValue
-    ("otheroptions/availability_colors", m_ui.availability_colors->isChecked());
+  settings.setValue("otheroptions/availability_colors", m_ui.availability_colors->isChecked());
 
   QStringList list;
 
@@ -386,22 +348,22 @@ void biblioteq_otheroptions::slotSave(void)
        << "otheroptions/journal_availability_color"
        << "otheroptions/magazine_availability_color";
 
-  for(int i = 0; i < list.size(); i++)
+  for (int i = 0; i < list.size(); i++)
+  {
+    QString value("");
+    auto widget = m_ui.availability_color->cellWidget(i, AVAILABILITY_COLOR);
+    const auto &key(list.at(i));
+
+    if (widget)
     {
-      QString value("");
-      auto widget = m_ui.availability_color->cellWidget(i, AVAILABILITY_COLOR);
-      const auto &key(list.at(i));
+      auto pushButton = widget->findChild<QPushButton *>();
 
-      if(widget)
-	{
-	  auto pushButton = widget->findChild<QPushButton *> ();
-
-	  if(pushButton)
-	    value = pushButton->text();
-	}
-
-      settings.setValue(key, value);
+      if (pushButton)
+        value = pushButton->text();
     }
+
+    settings.setValue(key, value);
+  }
 
   list.clear();
   list << "otheroptions/book_publication_date_format"
@@ -410,62 +372,51 @@ void biblioteq_otheroptions::slotSave(void)
        << "otheroptions/magazine_publication_date_format"
        << "otheroptions/photograph_publication_date_format";
 
-  for(int i = 0; i < list.size(); i++)
+  for (int i = 0; i < list.size(); i++)
+  {
+    QString value("MM/dd/yyyy");
+    auto widget = m_ui.publication_date->cellWidget(i, PUBLICATION_DATE_FORMAT);
+    const auto &key(list.at(i));
+
+    if (widget)
     {
-      QString value("MM/dd/yyyy");
-      auto widget = m_ui.publication_date->cellWidget
-	(i, PUBLICATION_DATE_FORMAT);
-      const auto &key(list.at(i));
+      auto comboBox = widget->findChild<QComboBox *>();
 
-      if(widget)
-	{
-	  auto comboBox = widget->findChild<QComboBox *> ();
-
-	  if(comboBox)
-	    value = comboBox->currentText();
-	}
-
-      settings.setValue(key, value);
+      if (comboBox)
+        value = comboBox->currentText();
     }
 
-  settings.setValue
-    ("mainwindow_canvas_background_color",
-     m_ui.main_window_canvas_background_color->text().toLatin1());
-  settings.setValue
-    ("otheroptions/book_read_status", m_ui.book_read_status->isChecked());
-  settings.setValue
-    ("otheroptions/books_accession_number_index",
-     m_ui.books_accession_number->currentIndex());
-  settings.setValue
-    ("otheroptions/icons_view_column_count",
-     m_ui.icons_view_column_count->value());
-  settings.setValue
-    ("otheroptions/isbn10_display_format_index",
-     m_ui.isbn10_display_format->currentIndex());
-  settings.setValue
-    ("otheroptions/isbn13_display_format_index",
-     m_ui.isbn13_display_format->currentIndex());
-  settings.setValue
-    ("show_maintable_images", m_ui.show_maintable_images->isChecked());
-  settings.setValue
-    ("show_maintable_progress_dialogs",
-     m_ui.show_maintable_progress_dialogs->isChecked());
-  settings.setValue
-    ("show_maintable_tooltips", m_ui.show_maintable_tooltips->isChecked());
+    settings.setValue(key, value);
+  }
+
+  settings.setValue("mainwindow_canvas_background_color",
+                    m_ui.main_window_canvas_background_color->text().toLatin1());
+  settings.setValue("otheroptions/book_read_status", m_ui.book_read_status->isChecked());
+  settings.setValue("otheroptions/books_accession_number_index",
+                    m_ui.books_accession_number->currentIndex());
+  settings.setValue("otheroptions/icons_view_column_count",
+                    m_ui.icons_view_column_count->value());
+  settings.setValue("otheroptions/isbn10_display_format_index",
+                    m_ui.isbn10_display_format->currentIndex());
+  settings.setValue("otheroptions/isbn13_display_format_index",
+                    m_ui.isbn13_display_format->currentIndex());
+  settings.setValue("show_maintable_images", m_ui.show_maintable_images->isChecked());
+  settings.setValue("show_maintable_progress_dialogs",
+                    m_ui.show_maintable_progress_dialogs->isChecked());
+  settings.setValue("show_maintable_tooltips", m_ui.show_maintable_tooltips->isChecked());
   settings.sync();
   m_isbn10Format = m_ui.isbn10_display_format->currentText();
   m_isbn13Format = m_ui.isbn13_display_format->currentText();
-  emit mainWindowCanvasBackgroundColorChanged
-    (QColor(m_ui.main_window_canvas_background_color->text()));
+  emit mainWindowCanvasBackgroundColorChanged(QColor(m_ui.main_window_canvas_background_color->text()));
   emit saved();
   QApplication::restoreOverrideCursor();
 }
 
 void biblioteq_otheroptions::slotSelectAvailabilityColor(void)
 {
-  auto pushButton = qobject_cast<QPushButton *> (sender());
+  auto pushButton = qobject_cast<QPushButton *>(sender());
 
-  if(!pushButton)
+  if (!pushButton)
     return;
 
   QColorDialog dialog(this);
@@ -473,13 +424,12 @@ void biblioteq_otheroptions::slotSelectAvailabilityColor(void)
   dialog.setCurrentColor(QColor(pushButton->text()));
   dialog.setOption(QColorDialog::DontUseNativeDialog);
 
-  if(dialog.exec() == QDialog::Accepted)
-    {
-      QApplication::processEvents();
-      pushButton->setStyleSheet
-	(QString("background-color: %1").arg(dialog.selectedColor().name()));
-      pushButton->setText(dialog.selectedColor().name());
-    }
+  if (dialog.exec() == QDialog::Accepted)
+  {
+    QApplication::processEvents();
+    pushButton->setStyleSheet(QString("background-color: %1").arg(dialog.selectedColor().name()));
+    pushButton->setText(dialog.selectedColor().name());
+  }
   else
     QApplication::processEvents();
 }
@@ -492,28 +442,25 @@ void biblioteq_otheroptions::slotSelectMainwindowCanvasBackgroundColor(void)
   dialog.setCurrentColor(color);
   dialog.setOption(QColorDialog::DontUseNativeDialog);
   connect(&dialog,
-	  SIGNAL(currentColorChanged(const QColor &)),
-	  this,
-	  SIGNAL(mainWindowCanvasBackgroundColorPreview(const QColor &)));
+          SIGNAL(currentColorChanged(const QColor &)),
+          this,
+          SIGNAL(mainWindowCanvasBackgroundColorPreview(const QColor &)));
   connect(&dialog,
-	  SIGNAL(currentColorChanged(const QColor &)),
-	  this,
-	  SLOT(slotPreviewCanvasBackgroundColor(const QColor &)));
+          SIGNAL(currentColorChanged(const QColor &)),
+          this,
+          SLOT(slotPreviewCanvasBackgroundColor(const QColor &)));
 
-  if(dialog.exec() == QDialog::Accepted)
-    {
-      QApplication::processEvents();
-      m_ui.main_window_canvas_background_color->setStyleSheet
-	(QString("background-color: %1").arg(dialog.selectedColor().name()));
-      m_ui.main_window_canvas_background_color->setText
-	(dialog.selectedColor().name());
-    }
+  if (dialog.exec() == QDialog::Accepted)
+  {
+    QApplication::processEvents();
+    m_ui.main_window_canvas_background_color->setStyleSheet(QString("background-color: %1").arg(dialog.selectedColor().name()));
+    m_ui.main_window_canvas_background_color->setText(dialog.selectedColor().name());
+  }
   else
-    {
-      QApplication::processEvents();
-      emit mainWindowCanvasBackgroundColorChanged(QColor());
-      m_ui.main_window_canvas_background_color->setStyleSheet
-	(QString("background-color: %1").arg(color.name()));
-      m_ui.main_window_canvas_background_color->setText(color.name());
-    }
+  {
+    QApplication::processEvents();
+    emit mainWindowCanvasBackgroundColorChanged(QColor());
+    m_ui.main_window_canvas_background_color->setStyleSheet(QString("background-color: %1").arg(color.name()));
+    m_ui.main_window_canvas_background_color->setText(color.name());
+  }
 }

@@ -12,14 +12,14 @@
 
 class biblioteq_generic_thread;
 
-class biblioteq_book: public QMainWindow, public biblioteq_item
+class biblioteq_book : public QMainWindow, public biblioteq_item
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_book(biblioteq *parentArg,
-		 const QString &oidArg,
-		 const QModelIndex &index);
+                 const QString &oidArg,
+                 const QModelIndex &index);
   ~biblioteq_book();
   void duplicate(const QString &p_oid, const int state);
   void insert(void);
@@ -33,15 +33,15 @@ class biblioteq_book: public QMainWindow, public biblioteq_item
 
   void updateWindow(const int);
 
- private:
+private:
   enum Columns
-    {
-     COMPRESSED_SIZE = 2,
-     DESCRIPTION = 3,
-     DIGEST = 1,
-     FILE = 0,
-     MYOID = 4
-    };
+  {
+    COMPRESSED_SIZE = 2,
+    DESCRIPTION = 3,
+    DIGEST = 1,
+    FILE = 0,
+    MYOID = 4
+  };
 
   QBuffer m_imageBuffer;
   QByteArray m_openLibraryResults;
@@ -61,22 +61,21 @@ class biblioteq_book: public QMainWindow, public biblioteq_item
   Ui_informationDialog id;
   Ui_passwordDialog ui_p;
   bool m_duplicate;
-  biblioteq_item_working_dialog *createImageDownloadDialog
-    (const QString &downloadType);
+  biblioteq_item_working_dialog *createImageDownloadDialog(const QString &downloadType);
   void changeEvent(QEvent *event);
   void closeEvent(QCloseEvent *event);
   void createFile(const QByteArray &digest,
-		  const QByteArray &bytes,
-		  const QString &fileName) const;
+                  const QByteArray &bytes,
+                  const QString &fileName) const;
   void createOpenLibraryDialog(void);
   void createSRUDialog(void);
   void populateAfterOpenLibrary(void);
   void populateAfterSRU(const QString &recordSyntax, const QString &text);
   void populateAfterZ3950(const QString &text,
-			  const biblioteq_marc::RECORD_SYNTAX recordSyntax);
+                          const biblioteq_marc::RECORD_SYNTAX recordSyntax);
   void populateFiles(void);
 
- private slots:
+private slots:
   void downloadFinished(void);
   void openLibraryDownloadFinished(void);
   void setGlobalFonts(const QFont &font);
@@ -106,7 +105,7 @@ class biblioteq_book: public QMainWindow, public biblioteq_item
   void slotPrintAuthorTitleDewey(void);
   void slotPrintCallDewey(void);
   void slotProxyAuthenticationRequired(const QNetworkProxy &proxy,
-				       QAuthenticator *authenticator);
+                                       QAuthenticator *authenticator);
   void slotPublicationDateEnabled(bool state);
   void slotReadyRead(void);
   void slotReset(void);
@@ -123,7 +122,7 @@ class biblioteq_book: public QMainWindow, public biblioteq_item
   void slotZ3950Query(void);
   void sruDownloadFinished(void);
 
- signals:
+signals:
   void openLibraryQueryError(const QString &text);
   void sruQueryError(const QString &text);
 };

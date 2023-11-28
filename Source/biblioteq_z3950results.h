@@ -5,19 +5,19 @@
 
 class biblioteq_magazine;
 
-class biblioteq_z3950results: public QDialog
+class biblioteq_z3950results : public QDialog
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_z3950results(QWidget *parent,
-			 QStringList &list,
-			 biblioteq_magazine *magazine_arg,
-			 const QFont &font,
-			 const QString &recordSyntax);
+                         QStringList &list,
+                         biblioteq_magazine *magazine_arg,
+                         const QFont &font,
+                         const QString &recordSyntax);
   ~biblioteq_z3950results();
 
- private:
+private:
   QString m_recordSyntax;
   QStringList m_records;
   Ui_z3950ResultsDialog m_ui;
@@ -27,7 +27,7 @@ class biblioteq_z3950results: public QDialog
   void keyPressEvent(QKeyEvent *event);
   void setGlobalFonts(const QFont &font);
 
- private slots:
+private slots:
   void slotClose(void);
   void slotSelectRecord(void);
   void slotUpdateQueryText(void);

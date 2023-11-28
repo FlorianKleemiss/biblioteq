@@ -3,11 +3,10 @@
 
 #include <QXmlStreamReader>
 
-biblioteq_sruresults::biblioteq_sruresults
-(QWidget *parent,
- const QList<QByteArray> &list,
- biblioteq_magazine *magazine_arg,
- const QFont &font):QDialog(parent)
+biblioteq_sruresults::biblioteq_sruresults(QWidget *parent,
+                                           const QList<QByteArray> &list,
+                                           biblioteq_magazine *magazine_arg,
+                                           const QFont &font) : QDialog(parent)
 {
   int row = -1;
 
@@ -16,69 +15,65 @@ biblioteq_sruresults::biblioteq_sruresults
   setWindowModality(Qt::ApplicationModal);
   m_ui.setupUi(this);
 
-  for(int i = 0; i < m_records.size(); i++)
-    {
-      QString issn("");
-      QXmlStreamReader reader(m_records.at(i));
+  for (int i = 0; i < m_records.size(); i++)
+  {
+    QString issn("");
+    QXmlStreamReader reader(m_records.at(i));
 
-      while(!reader.atEnd())
-	if(reader.readNextStartElement())
-	  {
-	    if(reader.name().toString().toLower().trimmed() == "datafield")
-	      {
-		auto tag
-		  (reader.attributes().value("tag").toString().trimmed());
+    while (!reader.atEnd())
+      if (reader.readNextStartElement())
+      {
+        if (reader.name().toString().toLower().trimmed() == "datafield")
+        {
+          auto tag(reader.attributes().value("tag").toString().trimmed());
 
-		if(tag == "022")
-		  {
-		    /*
-		    ** $a - International Standard Serial Number (NR)
-		    */
+          if (tag == "022")
+          {
+            /*
+            ** $a - International Standard Serial Number (NR)
+            */
 
-		    while(reader.readNextStartElement())
-		      if(reader.name().toString().toLower().
-			 trimmed() == "subfield")
-			{
-			  if(reader.attributes().value("code").
-			     toString().trimmed() == "a")
-			    {
-			      issn.append(reader.readElementText());
-			      break;
-			    }
-			  else
-			    reader.skipCurrentElement();
-			}
-		      else
-			break;
-		  }
-	      }
-	  }
+            while (reader.readNextStartElement())
+              if (reader.name().toString().toLower().trimmed() == "subfield")
+              {
+                if (reader.attributes().value("code").toString().trimmed() == "a")
+                {
+                  issn.append(reader.readElementText());
+                  break;
+                }
+                else
+                  reader.skipCurrentElement();
+              }
+              else
+                break;
+          }
+        }
+      }
 
-      if(!issn.isEmpty())
-	m_ui.list->addItem(issn);
-      else
-	m_ui.list->addItem
-	  (QString(tr("Record #")) + QString::number(i + 1));
-    }
+    if (!issn.isEmpty())
+      m_ui.list->addItem(issn);
+    else
+      m_ui.list->addItem(QString(tr("Record #")) + QString::number(i + 1));
+  }
 
   connect(m_ui.list, SIGNAL(currentRowChanged(int)), this,
-	  SLOT(slotUpdateQueryText(void)));
+          SLOT(slotUpdateQueryText(void)));
   connect(m_ui.okButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotSelectRecord(void)));
+          SLOT(slotSelectRecord(void)));
   connect(m_ui.cancelButton, SIGNAL(clicked(void)), this,
-	  SLOT(slotClose(void)));
+          SLOT(slotClose(void)));
 
-  if(row == -1)
+  if (row == -1)
     row = 0;
 
   m_ui.list->setCurrentRow(row);
-  m_ui.splitter->setStretchFactor(0,  0);
-  m_ui.splitter->setStretchFactor(1,  1);
+  m_ui.splitter->setStretchFactor(0, 0);
+  m_ui.splitter->setStretchFactor(1, 1);
   setGlobalFonts(font);
 
-  if(parent)
+  if (parent)
     resize(qRound(0.85 * parent->size().width()),
-	   qRound(0.85 * parent->size().height()));
+           qRound(0.85 * parent->size().height()));
 
   exec();
   QApplication::processEvents();
@@ -91,17 +86,17 @@ biblioteq_sruresults::~biblioteq_sruresults()
 
 void biblioteq_sruresults::changeEvent(QEvent *event)
 {
-  if(event)
-    switch(event->type())
-      {
-      case QEvent::LanguageChange:
-	{
-	  m_ui.retranslateUi(this);
-	  break;
-	}
-      default:
-	break;
-      }
+  if (event)
+    switch (event->type())
+    {
+    case QEvent::LanguageChange:
+    {
+      m_ui.retranslateUi(this);
+      break;
+    }
+    default:
+      break;
+    }
 
   QDialog::changeEvent(event);
 }
@@ -114,7 +109,7 @@ void biblioteq_sruresults::closeEvent(QCloseEvent *event)
 
 void biblioteq_sruresults::keyPressEvent(QKeyEvent *event)
 {
-  if(event && event->key() == Qt::Key_Escape)
+  if (event && event->key() == Qt::Key_Escape)
     close();
 
   QDialog::keyPressEvent(event);
@@ -124,11 +119,11 @@ void biblioteq_sruresults::setGlobalFonts(const QFont &font)
 {
   setFont(font);
 
-  foreach(auto widget, findChildren<QWidget *> ())
-    {
-      widget->setFont(font);
-      widget->update();
-    }
+  foreach (auto widget, findChildren<QWidget *>())
+  {
+    widget->setFont(font);
+    widget->update();
+  }
 
   update();
 }
@@ -163,29 +158,27 @@ void biblioteq_sruresults::slotUpdateQueryText(void)
   ** $8 - Field link and sequence number (R)
   */
 
-  while(!reader.atEnd())
-    if(reader.readNextStartElement())
-      if(reader.name().toString().toLower().trimmed() == "datafield")
-	{
-	  auto tag(reader.attributes().value("tag").toString().trimmed());
+  while (!reader.atEnd())
+    if (reader.readNextStartElement())
+      if (reader.name().toString().toLower().trimmed() == "datafield")
+      {
+        auto tag(reader.attributes().value("tag").toString().trimmed());
 
-	  if(tag == "245")
-	    {
-	      while(reader.readNextStartElement())
-		if(reader.name().toString().toLower().trimmed() == "subfield")
-		  {
-		    if(reader.attributes().value("code").
-		       toString().trimmed() == "a" ||
-		       reader.attributes().value("code").
-		       toString().trimmed() == "b")
-		      title.append(reader.readElementText());
-		    else
-		      reader.skipCurrentElement();
-		  }
-		else
-		  break;
-	    }
-	}
+        if (tag == "245")
+        {
+          while (reader.readNextStartElement())
+            if (reader.name().toString().toLower().trimmed() == "subfield")
+            {
+              if (reader.attributes().value("code").toString().trimmed() == "a" ||
+                  reader.attributes().value("code").toString().trimmed() == "b")
+                title.append(reader.readElementText());
+              else
+                reader.skipCurrentElement();
+            }
+            else
+              break;
+        }
+      }
 
   title = title.mid(0, title.lastIndexOf('/')).trimmed();
   m_ui.title->setText(title);

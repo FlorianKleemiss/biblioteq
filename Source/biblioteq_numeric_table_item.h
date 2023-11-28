@@ -3,11 +3,11 @@
 
 #include <QTableWidgetItem>
 
-class biblioteq_numeric_table_item: public QTableWidgetItem
+class biblioteq_numeric_table_item : public QTableWidgetItem
 {
- public:
+public:
   biblioteq_numeric_table_item(const double value);
-  bool operator <(const QTableWidgetItem &other) const;
+  bool operator<(const QTableWidgetItem &other) const;
   double value(void) const;
 };
 

@@ -7,1101 +7,1071 @@
 #include "biblioteq_misc_functions.h"
 #include "ui_biblioteq_generalmessagediag.h"
 
-biblioteq_import::biblioteq_import(biblioteq *parent):QMainWindow(parent)
+biblioteq_import::biblioteq_import(biblioteq *parent) : QMainWindow(parent)
 {
-  m_qmain = parent;
-  m_ui.setupUi(this);
-  connect(m_qmain,
-	  SIGNAL(fontChanged(const QFont &)),
-	  this,
-	  SLOT(slotSetGlobalFonts(const QFont &)));
-  connect(m_ui.add_row,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotAddRow(void)));
-  connect(m_ui.close,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotClose(void)));
-  connect(m_ui.delete_row,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotDeleteRow(void)));
-  connect(m_ui.import_csv,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotImport(void)));
-  connect(m_ui.refresh_preview,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotRefreshPreview(void)));
-  connect(m_ui.reset,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotReset(void)));
-  connect(m_ui.select_csv_file,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotSelectCSVFile(void)));
-  connect(m_ui.templates,
-	  SIGNAL(currentIndexChanged(int)),
-	  this,
-	  SLOT(slotTemplates(int)));
+	m_qmain = parent;
+	m_ui.setupUi(this);
+	connect(m_qmain,
+			SIGNAL(fontChanged(const QFont &)),
+			this,
+			SLOT(slotSetGlobalFonts(const QFont &)));
+	connect(m_ui.add_row,
+			SIGNAL(clicked(void)),
+			this,
+			SLOT(slotAddRow(void)));
+	connect(m_ui.close,
+			SIGNAL(clicked(void)),
+			this,
+			SLOT(slotClose(void)));
+	connect(m_ui.delete_row,
+			SIGNAL(clicked(void)),
+			this,
+			SLOT(slotDeleteRow(void)));
+	connect(m_ui.import_csv,
+			SIGNAL(clicked(void)),
+			this,
+			SLOT(slotImport(void)));
+	connect(m_ui.refresh_preview,
+			SIGNAL(clicked(void)),
+			this,
+			SLOT(slotRefreshPreview(void)));
+	connect(m_ui.reset,
+			SIGNAL(clicked(void)),
+			this,
+			SLOT(slotReset(void)));
+	connect(m_ui.select_csv_file,
+			SIGNAL(clicked(void)),
+			this,
+			SLOT(slotSelectCSVFile(void)));
+	connect(m_ui.templates,
+			SIGNAL(currentIndexChanged(int)),
+			this,
+			SLOT(slotTemplates(int)));
 }
 
 void biblioteq_import::changeEvent(QEvent *event)
 {
-  if(event)
-    switch(event->type())
-      {
-      case QEvent::LanguageChange:
-	{
-	  m_ui.retranslateUi(this);
-	  break;
-	}
-      default:
-	{
-	  break;
-	}
-      }
+	if (event)
+		switch (event->type())
+		{
+		case QEvent::LanguageChange:
+		{
+			m_ui.retranslateUi(this);
+			break;
+		}
+		default:
+		{
+			break;
+		}
+		}
 
-  QMainWindow::changeEvent(event);
+	QMainWindow::changeEvent(event);
 }
 
 void biblioteq_import::importBooks(QProgressDialog *progress,
-				   QStringList &errors,
-				   const int idIndex,
-				   qint64 *imported,
-				   qint64 *notImported)
+								   QStringList &errors,
+								   const int idIndex,
+								   qint64 *imported,
+								   qint64 *notImported)
 {
-  if(!progress)
-    return;
+	if (!progress)
+		return;
 
-  QFile file(m_ui.csv_file->text());
+	QFile file(m_ui.csv_file->text());
 
-  if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    return;
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		return;
 
-  QMapIterator<int, QPair<QString, QString> > it(m_mappings);
-  QString f("");
-  QString q("");
-  QString queryString("");
+	QMapIterator<int, QPair<QString, QString>> it(m_mappings);
+	QString f("");
+	QString q("");
+	QString queryString("");
 
-  while(it.hasNext())
-    {
-      it.next();
-
-      if(!it.value().first.contains("<ignored>"))
+	while (it.hasNext())
 	{
-	  f.append(it.value().first);
-	  q.append("?");
+		it.next();
 
-	  if(it.hasNext())
-	    {
-	      f.append(",");
-	      q.append(",");
-	    }
+		if (!it.value().first.contains("<ignored>"))
+		{
+			f.append(it.value().first);
+			q.append("?");
+
+			if (it.hasNext())
+			{
+				f.append(",");
+				q.append(",");
+			}
+		}
 	}
-    }
 
-  queryString.append("INSERT INTO book (");
-  queryString.append("description,"); /*
-				      ** The description field is not exported
-				      ** because it is not a column in the
-				      ** Books category.
-				      */
+	queryString.append("INSERT INTO book (");
+	queryString.append("description,"); /*
+										 ** The description field is not exported
+										 ** because it is not a column in the
+										 ** Books category.
+										 */
 
-  if(m_qmain->getDB().driverName() != "QPSQL")
-    queryString.append("myoid,");
+	if (m_qmain->getDB().driverName() != "QPSQL")
+		queryString.append("myoid,");
 
-  queryString.append(f);
-  queryString.append(") VALUES (");
-  queryString.append("?,"); // The description field!
+	queryString.append(f);
+	queryString.append(") VALUES (");
+	queryString.append("?,"); // The description field!
 
-  if(m_qmain->getDB().driverName() != "QPSQL")
-    queryString.append("?,"); // The myoid field!
+	if (m_qmain->getDB().driverName() != "QPSQL")
+		queryString.append("?,"); // The myoid field!
 
-  queryString.append(q);
-  queryString.append(")");
+	queryString.append(q);
+	queryString.append(")");
 
-  if(m_qmain->getDB().driverName() == "QPSQL")
-    queryString.append(" RETURNING myoid");
+	if (m_qmain->getDB().driverName() == "QPSQL")
+		queryString.append(" RETURNING myoid");
 
-  if(imported)
-    *imported = 0;
+	if (imported)
+		*imported = 0;
 
-  if(notImported)
-    *notImported = 0;
+	if (notImported)
+		*notImported = 0;
 
-  QTextStream in(&file);
-  auto list(m_ui.ignored_rows->text().trimmed().split(' ',
+	QTextStream in(&file);
+	auto list(m_ui.ignored_rows->text().trimmed().split(' ',
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-						      Qt::SkipEmptyParts
+														Qt::SkipEmptyParts
 #else
-						      QString::SkipEmptyParts
+														QString::SkipEmptyParts
 #endif
-						      ));
-  qint64 ct = 0;
+														));
+	qint64 ct = 0;
 
-  while(ct++, !in.atEnd())
-    {
-      if(progress->wasCanceled())
-	break;
-      else
+	while (ct++, !in.atEnd())
 	{
-	  progress->repaint();
-	  QApplication::processEvents();
-	}
-
-      auto data(in.readLine().trimmed());
-
-      if(list.contains(QString::number(ct)))
-	continue;
-
-      if(!data.isEmpty())
-	{
-	  /*
-	  ** Separate by the delimiter.
-	  */
-
-	  auto list
-	    (data.split
-	     (QRegularExpression(QString("%1(?=([^\"]*\"[^\"]*\")*[^\"]*$)").
-				 arg(m_ui.delimiter->text()))));
-
-	  if(!list.isEmpty())
-	    {
-	      QMap<int, QString> values;
-	      QSqlQuery query(m_qmain->getDB());
-	      QString id("");
-	      int quantity = 1;
-	      qint64 oid = 0;
-
-	      query.prepare(queryString);
-	      query.addBindValue("N/A"); // The description field.
-
-	      if(m_qmain->getDB().driverName() != "QPSQL")
+		if (progress->wasCanceled())
+			break;
+		else
 		{
-		  QString errorstr("");
-
-		  oid = biblioteq_misc_functions::getSqliteUniqueId
-		    (m_qmain->getDB(), errorstr);
-
-		  if(errorstr.isEmpty())
-		    query.addBindValue(oid);
+			progress->repaint();
+			QApplication::processEvents();
 		}
 
-	      /*
-	      ** i = 1? Ignore the myoid field.
-	      */
+		auto data(in.readLine().trimmed());
 
-	      for(int i = 1; i <= list.size(); i++)
+		if (list.contains(QString::number(ct)))
+			continue;
+
+		if (!data.isEmpty())
 		{
-		  if(!m_mappings.contains(i))
-		    continue;
-		  else if(m_mappings.value(i).first.contains("<ignored>"))
-		    continue;
+			/*
+			** Separate by the delimiter.
+			*/
 
-		  auto str(QString(list.at(i - 1)).remove('"').trimmed());
+			auto list(data.split(QRegularExpression(QString("%1(?=([^\"]*\"[^\"]*\")*[^\"]*$)").arg(m_ui.delimiter->text()))));
 
-		  if(m_mappings.value(i).first == "binding_type")
-		    {
-		      if(!str.isEmpty())
+			if (!list.isEmpty())
 			{
-			  QSqlQuery query(m_qmain->getDB());
+				QMap<int, QString> values;
+				QSqlQuery query(m_qmain->getDB());
+				QString id("");
+				int quantity = 1;
+				qint64 oid = 0;
 
-			  query.prepare
-			    ("INSERT INTO book_binding_types "
-			     "(binding_type) VALUES(?)");
-			  query.addBindValue(str);
-			  query.exec();
-			}
-		    }
-		  else if(m_mappings.value(i).first == "id")
-		    {
-		      str.remove('-');
+				query.prepare(queryString);
+				query.addBindValue("N/A"); // The description field.
 
-		      if(str.length() == 10)
-			id = str;
-		    }
-		  else if(m_mappings.value(i).first == "isbn13")
-		    {
-		      str.remove('-');
+				if (m_qmain->getDB().driverName() != "QPSQL")
+				{
+					QString errorstr("");
 
-		      if(id.length() == 10 && str.isEmpty())
-			str = biblioteq_misc_functions::isbn10to13(id);
-		    }
-		  else if(m_mappings.value(i).first == "language")
-		    {
-		      if(!str.isEmpty())
-			{
-			  QSqlQuery query(m_qmain->getDB());
+					oid = biblioteq_misc_functions::getSqliteUniqueId(m_qmain->getDB(), errorstr);
 
-			  query.prepare
-			    ("INSERT INTO languages (language) VALUES(?)");
-			  query.addBindValue(str);
-			  query.exec();
-			}
-		    }
-		  else if(m_mappings.value(i).first == "location")
-		    {
-		      if(!str.isEmpty())
-			{
-			  QSqlQuery query(m_qmain->getDB());
+					if (errorstr.isEmpty())
+						query.addBindValue(oid);
+				}
 
-			  query.prepare
-			    ("INSERT INTO locations "
-			     "(location, type) VALUES(?, ?)");
-			  query.addBindValue(str);
-			  query.addBindValue("Book");
-			  query.exec();
-			}
-		    }
-		  else if(m_mappings.value(i).first == "monetary_units")
-		    {
-		      if(!str.isEmpty())
-			{
-			  QSqlQuery query(m_qmain->getDB());
+				/*
+				** i = 1? Ignore the myoid field.
+				*/
 
-			  query.prepare
-			    ("INSERT INTO monetary_units "
-			     "(monetary_unit) VALUES(?)");
-			  query.addBindValue(str);
-			  query.exec();
-			}
-		    }
-		  else if(m_mappings.value(i).first == "quantity")
-		    quantity = qBound
-		      (1,
-		       str.toInt(),
-		       static_cast<int> (biblioteq::Limits::QUANTITY));
+				for (int i = 1; i <= list.size(); i++)
+				{
+					if (!m_mappings.contains(i))
+						continue;
+					else if (m_mappings.value(i).first.contains("<ignored>"))
+						continue;
 
-		  if(str.isEmpty())
-		    /*
-		    ** If the value in the CSV file is empty,
-		    ** refer to a substitution.
-		    */
+					auto str(QString(list.at(i - 1)).remove('"').trimmed());
 
-		    str = m_mappings.value(i).second;
+					if (m_mappings.value(i).first == "binding_type")
+					{
+						if (!str.isEmpty())
+						{
+							QSqlQuery query(m_qmain->getDB());
 
-		  values[i] = str;
-		}
+							query.prepare("INSERT INTO book_binding_types "
+										  "(binding_type) VALUES(?)");
+							query.addBindValue(str);
+							query.exec();
+						}
+					}
+					else if (m_mappings.value(i).first == "id")
+					{
+						str.remove('-');
 
-	      values[idIndex] = id; // ISBN-10?
+						if (str.length() == 10)
+							id = str;
+					}
+					else if (m_mappings.value(i).first == "isbn13")
+					{
+						str.remove('-');
 
-	      QMapIterator<int, QString> it(values);
+						if (id.length() == 10 && str.isEmpty())
+							str = biblioteq_misc_functions::isbn10to13(id);
+					}
+					else if (m_mappings.value(i).first == "language")
+					{
+						if (!str.isEmpty())
+						{
+							QSqlQuery query(m_qmain->getDB());
 
-	      while(it.hasNext())
-		{
-		  it.next();
+							query.prepare("INSERT INTO languages (language) VALUES(?)");
+							query.addBindValue(str);
+							query.exec();
+						}
+					}
+					else if (m_mappings.value(i).first == "location")
+					{
+						if (!str.isEmpty())
+						{
+							QSqlQuery query(m_qmain->getDB());
 
-		  if(it.value().isEmpty())
+							query.prepare("INSERT INTO locations "
+										  "(location, type) VALUES(?, ?)");
+							query.addBindValue(str);
+							query.addBindValue("Book");
+							query.exec();
+						}
+					}
+					else if (m_mappings.value(i).first == "monetary_units")
+					{
+						if (!str.isEmpty())
+						{
+							QSqlQuery query(m_qmain->getDB());
+
+							query.prepare("INSERT INTO monetary_units "
+										  "(monetary_unit) VALUES(?)");
+							query.addBindValue(str);
+							query.exec();
+						}
+					}
+					else if (m_mappings.value(i).first == "quantity")
+						quantity = qBound(1,
+										  str.toInt(),
+										  static_cast<int>(biblioteq::Limits::QUANTITY));
+
+					if (str.isEmpty())
+						/*
+						** If the value in the CSV file is empty,
+						** refer to a substitution.
+						*/
+
+						str = m_mappings.value(i).second;
+
+					values[i] = str;
+				}
+
+				values[idIndex] = id; // ISBN-10?
+
+				QMapIterator<int, QString> it(values);
+
+				while (it.hasNext())
+				{
+					it.next();
+
+					if (it.value().isEmpty())
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-		    query.addBindValue(QVariant(QMetaType(QMetaType::QString)));
+						query.addBindValue(QVariant(QMetaType(QMetaType::QString)));
 #else
-		    query.addBindValue(QVariant(QVariant::String));
+						query.addBindValue(QVariant(QVariant::String));
 #endif
-		  else
-		    query.addBindValue(it.value());
+					else
+						query.addBindValue(it.value());
+				}
+
+				if (query.exec())
+				{
+					if (m_qmain->getDB().driverName() == "QPSQL")
+					{
+						query.next();
+						oid = query.value(0).toLongLong();
+					}
+
+					QString errorstr("");
+
+					if (id.isEmpty())
+						biblioteq_misc_functions::createInitialCopies(QString::number(oid),
+																	  quantity,
+																	  m_qmain->getDB(),
+																	  "Book",
+																	  errorstr);
+					else
+						biblioteq_misc_functions::createInitialCopies(id, quantity, m_qmain->getDB(), "Book", errorstr);
+
+					if (!errorstr.isEmpty())
+						// Do not increase notImported.
+
+						errors << tr("biblioteq_misc_functions::"
+									 "createInitialCopies() "
+									 "error (%1) at row %2.")
+									  .arg(errorstr)
+									  .arg(ct);
+
+					if (imported)
+						*imported += 1;
+				}
+				else
+				{
+					errors << tr("Database error (%1) at row %2.").arg(query.lastError().text()).arg(ct);
+
+					if (notImported)
+						*notImported += 1;
+				}
+			}
+			else if (notImported)
+			{
+				errors << tr("Empty row %1.").arg(ct);
+				*notImported += 1;
+			}
 		}
-
-	      if(query.exec())
-		{
-		  if(m_qmain->getDB().driverName() == "QPSQL")
-		    {
-		      query.next();
-		      oid = query.value(0).toLongLong();
-		    }
-
-		  QString errorstr("");
-
-		  if(id.isEmpty())
-		    biblioteq_misc_functions::createInitialCopies
-		      (QString::number(oid),
-		       quantity,
-		       m_qmain->getDB(),
-		       "Book",
-		       errorstr);
-		  else
-		    biblioteq_misc_functions::createInitialCopies
-		      (id, quantity, m_qmain->getDB(), "Book", errorstr);
-
-		  if(!errorstr.isEmpty())
-		    // Do not increase notImported.
-
-		    errors << tr("biblioteq_misc_functions::"
-				 "createInitialCopies() "
-				 "error (%1) at row %2.").
-		      arg(errorstr).arg(ct);
-
-		  if(imported)
-		    *imported += 1;
-		}
-	      else
-		{
-		  errors << tr("Database error (%1) at row %2.").
-		    arg(query.lastError().text()).arg(ct);
-
-		  if(notImported)
-		    *notImported += 1;
-		}
-	    }
-	  else if(notImported)
-	    {
-	      errors << tr("Empty row %1.").arg(ct);
-	      *notImported += 1;
-	    }
 	}
-    }
 
-  file.close();
+	file.close();
 }
 
 void biblioteq_import::importPatrons(QProgressDialog *progress,
-				     QStringList &errors,
-				     qint64 *imported,
-				     qint64 *notImported)
+									 QStringList &errors,
+									 qint64 *imported,
+									 qint64 *notImported)
 {
-  if(!progress)
-    return;
+	if (!progress)
+		return;
 
-  QFile file(m_ui.csv_file->text());
+	QFile file(m_ui.csv_file->text());
 
-  if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
-    return;
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+		return;
 
-  QMapIterator<int, QPair<QString, QString> > it(m_mappings);
-  QString f("");
-  QString q("");
-  QString queryString("");
+	QMapIterator<int, QPair<QString, QString>> it(m_mappings);
+	QString f("");
+	QString q("");
+	QString queryString("");
 
-  while(it.hasNext())
-    {
-      it.next();
-
-      if(!it.value().first.contains("<ignored>"))
+	while (it.hasNext())
 	{
-	  f.append(it.value().first);
-	  q.append("?");
+		it.next();
 
-	  if(it.hasNext())
-	    {
-	      f.append(",");
-	      q.append(",");
-	    }
-	}
-    }
-
-  queryString.append("INSERT INTO member (");
-  queryString.append(f);
-  queryString.append(") VALUES (");
-  queryString.append(q);
-  queryString.append(")");
-
-  if(imported)
-    *imported = 0;
-
-  if(notImported)
-    *notImported = 0;
-
-  QTextStream in(&file);
-  auto list(m_ui.ignored_rows->text().trimmed().split(' ',
-#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-						      Qt::SkipEmptyParts
-#else
-						      QString::SkipEmptyParts
-#endif
-						      ));
-  qint64 ct = 0;
-
-  while(ct++, !in.atEnd())
-    {
-      if(progress->wasCanceled())
-	break;
-      else
-	{
-	  progress->repaint();
-	  QApplication::processEvents();
-	}
-
-      auto data(in.readLine().trimmed());
-
-      if(list.contains(QString::number(ct)))
-	continue;
-
-      if(!data.isEmpty())
-	{
-	  /*
-	  ** Separate by the delimiter.
-	  */
-
-	  auto list
-	    (data.split
-	     (QRegularExpression(QString("%1(?=([^\"]*\"[^\"]*\")*[^\"]*$)").
-				 arg(m_ui.delimiter->text()))));
-
-	  if(!list.isEmpty())
-	    {
-	      if(!m_qmain->getDB().transaction())
+		if (!it.value().first.contains("<ignored>"))
 		{
-		  errors << tr("Unable to create a database transaction at "
-			       "row %1").arg(ct);
-		  continue;
-		}
+			f.append(it.value().first);
+			q.append("?");
 
-	      QSqlQuery query(m_qmain->getDB());
-	      QString memberid("");
-
-	      query.prepare(queryString);
-
-	      for(int i = 1; i <= list.size(); i++)
-		{
-		  if(!m_mappings.contains(i))
-		    continue;
-		  else if(m_mappings.value(i).first.contains("<ignored>"))
-		    continue;
-
-		  auto str(QString(list.at(i - 1)).remove('"').trimmed());
-
-		  if(m_mappings.value(i).first == "memberid")
-		    memberid = str;
-
-		  if(str.isEmpty())
-		    /*
-		    ** If the value in the CSV file is empty,
-		    ** refer to a substitution.
-		    */
-
-		    str = m_mappings.value(i).second;
-
-		  if(str.isEmpty())
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-		    query.addBindValue(QVariant(QMetaType(QMetaType::QString)));
-#else
-		    query.addBindValue(QVariant(QVariant::String));
-#endif
-		  else
-		    query.addBindValue(str);
-		}
-
-	      auto ok = false;
-
-	      if(query.exec())
-		{
-		  if(m_qmain->getDB().driverName() == "QPSQL")
-		    {
-		      QString error("");
-
-		      biblioteq_misc_functions::DBAccount
-			(memberid,
-			 m_qmain->getDB(),
-			 biblioteq_misc_functions::CREATE_USER,
-			 error);
-
-		      if(!error.isEmpty())
-			errors << tr("Error (%1) in "
-				     "biblioteq_misc_functions::DBAccount() "
-				     "at row %2.").
-			  arg(error).arg(ct);
-
-		      if(error.isEmpty())
+			if (it.hasNext())
 			{
-			  if(imported)
-			    *imported += 1;
-
-			  ok = true;
+				f.append(",");
+				q.append(",");
 			}
-		      else if(notImported)
-			*notImported += 1;
-		    }
-		  else
-		    {
-		      if(imported)
-			*imported += 1;
-
-		      ok = true;
-		    }
 		}
-	      else
-		{
-		  errors << tr("Database error (%1) at row %2.").
-		    arg(query.lastError().text()).arg(ct);
-
-		  if(notImported)
-		    *notImported += 1;
-		}
-
-	      if(ok)
-		{
-		  if(!m_qmain->getDB().commit())
-		    errors << tr("Unable to commit the current database "
-				 "transaction at row.").arg(ct);
-		}
-	      else
-		m_qmain->getDB().rollback();
-	    }
-	  else if(notImported)
-	    {
-	      errors << tr("Empty row %1.").arg(ct);
-	      *notImported += 1;
-	    }
 	}
-    }
 
-  file.close();
+	queryString.append("INSERT INTO member (");
+	queryString.append(f);
+	queryString.append(") VALUES (");
+	queryString.append(q);
+	queryString.append(")");
+
+	if (imported)
+		*imported = 0;
+
+	if (notImported)
+		*notImported = 0;
+
+	QTextStream in(&file);
+	auto list(m_ui.ignored_rows->text().trimmed().split(' ',
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
+														Qt::SkipEmptyParts
+#else
+														QString::SkipEmptyParts
+#endif
+														));
+	qint64 ct = 0;
+
+	while (ct++, !in.atEnd())
+	{
+		if (progress->wasCanceled())
+			break;
+		else
+		{
+			progress->repaint();
+			QApplication::processEvents();
+		}
+
+		auto data(in.readLine().trimmed());
+
+		if (list.contains(QString::number(ct)))
+			continue;
+
+		if (!data.isEmpty())
+		{
+			/*
+			** Separate by the delimiter.
+			*/
+
+			auto list(data.split(QRegularExpression(QString("%1(?=([^\"]*\"[^\"]*\")*[^\"]*$)").arg(m_ui.delimiter->text()))));
+
+			if (!list.isEmpty())
+			{
+				if (!m_qmain->getDB().transaction())
+				{
+					errors << tr("Unable to create a database transaction at "
+								 "row %1")
+								  .arg(ct);
+					continue;
+				}
+
+				QSqlQuery query(m_qmain->getDB());
+				QString memberid("");
+
+				query.prepare(queryString);
+
+				for (int i = 1; i <= list.size(); i++)
+				{
+					if (!m_mappings.contains(i))
+						continue;
+					else if (m_mappings.value(i).first.contains("<ignored>"))
+						continue;
+
+					auto str(QString(list.at(i - 1)).remove('"').trimmed());
+
+					if (m_mappings.value(i).first == "memberid")
+						memberid = str;
+
+					if (str.isEmpty())
+						/*
+						** If the value in the CSV file is empty,
+						** refer to a substitution.
+						*/
+
+						str = m_mappings.value(i).second;
+
+					if (str.isEmpty())
+#if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+						query.addBindValue(QVariant(QMetaType(QMetaType::QString)));
+#else
+						query.addBindValue(QVariant(QVariant::String));
+#endif
+					else
+						query.addBindValue(str);
+				}
+
+				auto ok = false;
+
+				if (query.exec())
+				{
+					if (m_qmain->getDB().driverName() == "QPSQL")
+					{
+						QString error("");
+
+						biblioteq_misc_functions::DBAccount(memberid,
+															m_qmain->getDB(),
+															biblioteq_misc_functions::CREATE_USER,
+															error);
+
+						if (!error.isEmpty())
+							errors << tr("Error (%1) in "
+										 "biblioteq_misc_functions::DBAccount() "
+										 "at row %2.")
+										  .arg(error)
+										  .arg(ct);
+
+						if (error.isEmpty())
+						{
+							if (imported)
+								*imported += 1;
+
+							ok = true;
+						}
+						else if (notImported)
+							*notImported += 1;
+					}
+					else
+					{
+						if (imported)
+							*imported += 1;
+
+						ok = true;
+					}
+				}
+				else
+				{
+					errors << tr("Database error (%1) at row %2.").arg(query.lastError().text()).arg(ct);
+
+					if (notImported)
+						*notImported += 1;
+				}
+
+				if (ok)
+				{
+					if (!m_qmain->getDB().commit())
+						errors << tr("Unable to commit the current database "
+									 "transaction at row.")
+									  .arg(ct);
+				}
+				else
+					m_qmain->getDB().rollback();
+			}
+			else if (notImported)
+			{
+				errors << tr("Empty row %1.").arg(ct);
+				*notImported += 1;
+			}
+		}
+	}
+
+	file.close();
 }
 
 void biblioteq_import::loadPreview(void)
 {
-  QScopedPointer<QProgressDialog> progress(new QProgressDialog(this));
+	QScopedPointer<QProgressDialog> progress(new QProgressDialog(this));
 
-  progress->setLabelText(tr("Reading the CSV file..."));
-  progress->setMaximum(0);
-  progress->setMinimum(0);
-  progress->setModal(true);
-  progress->setValue(0);
-  progress->setWindowTitle(tr("BiblioteQ: Progress Dialog"));
-  progress->show();
-  progress->repaint();
-  QApplication::processEvents();
-  m_ui.preview->clear();
-  m_ui.preview->setColumnCount(0);
-  m_ui.preview->setRowCount(0);
+	progress->setLabelText(tr("Reading the CSV file..."));
+	progress->setMaximum(0);
+	progress->setMinimum(0);
+	progress->setModal(true);
+	progress->setValue(0);
+	progress->setWindowTitle(tr("BiblioteQ: Progress Dialog"));
+	progress->show();
+	progress->repaint();
+	QApplication::processEvents();
+	m_ui.preview->clear();
+	m_ui.preview->setColumnCount(0);
+	m_ui.preview->setRowCount(0);
 
-  QFile file(m_ui.csv_file->text());
+	QFile file(m_ui.csv_file->text());
 
-  if(file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-      QTextStream in(&file);
-      int row = 0;
-
-      while(!in.atEnd() && !progress->wasCanceled())
+	if (file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-	  progress->repaint();
-	  QApplication::processEvents();
+		QTextStream in(&file);
+		int row = 0;
 
-	  auto data(in.readLine().trimmed());
-	  auto headers
-	    (data.split
-	     (QRegularExpression
-	      (QString("%1(?=([^\"]*\"[^\"]*\")*[^\"]*$)").
-	       arg(m_ui.delimiter->text()))));
-	  auto list(headers);
-
-	  for(int i = 0; i < headers.size(); i++)
-	    headers.replace
-	      (i, QString("(%1) %2").arg(i + 1).arg(headers.at(i)));
-
-	  if(row == 0)
-	    {
-	      for(int i = 0; i < m_ui.rows->rowCount(); i++)
+		while (!in.atEnd() && !progress->wasCanceled())
 		{
-		  auto item = m_ui.rows->item(i, CSV_PREVIEW);
+			progress->repaint();
+			QApplication::processEvents();
 
-		  if(item)
-		    item->setText(list.value(i));
+			auto data(in.readLine().trimmed());
+			auto headers(data.split(QRegularExpression(QString("%1(?=([^\"]*\"[^\"]*\")*[^\"]*$)").arg(m_ui.delimiter->text()))));
+			auto list(headers);
+
+			for (int i = 0; i < headers.size(); i++)
+				headers.replace(i, QString("(%1) %2").arg(i + 1).arg(headers.at(i)));
+
+			if (row == 0)
+			{
+				for (int i = 0; i < m_ui.rows->rowCount(); i++)
+				{
+					auto item = m_ui.rows->item(i, CSV_PREVIEW);
+
+					if (item)
+						item->setText(list.value(i));
+				}
+
+				m_previewHeaders = list;
+				m_ui.preview->setColumnCount(headers.size());
+				m_ui.preview->setHorizontalHeaderLabels(headers);
+				m_ui.preview->resizeColumnsToContents();
+			}
+			else
+			{
+				m_ui.preview->setRowCount(row);
+
+				for (int i = 0; i < list.size(); i++)
+				{
+					auto item = new QTableWidgetItem(list.at(i));
+
+					item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+					m_ui.preview->setItem(row - 1, i, item);
+				}
+			}
+
+			row += 1;
 		}
-
-	      m_previewHeaders = list;
-	      m_ui.preview->setColumnCount(headers.size());
-	      m_ui.preview->setHorizontalHeaderLabels(headers);
-	      m_ui.preview->resizeColumnsToContents();
-	    }
-	  else
-	    {
-	      m_ui.preview->setRowCount(row);
-
-	      for(int i = 0; i < list.size(); i++)
-		{
-		  auto item = new QTableWidgetItem(list.at(i));
-
-		  item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		  m_ui.preview->setItem(row - 1, i, item);
-		}
-	    }
-
-	  row += 1;
 	}
-    }
 
-  file.close();
-  progress->close();
-  QApplication::processEvents();
+	file.close();
+	progress->close();
+	QApplication::processEvents();
 }
 
 void biblioteq_import::show(QMainWindow *parent)
 {
-  static auto resized = false;
+	static auto resized = false;
 
-  if(parent && !resized)
-    resize(qRound(0.50 * parent->size().width()),
-	   qRound(0.80 * parent->size().height()));
+	if (parent && !resized)
+		resize(qRound(0.50 * parent->size().width()),
+			   qRound(0.80 * parent->size().height()));
 
-  resized = true;
-  biblioteq_misc_functions::center(this, parent);
-  showNormal();
-  activateWindow();
-  raise();
+	resized = true;
+	biblioteq_misc_functions::center(this, parent);
+	showNormal();
+	activateWindow();
+	raise();
 }
 
 void biblioteq_import::slotAddRow(void)
 {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  m_ui.rows->setRowCount(m_ui.rows->rowCount() + 1);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+	m_ui.rows->setRowCount(m_ui.rows->rowCount() + 1);
 
-  auto item = new QTableWidgetItem();
+	auto item = new QTableWidgetItem();
 
-  item->setText(QString::number(m_ui.rows->rowCount()));
-  m_ui.rows->setItem
-    (m_ui.rows->rowCount() - 1, Columns::CSV_COLUMN_NUMBER, item);
-  item = new QTableWidgetItem
-    (m_previewHeaders.value(m_ui.rows->rowCount() - 1));
-  item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-  m_ui.rows->setItem(m_ui.rows->rowCount() - 1, Columns::CSV_PREVIEW, item);
+	item->setText(QString::number(m_ui.rows->rowCount()));
+	m_ui.rows->setItem(m_ui.rows->rowCount() - 1, Columns::CSV_COLUMN_NUMBER, item);
+	item = new QTableWidgetItem(m_previewHeaders.value(m_ui.rows->rowCount() - 1));
+	item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+	m_ui.rows->setItem(m_ui.rows->rowCount() - 1, Columns::CSV_PREVIEW, item);
 
-  auto comboBox = new QComboBox();
-  auto widget = new QWidget();
+	auto comboBox = new QComboBox();
+	auto widget = new QWidget();
 
-  switch(m_ui.templates->currentIndex())
-    {
-    case TEMPLATE_1:
-    case TEMPLATE_2:
-      {
-	comboBox->addItems(QStringList()
-			   << "<ignored>"
-			   << "accession_number"
-			   << "author"
-			   << "binding_type"
-			   << "callnumber"
-			   << "category"
-			   << "condition"
-			   << "description"
-			   << "deweynumber"
-			   << "edition"
-			   << "id"
-			   << "isbn13"
-			   << "keyword"
-			   << "language"
-			   << "lccontrolnumber"
-			   << "location"
-			   << "marc_tags"
-			   << "monetary_units"
-			   << "originality"
-			   << "pdate"
-			   << "place"
-			   << "price"
-			   << "publisher"
-			   << "quantity"
-			   << "title"
-			   << "url");
-	break;
-      }
-    case TEMPLATE_3:
-      {
-	comboBox->addItems(QStringList()
-			   << "<ignored>"
-			   << "city"
-			   << "comments"
-			   << "dob"
-			   << "email"
-			   << "expiration_date"
-			   << "first_name"
-			   << "general_registration_number"
-			   << "last_name"
-			   << "maximum_reserved_books"
-			   << "memberclass"
-			   << "memberid"
-			   << "membersince"
-			   << "membership_fees"
-			   << "middle_init"
-			   << "overdue_fees"
-			   << "sex"
-			   << "state_abbr"
-			   << "street"
-			   << "telephone_num"
-			   << "zip");
-	break;
-      }
-    default:
-      {
-	break;
-      }
-    }
+	switch (m_ui.templates->currentIndex())
+	{
+	case TEMPLATE_1:
+	case TEMPLATE_2:
+	{
+		comboBox->addItems(QStringList()
+						   << "<ignored>"
+						   << "accession_number"
+						   << "author"
+						   << "binding_type"
+						   << "callnumber"
+						   << "category"
+						   << "condition"
+						   << "description"
+						   << "deweynumber"
+						   << "edition"
+						   << "id"
+						   << "isbn13"
+						   << "keyword"
+						   << "language"
+						   << "lccontrolnumber"
+						   << "location"
+						   << "marc_tags"
+						   << "monetary_units"
+						   << "originality"
+						   << "pdate"
+						   << "place"
+						   << "price"
+						   << "publisher"
+						   << "quantity"
+						   << "title"
+						   << "url");
+		break;
+	}
+	case TEMPLATE_3:
+	{
+		comboBox->addItems(QStringList()
+						   << "<ignored>"
+						   << "city"
+						   << "comments"
+						   << "dob"
+						   << "email"
+						   << "expiration_date"
+						   << "first_name"
+						   << "general_registration_number"
+						   << "last_name"
+						   << "maximum_reserved_books"
+						   << "memberclass"
+						   << "memberid"
+						   << "membersince"
+						   << "membership_fees"
+						   << "middle_init"
+						   << "overdue_fees"
+						   << "sex"
+						   << "state_abbr"
+						   << "street"
+						   << "telephone_num"
+						   << "zip");
+		break;
+	}
+	default:
+	{
+		break;
+	}
+	}
 
-  comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
-  comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+	comboBox->setSizeAdjustPolicy(QComboBox::AdjustToContents);
+	comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
-  auto layout = new QHBoxLayout(widget);
-  auto spacer = new QSpacerItem
-    (40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
+	auto layout = new QHBoxLayout(widget);
+	auto spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-  layout->addWidget(comboBox);
-  layout->addSpacerItem(spacer);
-  layout->setContentsMargins(0, 0, 0, 0);
-  m_ui.rows->setCellWidget
-    (m_ui.rows->rowCount() - 1, Columns::BIBLIOTEQ_TABLE_FIELD_NAME, widget);
-  item = new QTableWidgetItem();
-  item->setText("N/A");
-  m_ui.rows->setItem
-    (m_ui.rows->rowCount() - 1, Columns::SUBSTITUTE_VALUE, item);
-  m_ui.rows->resizeRowsToContents();
+	layout->addWidget(comboBox);
+	layout->addSpacerItem(spacer);
+	layout->setContentsMargins(0, 0, 0, 0);
+	m_ui.rows->setCellWidget(m_ui.rows->rowCount() - 1, Columns::BIBLIOTEQ_TABLE_FIELD_NAME, widget);
+	item = new QTableWidgetItem();
+	item->setText("N/A");
+	m_ui.rows->setItem(m_ui.rows->rowCount() - 1, Columns::SUBSTITUTE_VALUE, item);
+	m_ui.rows->resizeRowsToContents();
 
-  if(m_ui.bottom_scroll_on_add->isChecked())
-    m_ui.rows->scrollToBottom();
+	if (m_ui.bottom_scroll_on_add->isChecked())
+		m_ui.rows->scrollToBottom();
 
-  QApplication::restoreOverrideCursor();
+	QApplication::restoreOverrideCursor();
 }
 
 void biblioteq_import::slotClose(void)
 {
 #ifdef Q_OS_ANDROID
-  hide();
+	hide();
 #else
-  close();
+	close();
 #endif
 }
 
 void biblioteq_import::slotDeleteRow(void)
 {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  auto rows(biblioteq_misc_functions::selectedRows(m_ui.rows));
+	auto rows(biblioteq_misc_functions::selectedRows(m_ui.rows));
 
-  for(int i = rows.size() - 1; i >= 0; i--)
-    m_ui.rows->removeRow(rows.at(i));
+	for (int i = rows.size() - 1; i >= 0; i--)
+		m_ui.rows->removeRow(rows.at(i));
 
-  QApplication::restoreOverrideCursor();
+	QApplication::restoreOverrideCursor();
 }
 
 void biblioteq_import::slotImport(void)
 {
-  if(m_ui.templates->currentIndex() == 0)
-    /*
-    ** A template has not been selected!
-    */
+	if (m_ui.templates->currentIndex() == 0)
+		/*
+		** A template has not been selected!
+		*/
 
-    return;
+		return;
 
-  /*
-  ** Test if the specified file is readable.
-  */
+	/*
+	** Test if the specified file is readable.
+	*/
 
-  QFileInfo fileInfo(m_ui.csv_file->text());
+	QFileInfo fileInfo(m_ui.csv_file->text());
 
-  if(!fileInfo.isReadable())
-    {
-      if(fileInfo.absolutePath().isEmpty())
-	QMessageBox::critical
-	  (this,
-	   tr("BiblioteQ: Error"),
-	   tr("The specified file is not readable."));
-      else
-	QMessageBox::critical
-	  (this,
-	   tr("BiblioteQ: Error"),
-	   tr("The file %1 is not readable.").arg(fileInfo.absolutePath()));
-
-      return;
-    }
-
-  /*
-  ** Test the various mappings.
-  */
-
-  QMap<int, QPair<QString, QString> > map;
-
-  for(int i = 0; i < m_ui.rows->rowCount(); i++)
-    {
-      auto item1 = m_ui.rows->item(i, Columns::CSV_COLUMN_NUMBER);
-      auto item2 = m_ui.rows->item(i, Columns::SUBSTITUTE_VALUE);
-      auto widget = m_ui.rows->cellWidget
-	(i, Columns::BIBLIOTEQ_TABLE_FIELD_NAME);
-
-      if(!item1 || !item2 || !widget)
-	continue;
-
-      auto comboBox = widget->findChild<QComboBox *> ();
-
-      if(!comboBox)
-	continue;
-
-      if(map.contains(item1->text().toInt()))
+	if (!fileInfo.isReadable())
 	{
-	  m_ui.rows->selectRow(i);
-	  QMessageBox::critical
-	    (this,
-	     tr("BiblioteQ: Error"),
-	     tr("Duplicate mapping discovered in the table. Please "
-		"review row %1.").arg(item1->row()));
-	  return;
+		if (fileInfo.absolutePath().isEmpty())
+			QMessageBox::critical(this,
+								  tr("BiblioteQ: Error"),
+								  tr("The specified file is not readable."));
+		else
+			QMessageBox::critical(this,
+								  tr("BiblioteQ: Error"),
+								  tr("The file %1 is not readable.").arg(fileInfo.absolutePath()));
+
+		return;
 	}
 
-      map[item1->text().toInt()] =
-	QPair<QString, QString> (comboBox->currentText(), item2->text());
-    }
+	/*
+	** Test the various mappings.
+	*/
 
-  if(map.isEmpty())
-    {
-      QMessageBox::critical
-	(this,
-	 tr("BiblioteQ: Error"),
-	 tr("Please define column mappings."));
-      return;
-    }
+	QMap<int, QPair<QString, QString>> map;
 
-  QScopedPointer<QProgressDialog> progress(new QProgressDialog(this));
-
-  progress->setLabelText(tr("Importing the CSV file..."));
-  progress->setMaximum(0);
-  progress->setMinimum(0);
-  progress->setModal(true);
-  progress->setValue(0);
-  progress->setWindowTitle(tr("BiblioteQ: Progress Dialog"));
-  progress->show();
-  progress->repaint();
-  QApplication::processEvents();
-  m_mappings = map;
-
-  QStringList errors;
-  auto index = m_ui.templates->currentIndex();
-  qint64 imported = 0;
-  qint64 notImported = 0;
-
-  if(index == TEMPLATE_1)
-    importBooks(progress.data(), errors, 10, &imported, &notImported);
-  else if(index == TEMPLATE_2)
-    importBooks(progress.data(), errors, 9, &imported, &notImported);
-  else if(index == TEMPLATE_3)
-    importPatrons(progress.data(), errors, &imported, &notImported);
-
-  progress->close();
-  QApplication::processEvents();
-
-  if(!errors.isEmpty())
-    {
-      QApplication::setOverrideCursor(Qt::WaitCursor);
-
-      QDialog dialog(this);
-      QString errorstr("");
-      Ui_generalmessagediag ui;
-
-      errors.prepend(tr("Imported: %1. Not imported: %2.\n").
-		     arg(imported).
-		     arg(notImported));
-
-      for(int i = 0; i < errors.size(); i++)
+	for (int i = 0; i < m_ui.rows->rowCount(); i++)
 	{
-	  errorstr.append(errors.at(i));
-	  errorstr.append('\n');
+		auto item1 = m_ui.rows->item(i, Columns::CSV_COLUMN_NUMBER);
+		auto item2 = m_ui.rows->item(i, Columns::SUBSTITUTE_VALUE);
+		auto widget = m_ui.rows->cellWidget(i, Columns::BIBLIOTEQ_TABLE_FIELD_NAME);
+
+		if (!item1 || !item2 || !widget)
+			continue;
+
+		auto comboBox = widget->findChild<QComboBox *>();
+
+		if (!comboBox)
+			continue;
+
+		if (map.contains(item1->text().toInt()))
+		{
+			m_ui.rows->selectRow(i);
+			QMessageBox::critical(this,
+								  tr("BiblioteQ: Error"),
+								  tr("Duplicate mapping discovered in the table. Please "
+									 "review row %1.")
+									  .arg(item1->row()));
+			return;
+		}
+
+		map[item1->text().toInt()] =
+			QPair<QString, QString>(comboBox->currentText(), item2->text());
 	}
 
-      ui.setupUi(&dialog);
-      ui.text->setPlainText(errorstr.trimmed());
-      connect(ui.cancelButton,
-	      SIGNAL(clicked(void)),
-	      &dialog,
-	      SLOT(close(void)));
-      dialog.setWindowTitle(tr("BiblioteQ: Import Results"));
-      QApplication::restoreOverrideCursor();
-      dialog.exec();
-    }
-  else
-    QMessageBox::information
-      (this,
-       tr("BiblioteQ: Information"),
-       tr("Imported: %1. Not imported: %2.").arg(imported).arg(notImported));
+	if (map.isEmpty())
+	{
+		QMessageBox::critical(this,
+							  tr("BiblioteQ: Error"),
+							  tr("Please define column mappings."));
+		return;
+	}
 
-  QApplication::processEvents();
+	QScopedPointer<QProgressDialog> progress(new QProgressDialog(this));
+
+	progress->setLabelText(tr("Importing the CSV file..."));
+	progress->setMaximum(0);
+	progress->setMinimum(0);
+	progress->setModal(true);
+	progress->setValue(0);
+	progress->setWindowTitle(tr("BiblioteQ: Progress Dialog"));
+	progress->show();
+	progress->repaint();
+	QApplication::processEvents();
+	m_mappings = map;
+
+	QStringList errors;
+	auto index = m_ui.templates->currentIndex();
+	qint64 imported = 0;
+	qint64 notImported = 0;
+
+	if (index == TEMPLATE_1)
+		importBooks(progress.data(), errors, 10, &imported, &notImported);
+	else if (index == TEMPLATE_2)
+		importBooks(progress.data(), errors, 9, &imported, &notImported);
+	else if (index == TEMPLATE_3)
+		importPatrons(progress.data(), errors, &imported, &notImported);
+
+	progress->close();
+	QApplication::processEvents();
+
+	if (!errors.isEmpty())
+	{
+		QApplication::setOverrideCursor(Qt::WaitCursor);
+
+		QDialog dialog(this);
+		QString errorstr("");
+		Ui_generalmessagediag ui;
+
+		errors.prepend(tr("Imported: %1. Not imported: %2.\n").arg(imported).arg(notImported));
+
+		for (int i = 0; i < errors.size(); i++)
+		{
+			errorstr.append(errors.at(i));
+			errorstr.append('\n');
+		}
+
+		ui.setupUi(&dialog);
+		ui.text->setPlainText(errorstr.trimmed());
+		connect(ui.cancelButton,
+				SIGNAL(clicked(void)),
+				&dialog,
+				SLOT(close(void)));
+		dialog.setWindowTitle(tr("BiblioteQ: Import Results"));
+		QApplication::restoreOverrideCursor();
+		dialog.exec();
+	}
+	else
+		QMessageBox::information(this,
+								 tr("BiblioteQ: Information"),
+								 tr("Imported: %1. Not imported: %2.").arg(imported).arg(notImported));
+
+	QApplication::processEvents();
 }
 
 void biblioteq_import::slotRefreshPreview(void)
 {
-  loadPreview();
+	loadPreview();
 }
 
 void biblioteq_import::slotReset(void)
 {
-  if(m_ui.rows->rowCount() > 0 ||
-     !m_ui.csv_file->text().isEmpty() ||
-     m_ui.delimiter->text() != ",")
-    if(QMessageBox::question(this,
-			     tr("BiblioteQ: Question"),
-			     tr("Are you sure that you wish to reset?"),
-			     QMessageBox::Yes | QMessageBox::No,
-			     QMessageBox::No) == QMessageBox::No)
-      {
-	QApplication::processEvents();
-	return;
-      }
+	if (m_ui.rows->rowCount() > 0 ||
+		!m_ui.csv_file->text().isEmpty() ||
+		m_ui.delimiter->text() != ",")
+		if (QMessageBox::question(this,
+								  tr("BiblioteQ: Question"),
+								  tr("Are you sure that you wish to reset?"),
+								  QMessageBox::Yes | QMessageBox::No,
+								  QMessageBox::No) == QMessageBox::No)
+		{
+			QApplication::processEvents();
+			return;
+		}
 
-  m_mappings.clear();
-  m_previewHeaders.clear();
-  m_ui.csv_file->clear();
-  m_ui.delimiter->setText(",");
-  m_ui.ignored_rows->clear();
-  m_ui.preview->clear();
-  m_ui.preview->setColumnCount(0);
-  m_ui.preview->setRowCount(0);
-  m_ui.rows->setRowCount(0);
-  m_ui.templates->setCurrentIndex(0);
+	m_mappings.clear();
+	m_previewHeaders.clear();
+	m_ui.csv_file->clear();
+	m_ui.delimiter->setText(",");
+	m_ui.ignored_rows->clear();
+	m_ui.preview->clear();
+	m_ui.preview->setColumnCount(0);
+	m_ui.preview->setRowCount(0);
+	m_ui.rows->setRowCount(0);
+	m_ui.templates->setCurrentIndex(0);
 }
 
 void biblioteq_import::slotSelectCSVFile(void)
 {
-  QFileDialog dialog(this);
+	QFileDialog dialog(this);
 
-  dialog.setDirectory(QDir::homePath());
-  dialog.setFileMode(QFileDialog::ExistingFile);
-  dialog.setNameFilter("CSV (*.csv)");
-  dialog.setOption(QFileDialog::DontUseNativeDialog);
-  dialog.setWindowTitle(tr("BiblioteQ: Select CSV Import File"));
-  dialog.exec();
-  QApplication::processEvents();
+	dialog.setDirectory(QDir::homePath());
+	dialog.setFileMode(QFileDialog::ExistingFile);
+	dialog.setNameFilter("CSV (*.csv)");
+	dialog.setOption(QFileDialog::DontUseNativeDialog);
+	dialog.setWindowTitle(tr("BiblioteQ: Select CSV Import File"));
+	dialog.exec();
+	QApplication::processEvents();
 
-  if(dialog.result() == QDialog::Accepted)
-    {
-      m_ui.csv_file->setText(dialog.selectedFiles().value(0));
-      loadPreview();
-    }
+	if (dialog.result() == QDialog::Accepted)
+	{
+		m_ui.csv_file->setText(dialog.selectedFiles().value(0));
+		loadPreview();
+	}
 }
 
 void biblioteq_import::slotSetGlobalFonts(const QFont &font)
 {
-  setFont(font);
+	setFont(font);
 
-  foreach(auto widget, findChildren<QWidget *> ())
-    {
-      widget->setFont(font);
-      widget->update();
-    }
+	foreach (auto widget, findChildren<QWidget *>())
+	{
+		widget->setFont(font);
+		widget->update();
+	}
 
-  m_ui.rows->resizeRowsToContents();
-  update();
+	m_ui.rows->resizeRowsToContents();
+	update();
 }
 
 void biblioteq_import::slotTemplates(int index)
 {
-  switch(index)
-    {
-    case 0:
-      {
-	break;
-      }
-    default:
-      {
-	if(m_ui.rows->rowCount() > 0)
-	  {
-	    if(QMessageBox::question(this,
-				     tr("BiblioteQ: Question"),
-				     tr("Populate the table with "
-					"Template %1 values?").arg(index),
-				     QMessageBox::Yes | QMessageBox::No,
-				     QMessageBox::No) == QMessageBox::No)
-	      {
-		QApplication::processEvents();
+	switch (index)
+	{
+	case 0:
+	{
 		break;
-	      }
-	  }
+	}
+	default:
+	{
+		if (m_ui.rows->rowCount() > 0)
+		{
+			if (QMessageBox::question(this,
+									  tr("BiblioteQ: Question"),
+									  tr("Populate the table with "
+										 "Template %1 values?")
+										  .arg(index),
+									  QMessageBox::Yes | QMessageBox::No,
+									  QMessageBox::No) == QMessageBox::No)
+			{
+				QApplication::processEvents();
+				break;
+			}
+		}
 
-	m_ui.ignored_rows->setText("1");
-	m_ui.rows->setRowCount(0);
+		m_ui.ignored_rows->setText("1");
+		m_ui.rows->setRowCount(0);
 
-	QStringList list;
+		QStringList list;
 
-	if(index == TEMPLATE_1)
-	  list << "accession_number"
-	       << "author"
-	       << "binding_type"
-	       << "callnumber"
-	       << "category"
-	       << "condition"
-	       << "description"
-	       << "deweynumber"
-	       << "edition"
-	       << "id"
-	       << "isbn13"
-	       << "keyword"
-	       << "language"
-	       << "lccontrolnumber"
-	       << "location"
-	       << "marc_tags"
-	       << "monetary_units"
-	       << "originality"
-	       << "pdate"
-	       << "place"
-	       << "price"
-	       << "publisher"
-	       << "quantity"
-	       << "title"
-	       << "url";
-	else if(index == TEMPLATE_2)
-	  list << "title"
-	       << "author"
-	       << "publisher"
-	       << "pdate"
-	       << "place"
-	       << "edition"
-	       << "category"
-	       << "language"
-	       << "id"
-	       << "price"
-	       << "monetary_units"
-	       << "quantity"
-	       << "binding_type"
-	       << "location"
-	       << "isbn13"
-	       << "lccontrolnumber"
-	       << "callnumber"
-	       << "deweynumber"
-	       << "<ignored>" // Availability
-	       << "<ignored>" // Total Reserved
-	       << "originality"
-	       << "condition"
-	       << "accession_number";
-	else if(index == TEMPLATE_3)
-	  list << "city"
-	       << "comments"
-	       << "dob"
-	       << "email"
-	       << "expiration_date"
-	       << "first_name"
-	       << "general_registration_number"
-	       << "last_name"
-	       << "maximum_reserved_books"
-	       << "memberclass"
-	       << "memberid"
-	       << "membersince"
-	       << "membership_fees"
-	       << "middle_init"
-	       << "overdue_fees"
-	       << "sex"
-	       << "state_abbr"
-	       << "street"
-	       << "telephone_num"
-	       << "zip";
+		if (index == TEMPLATE_1)
+			list << "accession_number"
+				 << "author"
+				 << "binding_type"
+				 << "callnumber"
+				 << "category"
+				 << "condition"
+				 << "description"
+				 << "deweynumber"
+				 << "edition"
+				 << "id"
+				 << "isbn13"
+				 << "keyword"
+				 << "language"
+				 << "lccontrolnumber"
+				 << "location"
+				 << "marc_tags"
+				 << "monetary_units"
+				 << "originality"
+				 << "pdate"
+				 << "place"
+				 << "price"
+				 << "publisher"
+				 << "quantity"
+				 << "title"
+				 << "url";
+		else if (index == TEMPLATE_2)
+			list << "title"
+				 << "author"
+				 << "publisher"
+				 << "pdate"
+				 << "place"
+				 << "edition"
+				 << "category"
+				 << "language"
+				 << "id"
+				 << "price"
+				 << "monetary_units"
+				 << "quantity"
+				 << "binding_type"
+				 << "location"
+				 << "isbn13"
+				 << "lccontrolnumber"
+				 << "callnumber"
+				 << "deweynumber"
+				 << "<ignored>" // Availability
+				 << "<ignored>" // Total Reserved
+				 << "originality"
+				 << "condition"
+				 << "accession_number";
+		else if (index == TEMPLATE_3)
+			list << "city"
+				 << "comments"
+				 << "dob"
+				 << "email"
+				 << "expiration_date"
+				 << "first_name"
+				 << "general_registration_number"
+				 << "last_name"
+				 << "maximum_reserved_books"
+				 << "memberclass"
+				 << "memberid"
+				 << "membersince"
+				 << "membership_fees"
+				 << "middle_init"
+				 << "overdue_fees"
+				 << "sex"
+				 << "state_abbr"
+				 << "street"
+				 << "telephone_num"
+				 << "zip";
 
-	for(int i = 0; i < list.size(); i++)
-	  {
-	    slotAddRow();
+		for (int i = 0; i < list.size(); i++)
+		{
+			slotAddRow();
 
-	    auto widget = m_ui.rows->cellWidget
-	      (i, Columns::BIBLIOTEQ_TABLE_FIELD_NAME);
+			auto widget = m_ui.rows->cellWidget(i, Columns::BIBLIOTEQ_TABLE_FIELD_NAME);
 
-	    if(widget)
-	      {
-		auto comboBox = widget->findChild<QComboBox *> ();
+			if (widget)
+			{
+				auto comboBox = widget->findChild<QComboBox *>();
 
-		if(comboBox)
-		  {
-		    comboBox->setCurrentIndex(comboBox->findText(list.at(i)));
+				if (comboBox)
+				{
+					comboBox->setCurrentIndex(comboBox->findText(list.at(i)));
 
-		    if(comboBox->currentIndex() < 0)
-		      comboBox->setCurrentIndex(0);
-		  }
-	      }
-	  }
+					if (comboBox->currentIndex() < 0)
+						comboBox->setCurrentIndex(0);
+				}
+			}
+		}
 
-	break;
-      }
-    }
+		break;
+	}
+	}
 }

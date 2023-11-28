@@ -7,28 +7,28 @@
 
 class biblioteq;
 
-class biblioteq_dbenumerations: public QMainWindow
+class biblioteq_dbenumerations : public QMainWindow
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_dbenumerations(biblioteq *parent);
   void clear(void);
   void closeEvent(QCloseEvent *event);
   void show(QMainWindow *parent, const bool populate);
 
- private:
-  QHash<QWidget *, QMap<QString, QString> > m_tableData;
+private:
+  QHash<QWidget *, QMap<QString, QString>> m_tableData;
   QHash<QWidget *, QStringList> m_listData;
   QPointer<biblioteq> qmain;
   Ui_dbEnumerations m_ui;
   void changeEvent(QEvent *event);
   void populateWidgets(void);
   void saveData(QHash<QWidget *,
-		QStringList> &listData,
-		QHash<QWidget *, QMap<QString, QString> > &tableData);
+                      QStringList> &listData,
+                QHash<QWidget *, QMap<QString, QString>> &tableData);
 
- private slots:
+private slots:
   void setGlobalFonts(const QFont &font);
   void slotAdd(void);
   void slotClose(void);

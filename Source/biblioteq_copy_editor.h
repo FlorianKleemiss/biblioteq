@@ -9,34 +9,34 @@ class QSpinBox;
 class biblioteq;
 class biblioteq_item;
 
-class biblioteq_copy_editor: public QDialog
+class biblioteq_copy_editor : public QDialog
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_copy_editor(QWidget *parent, biblioteq *biblioteq);
   biblioteq_copy_editor(QWidget *parent,
-			biblioteq *biblioteq,
-			biblioteq_item *bitemArg,
-			const bool showForLendingArg,
-			const int quantityArg,
-			const QString &ioidArg,
-			QSpinBox *spinboxArg,
-			const QFont &font,
-			const QString &itemTypeArg,
-			const QString &uniqueIdArg,
-			const bool speedy);
+                        biblioteq *biblioteq,
+                        biblioteq_item *bitemArg,
+                        const bool showForLendingArg,
+                        const int quantityArg,
+                        const QString &ioidArg,
+                        QSpinBox *spinboxArg,
+                        const QFont &font,
+                        const QString &itemTypeArg,
+                        const QString &uniqueIdArg,
+                        const bool speedy);
   virtual ~biblioteq_copy_editor();
   void populateCopiesEditor(void);
 
- private:
+private:
   class copy_class
   {
   public:
     copy_class(const QString &copyid,
-	       const QString &copynumber,
-	       const QString &itemoid,
-	       const QString &status)
+               const QString &copynumber,
+               const QString &itemoid,
+               const QString &status)
     {
       m_copyid = copyid;
       m_copynumber = copynumber;
@@ -52,14 +52,14 @@ class biblioteq_copy_editor: public QDialog
   };
 
   enum Columns
-    {
-     AVAILABILITY = 2,
-     BARCODE = 1,
-     COPY_NUMBER = 5,
-     MYOID = 4,
-     STATUS = 3,
-     TITLE = 0
-    };
+  {
+    AVAILABILITY = 2,
+    BARCODE = 1,
+    COPY_NUMBER = 5,
+    MYOID = 4,
+    STATUS = 3,
+    TITLE = 0
+  };
 
   QList<copy_class *> m_copies;
   QPointer<QWidget> m_parent;
@@ -80,13 +80,13 @@ class biblioteq_copy_editor: public QDialog
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
 
- protected:
+protected:
   void setGlobalFonts(const QFont &font);
 
- protected slots:
+protected slots:
   void slotCloseCopyEditor(void);
 
- private slots:
+private slots:
   void slotDeleteCopy(void);
   void slotSaveCopies(void);
 };

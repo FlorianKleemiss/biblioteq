@@ -3,16 +3,16 @@
 
 #include <QGraphicsView>
 
-class biblioteq_photograph_view: public QGraphicsView
+class biblioteq_photograph_view : public QGraphicsView
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_photograph_view(QWidget *parent);
   void setBestFit(const bool bestFit);
   void setImage(const QImage &image, const QString &format, const qint64 oid);
 
- private:
+private:
   QImage m_image;
   QString m_format;
   bool m_bestFit;
@@ -21,12 +21,12 @@ class biblioteq_photograph_view: public QGraphicsView
   void resizeEvent(QResizeEvent *event);
   void rotateImage(const qreal degrees);
 
- private slots:
+private slots:
   void slotRotateLeft(void);
   void slotRotateRight(void);
   void slotSave(void);
 
- signals:
+signals:
   void save(const QImage &image, const QString &format, const qint64 oid);
 };
 

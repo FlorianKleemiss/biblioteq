@@ -5,13 +5,11 @@
 #include "biblioteq_documentationwindow.h"
 #include "biblioteq_misc_functions.h"
 
-biblioteq_documentationwindow::biblioteq_documentationwindow
-(QWidget *parent):biblioteq_documentationwindow(QUrl(), parent)
+biblioteq_documentationwindow::biblioteq_documentationwindow(QWidget *parent) : biblioteq_documentationwindow(QUrl(), parent)
 {
 }
 
-biblioteq_documentationwindow::biblioteq_documentationwindow
-(const QUrl &url, QWidget *parent):QMainWindow(parent)
+biblioteq_documentationwindow::biblioteq_documentationwindow(const QUrl &url, QWidget *parent) : QMainWindow(parent)
 {
   m_openExternalLinks = false;
   m_ui.setupUi(this);
@@ -19,14 +17,14 @@ biblioteq_documentationwindow::biblioteq_documentationwindow
   m_ui.text->setSource(url);
   m_originalFindPalette = m_ui.find->palette();
 
-  if(menuBar())
+  if (menuBar())
     menuBar()->setNativeMenuBar(true);
 
   connectSignals();
 }
 
 biblioteq_documentationwindow::
-~biblioteq_documentationwindow()
+    ~biblioteq_documentationwindow()
 {
 }
 
@@ -34,21 +32,21 @@ void biblioteq_documentationwindow::connectSignals(void)
 {
 #ifdef Q_OS_ANDROID
   connect(m_ui.action_Close,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(hide(void)),
+          SIGNAL(triggered(void)),
+          this,
+          SLOT(hide(void)),
           Qt::UniqueConnection);
 #else
   connect(m_ui.action_Close,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(close(void)),
+          SIGNAL(triggered(void)),
+          this,
+          SLOT(close(void)),
           Qt::UniqueConnection);
 #endif
   connect(m_ui.action_Find,
-	  SIGNAL(triggered(void)),
-	  this,
-	  SLOT(slotFind(void)),
+          SIGNAL(triggered(void)),
+          this,
+          SLOT(slotFind(void)),
           Qt::UniqueConnection);
   connect(m_ui.action_Print,
           SIGNAL(triggered(void)),
@@ -56,24 +54,24 @@ void biblioteq_documentationwindow::connectSignals(void)
           SLOT(slotPrint(void)),
           Qt::UniqueConnection);
   connect(m_ui.find,
-	  SIGNAL(returnPressed(void)),
-	  this,
-	  SLOT(slotFindText(void)),
+          SIGNAL(returnPressed(void)),
+          this,
+          SLOT(slotFindText(void)),
           Qt::UniqueConnection);
   connect(m_ui.find,
-	  SIGNAL(textEdited(const QString &)),
-	  this,
-	  SLOT(slotFindText(void)),
+          SIGNAL(textEdited(const QString &)),
+          this,
+          SLOT(slotFindText(void)),
           Qt::UniqueConnection);
   connect(m_ui.next,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotFindText(void)),
+          SIGNAL(clicked(void)),
+          this,
+          SLOT(slotFindText(void)),
           Qt::UniqueConnection);
   connect(m_ui.previous,
-	  SIGNAL(clicked(void)),
-	  this,
-	  SLOT(slotFindText(void)),
+          SIGNAL(clicked(void)),
+          this,
+          SLOT(slotFindText(void)),
           Qt::UniqueConnection);
   connect(m_ui.text,
           SIGNAL(anchorClicked(const QUrl &)),
@@ -83,7 +81,7 @@ void biblioteq_documentationwindow::connectSignals(void)
 }
 
 void biblioteq_documentationwindow::
-setAllowOpeningOfExternalLinks(const bool state)
+    setAllowOpeningOfExternalLinks(const bool state)
 {
   m_openExternalLinks = state;
 }
@@ -98,8 +96,7 @@ void biblioteq_documentationwindow::show(void)
 #ifdef Q_OS_ANDROID
   QMainWindow::showMaximized();
 #else
-  biblioteq_misc_functions::center
-    (this, static_cast<QMainWindow *> (parentWidget()));
+  biblioteq_misc_functions::center(this, static_cast<QMainWindow *>(parentWidget()));
   QMainWindow::showNormal();
 #endif
   QMainWindow::activateWindow();
@@ -108,9 +105,9 @@ void biblioteq_documentationwindow::show(void)
 
 void biblioteq_documentationwindow::slotAnchorClicked(const QUrl &url)
 {
-  if(url.scheme().toLower().trimmed() == "qrc")
+  if (url.scheme().toLower().trimmed() == "qrc")
     m_ui.text->setSource(url);
-  else if(m_openExternalLinks)
+  else if (m_openExternalLinks)
     QDesktopServices::openUrl(url);
 }
 
@@ -128,27 +125,27 @@ void biblioteq_documentationwindow::slotFindText(void)
   QTextDocument::FindFlags options = 0;
 #endif
 
-  if(qobject_cast<QToolButton *> (sender()) == m_ui.previous)
+  if (qobject_cast<QToolButton *>(sender()) == m_ui.previous)
     options = QTextDocument::FindBackward;
 
-  if(m_ui.find->text().isEmpty())
-    {
-      m_ui.find->setPalette(m_originalFindPalette);
-      m_ui.text->moveCursor(QTextCursor::Left);
-    }
-  else if(!m_ui.text->find(m_ui.find->text(), options))
-    {
-      QColor color(240, 128, 128); // Light Coral
-      QPalette palette(m_ui.find->palette());
+  if (m_ui.find->text().isEmpty())
+  {
+    m_ui.find->setPalette(m_originalFindPalette);
+    m_ui.text->moveCursor(QTextCursor::Left);
+  }
+  else if (!m_ui.text->find(m_ui.find->text(), options))
+  {
+    QColor color(240, 128, 128); // Light Coral
+    QPalette palette(m_ui.find->palette());
 
-      palette.setColor(m_ui.find->backgroundRole(), color);
-      m_ui.find->setPalette(palette);
+    palette.setColor(m_ui.find->backgroundRole(), color);
+    m_ui.find->setPalette(palette);
 
-      if(!options)
-	m_ui.text->moveCursor(QTextCursor::Start);
-      else
-	m_ui.text->moveCursor(QTextCursor::End);
-    }
+    if (!options)
+      m_ui.text->moveCursor(QTextCursor::Start);
+    else
+      m_ui.text->moveCursor(QTextCursor::End);
+  }
   else
     m_ui.find->setPalette(m_originalFindPalette);
 }
@@ -160,6 +157,6 @@ void biblioteq_documentationwindow::slotPrint(void)
 
   printDialog.setWindowIcon(windowIcon());
 
-  if(printDialog.exec() == QDialog::Accepted)
+  if (printDialog.exec() == QDialog::Accepted)
     m_ui.text->print(&printer);
 }

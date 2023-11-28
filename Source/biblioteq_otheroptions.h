@@ -7,49 +7,47 @@
 
 class biblioteq;
 
-class biblioteq_otheroptions: public QMainWindow
+class biblioteq_otheroptions : public QMainWindow
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_otheroptions(biblioteq *parent);
   ~biblioteq_otheroptions();
   QColor availabilityColor(const QString &it) const;
 
   QString isbn10DisplayFormat(const QString &str) const
   {
-    if(QString(str).remove('-').length() != 10)
+    if (QString(str).remove('-').length() != 10)
       return str;
 
-    if(m_isbn10Format.isEmpty())
-      {
-	QSettings settings;
-	auto index = qBound
-	  (0,
-	   settings.value("otheroptions/isbn10_display_format_index").toInt(),
-	   m_ui.isbn10_display_format->count() - 1);
+    if (m_isbn10Format.isEmpty())
+    {
+      QSettings settings;
+      auto index = qBound(0,
+                          settings.value("otheroptions/isbn10_display_format_index").toInt(),
+                          m_ui.isbn10_display_format->count() - 1);
 
-	m_isbn10Format = m_ui.isbn10_display_format->itemText(index);
-      }
+      m_isbn10Format = m_ui.isbn10_display_format->itemText(index);
+    }
 
     return isbnDisplayFormat(m_isbn10Format, str);
   }
 
   QString isbn13DisplayFormat(const QString &str) const
   {
-    if(QString(str).remove('-').length() != 13)
+    if (QString(str).remove('-').length() != 13)
       return str;
 
-    if(m_isbn13Format.isEmpty())
-      {
-	QSettings settings;
-	auto index = qBound
-	  (0,
-	   settings.value("otheroptions/isbn13_display_format_index").toInt(),
-	   m_ui.isbn13_display_format->count() - 1);
+    if (m_isbn13Format.isEmpty())
+    {
+      QSettings settings;
+      auto index = qBound(0,
+                          settings.value("otheroptions/isbn13_display_format_index").toInt(),
+                          m_ui.isbn13_display_format->count() - 1);
 
-	m_isbn13Format = m_ui.isbn13_display_format->itemText(index);
-      }
+      m_isbn13Format = m_ui.isbn13_display_format->itemText(index);
+    }
 
     return isbnDisplayFormat(m_isbn13Format, str);
   }
@@ -62,13 +60,13 @@ class biblioteq_otheroptions: public QMainWindow
   int iconsViewColumnCount(void) const;
   void prepareSettings(void);
 
- private:
+private:
   enum ItemsColumns
-    {
-     AVAILABILITY_COLOR = 1,
-     ITEM_TYPE = 0,
-     PUBLICATION_DATE_FORMAT = 1
-    };
+  {
+    AVAILABILITY_COLOR = 1,
+    ITEM_TYPE = 0,
+    PUBLICATION_DATE_FORMAT = 1
+  };
 
   Ui_otheroptions m_ui;
   biblioteq *qmain;
@@ -79,21 +77,21 @@ class biblioteq_otheroptions: public QMainWindow
   {
     auto str(QString(s).remove('-'));
 
-    if(!(str.length() == 10 || str.length() == 13))
+    if (!(str.length() == 10 || str.length() == 13))
       return s;
 
     QString text("");
     auto list(format.split('-'));
 
-    for(int i = 0, j = 0; i < list.size(); i++)
-      {
-	text.append(str.mid(j, list.at(i).length()));
+    for (int i = 0, j = 0; i < list.size(); i++)
+    {
+      text.append(str.mid(j, list.at(i).length()));
 
-	if(i != list.size() - 1)
-	  text.append('-');
+      if (i != list.size() - 1)
+        text.append('-');
 
-	j += list.at(i).length();
-      }
+      j += list.at(i).length();
+    }
 
     return text;
   }
@@ -103,7 +101,7 @@ class biblioteq_otheroptions: public QMainWindow
   void keyPressEvent(QKeyEvent *event);
   void prepareAvailability(void);
 
- private slots:
+private slots:
   void setGlobalFonts(const QFont &font);
   void slotClose(void);
   void slotPreviewCanvasBackgroundColor(const QColor &color);
@@ -111,10 +109,10 @@ class biblioteq_otheroptions: public QMainWindow
   void slotSelectAvailabilityColor(void);
   void slotSelectMainwindowCanvasBackgroundColor(void);
 
- public slots:
+public slots:
   void showNormal(void);
 
- signals:
+signals:
   void mainWindowCanvasBackgroundColorChanged(const QColor &color);
   void mainWindowCanvasBackgroundColorPreview(const QColor &color);
   void saved(void);

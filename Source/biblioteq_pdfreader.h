@@ -9,17 +9,17 @@
 
 class QPrinter;
 
-class biblioteq_pdfreader: public QMainWindow
+class biblioteq_pdfreader : public QMainWindow
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_pdfreader(QWidget *parent);
   ~biblioteq_pdfreader();
   void load(const QByteArray &data, const QString &fileName);
   void load(const QString &fileName);
 
- private:
+private:
 #ifdef BIBLIOTEQ_LINKED_WITH_POPPLER
   Poppler::Document *m_document;
 #endif
@@ -33,7 +33,7 @@ class biblioteq_pdfreader: public QMainWindow
   void prepareContents(void);
   void resizeEvent(QResizeEvent *event);
 
- private slots:
+private slots:
   void setGlobalFonts(const QFont &font);
   void slotChangePageViewSize(int value);
   void slotClose(void);
@@ -48,7 +48,7 @@ class biblioteq_pdfreader: public QMainWindow
   void slotShowPage(int value, const QRectF &location = QRectF());
   void slotSliderTriggerAction(int action);
 
- public slots:
+public slots:
   void showNormal(void);
 };
 

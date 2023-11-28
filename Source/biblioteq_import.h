@@ -6,49 +6,49 @@
 class QProgressDialog;
 class biblioteq;
 
-class biblioteq_import: public QMainWindow
+class biblioteq_import : public QMainWindow
 {
   Q_OBJECT
 
- public:
+public:
   biblioteq_import(biblioteq *parent);
   void show(QMainWindow *parent);
 
- private:
+private:
   enum Columns
-    {
-     BIBLIOTEQ_TABLE_FIELD_NAME = 2,
-     CSV_COLUMN_NUMBER = 0,
-     CSV_PREVIEW = 1,
-     SUBSTITUTE_VALUE = 3
-    };
+  {
+    BIBLIOTEQ_TABLE_FIELD_NAME = 2,
+    CSV_COLUMN_NUMBER = 0,
+    CSV_PREVIEW = 1,
+    SUBSTITUTE_VALUE = 3
+  };
 
   enum Templates
-    {
-     // Zero is the text Templates.
+  {
+    // Zero is the text Templates.
 
-     TEMPLATE_1 = 1,
-     TEMPLATE_2,
-     TEMPLATE_3
-    };
+    TEMPLATE_1 = 1,
+    TEMPLATE_2,
+    TEMPLATE_3
+  };
 
-  QMap<int, QPair<QString, QString> > m_mappings;
+  QMap<int, QPair<QString, QString>> m_mappings;
   QStringList m_previewHeaders; // Ignore QTableWidget.
   Ui_importBrowser m_ui;
   biblioteq *m_qmain;
   void changeEvent(QEvent *event);
   void importBooks(QProgressDialog *progress,
-		   QStringList &errors,
-		   const int idIndex, // ISBN-10
-		   qint64 *imported,
-		   qint64 *notImported);
+                   QStringList &errors,
+                   const int idIndex, // ISBN-10
+                   qint64 *imported,
+                   qint64 *notImported);
   void importPatrons(QProgressDialog *progress,
-		     QStringList &errors,
-		     qint64 *imported,
-		     qint64 *notImported);
+                     QStringList &errors,
+                     qint64 *imported,
+                     qint64 *notImported);
   void loadPreview(void);
 
- private slots:
+private slots:
   void slotAddRow(void);
   void slotClose(void);
   void slotDeleteRow(void);

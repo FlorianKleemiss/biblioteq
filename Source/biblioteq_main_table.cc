@@ -9,21 +9,20 @@
 class NumericSortModel : public QSortFilterProxyModel
 {
 protected:
-    bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
-    {
-        bool ok1, ok2;
-        int leftNumber = sourceModel()->data(left).toInt(&ok1);
-        int rightNumber = sourceModel()->data(right).toInt(&ok2);
+  bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
+  {
+    bool ok1, ok2;
+    int leftNumber = sourceModel()->data(left).toInt(&ok1);
+    int rightNumber = sourceModel()->data(right).toInt(&ok2);
 
-        if (ok1 && ok2)
-            return leftNumber < rightNumber;
-        else
-            return QSortFilterProxyModel::lessThan(left, right);
-    }
+    if (ok1 && ok2)
+      return leftNumber < rightNumber;
+    else
+      return QSortFilterProxyModel::lessThan(left, right);
+  }
 };
 
-biblioteq_main_table::biblioteq_main_table(QWidget *parent):
-  QTableWidget(parent)
+biblioteq_main_table::biblioteq_main_table(QWidget *parent) : QTableWidget(parent)
 {
   QStandardItemModel *model = new QStandardItemModel;
   NumericSortModel *proxyModel = new NumericSortModel;
@@ -42,19 +41,18 @@ QHash<QString, QString> biblioteq_main_table::friendlyStates(void) const
 {
   QHash<QString, QString> states;
 
-  for(int i = 0; i < m_hiddenColumns.keys().size(); i++)
-    {
-      QString state("");
+  for (int i = 0; i < m_hiddenColumns.keys().size(); i++)
+  {
+    QString state("");
 
-      for(int j = 0; j < m_hiddenColumns.value(m_hiddenColumns.keys().at(i)).size(); j++)
-        state += QString::number
-	  (m_hiddenColumns.value(m_hiddenColumns.keys().at(i)).at(j)).append(",");
+    for (int j = 0; j < m_hiddenColumns.value(m_hiddenColumns.keys().at(i)).size(); j++)
+      state += QString::number(m_hiddenColumns.value(m_hiddenColumns.keys().at(i)).at(j)).append(",");
 
-      if(state.endsWith(","))
-        state = state.mid(0, state.length() - 1);
+    if (state.endsWith(","))
+      state = state.mid(0, state.length() - 1);
 
-      states[m_hiddenColumns.keys().at(i)] = state;
-    }
+    states[m_hiddenColumns.keys().at(i)] = state;
+  }
 
   return states;
 }
@@ -64,8 +62,7 @@ QStringList biblioteq_main_table::columnNames(void) const
   return m_columnHeaderIndexes.toList();
 }
 
-bool biblioteq_main_table::isColumnHidden
-(const int index, const QString &type, const QString &username) const
+bool biblioteq_main_table::isColumnHidden(const int index, const QString &type, const QString &username) const
 {
   QString indexstr("");
   auto l_type(type);
@@ -85,35 +82,35 @@ int biblioteq_main_table::columnNumber(const QString &name) const
 {
   auto index = m_columnHeaderIndexes.indexOf(name);
 
-  if(index >= 0)
+  if (index >= 0)
     return index;
 
-  for(int i = 0; i < m_columnHeaderIndexes.size(); i++)
-    if(m_columnHeaderIndexes.at(i).toLower() == name.toLower())
-      {
-        index = i;
-        break;
-      }
+  for (int i = 0; i < m_columnHeaderIndexes.size(); i++)
+    if (m_columnHeaderIndexes.at(i).toLower() == name.toLower())
+    {
+      index = i;
+      break;
+    }
 
   return index;
 }
 
 void biblioteq_main_table::keyPressEvent(QKeyEvent *event)
 {
-  if(event)
-    switch(event->key())
+  if (event)
+    switch (event->key())
     {
-      case Qt::Key_Enter:
-      case Qt::Key_Return:
-	{
-	  emit enterKeyPressed();
-	  break;
-	}
-      default:
-	{
-	  break;
-	}
-      }
+    case Qt::Key_Enter:
+    case Qt::Key_Return:
+    {
+      emit enterKeyPressed();
+      break;
+    }
+    default:
+    {
+      break;
+    }
+    }
 
   QTableWidget::keyPressEvent(event);
 }
@@ -122,28 +119,28 @@ void biblioteq_main_table::parseStates(const QHash<QString, QString> &states)
 {
   m_hiddenColumns.clear();
 
-  for(int i = 0; i < states.keys().size(); i++)
+  for (int i = 0; i < states.keys().size(); i++)
   {
-        QList<int> intList;
-        auto strList (states[states.keys().at(i)].split(",",
+    QList<int> intList;
+    auto strList(states[states.keys().at(i)].split(",",
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-					   Qt::SkipEmptyParts
+                                                   Qt::SkipEmptyParts
 #else
-					   QString::SkipEmptyParts
+                                                    QString::SkipEmptyParts
 #endif
-					   ));
+                                                   ));
 
-      for(int j = 0; j < strList.size(); j++)
-        intList.append(qBound(0, strList.at(j).toInt(), strList.size()));
+    for (int j = 0; j < strList.size(); j++)
+      intList.append(qBound(0, strList.at(j).toInt(), strList.size()));
 
-      m_hiddenColumns[states.keys().at(i)] = intList;
-    }
+    m_hiddenColumns[states.keys().at(i)] = intList;
+  }
 }
 
 void biblioteq_main_table::recordColumnHidden(const QString &username,
-					      const QString &type,
-					      const int index,
-					      const bool hidden)
+                                              const QString &type,
+                                              const int index,
+                                              const bool hidden)
 {
   QString indexstr("");
   auto l_type(type);
@@ -152,18 +149,18 @@ void biblioteq_main_table::recordColumnHidden(const QString &username,
   indexstr.append(l_type.replace(" ", "_"));
   indexstr.append("_header_state");
 
-  if(hidden)
+  if (hidden)
   {
-      if(!m_hiddenColumns[indexstr].contains(index))
-        m_hiddenColumns[indexstr].append(index);
+    if (!m_hiddenColumns[indexstr].contains(index))
+      m_hiddenColumns[indexstr].append(index);
   }
-  else if(m_hiddenColumns.contains(indexstr))
+  else if (m_hiddenColumns.contains(indexstr))
     m_hiddenColumns[indexstr].removeAll(index);
 }
 
 void biblioteq_main_table::resetTable(const QString &username,
-				      const QString &type,
-				      const QString &roles)
+                                      const QString &type,
+                                      const QString &roles)
 {
   setColumnCount(0);
   setRowCount(0);
@@ -171,13 +168,13 @@ void biblioteq_main_table::resetTable(const QString &username,
   horizontalScrollBar()->setValue(0);
   setColumns(username, type, roles);
 
-  if(m_qmain && m_qmain->setting("automatically_resize_column_widths").toBool())
-    {
-      for(int i = 0; i < columnCount() - 1; i++)
-	resizeColumnToContents(i);
+  if (m_qmain && m_qmain->setting("automatically_resize_column_widths").toBool())
+  {
+    for (int i = 0; i < columnCount() - 1; i++)
+      resizeColumnToContents(i);
 
-      horizontalHeader()->setStretchLastSection(true);
-    }
+    horizontalHeader()->setStretchLastSection(true);
+  }
 
   clearSelection();
   horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
@@ -190,309 +187,309 @@ void biblioteq_main_table::setColumnNames(const QStringList &list)
 {
   m_columnHeaderIndexes.clear();
 
-  for(int i = 0; i < list.size(); i++)
+  for (int i = 0; i < list.size(); i++)
     m_columnHeaderIndexes.append(list.at(i));
 }
 
 void biblioteq_main_table::setColumns(const QString &username,
-				      const QString &t,
-				      const QString &roles)
+                                      const QString &t,
+                                      const QString &roles)
 {
   QStringList list;
   auto type(t.trimmed());
 
   m_columnHeaderIndexes.clear();
 
-  if(type.isEmpty())
+  if (type.isEmpty())
     type = "All";
 
-  if(type == "All" ||
-     type == "All Available" ||
-     type == "All Overdue" ||
-     type == "All Requested" ||
-     type == "All Reserved")
+  if (type == "All" ||
+      type == "All Available" ||
+      type == "All Overdue" ||
+      type == "All Requested" ||
+      type == "All Reserved")
+  {
+    if (type == "All Overdue" || type == "All Reserved")
     {
-      if(type == "All Overdue" || type == "All Reserved")
-	{
-	  if(!roles.isEmpty())
-	    {
-	      list.append(tr("Borrower"));
-	      list.append(tr("Member ID"));
-	      list.append(tr("Contact Information"));
-	      m_columnHeaderIndexes.append("Borrower");
-	      m_columnHeaderIndexes.append("Member ID");
-	      m_columnHeaderIndexes.append("Contact Information");
-	    }
+      if (!roles.isEmpty())
+      {
+        list.append(tr("Borrower"));
+        list.append(tr("Member ID"));
+        list.append(tr("Contact Information"));
+        m_columnHeaderIndexes.append("Borrower");
+        m_columnHeaderIndexes.append("Member ID");
+        m_columnHeaderIndexes.append("Contact Information");
+      }
 
-	  list.append(tr("Barcode"));
-	  list.append(tr("Reservation Date"));
-	  list.append(tr("Due Date"));
-	  m_columnHeaderIndexes.append("Barcode");
-	  m_columnHeaderIndexes.append("Reservation Date");
-	  m_columnHeaderIndexes.append("Due Date");
-	}
-      else if(type == "All Requested")
-	{
-	  if(!roles.isEmpty())
-	    {
-	      list.append(tr("Borrower"));
-	      list.append(tr("Member ID"));
-	      list.append(tr("Contact Information"));
-	      m_columnHeaderIndexes.append("Borrower");
-	      m_columnHeaderIndexes.append("Member ID");
-	      m_columnHeaderIndexes.append("Contact Information");
-	    }
-
-	  list.append(tr("Request Date"));
-	  m_columnHeaderIndexes.append("Request Date");
-	}
-
-      list.append(tr("Title"));
-      list.append(tr("ID Number"));
-
-      if(type == "All Overdue"   ||
-         type == "All Requested" ||
-         type == "All Reserved")
-        list.append(tr("Call Number"));
-
-      list.append(tr("Publisher"));
-      list.append(tr("Publication Date"));
-      list.append(tr("Categories"));
-      list.append(tr("Language"));
-      list.append(tr("Price"));
-      list.append(tr("Monetary Units"));
-      list.append(tr("Quantity"));
-      list.append(tr("Location"));
-      m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("ID Number");
-
-      if(type == "All Overdue"   ||
-         type == "All Requested" ||
-         type == "All Reserved")
-        m_columnHeaderIndexes.append("Call Number");
-
-      m_columnHeaderIndexes.append("Publisher");
-      m_columnHeaderIndexes.append("Publication Date");
-      m_columnHeaderIndexes.append("Categories");
-      m_columnHeaderIndexes.append("Language");
-      m_columnHeaderIndexes.append("Price");
-      m_columnHeaderIndexes.append("Monetary Units");
-      m_columnHeaderIndexes.append("Quantity");
-      m_columnHeaderIndexes.append("Location");
-
-      if(type != "All Requested")
-	{
-	  list.append(tr("Availability"));
-	  list.append(tr("Total Reserved"));
-	  m_columnHeaderIndexes.append("Availability");
-	  m_columnHeaderIndexes.append("Total Reserved");
-	}
-
-      list.append(tr("Accession Number"));
-      list.append(tr("Type"));
-      list.append("MYOID");
-      m_columnHeaderIndexes.append("Accession Number");
-      m_columnHeaderIndexes.append("Type");
-      m_columnHeaderIndexes.append("MYOID");
-
-      if(type == "All Requested")
-	{
-	  list.append("REQUESTOID");
-	  m_columnHeaderIndexes.append("REQUESTOID");
-	}
+      list.append(tr("Barcode"));
+      list.append(tr("Reservation Date"));
+      list.append(tr("Due Date"));
+      m_columnHeaderIndexes.append("Barcode");
+      m_columnHeaderIndexes.append("Reservation Date");
+      m_columnHeaderIndexes.append("Due Date");
     }
-  else if(type == "Books")
+    else if (type == "All Requested")
     {
-      list.append(tr("Title"));
-      list.append(tr("Authors"));
-      list.append(tr("Publisher"));
-      list.append(tr("Publication Date"));
-      list.append(tr("Place of Publication"));
-      list.append(tr("Edition"));
-      list.append(tr("Categories"));
-      list.append(tr("Language"));
-      list.append(tr("ISBN-10"));
-      list.append(tr("Price"));
-      list.append(tr("Monetary Units"));
-      list.append(tr("Quantity"));
-      list.append(tr("Book Binding Type"));
-      list.append(tr("Location"));
-      list.append(tr("ISBN-13"));
-      list.append(tr("LC Control Number"));
+      if (!roles.isEmpty())
+      {
+        list.append(tr("Borrower"));
+        list.append(tr("Member ID"));
+        list.append(tr("Contact Information"));
+        m_columnHeaderIndexes.append("Borrower");
+        m_columnHeaderIndexes.append("Member ID");
+        m_columnHeaderIndexes.append("Contact Information");
+      }
+
+      list.append(tr("Request Date"));
+      m_columnHeaderIndexes.append("Request Date");
+    }
+
+    list.append(tr("Title"));
+    list.append(tr("ID Number"));
+
+    if (type == "All Overdue" ||
+        type == "All Requested" ||
+        type == "All Reserved")
       list.append(tr("Call Number"));
-      list.append(tr("Dewey Class Number"));
-      list.append(tr("Availability"));
-      list.append(tr("Total Reserved"));
-      list.append(tr("Originality"));
-      list.append(tr("Condition"));
-      list.append(tr("Accession Number"));
-      list.append(tr("Type"));
-      list.append("MYOID");
-      m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("Authors");
-      m_columnHeaderIndexes.append("Publisher");
-      m_columnHeaderIndexes.append("Publication Date");
-      m_columnHeaderIndexes.append("Place of Publication");
-      m_columnHeaderIndexes.append("Edition");
-      m_columnHeaderIndexes.append("Categories");
-      m_columnHeaderIndexes.append("Language");
-      m_columnHeaderIndexes.append("ISBN-10");
-      m_columnHeaderIndexes.append("Price");
-      m_columnHeaderIndexes.append("Monetary Units");
-      m_columnHeaderIndexes.append("Quantity");
-      m_columnHeaderIndexes.append("Book Binding Type");
-      m_columnHeaderIndexes.append("Location");
-      m_columnHeaderIndexes.append("ISBN-13");
-      m_columnHeaderIndexes.append("LC Control Number");
+
+    list.append(tr("Publisher"));
+    list.append(tr("Publication Date"));
+    list.append(tr("Categories"));
+    list.append(tr("Language"));
+    list.append(tr("Price"));
+    list.append(tr("Monetary Units"));
+    list.append(tr("Quantity"));
+    list.append(tr("Location"));
+    m_columnHeaderIndexes.append("Title");
+    m_columnHeaderIndexes.append("ID Number");
+
+    if (type == "All Overdue" ||
+        type == "All Requested" ||
+        type == "All Reserved")
       m_columnHeaderIndexes.append("Call Number");
-      m_columnHeaderIndexes.append("Dewey Class Number");
-      m_columnHeaderIndexes.append("Availability");
-      m_columnHeaderIndexes.append("Total Reserved");
-      m_columnHeaderIndexes.append("Originality");
-      m_columnHeaderIndexes.append("Condition");
-      m_columnHeaderIndexes.append("Accession Number");
-      m_columnHeaderIndexes.append("Type");
-      m_columnHeaderIndexes.append("MYOID");
-    }
-  else if(type == "Grey Literature")
+
+    m_columnHeaderIndexes.append("Publisher");
+    m_columnHeaderIndexes.append("Publication Date");
+    m_columnHeaderIndexes.append("Categories");
+    m_columnHeaderIndexes.append("Language");
+    m_columnHeaderIndexes.append("Price");
+    m_columnHeaderIndexes.append("Monetary Units");
+    m_columnHeaderIndexes.append("Quantity");
+    m_columnHeaderIndexes.append("Location");
+
+    if (type != "All Requested")
     {
-      list.append(tr("Authors"));
-      list.append(tr("Clients"));
-      list.append(tr("Document Code A"));
-      list.append(tr("Document Code B"));
-      list.append(tr("Document Date"));
-      list.append(tr("Document ID"));
-      list.append(tr("Document Status"));
-      list.append(tr("Title"));
-      list.append(tr("Document Type"));
-      list.append(tr("Job Number"));
-      list.append(tr("Location"));
-      list.append(tr("File Count"));
       list.append(tr("Availability"));
       list.append(tr("Total Reserved"));
-      list.append(tr("Type"));
-      list.append("MYOID");
-      m_columnHeaderIndexes.append("Authors");
-      m_columnHeaderIndexes.append("Clients");
-      m_columnHeaderIndexes.append("Document Code A");
-      m_columnHeaderIndexes.append("Document Code B");
-      m_columnHeaderIndexes.append("Document Date");
-      m_columnHeaderIndexes.append("Document ID");
-      m_columnHeaderIndexes.append("Document Status");
-      m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("Document Type");
-      m_columnHeaderIndexes.append("Job Number");
-      m_columnHeaderIndexes.append("Location");
-      m_columnHeaderIndexes.append("File Count");
       m_columnHeaderIndexes.append("Availability");
       m_columnHeaderIndexes.append("Total Reserved");
-      m_columnHeaderIndexes.append("Type");
-      m_columnHeaderIndexes.append("MYOID");
-    }
-  else if(type == "Journals" || type == "Magazines")
-    {
-      list.append(tr("Title"));
-      list.append(tr("Publisher"));
-      list.append(tr("Publication Date"));
-      list.append(tr("Place of Publication"));
-      list.append(tr("Volume"));
-      list.append(tr("Issue"));
-      list.append(tr("Categories"));
-      list.append(tr("Language"));
-      list.append(tr("ISSN"));
-      list.append(tr("Price"));
-      list.append(tr("Monetary Units"));
-      list.append(tr("Quantity"));
-      list.append(tr("Location"));
-      list.append(tr("LC Control Number"));
-      list.append(tr("Call Number"));
-      list.append(tr("Dewey Number"));
-      list.append(tr("Availability"));
-      list.append(tr("Total Reserved"));
-      list.append(tr("Accession Number"));
-      list.append(tr("Type"));
-      list.append("MYOID");
-      m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("Publisher");
-      m_columnHeaderIndexes.append("Publication Date");
-      m_columnHeaderIndexes.append("Place of Publication");
-      m_columnHeaderIndexes.append("Volume");
-      m_columnHeaderIndexes.append("Issue");
-      m_columnHeaderIndexes.append("Categories");
-      m_columnHeaderIndexes.append("Language");
-      m_columnHeaderIndexes.append("ISSN");
-      m_columnHeaderIndexes.append("Price");
-      m_columnHeaderIndexes.append("Monetary Units");
-      m_columnHeaderIndexes.append("Quantity");
-      m_columnHeaderIndexes.append("Location");
-      m_columnHeaderIndexes.append("LC Control Number");
-      m_columnHeaderIndexes.append("Call Number");
-      m_columnHeaderIndexes.append("Dewey Number");
-      m_columnHeaderIndexes.append("Availability");
-      m_columnHeaderIndexes.append("Total Reserved");
-      m_columnHeaderIndexes.append("Accession Number");
-      m_columnHeaderIndexes.append("Type");
-      m_columnHeaderIndexes.append("MYOID");
-    }
-  else if(type == "Photograph Collections")
-    {
-      list.append(tr("Title"));
-      list.append(tr("Creation Date"));
-      list.append(tr("Total Size"));
-      list.append(tr("Element Count"));
-      list.append(tr("Element Count Strixner"));
-      list.append(tr("About"));
-      list.append(tr("ID"));
-      list.append(tr("Type"));
-      list.append("MYOID");
-      m_columnHeaderIndexes.append("Title");
-      m_columnHeaderIndexes.append("Creation date");
-      m_columnHeaderIndexes.append("Total Size");
-      m_columnHeaderIndexes.append("Element Count");
-      m_columnHeaderIndexes.append("Element Count Strixner");
-      m_columnHeaderIndexes.append("About");
-      m_columnHeaderIndexes.append("ID");
-      m_columnHeaderIndexes.append("Type");
-      m_columnHeaderIndexes.append("MYOID");
     }
 
-  if(m_qmain &&
-     m_qmain->getDB().driverName() == "QSQLITE" &&
-     m_qmain->showBookReadStatus() &&
-     type == "Books")
+    list.append(tr("Accession Number"));
+    list.append(tr("Type"));
+    list.append("MYOID");
+    m_columnHeaderIndexes.append("Accession Number");
+    m_columnHeaderIndexes.append("Type");
+    m_columnHeaderIndexes.append("MYOID");
+
+    if (type == "All Requested")
     {
-      list.prepend(tr("Read Status"));
-      m_columnHeaderIndexes.prepend("Read Status");
+      list.append("REQUESTOID");
+      m_columnHeaderIndexes.append("REQUESTOID");
     }
+  }
+  else if (type == "Books")
+  {
+    list.append(tr("Title"));
+    list.append(tr("Authors"));
+    list.append(tr("Publisher"));
+    list.append(tr("Publication Date"));
+    list.append(tr("Place of Publication"));
+    list.append(tr("Edition"));
+    list.append(tr("Categories"));
+    list.append(tr("Language"));
+    list.append(tr("ISBN-10"));
+    list.append(tr("Price"));
+    list.append(tr("Monetary Units"));
+    list.append(tr("Quantity"));
+    list.append(tr("Book Binding Type"));
+    list.append(tr("Location"));
+    list.append(tr("ISBN-13"));
+    list.append(tr("LC Control Number"));
+    list.append(tr("Call Number"));
+    list.append(tr("Dewey Class Number"));
+    list.append(tr("Availability"));
+    list.append(tr("Total Reserved"));
+    list.append(tr("Originality"));
+    list.append(tr("Condition"));
+    list.append(tr("Accession Number"));
+    list.append(tr("Type"));
+    list.append("MYOID");
+    m_columnHeaderIndexes.append("Title");
+    m_columnHeaderIndexes.append("Authors");
+    m_columnHeaderIndexes.append("Publisher");
+    m_columnHeaderIndexes.append("Publication Date");
+    m_columnHeaderIndexes.append("Place of Publication");
+    m_columnHeaderIndexes.append("Edition");
+    m_columnHeaderIndexes.append("Categories");
+    m_columnHeaderIndexes.append("Language");
+    m_columnHeaderIndexes.append("ISBN-10");
+    m_columnHeaderIndexes.append("Price");
+    m_columnHeaderIndexes.append("Monetary Units");
+    m_columnHeaderIndexes.append("Quantity");
+    m_columnHeaderIndexes.append("Book Binding Type");
+    m_columnHeaderIndexes.append("Location");
+    m_columnHeaderIndexes.append("ISBN-13");
+    m_columnHeaderIndexes.append("LC Control Number");
+    m_columnHeaderIndexes.append("Call Number");
+    m_columnHeaderIndexes.append("Dewey Class Number");
+    m_columnHeaderIndexes.append("Availability");
+    m_columnHeaderIndexes.append("Total Reserved");
+    m_columnHeaderIndexes.append("Originality");
+    m_columnHeaderIndexes.append("Condition");
+    m_columnHeaderIndexes.append("Accession Number");
+    m_columnHeaderIndexes.append("Type");
+    m_columnHeaderIndexes.append("MYOID");
+  }
+  else if (type == "Grey Literature")
+  {
+    list.append(tr("Authors"));
+    list.append(tr("Clients"));
+    list.append(tr("Document Code A"));
+    list.append(tr("Document Code B"));
+    list.append(tr("Document Date"));
+    list.append(tr("Document ID"));
+    list.append(tr("Document Status"));
+    list.append(tr("Title"));
+    list.append(tr("Document Type"));
+    list.append(tr("Job Number"));
+    list.append(tr("Location"));
+    list.append(tr("File Count"));
+    list.append(tr("Availability"));
+    list.append(tr("Total Reserved"));
+    list.append(tr("Type"));
+    list.append("MYOID");
+    m_columnHeaderIndexes.append("Authors");
+    m_columnHeaderIndexes.append("Clients");
+    m_columnHeaderIndexes.append("Document Code A");
+    m_columnHeaderIndexes.append("Document Code B");
+    m_columnHeaderIndexes.append("Document Date");
+    m_columnHeaderIndexes.append("Document ID");
+    m_columnHeaderIndexes.append("Document Status");
+    m_columnHeaderIndexes.append("Title");
+    m_columnHeaderIndexes.append("Document Type");
+    m_columnHeaderIndexes.append("Job Number");
+    m_columnHeaderIndexes.append("Location");
+    m_columnHeaderIndexes.append("File Count");
+    m_columnHeaderIndexes.append("Availability");
+    m_columnHeaderIndexes.append("Total Reserved");
+    m_columnHeaderIndexes.append("Type");
+    m_columnHeaderIndexes.append("MYOID");
+  }
+  else if (type == "Journals" || type == "Magazines")
+  {
+    list.append(tr("Title"));
+    list.append(tr("Publisher"));
+    list.append(tr("Publication Date"));
+    list.append(tr("Place of Publication"));
+    list.append(tr("Volume"));
+    list.append(tr("Issue"));
+    list.append(tr("Categories"));
+    list.append(tr("Language"));
+    list.append(tr("ISSN"));
+    list.append(tr("Price"));
+    list.append(tr("Monetary Units"));
+    list.append(tr("Quantity"));
+    list.append(tr("Location"));
+    list.append(tr("LC Control Number"));
+    list.append(tr("Call Number"));
+    list.append(tr("Dewey Number"));
+    list.append(tr("Availability"));
+    list.append(tr("Total Reserved"));
+    list.append(tr("Accession Number"));
+    list.append(tr("Type"));
+    list.append("MYOID");
+    m_columnHeaderIndexes.append("Title");
+    m_columnHeaderIndexes.append("Publisher");
+    m_columnHeaderIndexes.append("Publication Date");
+    m_columnHeaderIndexes.append("Place of Publication");
+    m_columnHeaderIndexes.append("Volume");
+    m_columnHeaderIndexes.append("Issue");
+    m_columnHeaderIndexes.append("Categories");
+    m_columnHeaderIndexes.append("Language");
+    m_columnHeaderIndexes.append("ISSN");
+    m_columnHeaderIndexes.append("Price");
+    m_columnHeaderIndexes.append("Monetary Units");
+    m_columnHeaderIndexes.append("Quantity");
+    m_columnHeaderIndexes.append("Location");
+    m_columnHeaderIndexes.append("LC Control Number");
+    m_columnHeaderIndexes.append("Call Number");
+    m_columnHeaderIndexes.append("Dewey Number");
+    m_columnHeaderIndexes.append("Availability");
+    m_columnHeaderIndexes.append("Total Reserved");
+    m_columnHeaderIndexes.append("Accession Number");
+    m_columnHeaderIndexes.append("Type");
+    m_columnHeaderIndexes.append("MYOID");
+  }
+  else if (type == "Photograph Collections")
+  {
+    list.append(tr("Title"));
+    list.append(tr("Creation Date"));
+    list.append(tr("Total Size"));
+    list.append(tr("Element Count"));
+    list.append(tr("Element Count Strixner"));
+    list.append(tr("About"));
+    list.append(tr("ID"));
+    list.append(tr("Type"));
+    list.append("MYOID");
+    m_columnHeaderIndexes.append("Title");
+    m_columnHeaderIndexes.append("Creation date");
+    m_columnHeaderIndexes.append("Total Size");
+    m_columnHeaderIndexes.append("Element Count");
+    m_columnHeaderIndexes.append("Element Count Strixner");
+    m_columnHeaderIndexes.append("About");
+    m_columnHeaderIndexes.append("ID");
+    m_columnHeaderIndexes.append("Type");
+    m_columnHeaderIndexes.append("MYOID");
+  }
+
+  if (m_qmain &&
+      m_qmain->getDB().driverName() == "QSQLITE" &&
+      m_qmain->showBookReadStatus() &&
+      type == "Books")
+  {
+    list.prepend(tr("Read Status"));
+    m_columnHeaderIndexes.prepend("Read Status");
+  }
 
   setColumnCount(list.size());
   setHorizontalHeaderLabels(list);
 
-  if(type != "All" &&
-     type != "All Available" &&
-     type != "All Overdue" &&
-     type != "All Requested" &&
-     type != "All Reserved" &&
-     type != "Custom")
-    {
-      /*
-      ** Hide the Type and MYOID columns.
-      */
+  if (type != "All" &&
+      type != "All Available" &&
+      type != "All Overdue" &&
+      type != "All Requested" &&
+      type != "All Reserved" &&
+      type != "Custom")
+  {
+    /*
+    ** Hide the Type and MYOID columns.
+    */
 
-      setColumnHidden(list.size() - 1, true);
+    setColumnHidden(list.size() - 1, true);
+    setColumnHidden(list.size() - 2, true);
+  }
+  else if (type != "Custom")
+  {
+    /*
+    ** Hide the MYOID and REQUESTOID columns.
+    */
+
+    setColumnHidden(list.size() - 1, true);
+
+    if (type == "All Requested")
       setColumnHidden(list.size() - 2, true);
-    }
-  else if(type != "Custom")
-    {
-      /*
-      ** Hide the MYOID and REQUESTOID columns.
-      */
-
-      setColumnHidden(list.size() - 1, true);
-
-      if(type == "All Requested")
-	setColumnHidden(list.size() - 2, true);
-    }
+  }
 
   list.clear();
 
@@ -503,7 +500,7 @@ void biblioteq_main_table::setColumns(const QString &username,
   indexstr.append(l_type.replace(" ", "_"));
   indexstr.append("_header_state");
 
-  for(int i = 0; i < m_hiddenColumns[indexstr].size(); i++)
+  for (int i = 0; i < m_hiddenColumns[indexstr].size(); i++)
     setColumnHidden(m_hiddenColumns[indexstr][i], true);
 }
 
@@ -514,47 +511,47 @@ void biblioteq_main_table::setQMain(biblioteq *biblioteq)
 
 void biblioteq_main_table::updateToolTips(const int row)
 {
-  if(row < 0)
+  if (row < 0)
     return;
 
   QSettings settings;
   auto showToolTips = settings.value("show_maintable_tooltips", false).toBool();
 
-  if(!showToolTips)
+  if (!showToolTips)
     return;
 
   QString tooltip("<html>");
 
-  for(int i = 0; i < columnCount(); i++)
-    {
-      auto columnName(columnNames().value(i));
-      auto item = this->item(row, i);
+  for (int i = 0; i < columnCount(); i++)
+  {
+    auto columnName(columnNames().value(i));
+    auto item = this->item(row, i);
 
-      if(columnName.isEmpty())
-	columnName = "N/A";
+    if (columnName.isEmpty())
+      columnName = "N/A";
 
-      tooltip.append("<b>");
-      tooltip.append(columnName);
-      tooltip.append(":</b> ");
+    tooltip.append("<b>");
+    tooltip.append(columnName);
+    tooltip.append(":</b> ");
 
-      if(item)
-	tooltip.append(item->text().trimmed());
-      else
-	tooltip.append("");
+    if (item)
+      tooltip.append(item->text().trimmed());
+    else
+      tooltip.append("");
 
-      tooltip.append("<br>");
-    }
+    tooltip.append("<br>");
+  }
 
-  if(tooltip.endsWith("<br>"))
+  if (tooltip.endsWith("<br>"))
     tooltip = tooltip.mid(0, tooltip.length() - 4);
 
   tooltip.append("</html>");
 
-  for(int i = 0; i < columnCount(); i++)
-    {
-      auto item = this->item(row, i);
+  for (int i = 0; i < columnCount(); i++)
+  {
+    auto item = this->item(row, i);
 
-      if(item)
-        item->setToolTip(tooltip);
-    }
+    if (item)
+      item->setToolTip(tooltip);
+  }
 }

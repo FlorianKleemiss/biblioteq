@@ -1,22 +1,20 @@
 #include "biblioteq.h"
 #include "biblioteq_hyperlinked_text_edit.h"
 
-biblioteq_hyperlinked_text_edit::biblioteq_hyperlinked_text_edit
-(QWidget *parent):QTextBrowser(parent)
+biblioteq_hyperlinked_text_edit::biblioteq_hyperlinked_text_edit(QWidget *parent) : QTextBrowser(parent)
 {
   connect(this,
-	  SIGNAL(anchorClicked(const QUrl &)),
-	  this,
-	  SLOT(slotAnchorClicked(const QUrl &)));
+          SIGNAL(anchorClicked(const QUrl &)),
+          this,
+          SLOT(slotAnchorClicked(const QUrl &)));
   qmain = nullptr;
 }
 
-void biblioteq_hyperlinked_text_edit::setMultipleLinks
-(const QString &searchType,
- const QString &searchField,
- const QString &str)
+void biblioteq_hyperlinked_text_edit::setMultipleLinks(const QString &searchType,
+                                                       const QString &searchField,
+                                                       const QString &str)
 {
-  if(!qmain)
+  if (!qmain)
     return;
 
   QString html("");
@@ -25,18 +23,16 @@ void biblioteq_hyperlinked_text_edit::setMultipleLinks
 
   tmplist = str.trimmed().split("\n");
 
-  for(i = 0; i < tmplist.size(); i++)
-    {
-      if(qmain->getDB().driverName() == "QSQLITE")
-	html += tmplist[i].trimmed();
-      else
-	html += QString
-	  ("<a href=\"%1?%2?%3\">" + tmplist[i] + "</a>").arg
-	  (searchType).arg(searchField).arg(tmplist[i].trimmed());
+  for (i = 0; i < tmplist.size(); i++)
+  {
+    if (qmain->getDB().driverName() == "QSQLITE")
+      html += tmplist[i].trimmed();
+    else
+      html += QString("<a href=\"%1?%2?%3\">" + tmplist[i] + "</a>").arg(searchType).arg(searchField).arg(tmplist[i].trimmed());
 
-      if(i != tmplist.size() - 1)
-	html += "<br>";
-    }
+    if (i != tmplist.size() - 1)
+      html += "<br>";
+  }
 
   setText(html);
 }
@@ -48,7 +44,7 @@ void biblioteq_hyperlinked_text_edit::setQMain(biblioteq *biblioteq)
 
 void biblioteq_hyperlinked_text_edit::slotAnchorClicked(const QUrl &url)
 {
-  if(!qmain)
+  if (!qmain)
     return;
 
   QString searchKey("");
@@ -59,15 +55,15 @@ void biblioteq_hyperlinked_text_edit::slotAnchorClicked(const QUrl &url)
 
   tmplist = path.split("?");
 
-  if(tmplist.size() >= 3)
-    {
-      searchKey = tmplist[1];
-      searchType = tmplist[0];
-      searchValue = tmplist[2];
+  if (tmplist.size() >= 3)
+  {
+    searchKey = tmplist[1];
+    searchType = tmplist[0];
+    searchValue = tmplist[2];
 
-      if(searchType == "book_search")
-	qmain->bookSearch(searchKey, searchValue);
-    }
+    if (searchType == "book_search")
+      qmain->bookSearch(searchKey, searchValue);
+  }
 
   tmplist.clear();
 }

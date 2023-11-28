@@ -5,28 +5,28 @@
 
 class biblioteq_marc
 {
- public:
+public:
   enum ITEM_TYPE
-    {
-     BOOK = 0,
-     MAGAZINE
-    };
+  {
+    BOOK = 0,
+    MAGAZINE
+  };
 
   enum PROTOCOL
-    {
-     SRU = 0,
-     Z3950
-    };
+  {
+    SRU = 0,
+    Z3950
+  };
 
   enum RECORD_SYNTAX
-    {
-     MARC21 = 0,
-     UNIMARC
-    };
+  {
+    MARC21 = 0,
+    UNIMARC
+  };
 
   biblioteq_marc(const ITEM_TYPE itemType,
-		 const PROTOCOL protocol,
-		 const RECORD_SYNTAX recordSyntax);
+                 const PROTOCOL protocol,
+                 const RECORD_SYNTAX recordSyntax);
   biblioteq_marc(void);
   ~biblioteq_marc();
 
@@ -101,11 +101,11 @@ class biblioteq_marc
   }
 
   void initialize(const ITEM_TYPE itemType,
-		  const PROTOCOL protocol,
-		  const RECORD_SYNTAX recordSyntax);
+                  const PROTOCOL protocol,
+                  const RECORD_SYNTAX recordSyntax);
   void parse(const QString &data);
 
- private:
+private:
   ITEM_TYPE m_itemType;
   PROTOCOL m_protocol;
   QDate m_publicationDate;
