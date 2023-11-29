@@ -165,8 +165,6 @@ int main(int argc, char *argv[])
 
 biblioteq::biblioteq(void) : QMainWindow()
 {
-  QMenu *menu1 = nullptr;
-
   ui.setupUi(this);
   ui.table->setQMain(this);
 
@@ -203,39 +201,11 @@ biblioteq::biblioteq(void) : QMainWindow()
   m_error_diag = new QMainWindow();
 #endif
   m_import = new biblioteq_import(this);
-  menu1 = new QMenu(this);
+  //menu1 = new QMenu(this);
   connect(QCoreApplication::instance(),
           SIGNAL(lastWindowClosed(void)),
           this,
           SLOT(slotLastWindowClosed(void)));
-  connect(menu1->addAction(tr("Reset ID Number")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Title")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Publication Date")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Publisher")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Categories")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Price")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Language")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Monetary Units")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Abstract")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Copies")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Location")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Keywords")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Availability")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-  connect(menu1->addAction(tr("Reset Case-Insensitive")),
-          SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
 #ifndef BIBLIOTEQ_LINKED_WITH_POPPLER
   ui.action_Open_PDF_File->setEnabled(false);
 #endif
@@ -481,8 +451,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(br.cancelButton, SIGNAL(clicked(void)),
           m_branch_diag, SLOT(close(void)));
 #endif
-  connect(ui.actionConfigureAdministratorPrivileges,
-          SIGNAL(triggered(void)), this, SLOT(slotShowAdminDialog(void)));
   connect(ui.action_New_SQLite_Database,
           SIGNAL(triggered(void)),
           this,
