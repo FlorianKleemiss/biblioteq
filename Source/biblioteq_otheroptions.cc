@@ -7,24 +7,12 @@ biblioteq_otheroptions::biblioteq_otheroptions(biblioteq *parent) : QMainWindow(
 {
   m_ui.setupUi(this);
   qmain = parent;
-  connect(m_ui.close,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotClose(void)));
-  connect(m_ui.main_window_canvas_background_color,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotSelectMainwindowCanvasBackgroundColor(void)));
-  connect(m_ui.save,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotSave(void)));
+  connect(m_ui.close, SIGNAL(clicked()), this, SLOT(slotClose()));
+  connect(m_ui.main_window_canvas_background_color, SIGNAL(clicked()), this, SLOT(slotSelectMainwindowCanvasBackgroundColor()));
+  connect(m_ui.save, SIGNAL(clicked()), this, SLOT(slotSave()));
 
   if (qmain)
-    connect(qmain,
-            SIGNAL(fontChanged(const QFont &)),
-            this,
-            SLOT(setGlobalFonts(const QFont &)));
+    connect(qmain, SIGNAL(fontChanged(QFont)), this, SLOT(setGlobalFonts(QFont)));
 
   m_ui.publication_date->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
   prepareSettings();
@@ -175,10 +163,7 @@ void biblioteq_otheroptions::prepareAvailability(void)
     auto spacer2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
     auto widget = new QWidget();
 
-    connect(pushButton,
-            SIGNAL(clicked(void)),
-            this,
-            SLOT(slotSelectAvailabilityColor(void)));
+    connect(pushButton, SIGNAL(clicked()), this, SLOT(slotSelectAvailabilityColor()));
     widget->setLayout(layout);
     layout->addSpacerItem(spacer1);
     layout->addWidget(pushButton);
@@ -441,14 +426,8 @@ void biblioteq_otheroptions::slotSelectMainwindowCanvasBackgroundColor(void)
 
   dialog.setCurrentColor(color);
   dialog.setOption(QColorDialog::DontUseNativeDialog);
-  connect(&dialog,
-          SIGNAL(currentColorChanged(const QColor &)),
-          this,
-          SIGNAL(mainWindowCanvasBackgroundColorPreview(const QColor &)));
-  connect(&dialog,
-          SIGNAL(currentColorChanged(const QColor &)),
-          this,
-          SLOT(slotPreviewCanvasBackgroundColor(const QColor &)));
+  connect(&dialog, SIGNAL(currentColorChanged(QColor)), this, SIGNAL(mainWindowCanvasBackgroundColorPreview(QColor)));
+  connect(&dialog, SIGNAL(currentColorChanged(QColor)), this, SLOT(slotPreviewCanvasBackgroundColor(QColor)));
 
   if (dialog.exec() == QDialog::Accepted)
   {

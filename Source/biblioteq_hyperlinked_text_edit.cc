@@ -3,10 +3,7 @@
 
 biblioteq_hyperlinked_text_edit::biblioteq_hyperlinked_text_edit(QWidget *parent) : QTextBrowser(parent)
 {
-  connect(this,
-          SIGNAL(anchorClicked(const QUrl &)),
-          this,
-          SLOT(slotAnchorClicked(const QUrl &)));
+  connect(this, SIGNAL(anchorClicked(QUrl)), this, SLOT(slotAnchorClicked(QUrl)));
   qmain = nullptr;
 }
 

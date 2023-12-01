@@ -17,22 +17,10 @@ biblioteq_files::biblioteq_files(biblioteq *biblioteq) : QMainWindow(biblioteq)
   QSettings settings;
 
   m_ui.pages->setValue(settings.value("filesPerPage", 500).toInt());
-  connect(m_ui.close,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotClose(void)));
-  connect(m_ui.export_files,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotExport(void)));
-  connect(m_ui.pages,
-          SIGNAL(valueChanged(int)),
-          this,
-          SLOT(slotPagesChanged(int)));
-  connect(m_ui.refresh,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotRefresh(void)));
+  connect(m_ui.close, SIGNAL(clicked()), this, SLOT(slotClose()));
+  connect(m_ui.export_files, SIGNAL(clicked()), this, SLOT(slotExport()));
+  connect(m_ui.pages, SIGNAL(valueChanged(int)), this, SLOT(slotPagesChanged(int)));
+  connect(m_ui.refresh, SIGNAL(clicked()), this, SLOT(slotRefresh()));
   statusBar()->showMessage(tr("0 Total Files"));
 }
 
@@ -59,17 +47,11 @@ void biblioteq_files::changeEvent(QEvent *event)
 
 void biblioteq_files::reset(void)
 {
-  disconnect(m_ui.page,
-             SIGNAL(currentIndexChanged(int)),
-             this,
-             SLOT(slotRefresh(void)));
+  disconnect(m_ui.page, SIGNAL(currentIndexChanged(int)), this, SLOT(slotRefresh()));
   m_ui.files_table->setRowCount(0);
   m_ui.page->clear();
   m_ui.page->addItem("1");
-  connect(m_ui.page,
-          SIGNAL(currentIndexChanged(int)),
-          this,
-          SLOT(slotRefresh(void)));
+  connect(m_ui.page, SIGNAL(currentIndexChanged(int)), this, SLOT(slotRefresh()));
   statusBar()->showMessage(tr("0 Total Files"));
 }
 
@@ -303,8 +285,5 @@ void biblioteq_files::slotRefresh(void)
     m_ui.files_table->sortByColumn(FILE, Qt::AscendingOrder);
   }
 
-  connect(m_ui.page,
-          SIGNAL(currentIndexChanged(int)),
-          this,
-          SLOT(slotRefresh(void)));
+  connect(m_ui.page, SIGNAL(currentIndexChanged(int)), this, SLOT(slotRefresh()));
 }

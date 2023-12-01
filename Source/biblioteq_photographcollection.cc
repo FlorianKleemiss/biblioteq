@@ -418,11 +418,7 @@ void biblioteq_photographcollection::loadPhotographFromItem(QGraphicsScene *scen
 
       if (view)
       {
-        connect(view,
-                SIGNAL(save(QImage, QString, qint64)),
-                this,
-                SLOT(slotSaveRotatedImage(QImage, QString, qint64)),
-                Qt::UniqueConnection);
+        connect(view, SIGNAL(save(QImage,QString,qint64)), this, SLOT(slotSaveRotatedImage(QImage,QString,qint64)), Qt::UniqueConnection);
         view->horizontalScrollBar()->setValue(0);
         view->setBestFit(percent == 0);
         view->setImage(image, format, item->data(0).toLongLong());

@@ -871,10 +871,7 @@ int biblioteq::populateTable(QSqlQuery &query,
 	ui.table->hide();
 	ui.table->show();
 #endif
-	connect(ui.table,
-			SIGNAL(itemChanged(QTableWidgetItem *)),
-			this,
-			SLOT(slotItemChanged(QTableWidgetItem *)));
+    connect(ui.table, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(slotItemChanged(QTableWidgetItem*)));
 	QApplication::restoreOverrideCursor();
 	return 0;
 }
@@ -1447,16 +1444,11 @@ void biblioteq::slotAllGo(void)
 		}
 
 		QString ESCAPE("");
-		auto UNACCENT(unaccent());
 
 		if (m_db.driverName() != "QSQLITE")
 			ESCAPE = "E";
 
-		QString idField("id");
 		str.append(")");
-
-		QString titleField("title");
-
 		str += " UNION ALL ";
 
 		searchstr += str;
@@ -1821,16 +1813,10 @@ void biblioteq::slotConnectDB(void)
 			ui.menuEntriesPerPage->actions().at(ui.menuEntriesPerPage->actions().size() - 1)->setEnabled(false);
 
 		ui.actionChangePassword->setEnabled(true);
-		disconnect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this,
-				   SLOT(slotViewDetails(void)));
-		disconnect(ui.graphicsView->scene(),
-				   SIGNAL(itemDoubleClicked(void)),
-				   this,
-				   SLOT(slotViewDetails(void)));
-		connect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this,
-				SLOT(slotViewDetails(void)));
-		connect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked(void)), this,
-				SLOT(slotViewDetails(void)));
+        disconnect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotViewDetails()));
+        disconnect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotViewDetails()));
+        connect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotViewDetails()));
+        connect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotViewDetails()));
 
 		/*
 		** Set the window's title.

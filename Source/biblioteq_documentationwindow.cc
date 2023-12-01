@@ -31,53 +31,17 @@ biblioteq_documentationwindow::
 void biblioteq_documentationwindow::connectSignals(void)
 {
 #ifdef Q_OS_ANDROID
-  connect(m_ui.action_Close,
-          SIGNAL(triggered(void)),
-          this,
-          SLOT(hide(void)),
-          Qt::UniqueConnection);
+  connect(m_ui.action_Close, SIGNAL(triggered()), this, SLOT(hide()), Qt::UniqueConnection);
 #else
-  connect(m_ui.action_Close,
-          SIGNAL(triggered(void)),
-          this,
-          SLOT(close(void)),
-          Qt::UniqueConnection);
+  connect(m_ui.action_Close, SIGNAL(triggered()), this, SLOT(close()), Qt::UniqueConnection);
 #endif
-  connect(m_ui.action_Find,
-          SIGNAL(triggered(void)),
-          this,
-          SLOT(slotFind(void)),
-          Qt::UniqueConnection);
-  connect(m_ui.action_Print,
-          SIGNAL(triggered(void)),
-          this,
-          SLOT(slotPrint(void)),
-          Qt::UniqueConnection);
-  connect(m_ui.find,
-          SIGNAL(returnPressed(void)),
-          this,
-          SLOT(slotFindText(void)),
-          Qt::UniqueConnection);
-  connect(m_ui.find,
-          SIGNAL(textEdited(const QString &)),
-          this,
-          SLOT(slotFindText(void)),
-          Qt::UniqueConnection);
-  connect(m_ui.next,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotFindText(void)),
-          Qt::UniqueConnection);
-  connect(m_ui.previous,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotFindText(void)),
-          Qt::UniqueConnection);
-  connect(m_ui.text,
-          SIGNAL(anchorClicked(const QUrl &)),
-          this,
-          SLOT(slotAnchorClicked(const QUrl &)),
-          Qt::UniqueConnection);
+  connect(m_ui.action_Find, SIGNAL(triggered()), this, SLOT(slotFind()), Qt::UniqueConnection);
+  connect(m_ui.action_Print, SIGNAL(triggered()), this, SLOT(slotPrint()), Qt::UniqueConnection);
+  connect(m_ui.find, SIGNAL(returnPressed()), this, SLOT(slotFindText()), Qt::UniqueConnection);
+  connect(m_ui.find, SIGNAL(textEdited(QString)), this, SLOT(slotFindText()), Qt::UniqueConnection);
+  connect(m_ui.next, SIGNAL(clicked()), this, SLOT(slotFindText()), Qt::UniqueConnection);
+  connect(m_ui.previous, SIGNAL(clicked()), this, SLOT(slotFindText()), Qt::UniqueConnection);
+  connect(m_ui.text, SIGNAL(anchorClicked(QUrl)), this, SLOT(slotAnchorClicked(QUrl)), Qt::UniqueConnection);
 }
 
 void biblioteq_documentationwindow::

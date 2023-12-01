@@ -12,7 +12,7 @@
 #include <QSqlRecord>
 #include <QStandardPaths>
 
-#include <limits>
+// #include <limits>
 
 QString biblioteq::homePath(void)
 {
@@ -493,7 +493,7 @@ int biblioteq::populateTable(const int search_type_arg,
 						"photograph_collection.myoid, "
 						"photograph_collection.image_scaled "
 						"ORDER BY "
-						"photograph_collection.title" +
+						"photograph_collection.id" +
 						limitStr + offsetStr;
 		}
 		else if (typefilter == "Journals" || typefilter == "Magazines")
@@ -712,7 +712,7 @@ int biblioteq::populateTable(const int search_type_arg,
 								 "photograph_collection.type, "
 								 "photograph_collection.myoid, "
 								 "photograph_collection.image_scaled "
-								 "ORDER BY photograph_collection.title");
+								 "ORDER BY photograph_collection.id");
 			}
 
 			if (searchstr.lastIndexOf("LIMIT") != -1)
@@ -829,6 +829,58 @@ int biblioteq::populateTable(const int search_type_arg,
 		ui.table->resetTable(dbUserName(), "Custom", m_roles);
 
 	qint64 currentPage = 0;
+	qint64 number = 0;
+	QSqlQuery count_query(m_db);
+	if (limit == -1 && m_db.driverName() == "QSQLITE")
+		count_query.setForwardOnly(true);
+
+	QString count_string("SELECT COUNT(DISTINCT id) FROM photograph_collection;");
+
+	if (typefilter == "Photograph Collections")
+	{
+		count_string = "SELECT COUNT(DISTINCT id) FROM photograph_collection;";
+	}
+	else if (typefilter == "Books")
+	{
+		count_string = "SELECT COUNT(DISTINCT id) FROM book;";
+	}
+	else if (typefilter == "Grey Literature")
+	{
+		count_string = "SELECT COUNT(DISTINCT document_id) FROM grey_literature;";
+	}
+	else if (typefilter == "Journals")
+	{
+		count_string = "SELECT COUNT(DISTINCT id) FROM journal;";
+	}
+	else if (typefilter == "Magazines")
+	{
+		count_string = "SELECT COUNT(DISTINCT id) FROM magazine;";
+	}
+	else if (typefilter == "All")
+	{
+		count_string = "SELECT SUM(count) FROM( "
+					   "SELECT COUNT(DISTINCT id) FROM book "
+					   "UNION ALL "
+					   "SELECT COUNT(DISTINCT id) FROM grey_literature "
+					   "UNION ALL "
+					   "SELECT COUNT(DISTINCT id) FROM journal "
+					   "UNION ALL "
+					   "SELECT COUNT(DISTINCT id) FROM magazine "
+					   "UNION ALL "
+					   "SELECT COUNT(DISTINCT id) FROM photograph_collection) AS counts;";
+	}
+
+	if (count_query.exec(count_string))
+	{
+		if (count_query.next())
+		{
+			number = count_query.value(0).toLongLong();
+		}
+	}
+	else
+	{
+		qDebug() << "Query failed: " << count_query.lastError();
+	}
 
 	if (limit <= 0)
 		currentPage = 1;
@@ -845,8 +897,10 @@ int biblioteq::populateTable(const int search_type_arg,
 
 	if (limit == -1)
 		m_pages = 1;
+	else if (number > 0)
+		m_pages = static_cast<qint64>(ceil(number / static_cast<double>(limit)));
 
-	if (m_pages == 1 && pagingType != NEW_PAGE)
+	if (m_pages == 1)
 		ui.pagesLabel->setText(tr("1"));
 	else if (m_pages >= 2 && m_pages <= 10)
 	{
@@ -1378,10 +1432,7 @@ int biblioteq::populateTable(const int search_type_arg,
 	ui.table->hide();
 	ui.table->show();
 #endif
-	connect(ui.table,
-			SIGNAL(itemChanged(QTableWidgetItem *)),
-			this,
-			SLOT(slotItemChanged(QTableWidgetItem *)));
+    connect(ui.table, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(slotItemChanged(QTableWidgetItem*)));
 	QApplication::restoreOverrideCursor();
 	return 0;
 }
@@ -1497,10 +1548,7 @@ void biblioteq::preparePhotographsPerPageMenu(void)
 		if (!action)
 			continue;
 
-		connect(action,
-				SIGNAL(triggered(void)),
-				this,
-				SLOT(slotPhotographsPerPageChanged(void)));
+        connect(action, SIGNAL(triggered()), this, SLOT(slotPhotographsPerPageChanged()));
 
 		if (i == 5)
 			action->setData(-1);
@@ -2483,10 +2531,7 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 
 		ui.setupUi(&dialog);
 		ui.text->setText(errors);
-		connect(ui.cancelButton,
-				SIGNAL(clicked(void)),
-				&dialog,
-				SLOT(close(void)));
+        connect(ui.cancelButton, SIGNAL(clicked()), &dialog, SLOT(close()));
 		dialog.setWindowTitle(tr("BiblioteQ: Upgrade SQLite Schema Results"));
 		QApplication::restoreOverrideCursor();
 		dialog.exec();

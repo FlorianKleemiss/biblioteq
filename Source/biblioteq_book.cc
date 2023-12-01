@@ -68,128 +68,60 @@ biblioteq_book::biblioteq_book(biblioteq *parentArg,
 #else
 	new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S),
 				  this,
-				  SLOT(slotGo(void)));
+                  SLOT(slotGo()));
 #endif
 	updateFont(QApplication::font(), qobject_cast<QWidget *>(this));
-	connect(id.attach_files,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotAttachFiles(void)));
-	connect(id.delete_files,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotDeleteFiles(void)));
-	connect(id.export_files,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotExportFiles(void)));
-	connect(id.files, SIGNAL(itemDoubleClicked(QTableWidgetItem *)),
-			this, SLOT(slotFilesDoubleClicked(QTableWidgetItem *)));
-	connect(id.okButton, SIGNAL(clicked(void)), this, SLOT(slotGo(void)));
-	connect(id.openLibraryQuery, SIGNAL(clicked(void)), this,
-			SLOT(slotOpenLibraryQuery(void)));
-	connect(id.parse_marc_tags, SIGNAL(clicked(void)), this,
-			SLOT(slotParseMarcTags(void)));
-	connect(id.sruQueryButton, SIGNAL(clicked(void)), this,
-			SLOT(slotSRUQuery(void)));
-	connect(id.z3950QueryButton, SIGNAL(clicked(void)), this,
-			SLOT(slotZ3950Query(void)));
-	connect(id.cancelButton, SIGNAL(clicked(void)), this,
-			SLOT(slotCancel(void)));
-	connect(id.copiesButton, SIGNAL(clicked()), this,
-			SLOT(slotPopulateCopiesEditor(void)));
-	connect(id.resetButton, SIGNAL(clicked(void)), this,
-			SLOT(slotReset(void)));
-	connect(id.isbn10to13, SIGNAL(clicked(void)), this,
-			SLOT(slotConvertISBN10to13(void)));
-	connect(id.isbn13to10, SIGNAL(clicked(void)), this,
-			SLOT(slotConvertISBN13to10(void)));
-	connect(id.isbnAvailableCheckBox,
-			SIGNAL(toggled(bool)),
-			id.sruQueryButton,
-			SLOT(setEnabled(bool)));
-	connect(id.isbnAvailableCheckBox,
-			SIGNAL(toggled(bool)),
-			id.z3950QueryButton,
-			SLOT(setEnabled(bool)));
-	connect(menu->addAction(tr("Reset Front Cover Image")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Back Cover Image")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset ISBN-10")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset ISBN-13")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Edition")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Authors")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Book Binding Type")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset LC Control Number")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Call Number")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Dewey Class Number")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Title")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Publication Date")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Publisher")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Place of Publication")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Categories")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Price")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Language")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Monetary Units")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Copies")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Location")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Originality")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Condition")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Abstract")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset MARC Tags")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Keywords")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Accession Number")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset URL")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(menu->addAction(tr("Reset Multi-Volume Set ISBN")),
-			SIGNAL(triggered(void)), this, SLOT(slotReset(void)));
-	connect(id.frontButton,
-			SIGNAL(clicked(void)), this, SLOT(slotSelectImage(void)));
-	connect(id.backButton,
-			SIGNAL(clicked(void)), this, SLOT(slotSelectImage(void)));
-	connect(id.dwnldFront, SIGNAL(clicked(void)), id.dwnldFront,
-			SLOT(showMenu(void)));
-	connect(id.dwnldBack, SIGNAL(clicked(void)), id.dwnldBack,
-			SLOT(showMenu(void)));
-	connect(qmain,
-			SIGNAL(fontChanged(const QFont &)),
-			this,
-			SLOT(setGlobalFonts(const QFont &)));
-	connect(this,
-			SIGNAL(openLibraryQueryError(const QString &)),
-			this,
-			SLOT(slotOpenLibraryQueryError(const QString &)),
-			Qt::QueuedConnection);
-	connect(this,
-			SIGNAL(sruQueryError(const QString &)),
-			this,
-			SLOT(slotSRUQueryError(const QString &)),
-			Qt::QueuedConnection);
+    connect(id.attach_files,SIGNAL(clicked()),this,SLOT(slotAttachFiles()));
+    connect(id.delete_files,SIGNAL(clicked()),this,SLOT(slotDeleteFiles()));
+    connect(id.export_files,SIGNAL(clicked()),this,SLOT(slotExportFiles()));
+    connect(id.files, SIGNAL(itemDoubleClicked(QTableWidgetItem *)),this, SLOT(slotFilesDoubleClicked(QTableWidgetItem *)));
+    connect(id.okButton, SIGNAL(clicked()), this, SLOT(slotGo()));
+    connect(id.openLibraryQuery, SIGNAL(clicked()), this,SLOT(slotOpenLibraryQuery()));
+    connect(id.parse_marc_tags, SIGNAL(clicked()), this,SLOT(slotParseMarcTags()));
+    connect(id.sruQueryButton, SIGNAL(clicked()), this,SLOT(slotSRUQuery()));
+    connect(id.z3950QueryButton, SIGNAL(clicked()), this,SLOT(slotZ3950Query()));
+    connect(id.cancelButton, SIGNAL(clicked()), this,SLOT(slotCancel()));
+    connect(id.copiesButton, SIGNAL(clicked()), this,SLOT(slotPopulateCopiesEditor()));
+    connect(id.resetButton, SIGNAL(clicked()), this,SLOT(slotReset()));
+    connect(id.isbn10to13, SIGNAL(clicked()), this,SLOT(slotConvertISBN10to13()));
+    connect(id.isbn13to10, SIGNAL(clicked()), this,SLOT(slotConvertISBN13to10()));
+    connect(id.isbnAvailableCheckBox,SIGNAL(toggled(bool)),	id.sruQueryButton,SLOT(setEnabled(bool)));
+    connect(id.isbnAvailableCheckBox,SIGNAL(toggled(bool)),	id.z3950QueryButton,SLOT(setEnabled(bool)));
+    connect(menu->addAction(tr("Reset Front Cover Image")),	SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Back Cover Image")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset ISBN-10")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset ISBN-13")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Edition")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Authors")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Book Binding Type")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset LC Control Number")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Call Number")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Dewey Class Number")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Title")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Publication Date")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Publisher")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Place of Publication")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Categories")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Price")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Language")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Monetary Units")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Copies")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Location")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Originality")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Condition")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Abstract")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset MARC Tags")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Keywords")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Accession Number")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset URL")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(menu->addAction(tr("Reset Multi-Volume Set ISBN")),SIGNAL(triggered()), this, SLOT(slotReset()));
+    connect(id.frontButton,SIGNAL(clicked()), this, SLOT(slotSelectImage()));
+    connect(id.backButton,SIGNAL(clicked()), this, SLOT(slotSelectImage()));
+    connect(id.dwnldFront, SIGNAL(clicked()), id.dwnldFront,SLOT(showMenu()));
+    connect(id.dwnldBack, SIGNAL(clicked()), id.dwnldBack,SLOT(showMenu()));
+    connect(qmain,SIGNAL(fontChanged(QFont)),this,SLOT(setGlobalFonts(QFont)));
+    connect(this,SIGNAL(openLibraryQueryError(QString)),this,SLOT(slotOpenLibraryQueryError(QString)),Qt::QueuedConnection);
+    connect(this,SIGNAL(sruQueryError(QString)),this,SLOT(slotSRUQueryError(QString)),Qt::QueuedConnection);
 	id.resetButton->setMenu(menu);
 
 	if (menu->actions().size() >= 4)
@@ -224,16 +156,6 @@ biblioteq_book::biblioteq_book(biblioteq *parentArg,
 	if (!errorstr.isEmpty())
 		qmain->addError(QString(tr("Database Error")),
 						QString(tr("Unable to retrieve the languages.")),
-						errorstr, __FILE__, __LINE__);
-
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	id.monetary_units->addItems(biblioteq_misc_functions::getMonetaryUnits(qmain->getDB(),
-																		   errorstr));
-	QApplication::restoreOverrideCursor();
-
-	if (!errorstr.isEmpty())
-		qmain->addError(QString(tr("Database Error")),
-						QString(tr("Unable to retrieve the monetary units.")),
 						errorstr, __FILE__, __LINE__);
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -326,38 +248,23 @@ biblioteq_book::biblioteq_book(biblioteq *parentArg,
 			id.dwnldBack->addAction(action);
 		}
 
-		connect(action,
-				SIGNAL(triggered(void)),
-				this,
-				SLOT(slotDownloadImage(void)));
+        connect(action,	SIGNAL(triggered()),this,SLOT(slotDownloadImage()));
 	}
 
 	action = new QAction(tr("All..."), this);
-	connect(action,
-			SIGNAL(triggered(void)),
-			this,
-			SLOT(slotPrint(void)));
+    connect(action,SIGNAL(triggered()),this,SLOT(slotPrint()));
 	id.printButton->addAction(action);
 	action = new QAction(tr("Author, Title, Dewey Class Number..."), this);
-	connect(action,
-			SIGNAL(triggered(void)),
-			this,
-			SLOT(slotPrintAuthorTitleDewey(void)));
+    connect(action,SIGNAL(triggered()),this,SLOT(slotPrintAuthorTitleDewey()));
 	id.printButton->addAction(action);
 	action = new QAction(tr("Call Number, Dewey Class Number..."), this);
-	connect(action,
-			SIGNAL(triggered(void)),
-			this,
-			SLOT(slotPrintCallDewey(void)));
+    connect(action,SIGNAL(triggered()),this,SLOT(slotPrintCallDewey()));
 	id.printButton->addAction(action);
 
 	if (id.printButton->actions().isEmpty())
 		id.printButton->setPopupMode(QToolButton::MenuButtonPopup);
 
-	connect(id.printButton,
-			SIGNAL(clicked(void)),
-			id.printButton,
-			SLOT(showMenu(void)));
+    connect(id.printButton,SIGNAL(clicked()),id.printButton,SLOT(showMenu()));
 	found = false;
 	list = qmain->getZ3950Names();
 #ifndef BIBLIOTEQ_LINKED_WITH_YAZ
@@ -452,14 +359,10 @@ biblioteq_item_working_dialog *biblioteq_book::createImageDownloadDialog(const Q
 	dialog->show();
 	dialog->update();
 	dialog->repaint();
-	connect(dialog, SIGNAL(canceled(void)), dialog,
-			SLOT(deleteLater(void)));
-	connect(dialog, SIGNAL(rejected(void)), dialog,
-			SLOT(deleteLater(void)));
-	connect(dialog, SIGNAL(canceled(void)), this,
-			SLOT(slotCancelImageDownload(void)));
-	connect(dialog, SIGNAL(rejected(void)), this,
-			SLOT(slotCancelImageDownload(void)));
+    connect(dialog, SIGNAL(canceled()), dialog,	SLOT(deleteLater()));
+    connect(dialog, SIGNAL(rejected()), dialog,	SLOT(deleteLater()));
+    connect(dialog, SIGNAL(canceled()), this,SLOT(slotCancelImageDownload()));
+    connect(dialog, SIGNAL(rejected()), this,SLOT(slotCancelImageDownload()));
 	return dialog;
 }
 
@@ -559,14 +462,8 @@ void biblioteq_book::createOpenLibraryDialog(void)
 	m_openLibraryWorking->setMinimum(0);
 	m_openLibraryWorking->setModal(true);
 	m_openLibraryWorking->setWindowTitle(tr("BiblioteQ: Open Library Data Retrieval"));
-	connect(m_openLibraryWorking,
-			SIGNAL(canceled(void)),
-			this,
-			SLOT(slotOpenLibraryCanceled(void)));
-	connect(m_openLibraryWorking,
-			SIGNAL(rejected(void)),
-			this,
-			SLOT(slotOpenLibraryCanceled(void)));
+    connect(m_openLibraryWorking,SIGNAL(canceled()),this,SLOT(slotOpenLibraryCanceled()));
+    connect(m_openLibraryWorking,SIGNAL(rejected()),this,SLOT(slotOpenLibraryCanceled()));
 }
 
 void biblioteq_book::createSRUDialog(void)
@@ -581,14 +478,8 @@ void biblioteq_book::createSRUDialog(void)
 	m_sruWorking->setMinimum(0);
 	m_sruWorking->setModal(true);
 	m_sruWorking->setWindowTitle(tr("BiblioteQ: SRU Data Retrieval"));
-	connect(m_sruWorking,
-			SIGNAL(canceled(void)),
-			this,
-			SLOT(slotSRUCanceled(void)));
-	connect(m_sruWorking,
-			SIGNAL(rejected(void)),
-			this,
-			SLOT(slotSRUCanceled(void)));
+    connect(m_sruWorking,SIGNAL(canceled()),this,SLOT(slotSRUCanceled()));
+    connect(m_sruWorking,SIGNAL(rejected()),this,SLOT(slotSRUCanceled()));
 }
 
 void biblioteq_book::downloadFinished(void)
@@ -2012,12 +1903,10 @@ void biblioteq_book::slotDownloadImage(void)
 				if (reply)
 					reply->deleteLater();
 
-				connect(m_imageManager,
-						SIGNAL(proxyAuthenticationRequired(const QNetworkProxy &,
-														   QAuthenticator *)),
-						this,
-						SLOT(slotProxyAuthenticationRequired(const QNetworkProxy &,
-															 QAuthenticator *)),
+                connect(m_imageManager,SIGNAL(proxyAuthenticationRequired(QNetworkProxy,
+                                                        QAuthenticator *)),
+                        this,SLOT(slotProxyAuthenticationRequired(QNetworkProxy,
+                                                        QAuthenticator *)),
 						Qt::UniqueConnection);
 			}
 
@@ -2123,12 +2012,10 @@ void biblioteq_book::slotDownloadImage(void)
 				if (reply)
 					reply->deleteLater();
 
-				connect(m_imageManager,
-						SIGNAL(proxyAuthenticationRequired(const QNetworkProxy &,
-														   QAuthenticator *)),
-						this,
-						SLOT(slotProxyAuthenticationRequired(const QNetworkProxy &,
-															 QAuthenticator *)),
+                connect(m_imageManager,	SIGNAL(proxyAuthenticationRequired(QNetworkProxy,
+                                                        QAuthenticator *)),
+                        this, SLOT(slotProxyAuthenticationRequired(QNetworkProxy,
+                                                        QAuthenticator *)),
 						Qt::UniqueConnection);
 			}
 
@@ -2196,14 +2083,10 @@ void biblioteq_book::slotDownloadImage(void)
 		return;
 	}
 
-	connect(reply, SIGNAL(readyRead(void)),
-			this, SLOT(slotReadyRead(void)));
-	connect(reply, SIGNAL(downloadProgress(qint64, qint64)),
-			this, SLOT(slotDataTransferProgress(qint64, qint64)));
-	connect(reply, SIGNAL(finished(void)),
-			dialog, SLOT(deleteLater(void)));
-	connect(reply, SIGNAL(finished(void)),
-			this, SLOT(slotDownloadFinished(void)));
+    connect(reply, SIGNAL(readyRead()),	this, SLOT(slotReadyRead()));
+    connect(reply, SIGNAL(downloadProgress(qint64, qint64)), this, SLOT(slotDataTransferProgress(qint64, qint64)));
+    connect(reply, SIGNAL(finished()), dialog, SLOT(deleteLater()));
+    connect(reply, SIGNAL(finished()), this, SLOT(slotDownloadFinished()));
 	reply->ignoreSslErrors();
 	QApplication::processEvents();
 }
@@ -3009,15 +2892,6 @@ void biblioteq_book::slotGo(void)
 							qmain->getUI().table->item(m_index->row(), i)->setText(id.condition->currentText().trimmed());
 						else if (names.at(i) == "Accession Number")
 							qmain->getUI().table->item(m_index->row(), i)->setText(id.accession_number->text());
-						else if (names.at(i) == "Availability")
-						{
-							qmain->getUI().table->item(m_index->row(), i)->setText(biblioteq_misc_functions::getAvailability(m_oid, qmain->getDB(), "Book", errorstr));
-
-							if (!errorstr.isEmpty())
-								qmain->addError(QString(tr("Database Error")),
-												QString(tr("Retrieving availability.")),
-												errorstr, __FILE__, __LINE__);
-						}
 					}
 
 					if (imageColumn == -1)
@@ -3430,10 +3304,10 @@ void biblioteq_book::slotOpenLibraryQuery(void)
 				reply->deleteLater();
 
 			connect(m_openLibraryManager,
-					SIGNAL(proxyAuthenticationRequired(const QNetworkProxy &,
+                    SIGNAL(proxyAuthenticationRequired(QNetworkProxy,
 													   QAuthenticator *)),
 					this,
-					SLOT(slotProxyAuthenticationRequired(const QNetworkProxy &,
+                    SLOT(slotProxyAuthenticationRequired(QNetworkProxy,
 														 QAuthenticator *)),
 					Qt::UniqueConnection);
 		}
@@ -3489,23 +3363,14 @@ void biblioteq_book::slotOpenLibraryQuery(void)
 	if (reply)
 	{
 		m_openLibraryResults.clear();
-		connect(reply, SIGNAL(readyRead(void)),
-				this, SLOT(slotOpenLibraryReadyRead(void)));
-		connect(reply, SIGNAL(finished(void)),
-				this, SLOT(slotOpenLibraryDownloadFinished(void)));
+        connect(reply, SIGNAL(readyRead()),	this, SLOT(slotOpenLibraryReadyRead()));
+        connect(reply, SIGNAL(finished()), this, SLOT(slotOpenLibraryDownloadFinished()));
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-		connect(reply,
-				SIGNAL(error(QNetworkReply::NetworkError)),
-				this,
-				SLOT(slotOpenLibraryError(QNetworkReply::NetworkError)));
+        connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotOpenLibraryError(QNetworkReply::NetworkError)));
 #else
-		connect(reply,
-				SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-				this,
-				SLOT(slotOpenLibraryError(QNetworkReply::NetworkError)));
+        connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)), this, SLOT(slotOpenLibraryError(QNetworkReply::NetworkError)));
 #endif
-		connect(reply, SIGNAL(sslErrors(const QList<QSslError> &)),
-				this, SLOT(slotOpenLibrarySslErrors(const QList<QSslError> &)));
+        connect(reply, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(slotOpenLibrarySslErrors(QList<QSslError>)));
 	}
 	else
 	{
@@ -4217,10 +4082,10 @@ void biblioteq_book::slotSRUQuery(void)
 				reply->deleteLater();
 
 			connect(m_sruManager,
-					SIGNAL(proxyAuthenticationRequired(const QNetworkProxy &,
+                    SIGNAL(proxyAuthenticationRequired(QNetworkProxy,
 													   QAuthenticator *)),
 					this,
-					SLOT(slotProxyAuthenticationRequired(const QNetworkProxy &,
+                    SLOT(slotProxyAuthenticationRequired(QNetworkProxy,
 														 QAuthenticator *)),
 					Qt::UniqueConnection);
 		}
@@ -4276,23 +4141,14 @@ void biblioteq_book::slotSRUQuery(void)
 	if (reply)
 	{
 		m_sruResults.clear();
-		connect(reply, SIGNAL(readyRead(void)),
-				this, SLOT(slotSRUReadyRead(void)));
-		connect(reply, SIGNAL(finished(void)),
-				this, SLOT(slotSRUDownloadFinished(void)));
+        connect(reply, SIGNAL(readyRead()), this, SLOT(slotSRUReadyRead()));
+        connect(reply, SIGNAL(finished()), this, SLOT(slotSRUDownloadFinished()));
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-		connect(reply,
-				SIGNAL(error(QNetworkReply::NetworkError)),
-				this,
-				SLOT(slotSRUError(QNetworkReply::NetworkError)));
+        connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), this, SLOT(slotSRUError(QNetworkReply::NetworkError)));
 #else
-		connect(reply,
-				SIGNAL(errorOccurred(QNetworkReply::NetworkError)),
-				this,
-				SLOT(slotSRUError(QNetworkReply::NetworkError)));
+        connect(reply, SIGNAL(errorOccurred(QNetworkReply::NetworkError)), this, SLOT(slotSRUError(QNetworkReply::NetworkError)));
 #endif
-		connect(reply, SIGNAL(sslErrors(const QList<QSslError> &)),
-				this, SLOT(slotSRUSslErrors(const QList<QSslError> &)));
+        connect(reply, SIGNAL(sslErrors(QList<QSslError>)), this, SLOT(slotSRUSslErrors(QList<QSslError>)));
 	}
 	else
 	{
@@ -4421,9 +4277,6 @@ void biblioteq_book::slotZ3950Query(void)
 	QString errorstr = "";
 	QString etype = "";
 	QString searchstr = "";
-	QString str = "";
-	QStringList list;
-	QStringList tmplist;
 	int i = 0;
 
 	if (!(id.id->text().remove('-').trimmed().length() == 10 ||

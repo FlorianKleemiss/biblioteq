@@ -11,42 +11,15 @@ biblioteq_import::biblioteq_import(biblioteq *parent) : QMainWindow(parent)
 {
 	m_qmain = parent;
 	m_ui.setupUi(this);
-	connect(m_qmain,
-			SIGNAL(fontChanged(const QFont &)),
-			this,
-			SLOT(slotSetGlobalFonts(const QFont &)));
-	connect(m_ui.add_row,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotAddRow(void)));
-	connect(m_ui.close,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotClose(void)));
-	connect(m_ui.delete_row,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotDeleteRow(void)));
-	connect(m_ui.import_csv,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotImport(void)));
-	connect(m_ui.refresh_preview,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotRefreshPreview(void)));
-	connect(m_ui.reset,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotReset(void)));
-	connect(m_ui.select_csv_file,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotSelectCSVFile(void)));
-	connect(m_ui.templates,
-			SIGNAL(currentIndexChanged(int)),
-			this,
-			SLOT(slotTemplates(int)));
+    connect(m_qmain, SIGNAL(fontChanged(QFont)), this, SLOT(slotSetGlobalFonts(QFont)));
+    connect(m_ui.add_row, SIGNAL(clicked()), this, SLOT(slotAddRow()));
+    connect(m_ui.close, SIGNAL(clicked()), this, SLOT(slotClose()));
+    connect(m_ui.delete_row, SIGNAL(clicked()), this, SLOT(slotDeleteRow()));
+    connect(m_ui.import_csv, SIGNAL(clicked()), this, SLOT(slotImport()));
+    connect(m_ui.refresh_preview, SIGNAL(clicked()), this, SLOT(slotRefreshPreview()));
+    connect(m_ui.reset, SIGNAL(clicked()), this, SLOT(slotReset()));
+    connect(m_ui.select_csv_file, SIGNAL(clicked()), this, SLOT(slotSelectCSVFile()));
+    connect(m_ui.templates, SIGNAL(currentIndexChanged(int)), this, SLOT(slotTemplates(int)));
 }
 
 void biblioteq_import::changeEvent(QEvent *event)
@@ -868,10 +841,7 @@ void biblioteq_import::slotImport(void)
 
 		ui.setupUi(&dialog);
 		ui.text->setPlainText(errorstr.trimmed());
-		connect(ui.cancelButton,
-				SIGNAL(clicked(void)),
-				&dialog,
-				SLOT(close(void)));
+        connect(ui.cancelButton, SIGNAL(clicked()), &dialog, SLOT(close()));
 		dialog.setWindowTitle(tr("BiblioteQ: Import Results"));
 		QApplication::restoreOverrideCursor();
 		dialog.exec();

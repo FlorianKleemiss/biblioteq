@@ -223,16 +223,10 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
 
 	if (!m_showForLending)
 	{
-		disconnect(m_cb.deleteButton, SIGNAL(clicked(void)));
-		disconnect(m_cb.saveButton, SIGNAL(clicked(void)));
-		connect(m_cb.deleteButton,
-				SIGNAL(clicked(void)),
-				this,
-				SLOT(slotDeleteCopy(void)));
-		connect(m_cb.saveButton,
-				SIGNAL(clicked(void)),
-				this,
-				SLOT(slotSaveCopies(void)));
+        disconnect(m_cb.deleteButton, SIGNAL(clicked()));
+        disconnect(m_cb.saveButton, SIGNAL(clicked()));
+        connect(m_cb.deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteCopy()));
+        connect(m_cb.saveButton, SIGNAL(clicked()), this, SLOT(slotSaveCopies()));
 		m_cb.saveButton->setText(tr("&Save"));
 	}
 	else
@@ -259,18 +253,11 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
 
 		m_cb.dueDate->setMinimumDate(duedate);
 		m_cb.saveButton->setText(tr("&Reserve"));
-		disconnect(m_cb.saveButton, SIGNAL(clicked(void)));
-		// connect(m_cb.saveButton,
-		//     SIGNAL(clicked(void)),
-		//     this,
-		//     SLOT(slotCheckoutCopy(void)));
+        disconnect(m_cb.saveButton, SIGNAL(clicked()));
 	}
 
-	disconnect(m_cb.cancelButton, SIGNAL(clicked(void)));
-	connect(m_cb.cancelButton,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotCloseCopyEditor(void)));
+    disconnect(m_cb.cancelButton, SIGNAL(clicked()));
+    connect(m_cb.cancelButton, SIGNAL(clicked()), this, SLOT(slotCloseCopyEditor()));
 
 	QProgressDialog progress1(this);
 	QProgressDialog progress2(this);
@@ -575,7 +562,6 @@ void biblioteq_copy_editor_book::slotDeleteCopy(void)
 
 	QString copyid = "";
 	QString errorstr = "";
-	auto isCheckedOut = false;
 	auto row = m_cb.table->currentRow();
 
 	if (row < 0)
@@ -597,33 +583,7 @@ void biblioteq_copy_editor_book::slotDeleteCopy(void)
 	}
 
 	copyid = biblioteq_misc_functions::getColumnString(m_cb.table, row, m_columnHeaderIndexes.indexOf("Barcode"));
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	isCheckedOut = biblioteq_misc_functions::isCopyCheckedOut(qmain->getDB(),
-															  copyid,
-															  m_ioid,
-															  m_itemType,
-															  errorstr);
-	QApplication::restoreOverrideCursor();
-
-	if (isCheckedOut)
-	{
-		if (m_cb.table->item(row, BARCODE) != nullptr)
-			m_cb.table->item(row, BARCODE)->setFlags(Qt::NoItemFlags);
-
-		if (m_cb.table->item(row, AVAILABILITY) != nullptr)
-		{
-			m_cb.table->item(row, AVAILABILITY)->setFlags(Qt::NoItemFlags);
-			m_cb.table->item(row, AVAILABILITY)->setText("0");
-		}
-
-		QMessageBox::critical(this,
-							  tr("BiblioteQ: User Error"),
-							  tr("It appears that the copy you selected to "
-								 "delete is reserved."));
-		QApplication::processEvents();
-		return;
-	}
-	else if (errorstr.length() > 0)
+    if (errorstr.length() > 0)
 	{
 		qmain->addError(tr("Database Error"),
 						tr("Unable to determine the reservation "
@@ -787,40 +747,13 @@ success_label:
 		return;
 	}
 
-	auto availability = biblioteq_misc_functions::getAvailability(m_ioid, qmain->getDB(), m_itemType, errorstr);
-	auto reserved = biblioteq_misc_functions::getTotalReserved(qmain->getDB(), m_itemType, m_ioid);
-
 	QApplication::restoreOverrideCursor();
 
-	if (!availability.isEmpty())
-		biblioteq_misc_functions::updateColumn(qmain->getUI().table,
-											   m_bitem->getRow(),
-											   qmain->getUI().table->columnNumber("Availability"),
-											   availability);
-
-	if (qmain->availabilityColors())
-	{
-		QColor color(Qt::white);
-
-		if (availability.toInt() > 0)
-			color = qmain->availabilityColor(m_itemType);
-
-		biblioteq_misc_functions::updateColumnColor(qmain->getUI().table,
-													m_bitem->getRow(),
-													qmain->getUI().table->columnNumber("Availability"),
-													color);
-	}
 
 	biblioteq_misc_functions::updateColumn(qmain->getUI().table,
 										   m_bitem->getRow(),
 										   qmain->getUI().table->columnNumber("Quantity"),
 										   QString::number(m_copies.size()));
-
-	if (!reserved.isEmpty())
-		biblioteq_misc_functions::updateColumn(qmain->getUI().table,
-											   m_bitem->getRow(),
-											   qmain->getUI().table->columnNumber("Total Reserved"),
-											   reserved);
 
 	if (m_bitem)
 	{

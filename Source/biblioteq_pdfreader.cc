@@ -37,68 +37,23 @@ biblioteq_pdfreader::biblioteq_pdfreader(QWidget *parent) : QMainWindow(parent)
   m_ui.splitter->setSizes(QList<int>() << 100 << std::numeric_limits<int>::max());
   m_ui.splitter->setStretchFactor(0, 0);
   m_ui.splitter->setStretchFactor(1, 1);
-  connect(m_ui.action_Close,
-          SIGNAL(triggered(void)),
-          this,
-          SLOT(slotClose(void)));
-  connect(m_ui.action_Contents,
-          SIGNAL(triggered(bool)),
-          this,
-          SLOT(slotShowContents(bool)));
-  connect(m_ui.action_Find,
-          SIGNAL(triggered(void)),
-          m_ui.find,
-          SLOT(selectAll(void)));
-  connect(m_ui.action_Find,
-          SIGNAL(triggered(void)),
-          m_ui.find,
-          SLOT(setFocus(void)));
-  connect(m_ui.action_Print,
-          SIGNAL(triggered(void)),
-          this,
-          SLOT(slotPrint(void)));
-  connect(m_ui.action_Print_Preview,
-          SIGNAL(triggered(void)),
-          this,
-          SLOT(slotPrintPreview(void)));
-  connect(m_ui.action_Save_As,
-          SIGNAL(triggered(void)),
-          this,
-          SLOT(slotSaveAs(void)));
-  connect(m_ui.contents,
-          SIGNAL(itemDoubleClicked(QListWidgetItem *)),
-          this,
-          SLOT(slotContentsDoubleClicked(QListWidgetItem *)));
-  connect(m_ui.find,
-          SIGNAL(returnPressed(void)),
-          this,
-          SLOT(slotSearchNext(void)));
-  connect(m_ui.find_next,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotSearchNext(void)));
-  connect(m_ui.find_previous,
-          SIGNAL(clicked(void)),
-          this,
-          SLOT(slotSearchPrevious(void)));
-  connect(m_ui.page,
-          SIGNAL(valueChanged(int)),
-          this,
-          SLOT(slotShowPage(int)));
-  connect(m_ui.scrollArea->verticalScrollBar(),
-          SIGNAL(actionTriggered(int)),
-          this,
-          SLOT(slotSliderTriggerAction(int)));
-  connect(m_ui.view_size,
-          SIGNAL(currentIndexChanged(int)),
-          this,
-          SLOT(slotChangePageViewSize(int)));
+  connect(m_ui.action_Close, SIGNAL(triggered()), this, SLOT(slotClose()));
+  connect(m_ui.action_Contents, SIGNAL(triggered(bool)), this, SLOT(slotShowContents(bool)));
+  connect(m_ui.action_Find, SIGNAL(triggered()), m_ui.find, SLOT(selectAll()));
+  connect(m_ui.action_Find, SIGNAL(triggered()), m_ui.find, SLOT(setFocus()));
+  connect(m_ui.action_Print, SIGNAL(triggered()), this, SLOT(slotPrint()));
+  connect(m_ui.action_Print_Preview, SIGNAL(triggered()), this, SLOT(slotPrintPreview()));
+  connect(m_ui.action_Save_As, SIGNAL(triggered()), this, SLOT(slotSaveAs()));
+  connect(m_ui.contents, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(slotContentsDoubleClicked(QListWidgetItem*)));
+  connect(m_ui.find, SIGNAL(returnPressed()), this, SLOT(slotSearchNext()));
+  connect(m_ui.find_next, SIGNAL(clicked()), this, SLOT(slotSearchNext()));
+  connect(m_ui.find_previous, SIGNAL(clicked()), this, SLOT(slotSearchPrevious()));
+  connect(m_ui.page, SIGNAL(valueChanged(int)), this, SLOT(slotShowPage(int)));
+  connect(m_ui.scrollArea->verticalScrollBar(), SIGNAL(actionTriggered(int)), this, SLOT(slotSliderTriggerAction(int)));
+  connect(m_ui.view_size, SIGNAL(currentIndexChanged(int)), this, SLOT(slotChangePageViewSize(int)));
 
   if (parent)
-    connect(parent,
-            SIGNAL(fontChanged(const QFont &)),
-            this,
-            SLOT(setGlobalFonts(const QFont &)));
+    connect(parent, SIGNAL(fontChanged(QFont)), this, SLOT(setGlobalFonts(QFont)));
 
   biblioteq_misc_functions::center(this, qobject_cast<QMainWindow *>(parent));
   m_ui.contents->setVisible(false);

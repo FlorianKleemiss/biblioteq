@@ -13,30 +13,12 @@ biblioteq_sqlite_merge_databases::biblioteq_sqlite_merge_databases(biblioteq *pa
 	m_ui.setupUi(this);
 	m_ui.splitter->setStretchFactor(0, 1);
 	m_ui.splitter->setStretchFactor(1, 0);
-	connect(m_qmain,
-			SIGNAL(fontChanged(const QFont &)),
-			this,
-			SLOT(slotSetGlobalFonts(const QFont &)));
-	connect(m_ui.add_row,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotAddRow(void)));
-	connect(m_ui.close,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(close(void)));
-	connect(m_ui.delete_row,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotDeleteRow(void)));
-	connect(m_ui.merge,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotMerge(void)));
-	connect(m_ui.reset,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotReset(void)));
+    connect(m_qmain, SIGNAL(fontChanged(QFont)), this, SLOT(slotSetGlobalFonts(QFont)));
+    connect(m_ui.add_row, SIGNAL(clicked()), this, SLOT(slotAddRow()));
+    connect(m_ui.close, SIGNAL(clicked()), this, SLOT(close()));
+    connect(m_ui.delete_row, SIGNAL(clicked()), this, SLOT(slotDeleteRow()));
+    connect(m_ui.merge, SIGNAL(clicked()), this, SLOT(slotMerge()));
+    connect(m_ui.reset, SIGNAL(clicked()), this, SLOT(slotReset()));
 }
 
 void biblioteq_sqlite_merge_databases::changeEvent(QEvent *event)
@@ -78,10 +60,7 @@ void biblioteq_sqlite_merge_databases::slotAddRow(void)
 		{
 			auto pushButton = new QPushButton(tr("Select SQLite Database"));
 
-			connect(pushButton,
-					SIGNAL(clicked(void)),
-					this,
-					SLOT(slotSelect(void)));
+            connect(pushButton,	SIGNAL(clicked()), this, SLOT(slotSelect()));
 			m_ui.databases->setCellWidget(row, i, pushButton);
 			break;
 		}

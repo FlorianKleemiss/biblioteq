@@ -50,12 +50,9 @@ biblioteq_z3950results::biblioteq_z3950results(QWidget *parent,
 	}
 
 	list.clear();
-	connect(m_ui.list, SIGNAL(currentRowChanged(int)), this,
-			SLOT(slotUpdateQueryText(void)));
-	connect(m_ui.okButton, SIGNAL(clicked(void)), this,
-			SLOT(slotSelectRecord(void)));
-	connect(m_ui.cancelButton, SIGNAL(clicked(void)), this,
-			SLOT(slotClose(void)));
+    connect(m_ui.list, SIGNAL(currentRowChanged(int)), this, SLOT(slotUpdateQueryText()));
+    connect(m_ui.okButton, SIGNAL(clicked()), this,	SLOT(slotSelectRecord()));
+    connect(m_ui.cancelButton, SIGNAL(clicked()), this,	SLOT(slotClose()));
 
 	if (row == -1)
 		row = 0;

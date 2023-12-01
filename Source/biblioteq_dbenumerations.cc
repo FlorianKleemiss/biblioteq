@@ -6,64 +6,21 @@ biblioteq_dbenumerations::biblioteq_dbenumerations(biblioteq *parent) : QMainWin
 {
 	m_ui.setupUi(this);
 	qmain = parent;
-	connect(m_ui.addBookBinding,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotAdd(void)));
-	connect(m_ui.addGreyLiteratureType,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotAdd(void)));
-	connect(m_ui.addLanguage,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotAdd(void)));
-	connect(m_ui.addLocation,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotAdd(void)));
-	connect(m_ui.addMonetaryUnit,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotAdd(void)));
-	connect(m_ui.cancelButton,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotClose(void)));
-	connect(m_ui.reloadButton,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotReload(void)));
-	connect(m_ui.removeBookBinding,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotRemove(void)));
-	connect(m_ui.removeGreyLiteratureType,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotRemove(void)));
-	connect(m_ui.removeLanguage,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotRemove(void)));
-	connect(m_ui.removeLocation,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotRemove(void)));
-	connect(m_ui.removeMonetaryUnit,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotRemove(void)));
-	connect(m_ui.saveButton,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotSave(void)));
+    connect(m_ui.addBookBinding, SIGNAL(clicked()), this, SLOT(slotAdd()));
+    connect(m_ui.addGreyLiteratureType, SIGNAL(clicked()), this, SLOT(slotAdd()));
+    connect(m_ui.addLanguage, SIGNAL(clicked()), this, SLOT(slotAdd()));
+    connect(m_ui.addLocation, SIGNAL(clicked()), this, SLOT(slotAdd()));
+    connect(m_ui.addMonetaryUnit, SIGNAL(clicked()), this, SLOT(slotAdd()));
+    connect(m_ui.cancelButton, SIGNAL(clicked()), this, SLOT(slotClose()));
+    connect(m_ui.reloadButton, SIGNAL(clicked()), this, SLOT(slotReload()));
+    connect(m_ui.removeBookBinding, SIGNAL(clicked()), this, SLOT(slotRemove()));
+    connect(m_ui.removeGreyLiteratureType, SIGNAL(clicked()), this, SLOT(slotRemove()));
+    connect(m_ui.removeLanguage, SIGNAL(clicked()), this, SLOT(slotRemove()));
+    connect(m_ui.removeLocation, SIGNAL(clicked()), this, SLOT(slotRemove()));
+    connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(slotSave()));
 
 	if (qmain)
-		connect(qmain,
-				SIGNAL(fontChanged(const QFont &)),
-				this,
-				SLOT(setGlobalFonts(const QFont &)));
+        connect(qmain, SIGNAL(fontChanged(QFont)), this, SLOT(setGlobalFonts(QFont)));
 
 	m_ui.locationsTable->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 	m_ui.minimumDaysTable->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -142,9 +99,7 @@ void biblioteq_dbenumerations::populateWidgets(void)
 	tables << "book_binding_types"
 		   << "grey_literature_types"
 		   << "languages"
-		   << "locations"
-		   << "minimum_days"
-		   << "monetary_units";
+		   << "locations";
 
 	for (int i = 0; i < tables.size(); i++)
 	{
@@ -176,18 +131,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
 			pairList = biblioteq_misc_functions::getLocations(qmain->getDB(),
 															  errorstr);
 			tablewidget = m_ui.locationsTable;
-		}
-		else if (str == "minimum_days")
-		{
-			list = biblioteq_misc_functions::getMinimumDays(qmain->getDB(),
-															errorstr);
-			tablewidget = m_ui.minimumDaysTable;
-		}
-		else if (str == "monetary_units")
-		{
-			list = biblioteq_misc_functions::getMonetaryUnits(qmain->getDB(),
-															  errorstr);
-			listwidget = m_ui.monetaryUnitsList;
 		}
 
 		QApplication::restoreOverrideCursor();
