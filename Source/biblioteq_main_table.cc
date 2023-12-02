@@ -126,7 +126,7 @@ void biblioteq_main_table::parseStates(const QHash<QString, QString> &states)
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
                                                    Qt::SkipEmptyParts
 #else
-                                                    QString::SkipEmptyParts
+                                                   QString::SkipEmptyParts
 #endif
                                                    ));
 
@@ -159,14 +159,13 @@ void biblioteq_main_table::recordColumnHidden(const QString &username,
 }
 
 void biblioteq_main_table::resetTable(const QString &username,
-                                      const QString &type,
-                                      const QString &roles)
+                                      const QString &type)
 {
   setColumnCount(0);
   setRowCount(0);
   scrollToTop();
   horizontalScrollBar()->setValue(0);
-  setColumns(username, type, roles);
+  setColumns(username, type);
 
   if (m_qmain && m_qmain->setting("automatically_resize_column_widths").toBool())
   {
@@ -192,8 +191,7 @@ void biblioteq_main_table::setColumnNames(const QStringList &list)
 }
 
 void biblioteq_main_table::setColumns(const QString &username,
-                                      const QString &t,
-                                      const QString &roles)
+                                      const QString &t)
 {
   QStringList list;
   auto type(t.trimmed());
@@ -203,54 +201,11 @@ void biblioteq_main_table::setColumns(const QString &username,
   if (type.isEmpty())
     type = "All";
 
-  if (type == "All" ||
-      type == "All Available" ||
-      type == "All Overdue" ||
-      type == "All Requested" ||
-      type == "All Reserved")
+  if (type == "All")
   {
-    if (type == "All Overdue" || type == "All Reserved")
-    {
-      if (!roles.isEmpty())
-      {
-        list.append(tr("Borrower"));
-        list.append(tr("Member ID"));
-        list.append(tr("Contact Information"));
-        m_columnHeaderIndexes.append("Borrower");
-        m_columnHeaderIndexes.append("Member ID");
-        m_columnHeaderIndexes.append("Contact Information");
-      }
-
-      list.append(tr("Barcode"));
-      list.append(tr("Reservation Date"));
-      list.append(tr("Due Date"));
-      m_columnHeaderIndexes.append("Barcode");
-      m_columnHeaderIndexes.append("Reservation Date");
-      m_columnHeaderIndexes.append("Due Date");
-    }
-    else if (type == "All Requested")
-    {
-      if (!roles.isEmpty())
-      {
-        list.append(tr("Borrower"));
-        list.append(tr("Member ID"));
-        list.append(tr("Contact Information"));
-        m_columnHeaderIndexes.append("Borrower");
-        m_columnHeaderIndexes.append("Member ID");
-        m_columnHeaderIndexes.append("Contact Information");
-      }
-
-      list.append(tr("Request Date"));
-      m_columnHeaderIndexes.append("Request Date");
-    }
 
     list.append(tr("Title"));
     list.append(tr("ID Number"));
-
-    if (type == "All Overdue" ||
-        type == "All Requested" ||
-        type == "All Reserved")
-      list.append(tr("Call Number"));
 
     list.append(tr("Publisher"));
     list.append(tr("Publication Date"));
@@ -262,11 +217,6 @@ void biblioteq_main_table::setColumns(const QString &username,
     list.append(tr("Location"));
     m_columnHeaderIndexes.append("Title");
     m_columnHeaderIndexes.append("ID Number");
-
-    if (type == "All Overdue" ||
-        type == "All Requested" ||
-        type == "All Reserved")
-      m_columnHeaderIndexes.append("Call Number");
 
     m_columnHeaderIndexes.append("Publisher");
     m_columnHeaderIndexes.append("Publication Date");
@@ -291,12 +241,6 @@ void biblioteq_main_table::setColumns(const QString &username,
     m_columnHeaderIndexes.append("Accession Number");
     m_columnHeaderIndexes.append("Type");
     m_columnHeaderIndexes.append("MYOID");
-
-    if (type == "All Requested")
-    {
-      list.append("REQUESTOID");
-      m_columnHeaderIndexes.append("REQUESTOID");
-    }
   }
   else if (type == "Books")
   {
@@ -351,86 +295,6 @@ void biblioteq_main_table::setColumns(const QString &username,
     m_columnHeaderIndexes.append("Type");
     m_columnHeaderIndexes.append("MYOID");
   }
-  else if (type == "Grey Literature")
-  {
-    list.append(tr("Authors"));
-    list.append(tr("Clients"));
-    list.append(tr("Document Code A"));
-    list.append(tr("Document Code B"));
-    list.append(tr("Document Date"));
-    list.append(tr("Document ID"));
-    list.append(tr("Document Status"));
-    list.append(tr("Title"));
-    list.append(tr("Document Type"));
-    list.append(tr("Job Number"));
-    list.append(tr("Location"));
-    list.append(tr("File Count"));
-    list.append(tr("Availability"));
-    list.append(tr("Total Reserved"));
-    list.append(tr("Type"));
-    list.append("MYOID");
-    m_columnHeaderIndexes.append("Authors");
-    m_columnHeaderIndexes.append("Clients");
-    m_columnHeaderIndexes.append("Document Code A");
-    m_columnHeaderIndexes.append("Document Code B");
-    m_columnHeaderIndexes.append("Document Date");
-    m_columnHeaderIndexes.append("Document ID");
-    m_columnHeaderIndexes.append("Document Status");
-    m_columnHeaderIndexes.append("Title");
-    m_columnHeaderIndexes.append("Document Type");
-    m_columnHeaderIndexes.append("Job Number");
-    m_columnHeaderIndexes.append("Location");
-    m_columnHeaderIndexes.append("File Count");
-    m_columnHeaderIndexes.append("Availability");
-    m_columnHeaderIndexes.append("Total Reserved");
-    m_columnHeaderIndexes.append("Type");
-    m_columnHeaderIndexes.append("MYOID");
-  }
-  else if (type == "Journals" || type == "Magazines")
-  {
-    list.append(tr("Title"));
-    list.append(tr("Publisher"));
-    list.append(tr("Publication Date"));
-    list.append(tr("Place of Publication"));
-    list.append(tr("Volume"));
-    list.append(tr("Issue"));
-    list.append(tr("Categories"));
-    list.append(tr("Language"));
-    list.append(tr("ISSN"));
-    list.append(tr("Price"));
-    list.append(tr("Monetary Units"));
-    list.append(tr("Quantity"));
-    list.append(tr("Location"));
-    list.append(tr("LC Control Number"));
-    list.append(tr("Call Number"));
-    list.append(tr("Dewey Number"));
-    list.append(tr("Availability"));
-    list.append(tr("Total Reserved"));
-    list.append(tr("Accession Number"));
-    list.append(tr("Type"));
-    list.append("MYOID");
-    m_columnHeaderIndexes.append("Title");
-    m_columnHeaderIndexes.append("Publisher");
-    m_columnHeaderIndexes.append("Publication Date");
-    m_columnHeaderIndexes.append("Place of Publication");
-    m_columnHeaderIndexes.append("Volume");
-    m_columnHeaderIndexes.append("Issue");
-    m_columnHeaderIndexes.append("Categories");
-    m_columnHeaderIndexes.append("Language");
-    m_columnHeaderIndexes.append("ISSN");
-    m_columnHeaderIndexes.append("Price");
-    m_columnHeaderIndexes.append("Monetary Units");
-    m_columnHeaderIndexes.append("Quantity");
-    m_columnHeaderIndexes.append("Location");
-    m_columnHeaderIndexes.append("LC Control Number");
-    m_columnHeaderIndexes.append("Call Number");
-    m_columnHeaderIndexes.append("Dewey Number");
-    m_columnHeaderIndexes.append("Availability");
-    m_columnHeaderIndexes.append("Total Reserved");
-    m_columnHeaderIndexes.append("Accession Number");
-    m_columnHeaderIndexes.append("Type");
-    m_columnHeaderIndexes.append("MYOID");
-  }
   else if (type == "Photograph Collections")
   {
     list.append(tr("Title"));
@@ -466,10 +330,6 @@ void biblioteq_main_table::setColumns(const QString &username,
   setHorizontalHeaderLabels(list);
 
   if (type != "All" &&
-      type != "All Available" &&
-      type != "All Overdue" &&
-      type != "All Requested" &&
-      type != "All Reserved" &&
       type != "Custom")
   {
     /*

@@ -102,7 +102,6 @@ public:
                 const char *file = "",
                 const int line = 0);
   void bookSearch(const QString &field, const QString &value);
-  void greyLiteratureSearch(const QString &field, const QString &value);
   void journSearch(const QString &field, const QString &value);
   void magSearch(const QString &field, const QString &value);
   void pcSearch(const QString &field, const QString &value);

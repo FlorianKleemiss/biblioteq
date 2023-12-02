@@ -13,12 +13,12 @@ biblioteq_sqlite_merge_databases::biblioteq_sqlite_merge_databases(biblioteq *pa
 	m_ui.setupUi(this);
 	m_ui.splitter->setStretchFactor(0, 1);
 	m_ui.splitter->setStretchFactor(1, 0);
-    connect(m_qmain, SIGNAL(fontChanged(QFont)), this, SLOT(slotSetGlobalFonts(QFont)));
-    connect(m_ui.add_row, SIGNAL(clicked()), this, SLOT(slotAddRow()));
-    connect(m_ui.close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(m_ui.delete_row, SIGNAL(clicked()), this, SLOT(slotDeleteRow()));
-    connect(m_ui.merge, SIGNAL(clicked()), this, SLOT(slotMerge()));
-    connect(m_ui.reset, SIGNAL(clicked()), this, SLOT(slotReset()));
+	connect(m_qmain, SIGNAL(fontChanged(QFont)), this, SLOT(slotSetGlobalFonts(QFont)));
+	connect(m_ui.add_row, SIGNAL(clicked()), this, SLOT(slotAddRow()));
+	connect(m_ui.close, SIGNAL(clicked()), this, SLOT(close()));
+	connect(m_ui.delete_row, SIGNAL(clicked()), this, SLOT(slotDeleteRow()));
+	connect(m_ui.merge, SIGNAL(clicked()), this, SLOT(slotMerge()));
+	connect(m_ui.reset, SIGNAL(clicked()), this, SLOT(slotReset()));
 }
 
 void biblioteq_sqlite_merge_databases::changeEvent(QEvent *event)
@@ -60,7 +60,7 @@ void biblioteq_sqlite_merge_databases::slotAddRow(void)
 		{
 			auto pushButton = new QPushButton(tr("Select SQLite Database"));
 
-            connect(pushButton,	SIGNAL(clicked()), this, SLOT(slotSelect()));
+			connect(pushButton, SIGNAL(clicked()), this, SLOT(slotSelect()));
 			m_ui.databases->setCellWidget(row, i, pushButton);
 			break;
 		}
@@ -113,21 +113,8 @@ void biblioteq_sqlite_merge_databases::slotMerge(void)
 				<< "book_copy_info"
 				<< "book_files"
 				<< "book_sequence"
-				<< "grey_literature"
-				<< "grey_literature_files"
-				<< "grey_literature_types"
-				<< "item_borrower"
-				<< "journal"
-				<< "journal_copy_info"
-				<< "journal_files"
 				<< "languages"
 				<< "locations"
-				<< "magazine"
-				<< "magazine_copy_info"
-				<< "magazine_files"
-				<< "member"
-				<< "member_history"
-				<< "minimum_days"
 				<< "monetary_units"
 				<< "photograph"
 				<< "photograph_collection"

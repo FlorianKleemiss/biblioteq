@@ -14,16 +14,12 @@ QImage biblioteq_misc_functions::getImage(const QString &oid,
   auto image = QImage();
   auto type(typeArg.toLower());
 
-  if (type == "grey literature" ||
-      type == "photograph collection")
+  if (type == "photograph collection")
     type = type.replace(" ", "_");
   else
     type = type.remove(" ");
 
   if (type == "book" ||
-      type == "grey_literature" ||
-      type == "journal" ||
-      type == "magazine" ||
       type == "photograph_collection")
   {
     if (which == "back_cover" ||
@@ -99,17 +95,10 @@ QString biblioteq_misc_functions::getAbstractInfo(const QString &oid,
   QString str = "";
   auto type(typeArg.toLower());
 
-  if (type == "book" ||
-      type == "journal" ||
-      type == "magazine")
+  if (type == "book")
   {
     type = type.remove(" ");
     querystr = QString("SELECT description FROM %1 WHERE myoid = ?").arg(type);
-  }
-  else if (type == "grey literature")
-  {
-    type = type.replace(" ", "_");
-    querystr = QString("SELECT notes FROM %1 WHERE myoid = ?").arg(type);
   }
   else if (type == "photograph collection")
   {
@@ -183,12 +172,11 @@ QString biblioteq_misc_functions::getOID(const QString &idArg,
   QString itemType = "";
   QString oid = "";
   QString querystr = "";
-  int i = 0;
 
   id = idArg;
   itemType = itemTypeArg.toLower();
 
-  if (itemType == "grey literature" || itemType == "photograph collection")
+  if (itemType == "photograph collection")
     itemType = itemType.replace(" ", "_");
   else
     itemType = itemType.remove(" ");
@@ -199,27 +187,11 @@ QString biblioteq_misc_functions::getOID(const QString &idArg,
                    .arg(itemType);
   else if (itemType == "photograph_collection")
     querystr = QString("SELECT myoid FROM %1 WHERE id = ?").arg(itemType);
-  else if (itemType == "grey_literature")
-    querystr = "SELECT myoid FROM grey_literature WHERE document_id = ?";
-  else if (itemType == "journal" || itemType == "magazine")
-    querystr = QString("SELECT myoid FROM %1 WHERE id = ? AND "
-                       "issuevolume = ? AND issueno = ? AND "
-                       "id IS NOT NULL")
-                   .arg(itemType);
   else
     return oid;
 
   query.prepare(querystr);
-
-  if (itemType == "journal" || itemType == "magazine")
-  {
-    auto list(id.split(","));
-
-    for (i = 0; i < list.size(); i++)
-      query.bindValue(i, list[i]);
-  }
-  else
-    query.bindValue(0, id);
+  query.bindValue(0, id);
 
   if (query.exec())
     if (query.next())
@@ -348,27 +320,6 @@ QStringList biblioteq_misc_functions::getBookBindingTypes(const QSqlDatabase &db
   querystr = "SELECT binding_type FROM book_binding_types "
              "WHERE LENGTH(TRIM(binding_type)) > 0 "
              "ORDER BY binding_type";
-
-  if (query.exec(querystr))
-    while (query.next())
-      types.append(query.value(0).toString().trimmed());
-
-  if (query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return types;
-}
-
-QStringList biblioteq_misc_functions::getGreyLiteratureTypes(const QSqlDatabase &db, QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr("");
-  QStringList types;
-
-  errorstr = "";
-  querystr = "SELECT document_type FROM grey_literature_types "
-             "WHERE LENGTH(TRIM(document_type)) > 0 "
-             "ORDER BY document_type";
 
   if (query.exec(querystr))
     while (query.next())
@@ -624,7 +575,7 @@ int biblioteq_misc_functions::sqliteQuerySize(const QString &querystr,
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
                                               const QMap<QString, QVariant> &boundValues,
 #else
-                                               const QVariantList &boundValues,
+                                              const QVariantList &boundValues,
 #endif
                                               const QSqlDatabase &db,
                                               const char *file,
@@ -956,19 +907,7 @@ void biblioteq_misc_functions::createInitialCopies(const QString &idArg,
   if (!errorstr.isEmpty())
     return;
 
-  if (itemType == "journal" || itemType == "magazine")
-  {
-    if (itemoid.isEmpty())
-      /*
-      ** If the id from getOID() is empty, createInitialCopies() was called
-      ** with an oid.
-      */
-
-      id = itemoid = id.split(",").value(0);
-    else
-      id = id.split(",").value(0);
-  }
-  else if (itemType == "book")
+  if (itemType == "book")
   {
     if (itemoid.isEmpty())
       /*
@@ -984,9 +923,7 @@ void biblioteq_misc_functions::createInitialCopies(const QString &idArg,
     {
       if (db.driverName() != "QSQLITE")
       {
-        if (itemType == "book" ||
-            itemType == "journal" ||
-            itemType == "magazine")
+        if (itemType == "book")
           query.prepare(QString("INSERT INTO %1_copy_info "
                                 "(item_oid, copy_number, "
                                 "copyid) "
@@ -996,9 +933,7 @@ void biblioteq_misc_functions::createInitialCopies(const QString &idArg,
       }
       else
       {
-        if (itemType == "book" ||
-            itemType == "journal" ||
-            itemType == "magazine")
+        if (itemType == "book")
           query.prepare(QString("INSERT INTO %1_copy_info "
                                 "(item_oid, copy_number, "
                                 "copyid, myoid) "
@@ -1372,9 +1307,7 @@ void biblioteq_misc_functions::saveQuantity(const QSqlDatabase &db,
   errorstr = "";
   itemType = itemTypeArg.toLower().remove(" ");
 
-  if (itemType == "book" ||
-      itemType == "journal" ||
-      itemType == "magazine")
+  if (itemType == "book")
     querystr = QString("UPDATE %1 SET quantity = ? WHERE "
                        "myoid = ?")
                    .arg(itemType);

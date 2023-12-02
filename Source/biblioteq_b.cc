@@ -149,17 +149,11 @@ int biblioteq::populateTable(const int search_type_arg,
 	}
 
 	QString bookFrontCover("'' AS front_cover ");
-	QString greyLiteratureFrontCover("'' AS front_cover ");
-	QString journalFrontCover("'' AS front_cover ");
-	QString magazineFrontCover("'' AS front_cover ");
 	QString photographCollectionFrontCover("'' AS image_scaled ");
 
 	if (m_otheroptions->showMainTableImages())
 	{
 		bookFrontCover = "book.front_cover ";
-		greyLiteratureFrontCover = "grey_literature.front_cover ";
-		journalFrontCover = "journal.front_cover ";
-		magazineFrontCover = "magazine.front_cover ";
 		photographCollectionFrontCover = "photograph_collection.image_scaled ";
 	}
 
@@ -240,105 +234,6 @@ int biblioteq::populateTable(const int search_type_arg,
 								"book.type, "
 								"book.myoid, "
 								"book.front_cover "
-								" %1 "
-								"UNION "
-								"SELECT DISTINCT grey_literature.document_title, "
-								"grey_literature.document_id, "
-								"grey_literature.author, "
-								"grey_literature.document_date, "
-								"'', "
-								"'', "
-								"0.00, "
-								"'', "
-								"grey_literature.quantity, "
-								"grey_literature.location, "
-								"1 - COUNT(item_borrower.item_oid) AS availability, "
-								"COUNT(item_borrower.item_oid) AS total_reserved, "
-								"grey_literature.job_number, "
-								"grey_literature.type, "
-								"grey_literature.myoid, " +
-								greyLiteratureFrontCover +
-								"FROM "
-								"grey_literature LEFT JOIN item_borrower ON "
-								"grey_literature.myoid = item_borrower.item_oid "
-								"AND item_borrower.type = 'Grey Literature' "
-								"GROUP BY "
-								"grey_literature.document_title, "
-								"grey_literature.document_id, "
-								"grey_literature.author, "
-								"grey_literature.document_date, "
-								"grey_literature.quantity, "
-								"grey_literature.location, "
-								"grey_literature.job_number, "
-								"grey_literature.type, "
-								"grey_literature.myoid, "
-								"grey_literature.front_cover "
-								"%1 "
-								"UNION "
-								"SELECT DISTINCT journal.title, "
-								"journal.id, "
-								"journal.publisher, journal.pdate, "
-								"journal.category, "
-								"journal.language, "
-								"journal.price, journal.monetary_units, "
-								"journal.quantity, "
-								"journal.location, "
-								"journal.quantity - COUNT(item_borrower.item_oid) AS "
-								"availability, "
-								"COUNT(item_borrower.item_oid) AS total_reserved, "
-								"journal.accession_number, "
-								"journal.type, "
-								"journal.myoid, " +
-								journalFrontCover +
-								"FROM "
-								"journal LEFT JOIN item_borrower ON "
-								"journal.myoid = item_borrower.item_oid "
-								"AND item_borrower.type = journal.type "
-								"GROUP BY journal.title, "
-								"journal.id, "
-								"journal.publisher, journal.pdate, "
-								"journal.category, "
-								"journal.language, "
-								"journal.price, journal.monetary_units, "
-								"journal.quantity, "
-								"journal.location, "
-								"journal.accession_number, "
-								"journal.type, "
-								"journal.myoid, "
-								"journal.front_cover "
-								" %1 "
-								"UNION "
-								"SELECT DISTINCT magazine.title, "
-								"magazine.id, "
-								"magazine.publisher, magazine.pdate, "
-								"magazine.category, "
-								"magazine.language, "
-								"magazine.price, magazine.monetary_units, "
-								"magazine.quantity, "
-								"magazine.location, "
-								"magazine.quantity - COUNT(item_borrower.item_oid) AS "
-								"availability, "
-								"COUNT(item_borrower.item_oid) AS total_reserved, "
-								"magazine.accession_number, "
-								"magazine.type, "
-								"magazine.myoid, " +
-								magazineFrontCover +
-								"FROM "
-								"magazine LEFT JOIN item_borrower ON "
-								"magazine.myoid = item_borrower.item_oid "
-								"AND item_borrower.type = magazine.type "
-								"GROUP BY magazine.title, "
-								"magazine.id, "
-								"magazine.publisher, magazine.pdate, "
-								"magazine.category, "
-								"magazine.language, "
-								"magazine.price, magazine.monetary_units, "
-								"magazine.quantity, "
-								"magazine.location, "
-								"magazine.accession_number, "
-								"magazine.type, "
-								"magazine.myoid, "
-								"magazine.front_cover "
 								" %1 "
 								"UNION "
 								"SELECT DISTINCT photograph_collection.title, "
@@ -425,50 +320,6 @@ int biblioteq::populateTable(const int search_type_arg,
 						"book.title" +
 						limitStr + offsetStr;
 		}
-		else if (typefilter == "Grey Literature")
-		{
-			searchstr = "SELECT DISTINCT grey_literature.author, "
-						"grey_literature.client, "
-						"grey_literature.document_code_a, "
-						"grey_literature.document_code_b, "
-						"grey_literature.document_date, "
-						"grey_literature.document_id, "
-						"grey_literature.document_status, "
-						"grey_literature.document_title, "
-						"grey_literature.document_type, "
-						"grey_literature.job_number, "
-						"grey_literature.location, "
-						"(SELECT COUNT(myoid) FROM grey_literature_files "
-						"WHERE grey_literature_files.item_oid = grey_literature.myoid) "
-						"AS file_count, "
-						"1 - COUNT(item_borrower.item_oid) AS availability, "
-						"COUNT(item_borrower.item_oid) AS total_reserved, "
-						"grey_literature.type, "
-						"grey_literature.myoid, " +
-						greyLiteratureFrontCover +
-						"FROM "
-						"grey_literature LEFT JOIN item_borrower ON "
-						"grey_literature.myoid = item_borrower.item_oid "
-						"AND item_borrower.type = 'Grey Literature' "
-						"GROUP BY "
-						"grey_literature.author, "
-						"grey_literature.client, "
-						"grey_literature.document_code_a, "
-						"grey_literature.document_code_b, "
-						"grey_literature.document_date, "
-						"grey_literature.document_id, "
-						"grey_literature.document_status, "
-						"grey_literature.document_title, "
-						"grey_literature.document_type, "
-						"grey_literature.job_number, "
-						"grey_literature.location, "
-						"grey_literature.type, "
-						"grey_literature.myoid, "
-						"grey_literature.front_cover "
-						"ORDER BY "
-						"grey_literature.author" +
-						limitStr + offsetStr;
-		}
 		else if (typefilter == "Photograph Collections")
 		{
 			searchstr = "SELECT DISTINCT photograph_collection.title, "
@@ -495,73 +346,6 @@ int biblioteq::populateTable(const int search_type_arg,
 						"ORDER BY "
 						"photograph_collection.id" +
 						limitStr + offsetStr;
-		}
-		else if (typefilter == "Journals" || typefilter == "Magazines")
-		{
-			if (typefilter == "Journals")
-				type = "Journal";
-			else
-				type = "Magazine";
-
-			QString frontCover("'' AS front_cover ");
-
-			if (m_otheroptions->showMainTableImages())
-			{
-				if (type == "Journal")
-					frontCover = "journal.front_cover ";
-				else
-					frontCover = "magazine.front_cover ";
-			}
-
-			searchstr = QString("SELECT DISTINCT %1.title, "
-								"%1.publisher, %1.pdate, "
-								"%1.place, "
-								"%1.issuevolume, %1.issueno, "
-								"%1.category, %1.language, "
-								"%1.id, "
-								"%1.price, %1.monetary_units, "
-								"%1.quantity, "
-								"%1.location, "
-								"%1.lccontrolnumber, "
-								"%1.callnumber, "
-								"%1.deweynumber, "
-								"%1.quantity - "
-								"COUNT(item_borrower.item_oid) AS "
-								"availability, "
-								"COUNT(item_borrower.item_oid) AS "
-								"total_reserved, "
-								"%1.accession_number, "
-								"%1.type, "
-								"%1.myoid, " +
-								frontCover +
-								"FROM "
-								"%1 LEFT JOIN item_borrower ON "
-								"%1.myoid = "
-								"item_borrower.item_oid "
-								"AND item_borrower.type = %1.type "
-								"WHERE "
-								"%1.type = '%1' "
-								"GROUP BY "
-								"%1.title, "
-								"%1.publisher, %1.pdate, "
-								"%1.place, "
-								"%1.issuevolume, %1.issueno, "
-								"%1.category, %1.language, "
-								"%1.id, "
-								"%1.price, %1.monetary_units, "
-								"%1.quantity, "
-								"%1.location, "
-								"%1.lccontrolnumber, "
-								"%1.callnumber, "
-								"%1.deweynumber, "
-								"%1.accession_number, "
-								"%1.type, "
-								"%1.myoid, "
-								"%1.front_cover "
-								"ORDER BY "
-								"%1.title")
-							.arg(type);
-			searchstr += limitStr + offsetStr;
 		}
 
 		break;
@@ -606,93 +390,6 @@ int biblioteq::populateTable(const int search_type_arg,
 								 "book.myoid, "
 								 "book.front_cover "
 								 "ORDER BY book.title");
-			}
-
-			if (searchstr.lastIndexOf("LIMIT") != -1)
-				searchstr.remove(searchstr.lastIndexOf("LIMIT"),
-								 searchstr.length());
-
-			searchstr += limitStr + offsetStr;
-		}
-		else if (typefilter == "Grey Literature")
-		{
-			if (!searchstr.contains("ORDER BY"))
-			{
-				searchstr.append(searchstrArg);
-				searchstr.append("GROUP BY grey_literature.document_title, "
-								 "grey_literature.document_id, "
-								 "grey_literature.location, "
-								 "grey_literature.notes, "
-								 "grey_literature.job_number, "
-								 "grey_literature.type, "
-								 "grey_literature.myoid, "
-								 "grey_literature.front_cover "
-								 "ORDER BY grey_literature.document_title");
-			}
-
-			if (searchstr.lastIndexOf("LIMIT") != -1)
-				searchstr.remove(searchstr.lastIndexOf("LIMIT"), searchstr.length());
-
-			searchstr += limitStr + offsetStr;
-		}
-		else if (typefilter == "Journals")
-		{
-			if (!searchstr.contains("ORDER BY"))
-			{
-				searchstr.append(searchstrArg);
-				searchstr.append("GROUP BY journal.title, "
-								 "journal.publisher, journal.pdate, "
-								 "journal.place, "
-								 "journal.issuevolume, "
-								 "journal.issueno, "
-								 "journal.category, journal.language, "
-								 "journal.id, "
-								 "journal.price, "
-								 "journal.monetary_units, "
-								 "journal.quantity, "
-								 "journal.location, "
-								 "journal.lccontrolnumber, "
-								 "journal.callnumber, "
-								 "journal.deweynumber, "
-								 "journal.accession_number, "
-								 "journal.type, "
-								 "journal.myoid, "
-								 "journal.front_cover "
-								 "ORDER BY journal.title, "
-								 "journal.issuevolume, journal.issueno");
-			}
-
-			if (searchstr.lastIndexOf("LIMIT") != -1)
-				searchstr.remove(searchstr.lastIndexOf("LIMIT"),
-								 searchstr.length());
-
-			searchstr += limitStr + offsetStr;
-		}
-		else if (typefilter == "Magazines")
-		{
-			if (!searchstr.contains("ORDER BY"))
-			{
-				searchstr.append(searchstrArg);
-				searchstr.append("GROUP BY magazine.title, "
-								 "magazine.publisher, magazine.pdate, "
-								 "magazine.place, "
-								 "magazine.issuevolume, "
-								 "magazine.issueno, "
-								 "magazine.category, magazine.language, "
-								 "magazine.id, "
-								 "magazine.price, "
-								 "magazine.monetary_units, "
-								 "magazine.quantity, "
-								 "magazine.location, "
-								 "magazine.lccontrolnumber, "
-								 "magazine.callnumber, "
-								 "magazine.deweynumber, "
-								 "magazine.accession_number, "
-								 "magazine.type, "
-								 "magazine.myoid, "
-								 "magazine.front_cover "
-								 "ORDER BY magazine.title, "
-								 "magazine.issuevolume, magazine.issueno");
 			}
 
 			if (searchstr.lastIndexOf("LIMIT") != -1)
@@ -824,9 +521,9 @@ int biblioteq::populateTable(const int search_type_arg,
 			   SLOT(slotItemChanged(QTableWidgetItem *)));
 
 	if (search_type != CUSTOM_QUERY)
-		ui.table->resetTable(dbUserName(), typefilter, m_roles);
+		ui.table->resetTable(dbUserName(), typefilter);
 	else
-		ui.table->resetTable(dbUserName(), "Custom", m_roles);
+		ui.table->resetTable(dbUserName(), "Custom");
 
 	qint64 currentPage = 0;
 	qint64 number = 0;
@@ -834,7 +531,7 @@ int biblioteq::populateTable(const int search_type_arg,
 	if (limit == -1 && m_db.driverName() == "QSQLITE")
 		count_query.setForwardOnly(true);
 
-	QString count_string("SELECT COUNT(DISTINCT id) FROM photograph_collection;");
+	QString count_string;
 
 	if (typefilter == "Photograph Collections")
 	{
@@ -844,30 +541,12 @@ int biblioteq::populateTable(const int search_type_arg,
 	{
 		count_string = "SELECT COUNT(DISTINCT id) FROM book;";
 	}
-	else if (typefilter == "Grey Literature")
-	{
-		count_string = "SELECT COUNT(DISTINCT document_id) FROM grey_literature;";
-	}
-	else if (typefilter == "Journals")
-	{
-		count_string = "SELECT COUNT(DISTINCT id) FROM journal;";
-	}
-	else if (typefilter == "Magazines")
-	{
-		count_string = "SELECT COUNT(DISTINCT id) FROM magazine;";
-	}
 	else if (typefilter == "All")
 	{
 		count_string = "SELECT SUM(count) FROM( "
-					   "SELECT COUNT(DISTINCT id) FROM book "
+					   "SELECT COUNT(DISTINCT id) as count FROM book "
 					   "UNION ALL "
-					   "SELECT COUNT(DISTINCT id) FROM grey_literature "
-					   "UNION ALL "
-					   "SELECT COUNT(DISTINCT id) FROM journal "
-					   "UNION ALL "
-					   "SELECT COUNT(DISTINCT id) FROM magazine "
-					   "UNION ALL "
-					   "SELECT COUNT(DISTINCT id) FROM photograph_collection) AS counts;";
+					   "SELECT COUNT(DISTINCT id) as count FROM photograph_collection) AS counts;";
 	}
 
 	if (count_query.exec(count_string))
@@ -1033,9 +712,6 @@ int biblioteq::populateTable(const int search_type_arg,
 	QString dateFormat("");
 
 	if (typefilter == "Books" ||
-		typefilter == "Grey Literature" ||
-		typefilter == "Journals" ||
-		typefilter == "Magazines" ||
 		typefilter == "Photograph Collections")
 		dateFormat = publicationDateFormat(QString(typefilter).remove(' ').toLower());
 
@@ -1432,7 +1108,7 @@ int biblioteq::populateTable(const int search_type_arg,
 	ui.table->hide();
 	ui.table->show();
 #endif
-    connect(ui.table, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(slotItemChanged(QTableWidgetItem*)));
+	connect(ui.table, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(slotItemChanged(QTableWidgetItem *)));
 	QApplication::restoreOverrideCursor();
 	return 0;
 }
@@ -1548,7 +1224,7 @@ void biblioteq::preparePhotographsPerPageMenu(void)
 		if (!action)
 			continue;
 
-        connect(action, SIGNAL(triggered()), this, SLOT(slotPhotographsPerPageChanged()));
+		connect(action, SIGNAL(triggered()), this, SLOT(slotPhotographsPerPageChanged()));
 
 		if (i == 5)
 			action->setData(-1);
@@ -1770,9 +1446,6 @@ void biblioteq::slotSearchBasic(void)
 	QList<QVariant> values;
 	QSqlQuery query(m_db);
 	QString bookFrontCover("'' AS front_cover ");
-	QString greyLiteratureFrontCover("'' AS front_cover ");
-	QString journalFrontCover("'' AS front_cover ");
-	QString magazineFrontCover("'' AS front_cover ");
 	QString photographCollectionFrontCover("'' AS image_scaled ");
 	QString searchstr("");
 	QString str("");
@@ -1781,17 +1454,11 @@ void biblioteq::slotSearchBasic(void)
 	auto text(ui.search->text().trimmed());
 
 	types.append("Book");
-	types.append("Grey Literature");
-	types.append("Journal");
-	types.append("Magazine");
 	types.append("Photograph Collection");
 
 	if (m_otheroptions->showMainTableImages())
 	{
 		bookFrontCover = "book.front_cover ";
-		greyLiteratureFrontCover = "grey_literature.front_cover ";
-		journalFrontCover = "journal.front_cover ";
-		magazineFrontCover = "magazine.front_cover ";
 		photographCollectionFrontCover = "photograph_collection.image_scaled ";
 	}
 
@@ -1799,30 +1466,7 @@ void biblioteq::slotSearchBasic(void)
 	{
 		type = types.at(i);
 
-		if (type == "Grey Literature")
-			str = "SELECT DISTINCT grey_literature.document_title, "
-				  "grey_literature.document_id, "
-				  "'', "
-				  "'', "
-				  "'', "
-				  "'', "
-				  "0.00, "
-				  "'', "
-				  "grey_literature.quantity, "
-				  "grey_literature.location, "
-				  "1 - COUNT(item_borrower.item_oid) AS availability, "
-				  "COUNT(item_borrower.item_oid) AS total_reserved, "
-				  "grey_literature.job_number, "
-				  "grey_literature.type, "
-				  "grey_literature.myoid, " +
-				  greyLiteratureFrontCover +
-				  "FROM "
-				  "grey_literature LEFT JOIN item_borrower ON "
-				  "grey_literature.myoid = "
-				  "item_borrower.item_oid "
-				  "AND item_borrower.type = 'Grey Literature' "
-				  "WHERE ";
-		else if (type == "Photograph Collection")
+		if (type == "Photograph Collection")
 			str = "SELECT DISTINCT photograph_collection.title, "
 				  "photograph_collection.id, "
 				  "'', "
@@ -1861,10 +1505,6 @@ void biblioteq::slotSearchBasic(void)
 
 			if (type == "Book")
 				str.append(bookFrontCover);
-			else if (type == "Journal")
-				str.append(journalFrontCover);
-			else if (type == "Magazine")
-				str.append(magazineFrontCover);
 
 			str += QString("FROM "
 						   "%1 LEFT JOIN item_borrower ON "
@@ -1885,31 +1525,17 @@ void biblioteq::slotSearchBasic(void)
 		{
 		case ACCESSION_NUMBER_GENERIC_SEARCH_TYPE:
 		{
-			if (type != "Grey Literature")
+			if (ui.case_insensitive->isChecked())
 			{
-				if (ui.case_insensitive->isChecked())
-				{
-					str.append("COALESCE(LOWER(accession_number), '') LIKE " +
-							   E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::
-									  escape(text.toLower().trimmed(), true));
-				}
-				else
-				{
-					str.append("COALESCE(accession_number, '') LIKE " +
-							   E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::escape(text.trimmed()));
-				}
-			}
-			else if (ui.case_insensitive->isChecked())
-			{
-				str.append("LOWER(document_id) LIKE " + E + "'%' || ? || '%' ");
+				str.append("COALESCE(LOWER(accession_number), '') LIKE " +
+						   E + "'%' || ? || '%' ");
 				values.append(biblioteq_myqstring::
 								  escape(text.toLower().trimmed(), true));
 			}
 			else
 			{
-				str.append("document_id LIKE " + E + "'%' || ? || '%' ");
+				str.append("COALESCE(accession_number, '') LIKE " +
+						   E + "'%' || ? || '%' ");
 				values.append(biblioteq_myqstring::escape(text.trimmed()));
 			}
 
@@ -1917,7 +1543,7 @@ void biblioteq::slotSearchBasic(void)
 		}
 		case CATEGORY_GENERIC_SEARCH_TYPE:
 		{
-			if (type != "Grey Literature" && type != "Photograph Collection")
+			if (type != "Photograph Collection")
 			{
 				if (ui.case_insensitive->isChecked())
 				{
@@ -1928,21 +1554,6 @@ void biblioteq::slotSearchBasic(void)
 				else
 				{
 					str.append("category LIKE " + E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::escape(text.trimmed()));
-				}
-			}
-			else if (type == "Grey Literature")
-			{
-				if (ui.case_insensitive->isChecked())
-				{
-					str.append("COALESCE(LOWER(notes), '') LIKE " +
-							   E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::
-									  escape(text.toLower().trimmed(), true));
-				}
-				else
-				{
-					str.append("COALESCE(notes, '') LIKE " + E + "'%' || ? || '%' ");
 					values.append(biblioteq_myqstring::escape(text.trimmed()));
 				}
 			}
@@ -1966,21 +1577,7 @@ void biblioteq::slotSearchBasic(void)
 		}
 		case ID_GENERIC_SEARCH_TYPE:
 		{
-			if (type == "Grey Literature")
-			{
-				if (ui.case_insensitive->isChecked())
-				{
-					str.append("(LOWER(document_id) LIKE " + E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::
-									  escape(text.toLower().trimmed(), true));
-				}
-				else
-				{
-					str.append("(document_id LIKE " + E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::escape(text.trimmed()));
-				}
-			}
-			else if (ui.case_insensitive->isChecked())
+			if (ui.case_insensitive->isChecked())
 			{
 				str.append("(LOWER(id) LIKE " + E + "'%' || ? || '%' ");
 				values.append(biblioteq_myqstring::
@@ -2012,7 +1609,7 @@ void biblioteq::slotSearchBasic(void)
 		}
 		case KEYWORD_GENERIC_SEARCH_TYPE:
 		{
-			if (type != "Grey Literature" && type != "Photograph Collection")
+			if (type != "Photograph Collection")
 			{
 				if (ui.case_insensitive->isChecked())
 				{
@@ -2025,21 +1622,6 @@ void biblioteq::slotSearchBasic(void)
 				{
 					str.append("COALESCE(keyword, '') LIKE " +
 							   E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::escape(text.trimmed()));
-				}
-			}
-			else if (type == "Grey Literature")
-			{
-				if (ui.case_insensitive->isChecked())
-				{
-					str.append("COALESCE(LOWER(notes), '') LIKE " +
-							   E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::
-									  escape(text.toLower().trimmed(), true));
-				}
-				else
-				{
-					str.append("COALESCE(notes, '') LIKE " + E + "'%' || ? || '%' ");
 					values.append(biblioteq_myqstring::escape(text.trimmed()));
 				}
 			}
@@ -2063,22 +1645,7 @@ void biblioteq::slotSearchBasic(void)
 		}
 		default:
 		{
-			if (type == "Grey Literature")
-			{
-				if (ui.case_insensitive->isChecked())
-				{
-					str.append("LOWER(document_title) LIKE " +
-							   E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::
-									  escape(text.toLower().trimmed(), true));
-				}
-				else
-				{
-					str.append("document_title LIKE " + E + "'%' || ? || '%' ");
-					values.append(biblioteq_myqstring::escape(text.trimmed()));
-				}
-			}
-			else if (ui.case_insensitive->isChecked())
+			if (ui.case_insensitive->isChecked())
 			{
 				str.append("LOWER(title) LIKE " + E + "'%' || ? || '%' ");
 				values.append(biblioteq_myqstring::
@@ -2092,8 +1659,7 @@ void biblioteq::slotSearchBasic(void)
 		}
 		}
 
-		if (type != "Grey Literature" &&
-			type != "Photograph Collection")
+		if (type != "Photograph Collection")
 			str += QString("GROUP BY "
 						   "%1.title, "
 						   "%1.id, "
@@ -2110,15 +1676,6 @@ void biblioteq::slotSearchBasic(void)
 						   "%1.myoid, "
 						   "%1.front_cover ")
 					   .arg(type.toLower().remove(" "));
-		else if (type == "Grey Literature")
-			str += "GROUP BY "
-				   "grey_literature.document_title, "
-				   "grey_literature.document_id, "
-				   "grey_literature.location, "
-				   "grey_literature.job_number, "
-				   "grey_literature.type, "
-				   "grey_literature.myoid, "
-				   "grey_literature.front_cover ";
 		else
 		{
 			str += "GROUP BY "
@@ -2187,35 +1744,11 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 				"FOREIGN KEY(item_oid) REFERENCES book(myoid) ON DELETE CASCADE,"
 				"PRIMARY KEY(file_digest, item_oid)"
 				")");
-	list.append("CREATE TABLE IF NOT EXISTS journal_files"
-				"("
-				"description	TEXT,"
-				"file		BYTEA NOT NULL,"
-				"file_digest	TEXT NOT NULL,"
-				"file_name        TEXT NOT NULL,"
-				"item_oid	BIGINT NOT NULL,"
-				"myoid		BIGSERIAL NOT NULL,"
-				"FOREIGN KEY(item_oid) REFERENCES journal(myoid) ON DELETE "
-				"CASCADE,"
-				"PRIMARY KEY(file_digest, item_oid)"
-				")");
 	list.append("CREATE TABLE IF NOT EXISTS locations "
 				"("
 				"location TEXT NOT NULL,"
 				"type VARCHAR(16),"
 				"PRIMARY KEY(location, type))");
-	list.append("CREATE TABLE IF NOT EXISTS magazine_files"
-				"("
-				"description	TEXT,"
-				"file		BYTEA NOT NULL,"
-				"file_digest	TEXT NOT NULL,"
-				"file_name        TEXT NOT NULL,"
-				"item_oid	BIGINT NOT NULL,"
-				"myoid		BIGSERIAL NOT NULL,"
-				"FOREIGN KEY(item_oid) REFERENCES magazine(myoid) ON DELETE "
-				"CASCADE,"
-				"PRIMARY KEY(file_digest, item_oid)"
-				")");
 	list.append("CREATE TABLE IF NOT EXISTS monetary_units "
 				"("
 				"monetary_unit TEXT NOT NULL PRIMARY KEY)");
@@ -2227,18 +1760,7 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 				"days INTEGER NOT NULL,"
 				"type VARCHAR(16) NOT NULL PRIMARY KEY)");
 	list.append("ALTER TABLE book ADD marc_tags TEXT");
-	list.append("ALTER TABLE journal ADD marc_tags TEXT");
-	list.append("ALTER TABLE magazine ADD marc_tags TEXT");
-	list.append("ALTER TABLE member ADD expiration_date VARCHAR(32) "
-				"NOT NULL DEFAULT '01/0/3000'");
 	list.append("ALTER TABLE book ADD keyword TEXT");
-	list.append("ALTER TABLE journal ADD keyword TEXT");
-	list.append("ALTER TABLE magazine ADD keyword TEXT");
-	list.append("ALTER TABLE member ADD overdue_fees NUMERIC(10, 2) "
-				"NOT NULL DEFAULT 0.00");
-	list.append("ALTER TABLE member ADD comments TEXT");
-	list.append("ALTER TABLE member ADD general_registration_number TEXT");
-	list.append("ALTER TABLE member ADD memberclass TEXT");
 	list.append("CREATE TABLE IF NOT EXISTS photograph_collection "
 				"("
 				"id  TEXT PRIMARY KEY NOT NULL,"
@@ -2279,212 +1801,16 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 	list.append("CREATE TABLE IF NOT EXISTS book_binding_types "
 				"("
 				"binding_type TEXT NOT NULL PRIMARY KEY)");
-	list.append("CREATE TABLE member_temporary "
-				"("
-				"memberid VARCHAR(16) NOT NULL PRIMARY KEY DEFAULT 1,"
-				"membersince VARCHAR(32) NOT NULL,"
-				"dob VARCHAR(32) NOT NULL,"
-				"sex VARCHAR(32) NOT NULL DEFAULT 'Female',"
-				"first_name VARCHAR(128) NOT NULL,"
-				"middle_init VARCHAR(1),"
-				"last_name VARCHAR(128) NOT NULL,"
-				"telephone_num VARCHAR(32),"
-				"street VARCHAR(256) NOT NULL,"
-				"city VARCHAR(256) NOT NULL,"
-				"state_abbr VARCHAR(16) NOT NULL DEFAULT 'N/A',"
-				"zip VARCHAR(16) NOT NULL DEFAULT 'N/A',"
-				"email VARCHAR(128),"
-				"expiration_date VARCHAR(32) NOT NULL,"
-				"overdue_fees NUMERIC(10, 2) NOT NULL DEFAULT 0.00,"
-				"comments TEXT,"
-				"general_registration_number TEXT,"
-				"memberclass TEXT)");
-	list.append("INSERT INTO member_temporary SELECT "
-				"memberid, "
-				"membersince, "
-				"dob, "
-				"sex, "
-				"first_name, "
-				"middle_init, "
-				"last_name, "
-				"telephone_num, "
-				"street, "
-				"city, "
-				"state_abbr, "
-				"zip, "
-				"email, "
-				"expiration_date, "
-				"overdue_fees, "
-				"comments, "
-				"general_registration_number, "
-				"memberclass FROM member");
-	list.append("DROP TABLE IF EXISTS member");
-	list.append("ALTER TABLE member_temporary RENAME TO member");
-	list.append("CREATE TABLE journal_temporary "
-				"("
-				"accession_number TEXT, "
-				"id VARCHAR(32),"
-				"myoid BIGINT NOT NULL,"
-				"title TEXT NOT NULL,"
-				"pdate VARCHAR(32) NOT NULL,"
-				"publisher TEXT NOT NULL,"
-				"place TEXT NOT NULL,"
-				"category TEXT NOT NULL,"
-				"price NUMERIC(10, 2) NOT NULL DEFAULT 0.00,"
-				"description TEXT NOT NULL,"
-				"language VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',"
-				"monetary_units VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',"
-				"quantity INTEGER NOT NULL DEFAULT 1,"
-				"location TEXT NOT NULL,"
-				"issuevolume INTEGER NOT NULL DEFAULT 0,"
-				"issueno INTEGER NOT NULL DEFAULT 0,"
-				"lccontrolnumber VARCHAR(64),"
-				"callnumber VARCHAR(64),"
-				"deweynumber VARCHAR(64),"
-				"front_cover BYTEA,"
-				"back_cover BYTEA,"
-				"marc_tags TEXT,"
-				"keyword TEXT,"
-				"type VARCHAR(16) NOT NULL DEFAULT 'Journal',"
-				"UNIQUE (id, issueno, issuevolume))");
-	list.append("INSERT INTO journal_temporary SELECT "
-				"accession_number, "
-				"id, "
-				"myoid, "
-				"title, "
-				"pdate, "
-				"publisher, "
-				"place, "
-				"category, "
-				"price, "
-				"description, "
-				"language, "
-				"monetary_units, "
-				"quantity, "
-				"location, "
-				"issuevolume, "
-				"issueno, "
-				"lccontrolnumber, "
-				"callnumber, "
-				"deweynumber, "
-				"front_cover, "
-				"back_cover, "
-				"marc_tags, "
-				"keyword, "
-				"type FROM journal");
-	list.append("DROP TABLE IF EXISTS journal");
-	list.append("ALTER TABLE journal_temporary RENAME TO journal");
-	list.append("CREATE TABLE magazine_temporary"
-				"("
-				"accession_number TEXT, "
-				"id VARCHAR(32),"
-				"myoid BIGINT NOT NULL,"
-				"title TEXT NOT NULL,"
-				"pdate VARCHAR(32) NOT NULL,"
-				"publisher TEXT NOT NULL,"
-				"place TEXT NOT NULL,"
-				"category TEXT NOT NULL,"
-				"price NUMERIC(10, 2) NOT NULL DEFAULT 0.00,"
-				"description TEXT NOT NULL,"
-				"language VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',"
-				"monetary_units VARCHAR(64) NOT NULL DEFAULT 'UNKNOWN',"
-				"quantity INTEGER NOT NULL DEFAULT 1,"
-				"location TEXT NOT NULL,"
-				"issuevolume INTEGER NOT NULL DEFAULT 0,"
-				"issueno INTEGER NOT NULL DEFAULT 0,"
-				"lccontrolnumber VARCHAR(64),"
-				"callnumber VARCHAR(64),"
-				"deweynumber VARCHAR(64),"
-				"front_cover BYTEA,"
-				"back_cover BYTEA,"
-				"marc_tags TEXT,"
-				"keyword TEXT,"
-				"type VARCHAR(16) NOT NULL DEFAULT 'Magazine',"
-				"UNIQUE (id, issueno, issuevolume))");
-	list.append("INSERT INTO magazine_temporary SELECT "
-				"accession_number, "
-				"id, "
-				"myoid, "
-				"title, "
-				"pdate, "
-				"publisher, "
-				"place, "
-				"category, "
-				"price, "
-				"description, "
-				"language, "
-				"monetary_units, "
-				"quantity, "
-				"location, "
-				"issuevolume, "
-				"issueno, "
-				"lccontrolnumber, "
-				"callnumber, "
-				"deweynumber, "
-				"front_cover, "
-				"back_cover, "
-				"marc_tags, "
-				"keyword, "
-				"type FROM magazine");
-	list.append("DROP TABLE IF EXISTS magazine");
-	list.append("ALTER TABLE magazine_temporary RENAME TO magazine");
-	list.append("CREATE TABLE IF NOT EXISTS grey_literature "
-				"("
-				"author TEXT NOT NULL,"
-				"client TEXT,"
-				"document_code_a TEXT NOT NULL,"
-				"document_code_b TEXT NOT NULL,"
-				"document_date TEXT NOT NULL,"
-				"document_id TEXT NOT NULL PRIMARY KEY,"
-				"document_status TEXT,"
-				"document_title TEXT NOT NULL,"
-				"document_type TEXT NOT NULL,"
-				"front_cover BYTEA,"
-				"job_number TEXT NOT NULL,"
-				"location TEXT,"
-				"myoid BIGINT UNIQUE,"
-				"notes TEXT,"
-				"type VARCHAR(16) NOT NULL DEFAULT 'Grey Literature')");
 	list.append("ALTER TABLE book ADD accession_number TEXT");
-	list.append("ALTER TABLE journal ADD accession_number TEXT");
-	list.append("ALTER TABLE magazine ADD accession_number TEXT");
 	list.append("ALTER TABLE photograph ADD accession_number TEXT");
 	list.append("ALTER TABLE photograph_collection ADD accession_number TEXT");
-	list.append("CREATE TABLE IF NOT EXISTS grey_literature_files "
-				"("
-				"description TEXT,"
-				"file BYTEA NOT NULL,"
-				"file_digest TEXT NOT NULL,"
-				"file_name TEXT NOT NULL,"
-				"item_oid BIGINT NOT NULL,"
-				"myoid BIGINT NOT NULL,"
-				"FOREIGN KEY(item_oid) REFERENCES grey_literature(myoid) ON "
-				"DELETE CASCADE,"
-				"PRIMARY KEY(file_digest, item_oid)"
-				")");
-	list.append("CREATE TABLE IF NOT EXISTS grey_literature_types	"
-				"("
-				"document_type     TEXT NOT NULL PRIMARY KEY"
-				")");
 	list.append("DROP VIEW IF EXISTS item_borrower_vw");
 	list.append("CREATE TABLE IF NOT EXISTS book_sequence "
 				"("
 				"value            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"
 				")");
 	list.append("ALTER TABLE book_copy_info ADD status TEXT");
-	list.append("ALTER TABLE journal_copy_info ADD status TEXT");
-	list.append("ALTER TABLE magazine_copy_info ADD status TEXT");
 	list.append("ALTER TABLE book ADD url");
-	list.append("ALTER TABLE grey_literature ADD quantity INTEGER NOT NULL DEFAULT 1");
-	list.append("CREATE TRIGGER IF NOT EXISTS "
-				"grey_literature_purge_trigger AFTER DELETE ON "
-				"grey_literature "
-				"FOR EACH row "
-				"BEGIN "
-				"DELETE FROM item_borrower WHERE item_oid = old.myoid; "
-				"DELETE FROM member_history WHERE item_oid = old.myoid AND "
-				"type = old.type; "
-				"END;");
 	list.append("ALTER TABLE book ADD book_read INTEGER DEFAULT 0");
 	list.append("ALTER TABLE member ADD maximum_reserved_books "
 				"INTEGER NOT NULL DEFAULT 0");
@@ -2531,7 +1857,7 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 
 		ui.setupUi(&dialog);
 		ui.text->setText(errors);
-        connect(ui.cancelButton, SIGNAL(clicked()), &dialog, SLOT(close()));
+		connect(ui.cancelButton, SIGNAL(clicked()), &dialog, SLOT(close()));
 		dialog.setWindowTitle(tr("BiblioteQ: Upgrade SQLite Schema Results"));
 		QApplication::restoreOverrideCursor();
 		dialog.exec();

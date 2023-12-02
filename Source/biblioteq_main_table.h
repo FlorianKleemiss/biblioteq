@@ -35,8 +35,7 @@ class biblioteq_main_table: public QTableWidget
 			  const int index,
 			  const bool hidden);
   void resetTable(const QString &username,
-		  const QString &t,
-		  const QString &roles);
+          const QString &t);
   void setColumnNames(const QStringList &list);
   void setQMain(biblioteq *biblioteq);
   void updateToolTips(const int row);
@@ -47,8 +46,7 @@ class biblioteq_main_table: public QTableWidget
   QVector<QString> m_columnHeaderIndexes;
   void keyPressEvent(QKeyEvent *event);
   void setColumns(const QString &username,
-		  const QString &type,
-		  const QString &roles);
+          const QString &type);
 
  signals:
   void enterKeyPressed(void);

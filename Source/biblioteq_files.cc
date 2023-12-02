@@ -179,13 +179,7 @@ void biblioteq_files::slotRefresh(void)
 
   m_ui.page->clear();
   query.setForwardOnly(true);
-  query.prepare("SELECT (SELECT COUNT(*) FROM book_files) "
-                "+ "
-                "(SELECT COUNT(*) FROM grey_literature_files) "
-                "+ "
-                "(SELECT COUNT(*) FROM journal_files) "
-                "+ "
-                "(SELECT COUNT(*) FROM magazine_files) AS totalCount");
+  query.prepare("SELECT (SELECT COUNT(*) FROM book_files) AS totalCount");
 
   if (query.exec() && query.next())
   {
@@ -211,36 +205,6 @@ void biblioteq_files::slotRefresh(void)
                         "bf.myoid "
                         "FROM book b, book_files bf "
                         "WHERE b.myoid = bf.item_oid "
-                        "UNION "
-                        "SELECT gf.file_name, "
-                        "gf.description, "
-                        "gf.file_digest, "
-                        "LENGTH(gf.file), "
-                        "g.document_title, "
-                        "'grey literature', "
-                        "gf.myoid "
-                        "FROM grey_literature g, grey_literature_files gf "
-                        "WHERE g.myoid = gf.item_oid "
-                        "UNION "
-                        "SELECT jf.file_name, "
-                        "jf.description, "
-                        "jf.file_digest, "
-                        "LENGTH(jf.file), "
-                        "j.title, "
-                        "'journal', "
-                        "jf.myoid "
-                        "FROM journal j, journal_files jf "
-                        "WHERE j.myoid = jf.item_oid "
-                        "UNION "
-                        "SELECT mf.file_name, "
-                        "mf.description, "
-                        "mf.file_digest, "
-                        "LENGTH(mf.file), "
-                        "m.title, "
-                        "'magazine', "
-                        "mf.myoid "
-                        "FROM magazine m, magazine_files mf "
-                        "WHERE m.myoid = mf.item_oid "
                         "LIMIT %1 OFFSET %2")
                     .arg(m_ui.pages->value())
                     .arg(m_ui.page->currentIndex() * m_ui.pages->value()));

@@ -450,7 +450,7 @@ biblioteq::biblioteq(void) : QMainWindow()
   ui.graphicsView->scene()->clear();
   ui.summary->setVisible(false);
   ui.about->setVisible(false);
-  ui.table->resetTable(dbUserName(), m_lastCategory, m_roles);
+  ui.table->resetTable(dbUserName(), m_lastCategory);
 
   if (m_otheroptions->showMainTableImages())
     ui.table->setIconSize(QSize(64, 94));
@@ -923,8 +923,7 @@ void biblioteq::changeEvent(QEvent *event)
       ui.pagesLabel->setText(tr("1"));
       ui.previousPageButton->setEnabled(false);
       ui.table->resetTable(dbUserName(),
-                           ui.menu_Category->defaultAction() ? ui.menu_Category->defaultAction()->data().toString() : "All",
-                           m_roles);
+                           ui.menu_Category->defaultAction() ? ui.menu_Category->defaultAction()->data().toString() : "All");
       ui.itemsCountLabel->setText(tr("0 Results"));
       addConfigOptions(m_lastCategory);
       prepareFilter();
@@ -1530,7 +1529,7 @@ void biblioteq::slotAutoPopOnFilter(QAction *action)
     ui.nextPageButton->setEnabled(false);
     ui.pagesLabel->setText(tr("1"));
     ui.previousPageButton->setEnabled(false);
-    ui.table->resetTable(dbUserName(), typefilter, "");
+    ui.table->resetTable(dbUserName(), typefilter);
     ui.itemsCountLabel->setText(tr("0 Results"));
   }
 }
@@ -1756,15 +1755,12 @@ void biblioteq::slotDelete(void)
     str = ui.table->item(i, col)->text();
     itemType = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Type")).toLower();
 
-    if (itemType == "grey literature" || itemType == "photograph collection")
+    if (itemType == "photograph collection")
       itemType = itemType.replace(" ", "_");
     else
       itemType = itemType.remove(" ");
 
     if (itemType == "book" ||
-        itemType == "grey_literature" ||
-        itemType == "journal" ||
-        itemType == "magazine" ||
         itemType == "photograph_collection")
       query.prepare(QString("DELETE FROM %1 WHERE myoid = ?").arg(itemType));
 
@@ -1786,17 +1782,11 @@ void biblioteq::slotDelete(void)
       ** SQL errors are ignored.
       */
 
-      if (itemType == "book" ||
-          itemType == "grey_literature" ||
-          itemType == "journal" ||
-          itemType == "magazine")
+      if (itemType == "book")
       {
-        if (itemType != "grey_literature")
-        {
-          query.prepare(QString("DELETE FROM %1_copy_info WHERE item_oid = ?").arg(itemType));
-          query.bindValue(0, str);
-          query.exec();
-        }
+        query.prepare(QString("DELETE FROM %1_copy_info WHERE item_oid = ?").arg(itemType));
+        query.bindValue(0, str);
+        query.exec();
 
         query.prepare(QString("DELETE FROM %1_files WHERE item_oid = ?").arg(itemType));
         query.bindValue(0, str);

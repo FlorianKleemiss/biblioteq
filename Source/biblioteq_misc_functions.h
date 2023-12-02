@@ -40,8 +40,6 @@ public:
 	static QString isbn13to10(const QString &text);
 	static QString linearizeString(const QString &text);
 	static QStringList getBookBindingTypes(const QSqlDatabase &, QString &);
-	static QStringList getGreyLiteratureTypes(const QSqlDatabase &db,
-											  QString &errorstr);
 	static QStringList getLanguages(const QSqlDatabase &, QString &);
 	static QStringList getLocations(const QSqlDatabase &,
 									const QString &,

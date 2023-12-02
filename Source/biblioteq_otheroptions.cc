@@ -30,12 +30,6 @@ QColor biblioteq_otheroptions::availabilityColor(const QString &it) const
 
   if (itemType == "book" || itemType == "books")
     value = settings.value("otheroptions/book_availability_color").toString();
-  else if (itemType == "greyliterature")
-    value = settings.value("otheroptions/grey_literature_availability_color").toString();
-  else if (itemType == "journal" || itemType == "journals")
-    value = settings.value("otheroptions/journal_availability_color").toString();
-  else if (itemType == "magazine" || itemType == "magazines")
-    value = settings.value("otheroptions/magazine_availability_color").toString();
 
   return QColor(value);
 }
@@ -47,12 +41,6 @@ QString biblioteq_otheroptions::publicationDateFormat(const QString &it) const
 
   if (itemType == "books")
     return settings.value("otheroptions/book_publication_date_format").toString();
-  else if (itemType == "greyliterature")
-    return settings.value("otheroptions/grey_literature_date_format").toString();
-  else if (itemType == "journals")
-    return settings.value("otheroptions/journal_publication_date_format").toString();
-  else if (itemType == "magazines")
-    return settings.value("otheroptions/magazine_publication_date_format").toString();
   else if (itemType == "photographcollections")
     return settings.value("otheroptions/photograph_publication_date_format").toString();
   else
@@ -139,18 +127,9 @@ void biblioteq_otheroptions::prepareAvailability(void)
   QStringList list2;
   QStringList list3;
 
-  list1 << tr("Books")
-        << tr("Grey Literature")
-        << tr("Journals")
-        << tr("Magazines");
-  list2 << settings.value("otheroptions/book_availability_color").toString()
-        << settings.value("otheroptions/grey_literature_availability_color").toString()
-        << settings.value("otheroptions/journal_availability_color").toString()
-        << settings.value("otheroptions/magazine_availability_color").toString();
-  list3 << "books"
-        << "greyliterature"
-        << "journals"
-        << "magazines";
+  list1 << tr("Books");
+  list2 << settings.value("otheroptions/book_availability_color").toString();
+  list3 << "books";
   m_ui.availability_color->setRowCount(list1.size());
   m_ui.availability_colors->setChecked(settings.value("otheroptions/availability_colors", false).toBool());
 
@@ -192,19 +171,10 @@ void biblioteq_otheroptions::prepareSettings(void)
   QStringList list3;
 
   list1 << tr("Books")
-        << tr("Grey Literature")
-        << tr("Journals")
-        << tr("Magazines")
         << tr("Photograph Collections");
   list2 << settings.value("otheroptions/book_publication_date_format").toString()
-        << settings.value("otheroptions/grey_literature_date_format").toString()
-        << settings.value("otheroptions/journal_publication_date_format").toString()
-        << settings.value("otheroptions/magazine_publication_date_format").toString()
         << settings.value("otheroptions/photograph_publication_date_format").toString();
   list3 << "books"
-        << "greyliterature"
-        << "journals"
-        << "magazines"
         << "photographcollections";
   m_ui.book_read_status->setChecked(settings.value("otheroptions/book_read_status", false).toBool());
   m_ui.books_accession_number->setCurrentIndex(qBound(0,
@@ -328,10 +298,7 @@ void biblioteq_otheroptions::slotSave(void)
 
   QStringList list;
 
-  list << "otheroptions/book_availability_color"
-       << "otheroptions/grey_literature_availability_color"
-       << "otheroptions/journal_availability_color"
-       << "otheroptions/magazine_availability_color";
+  list << "otheroptions/book_availability_color";
 
   for (int i = 0; i < list.size(); i++)
   {
@@ -352,9 +319,6 @@ void biblioteq_otheroptions::slotSave(void)
 
   list.clear();
   list << "otheroptions/book_publication_date_format"
-       << "otheroptions/grey_literature_date_format"
-       << "otheroptions/journal_publication_date_format"
-       << "otheroptions/magazine_publication_date_format"
        << "otheroptions/photograph_publication_date_format";
 
   for (int i = 0; i < list.size(); i++)

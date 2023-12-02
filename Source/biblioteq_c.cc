@@ -355,7 +355,7 @@ int biblioteq::populateTable(QSqlQuery &query,
 			   SIGNAL(itemChanged(QTableWidgetItem *)),
 			   this,
 			   SLOT(slotItemChanged(QTableWidgetItem *)));
-	ui.table->resetTable(dbUserName(), typefilter, m_roles);
+    ui.table->resetTable(dbUserName(), typefilter);
 
 	qint64 currentPage = 0;
 
@@ -497,9 +497,6 @@ int biblioteq::populateTable(QSqlQuery &query,
 	auto showToolTips = settings.value("show_maintable_tooltips", false).toBool();
 
 	if (typefilter == "Books" ||
-		typefilter == "Grey Literature" ||
-		typefilter == "Journals" ||
-		typefilter == "Magazines" ||
 		typefilter == "Photograph Collections")
 		dateFormat = publicationDateFormat(QString(typefilter).remove(' ').toLower());
 
@@ -871,7 +868,7 @@ int biblioteq::populateTable(QSqlQuery &query,
 	ui.table->hide();
 	ui.table->show();
 #endif
-    connect(ui.table, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(slotItemChanged(QTableWidgetItem*)));
+	connect(ui.table, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(slotItemChanged(QTableWidgetItem *)));
 	QApplication::restoreOverrideCursor();
 	return 0;
 }
@@ -1363,9 +1360,6 @@ void biblioteq::slotAllGo(void)
 	QList<QVariant> values;
 	QSqlQuery query(m_db);
 	QString bookFrontCover("'' AS front_cover ");
-	QString greyLiteratureFrontCover("'' AS front_cover ");
-	QString journalFrontCover("'' AS front_cover ");
-	QString magazineFrontCover("'' AS front_cover ");
 	QString photographCollectionFrontCover("'' AS image_scaled ");
 	QString searchstr("");
 	QString str("");
@@ -1375,16 +1369,10 @@ void biblioteq::slotAllGo(void)
 	if (m_otheroptions->showMainTableImages())
 	{
 		bookFrontCover = "book.front_cover ";
-		greyLiteratureFrontCover = "grey_literature.front_cover ";
-		journalFrontCover = "journal.front_cover ";
-		magazineFrontCover = "magazine.front_cover ";
 		photographCollectionFrontCover = "photograph_collection.image_scaled ";
 	}
 
 	types.append("Book");
-	types.append("Grey Literature");
-	types.append("Journal");
-	types.append("Magazine");
 	types.append("Photograph Collection");
 
 	for (int i = 0; i < types.size(); i++)
@@ -1813,10 +1801,10 @@ void biblioteq::slotConnectDB(void)
 			ui.menuEntriesPerPage->actions().at(ui.menuEntriesPerPage->actions().size() - 1)->setEnabled(false);
 
 		ui.actionChangePassword->setEnabled(true);
-        disconnect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotViewDetails()));
-        disconnect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotViewDetails()));
-        connect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotViewDetails()));
-        connect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotViewDetails()));
+		disconnect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, SLOT(slotViewDetails()));
+		disconnect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotViewDetails()));
+		connect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, SLOT(slotViewDetails()));
+		connect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotViewDetails()));
 
 		/*
 		** Set the window's title.
@@ -2101,7 +2089,7 @@ void biblioteq::slotDisconnect(void)
 	ui.nextPageButton->setEnabled(false);
 	ui.pagesLabel->setText(tr("1"));
 	ui.previousPageButton->setEnabled(false);
-	ui.table->resetTable(dbUserName(), m_previousTypeFilter, m_roles);
+    ui.table->resetTable(dbUserName(), m_previousTypeFilter);
 	ui.itemsCountLabel->setText(tr("0 Results"));
 	prepareFilter();
 
@@ -2216,55 +2204,6 @@ void biblioteq::slotDisplaySummary(void)
 			summary += biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Place of Publication"));
 			summary += "<br>";
 		}
-		else if (type == "Grey Literature")
-		{
-			summary += "<b>" +
-					   biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Title")) +
-					   "</b>";
-			summary += "<br>";
-			tmpstr = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("ID"));
-
-			if (tmpstr.isEmpty())
-				tmpstr = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("ID Number"));
-
-			if (tmpstr.isEmpty())
-				tmpstr = "<br>";
-
-			summary += tmpstr;
-			tmpstr = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("File Count"));
-
-			if (!tmpstr.isEmpty())
-				summary += "<br>" + QString(tr("%1 File(s)")).arg(tmpstr);
-
-			summary += "<br>";
-		}
-		else if (type == "Journal" || type == "Magazine")
-		{
-			summary += "<b>" +
-					   biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Title")) +
-					   "</b>";
-			summary += "<br>";
-			tmpstr = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("ISSN"));
-
-			if (tmpstr.isEmpty())
-				tmpstr = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("ID Number"));
-			else
-			{
-				tmpstr += QString(" Vol. %1, No. %2").arg(biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Volume"))).arg(biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Issue")));
-			}
-
-			if (tmpstr.isEmpty())
-				tmpstr = "<br>";
-
-			summary += tmpstr;
-			summary += "<br>";
-			summary += biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Publication Date"));
-			summary += "<br>";
-			summary += biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Publisher"));
-			summary += "<br>";
-			summary += biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Place of Publication"));
-			summary += "<br>";
-		}
 		else if (type == "Photograph Collection")
 		{
 			summary += "<b>" +
@@ -2334,16 +2273,14 @@ void biblioteq::slotDisplaySummary(void)
 		ui.summary->setVisible(true);
 		QApplication::setOverrideCursor(Qt::WaitCursor);
 
-		if (type != "Grey Literature" &&
-			type != "Photograph Collection")
+		if (type != "Photograph Collection")
 			frontImage = biblioteq_misc_functions::getImage(oid, "front_cover", type,
 															m_db);
 		else
 			frontImage = biblioteq_misc_functions::getImage(oid, "image_scaled", type,
 															m_db);
 
-		if (type != "Grey Literature" &&
-			type != "Photograph Collection")
+		if (type != "Photograph Collection")
 			backImage = biblioteq_misc_functions::getImage(oid, "back_cover", type, m_db);
 
 		QApplication::restoreOverrideCursor();
@@ -2358,8 +2295,7 @@ void biblioteq::slotDisplaySummary(void)
 		if (!frontImage.isNull())
 			frontImage = frontImage.scaled(126, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-		if (type != "Grey Literature" &&
-			type != "Photograph Collection")
+		if (type != "Photograph Collection")
 		{
 			if (backImage.isNull())
 				backImage = QImage(":/no_image.png");
@@ -2376,8 +2312,7 @@ void biblioteq::slotDisplaySummary(void)
 		else
 			ui.frontImage->clear();
 
-		if (type != "Grey Literature" &&
-			type != "Photograph Collection")
+		if (type != "Photograph Collection")
 		{
 			if (!backImage.isNull())
 			{
@@ -2560,21 +2495,8 @@ void biblioteq::slotRefreshCustomQuery(void)
 			 << "book_binding_types"
 			 << "book_copy_info"
 			 << "book_files"
-			 << "grey_literature"
-			 << "grey_literature_files"
-			 << "grey_literature_types"
-			 << "item_borrower"
-			 << "journal"
-			 << "journal_copy_info"
-			 << "journal_files"
 			 << "languages"
 			 << "locations"
-			 << "magazine"
-			 << "magazine_copy_info"
-			 << "magazine_files"
-			 << "member"
-			 << "member_history"
-			 << "minimum_days"
 			 << "monetary_units"
 			 << "photograph"
 			 << "photograph_collection";
@@ -2584,21 +2506,8 @@ void biblioteq::slotRefreshCustomQuery(void)
 			 << "book_binding_types"
 			 << "book_copy_info"
 			 << "book_files"
-			 << "grey_literature"
-			 << "grey_literature_files"
-			 << "grey_literature_types"
-			 << "item_borrower"
-			 << "item_request"
-			 << "journal"
-			 << "journal_copy_info"
-			 << "journal_files"
 			 << "languages"
 			 << "locations"
-			 << "magazine"
-			 << "magazine_copy_info"
-			 << "magazine_files"
-			 << "member"
-			 << "member_history"
 			 << "minimum_days"
 			 << "monetary_units"
 			 << "photograph"
@@ -3060,21 +2969,6 @@ void biblioteq::slotVacuum(void)
 		progress.setValue(0);
 		query.exec("DELETE FROM book_files WHERE item_oid NOT IN "
 				   "(SELECT myoid FROM book)");
-		progress.setValue(0);
-		query.exec("DELETE FROM grey_literature_files WHERE item_oid NOT IN "
-				   "(SELECT myoid FROM grey_literature)");
-		progress.setValue(0);
-		query.exec("DELETE FROM journal_copy_info WHERE item_oid NOT IN "
-				   "(SELECT myoid FROM journal)");
-		progress.setValue(0);
-		query.exec("DELETE FROM journal_files WHERE item_oid NOT IN "
-				   "(SELECT myoid FROM journal)");
-		progress.setValue(0);
-		query.exec("DELETE FROM magazine_copy_info WHERE item_oid NOT IN "
-				   "(SELECT myoid FROM magazine)");
-		progress.setValue(0);
-		query.exec("DELETE FROM magazine_files WHERE item_oid NOT IN "
-				   "(SELECT myoid FROM magazine)");
 		progress.setValue(0);
 		query.exec("DELETE FROM photograph WHERE collection_oid NOT IN "
 				   "(SELECT myoid FROM photograph_collection)");

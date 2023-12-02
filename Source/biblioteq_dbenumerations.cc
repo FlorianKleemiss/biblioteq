@@ -6,21 +6,19 @@ biblioteq_dbenumerations::biblioteq_dbenumerations(biblioteq *parent) : QMainWin
 {
 	m_ui.setupUi(this);
 	qmain = parent;
-    connect(m_ui.addBookBinding, SIGNAL(clicked()), this, SLOT(slotAdd()));
-    connect(m_ui.addGreyLiteratureType, SIGNAL(clicked()), this, SLOT(slotAdd()));
-    connect(m_ui.addLanguage, SIGNAL(clicked()), this, SLOT(slotAdd()));
-    connect(m_ui.addLocation, SIGNAL(clicked()), this, SLOT(slotAdd()));
-    connect(m_ui.addMonetaryUnit, SIGNAL(clicked()), this, SLOT(slotAdd()));
-    connect(m_ui.cancelButton, SIGNAL(clicked()), this, SLOT(slotClose()));
-    connect(m_ui.reloadButton, SIGNAL(clicked()), this, SLOT(slotReload()));
-    connect(m_ui.removeBookBinding, SIGNAL(clicked()), this, SLOT(slotRemove()));
-    connect(m_ui.removeGreyLiteratureType, SIGNAL(clicked()), this, SLOT(slotRemove()));
-    connect(m_ui.removeLanguage, SIGNAL(clicked()), this, SLOT(slotRemove()));
-    connect(m_ui.removeLocation, SIGNAL(clicked()), this, SLOT(slotRemove()));
-    connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(slotSave()));
+	connect(m_ui.addBookBinding, SIGNAL(clicked()), this, SLOT(slotAdd()));
+	connect(m_ui.addLanguage, SIGNAL(clicked()), this, SLOT(slotAdd()));
+	connect(m_ui.addLocation, SIGNAL(clicked()), this, SLOT(slotAdd()));
+	connect(m_ui.addMonetaryUnit, SIGNAL(clicked()), this, SLOT(slotAdd()));
+	connect(m_ui.cancelButton, SIGNAL(clicked()), this, SLOT(slotClose()));
+	connect(m_ui.reloadButton, SIGNAL(clicked()), this, SLOT(slotReload()));
+	connect(m_ui.removeBookBinding, SIGNAL(clicked()), this, SLOT(slotRemove()));
+	connect(m_ui.removeLanguage, SIGNAL(clicked()), this, SLOT(slotRemove()));
+	connect(m_ui.removeLocation, SIGNAL(clicked()), this, SLOT(slotRemove()));
+	connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(slotSave()));
 
 	if (qmain)
-        connect(qmain, SIGNAL(fontChanged(QFont)), this, SLOT(setGlobalFonts(QFont)));
+		connect(qmain, SIGNAL(fontChanged(QFont)), this, SLOT(setGlobalFonts(QFont)));
 
 	m_ui.locationsTable->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 	m_ui.minimumDaysTable->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -97,7 +95,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
 	QStringList tables;
 
 	tables << "book_binding_types"
-		   << "grey_literature_types"
 		   << "languages"
 		   << "locations";
 
@@ -114,11 +111,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
 			list = biblioteq_misc_functions::getBookBindingTypes(qmain->getDB(),
 																 errorstr);
 			listwidget = m_ui.bookBindingsList;
-		}
-		else if (str == "grey_literature_types")
-		{
-			list = biblioteq_misc_functions::getGreyLiteratureTypes(qmain->getDB(), errorstr);
-			listwidget = m_ui.greyLiteratureTypes;
 		}
 		else if (str == "languages")
 		{
@@ -166,20 +158,11 @@ void biblioteq_dbenumerations::populateWidgets(void)
 				layout->addSpacerItem(spacer);
 				layout->setContentsMargins(0, 0, 0, 0);
 				list << tr("Book")
-					 << tr("Grey Literature")
-					 << tr("Journal")
-					 << tr("Magazine")
 					 << tr("Photograph Collection");
 				comboBox->addItems(list);
 
 				if (pairList.at(j).first == "Book")
 					comboBox->setCurrentIndex(0);
-				else if (pairList.at(j).first == "Grey Literature")
-					comboBox->setCurrentIndex(1);
-				else if (pairList.at(j).first == "Journal")
-					comboBox->setCurrentIndex(2);
-				else if (pairList.at(j).first == "Magazine")
-					comboBox->setCurrentIndex(3);
 				else if (pairList.at(j).first == "Photograph Collection")
 					comboBox->setCurrentIndex(4);
 
@@ -335,11 +318,6 @@ void biblioteq_dbenumerations::slotAdd(void)
 		list = m_ui.bookBindingsList;
 		listItem = new QListWidgetItem(tr("Book Binding"));
 	}
-	else if (toolButton == m_ui.addGreyLiteratureType)
-	{
-		list = m_ui.greyLiteratureTypes;
-		listItem = new QListWidgetItem(tr("Document Type"));
-	}
 	else if (toolButton == m_ui.addLanguage)
 	{
 		list = m_ui.languagesList;
@@ -358,9 +336,6 @@ void biblioteq_dbenumerations::slotAdd(void)
 		layout->addSpacerItem(spacer);
 		layout->setContentsMargins(0, 0, 0, 0);
 		list << tr("Book")
-			 << tr("Grey Literature")
-			 << tr("Journal")
-			 << tr("Magazine")
 			 << tr("Photograph Collection");
 		comboBox->addItems(list);
 		comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
@@ -434,8 +409,6 @@ void biblioteq_dbenumerations::slotRemove(void)
 
 	if (toolButton == m_ui.removeBookBinding)
 		list = m_ui.bookBindingsList;
-	else if (toolButton == m_ui.removeGreyLiteratureType)
-		list = m_ui.greyLiteratureTypes;
 	else if (toolButton == m_ui.removeLanguage)
 		list = m_ui.languagesList;
 	else if (toolButton == m_ui.removeLocation)
@@ -459,10 +432,8 @@ void biblioteq_dbenumerations::slotSave(void)
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 	tables << "book_binding_types"
-		   << "grey_literature_types"
 		   << "languages"
 		   << "locations"
-		   << "minimum_days"
 		   << "monetary_units";
 
 	for (int i = 0; i < tables.size(); i++)
@@ -492,8 +463,6 @@ void biblioteq_dbenumerations::slotSave(void)
 
 		if (i == 0)
 			listwidget = m_ui.bookBindingsList;
-		else if (i == 1)
-			listwidget = m_ui.greyLiteratureTypes;
 		else if (i == 6)
 			listwidget = m_ui.languagesList;
 		else if (i == 7)
@@ -544,29 +513,6 @@ void biblioteq_dbenumerations::slotSave(void)
 						query.bindValue(0,
 										tablewidget->item(j, 1)->text().trimmed());
 					}
-					else if (index == 1)
-					{
-						query.prepare("INSERT INTO locations "
-									  "(location, type) VALUES "
-									  "(?, 'Grey Literature')");
-						query.bindValue(0, tablewidget->item(j, 1)->text().trimmed());
-					}
-					else if (index == 2)
-					{
-						query.prepare("INSERT INTO locations "
-									  "(location, type) VALUES "
-									  "(?, 'Journal')");
-						query.bindValue(0,
-										tablewidget->item(j, 1)->text().trimmed());
-					}
-					else if (index == 3)
-					{
-						query.prepare("INSERT INTO locations "
-									  "(location, type) VALUES "
-									  "(?, 'Magazine')");
-						query.bindValue(0,
-										tablewidget->item(j, 1)->text().trimmed());
-					}
 					else if (index == 4)
 					{
 						query.prepare("INSERT INTO locations "
@@ -599,30 +545,6 @@ void biblioteq_dbenumerations::slotSave(void)
 						query.prepare("INSERT INTO minimum_days "
 									  "(days, type) VALUES "
 									  "(?, 'Book')");
-						query.bindValue(0,
-										tablewidget->item(j, 1)->text().trimmed());
-					}
-					else if (j == 1)
-					{
-						query.prepare("INSERT INTO minimum_days "
-									  "(days, type) VALUES "
-									  "(?, 'Grey Literature')");
-						query.bindValue(0,
-										tablewidget->item(j, 1)->text().trimmed());
-					}
-					else if (j == 2)
-					{
-						query.prepare("INSERT INTO minimum_days "
-									  "(days, type) VALUES "
-									  "(?, 'Journal')");
-						query.bindValue(0,
-										tablewidget->item(j, 1)->text().trimmed());
-					}
-					else if (j == 3)
-					{
-						query.prepare("INSERT INTO minimum_days "
-									  "(days, type) VALUES "
-									  "(?, 'Magazine')");
 						query.bindValue(0,
 										tablewidget->item(j, 1)->text().trimmed());
 					}

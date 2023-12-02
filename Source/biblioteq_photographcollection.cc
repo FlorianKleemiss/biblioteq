@@ -2950,10 +2950,6 @@ void biblioteq_photographcollection::updateTablePhotographCount(const int count)
 {
   if (m_index->isValid() &&
       (qmain->getTypeFilterString() == "All" ||
-       qmain->getTypeFilterString() == "All Available" ||
-       qmain->getTypeFilterString() == "All Overdue" ||
-       qmain->getTypeFilterString() == "All Requested" ||
-       qmain->getTypeFilterString() == "All Reserved" ||
        qmain->getTypeFilterString() == "Photograph Collections"))
   {
     qmain->getUI().table->setSortingEnabled(false);
