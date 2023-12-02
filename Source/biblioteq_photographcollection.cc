@@ -59,11 +59,6 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   pc.graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
   pc.graphicsView->setRubberBandSelectionMode(Qt::IntersectsItemShape);
 
-  // if(photographsPerPage() != -1) // Unlimited.
-  //   pc.graphicsView->setSceneRect(0, 0,
-  //				  5 * 150,
-  //				  photographsPerPage() / 5 * 200 + 15);
-
   pc.thumbnail_item->setReadOnly(true);
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
   new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_A),
@@ -139,12 +134,7 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   pc.thumbnail_item->setScene(scene2);
   photo.thumbnail_item->setScene(scene3);
 
-  // if(pc.location->findText(biblioteq::s_unknown) == -1)
-  //   pc.location->addItem(biblioteq::s_unknown);
-
   if (m_parentWid)
-    //  resize(qRound(0.95 * m_parentWid->size().width()),
-    //     qRound(0.95 * m_parentWid->size().height()));
     biblioteq_misc_functions::center(this, m_parentWid);
 
 #ifdef Q_OS_MACOS
@@ -418,7 +408,7 @@ void biblioteq_photographcollection::loadPhotographFromItem(QGraphicsScene *scen
 
       if (view)
       {
-        connect(view, SIGNAL(save(QImage,QString,qint64)), this, SLOT(slotSaveRotatedImage(QImage,QString,qint64)), Qt::UniqueConnection);
+        connect(view, SIGNAL(save(QImage, QString, qint64)), this, SLOT(slotSaveRotatedImage(QImage, QString, qint64)), Qt::UniqueConnection);
         view->horizontalScrollBar()->setValue(0);
         view->setBestFit(percent == 0);
         view->setImage(image, format, item->data(0).toLongLong());
@@ -577,38 +567,14 @@ void biblioteq_photographcollection::loadPhotographFromItemInNewWindow(QGraphics
     mainWindow = new QMainWindow(this);
     mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
     ui.setupUi(mainWindow);
-    connect(ui.closeButton,
-            SIGNAL(clicked()),
-            mainWindow,
-            SLOT(close()));
-    connect(ui.exportItem,
-            SIGNAL(clicked()),
-            this,
-            SLOT(slotExportItem()));
-    connect(ui.next,
-            SIGNAL(clicked()),
-            this,
-            SLOT(slotViewNextPhotograph()));
-    connect(ui.previous,
-            SIGNAL(clicked()),
-            this,
-            SLOT(slotViewPreviousPhotograph()));
-    connect(ui.rotate_left,
-            SIGNAL(clicked()),
-            ui.view,
-            SLOT(slotRotateLeft()));
-    connect(ui.rotate_right,
-            SIGNAL(clicked()),
-            ui.view,
-            SLOT(slotRotateRight()));
-    connect(ui.save,
-            SIGNAL(clicked()),
-            ui.view,
-            SLOT(slotSave()));
-    connect(ui.view_size,
-            SIGNAL(currentIndexChanged(int)),
-            this,
-            SLOT(slotImageViewSizeChanged(int)));
+    connect(ui.closeButton, SIGNAL(clicked()), mainWindow, SLOT(close()));
+    connect(ui.exportItem, SIGNAL(clicked()), this, SLOT(slotExportItem()));
+    connect(ui.next, SIGNAL(clicked()), this, SLOT(slotViewNextPhotograph()));
+    connect(ui.previous, SIGNAL(clicked()), this, SLOT(slotViewPreviousPhotograph()));
+    connect(ui.rotate_left, SIGNAL(clicked()), ui.view, SLOT(slotRotateLeft()));
+    connect(ui.rotate_right, SIGNAL(clicked()), ui.view, SLOT(slotRotateRight()));
+    connect(ui.save, SIGNAL(clicked()), ui.view, SLOT(slotSave()));
+    connect(ui.view_size, SIGNAL(currentIndexChanged(int)), this, SLOT(slotImageViewSizeChanged(int)));
     ui.save->setVisible(m_engWindowTitle.contains("Modify"));
 
     auto scene = new QGraphicsScene(mainWindow);
@@ -633,14 +599,8 @@ void biblioteq_photographcollection::modify(const int state,
 
   if (state == biblioteq::EDITABLE)
   {
-    disconnect(m_scene,
-               SIGNAL(deleteKeyPressed()),
-               this,
-               SLOT(slotDeleteItem()));
-    connect(m_scene,
-            SIGNAL(deleteKeyPressed()),
-            this,
-            SLOT(slotDeleteItem()));
+    disconnect(m_scene, SIGNAL(deleteKeyPressed()), this, SLOT(slotDeleteItem()));
+    connect(m_scene, SIGNAL(deleteKeyPressed()), this, SLOT(slotDeleteItem()));
 
     if (behavior.isEmpty())
     {
@@ -2161,26 +2121,12 @@ void biblioteq_photographcollection::slotPrint(void)
             pc.executing_artist_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Publication Date:") + "</b> " +
             pc.creation_date_item->toPlainText() + "<br>";
-  // m_html += "<b>" + tr("Item Copies:") + "</b> " +
-  //   pc.quantity->text() + "<br>";
   m_html += "<b>" + tr("Item Medium:") + "</b> " +
             pc.technique_item->toPlainText().trimmed() + "<br>";
-  // m_html += "<b>" + tr("Item Reproduction Number:") + "</b> " +
-  //   pc.reproduction_number_item->toPlainText().trimmed() + "<br>";
-  // m_html += "<b>" + tr("Item Copyright:") + "</b> " +
-  //   pc.copyright_item->toPlainText().trimmed() + "<br>";
-  // m_html += "<b>" + tr("Item Call Number:") + "</b> " +
-  //   pc.call_number_item->toPlainText().trimmed() + "<br>";
-  // m_html += "<b>" + tr("Item Other Number:") + "</b> " +
-  //   pc.other_number_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Notes:") + "</b> " +
             pc.notes_item->toPlainText().trimmed() + "<br>";
-  // m_html += "<b>" + tr("Item Subjects:") + "</b> " +
-  //   pc.subjects_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Item Format:") + "</b> " +
             pc.format_item->toPlainText().trimmed() + "<br>";
-  // m_html += "<b>" + tr("Accession Number:") + "</b> " +
-  //   pc.accession_number_item->toPlainText().trimmed();
   m_html += "</html>";
   print(this);
 }
@@ -2515,19 +2461,12 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow(QGraphicsPix
     mainWindow = new QDialog(this);
     mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
     ui.setupUi(mainWindow);
-    connect(ui.closeButton,
-            SIGNAL(clicked()),
-            mainWindow,
-            SLOT(close()));
-    connect(ui.view_size,
-            SIGNAL(currentIndexChanged(int)),
-            this,
-            SLOT(slotImageViewSizeChanged(int)));
+    connect(ui.closeButton, SIGNAL(clicked()), mainWindow, SLOT(close()));
+    connect(ui.view_size, SIGNAL(currentIndexChanged(int)), this, SLOT(slotImageViewSizeChanged(int)));
 
     auto scene = new QGraphicsScene(mainWindow);
     auto scene2 = new QGraphicsScene(mainWindow);
 
-    // mainWindow->show();
     biblioteq_misc_functions::center(mainWindow, this);
     mainWindow->hide();
     scene->setProperty("view_size", ui.view->viewport()->size());
@@ -3049,14 +2988,8 @@ void biblioteq_photographcollection::updateWindow(const int state)
     pc.importItems->setEnabled(true);
     str = QString(tr("BiblioteQ: Modify Photograph Collection Entry (")) + pc.id_collection->text() + tr(")");
     m_engWindowTitle = "Modify";
-    disconnect(m_scene,
-               SIGNAL(deleteKeyPressed(void)),
-               this,
-               SLOT(slotDeleteItem(void)));
-    connect(m_scene,
-            SIGNAL(deleteKeyPressed()),
-            this,
-            SLOT(slotDeleteItem()));
+    disconnect(m_scene, SIGNAL(deleteKeyPressed()), this, SLOT(slotDeleteItem()));
+    connect(m_scene, SIGNAL(deleteKeyPressed()), this, SLOT(slotDeleteItem()));
   }
   else
   {
