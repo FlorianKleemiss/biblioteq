@@ -1,5 +1,5 @@
 /* This file is part of the YAZ toolkit.
- * Copyright (C) 1995-2015 Index Data.
+ * Copyright (C) Index Data.
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -24,49 +24,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 /**
- * \file yaz-version.h
- * \brief Defines YAZ version.
+ * \file marc_sax.h
+ * \brief Parsing MARCXML collection using Libxml2's SAX parser.
  */
-#ifndef YAZ_VERSION
+
+#ifndef MARC_SAX_H
+#define MARC_SAX_H
 
 #include <yaz/yconfig.h>
+#include <yaz/marcdisp.h>
 
-/** \brief YAZ version as string */
-#define YAZ_VERSION "5.34.0"
-
-/** \brief YAZ version as integer (for comparison purposes) */
-#define YAZ_VERSIONL 0x52200
-
-/** \brief YAZ file version for YAZ DLL (resource) */
-#define YAZ_FILEVERSION 5,34,0,1
-
-/** \brief SHA1 ID for YAZ (Git) */
-#define YAZ_VERSION_SHA1 ""
+#if YAZ_HAVE_XML2
+#include <libxml/parser.h>
+#endif
 
 YAZ_BEGIN_CDECL
 
-/** \brief returns YAZ version
-    \param version_str holds version upon completion (YAZ_VERSION)
-    \param sha1_str holds SHA1 (Git) upon completion (YAZ_VERSION_SHA1)
-    \returns long version value (YAZ_VERSIONL)
+typedef struct yaz_marc_sax_t_ *yaz_marc_sax_t;
 
-    The version_str may be NULL in which case version is not returned.
-    When not-null, version_str, should point to a buffer of at least 20
-    charcters in size (including "\0").
-    The sha1_str may be NULL in which case the SHA1 is not returnd.
-    When not-null, sha1_str whould point to a buffer of at least 41 characters
-    in size (including "\0"). 
+#if YAZ_HAVE_XML2
+
+/** \brief construct marc SAX parser
+    \param mt marc handle
+    \param cb function called for each record
+    \param cb_data data to be passed to each cb call
   */
-YAZ_EXPORT unsigned long yaz_version(char *version_str, char *sha1_str);
+YAZ_EXPORT yaz_marc_sax_t yaz_marc_sax_new(yaz_marc_t mt,
+    void (*cb)(yaz_marc_t mt, void *), void *cb_data);
+
+/** \brief return Libxml SAX handler pointer
+    \returns pointer
+  */
+YAZ_EXPORT xmlSAXHandlerPtr yaz_marc_sax_get_handler(yaz_marc_sax_t ctx);
+
+/** \brief destroys marc SAX parser
+    \param ctx
+  */
+YAZ_EXPORT void yaz_marc_sax_destroy(yaz_marc_sax_t ctx);
+
+#endif
 
 YAZ_END_CDECL
 
 #endif
-
 /*
  * Local variables:
  * c-basic-offset: 4
+ * c-file-style: "Stroustrup"
  * indent-tabs-mode: nil
  * End:
  * vim: shiftwidth=4 tabstop=8 expandtab
