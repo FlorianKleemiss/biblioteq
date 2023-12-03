@@ -14,6 +14,7 @@ public:
   void clear(void);
   void enableDoubleClickResize(const bool state);
   void loadFromData(const QByteArray &bytes);
+  QImage getImage(void) const;
   void setImage(const QImage &image);
   void setReadOnly(const bool readOnly);
 

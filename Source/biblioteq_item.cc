@@ -132,7 +132,11 @@ void biblioteq_item::print(QWidget *parent)
 
   printer.setColorMode(QPrinter::GrayScale);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
-  printer.setPageSize(QPageSize(QPageSize::Letter));
+  auto s = QPageSize(QPageSize::Letter);
+  if (!printer.setPageSize(s))
+  {
+    qDebug() << "Error setting page size";
+  }
 #else
   printer.setPageSize(QPrinter::Letter);
 #endif

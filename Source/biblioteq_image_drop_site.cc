@@ -26,7 +26,7 @@ QString biblioteq_image_drop_site::determineFormat(const QString &filename) cons
   QFile file(filename);
   QString imgf("");
 
-  if (file.open(QIODevice::ReadOnly) && file.read(bytes.data(),bytes.length()) > 0)
+  if (file.open(QIODevice::ReadOnly) && file.read(bytes.data(), bytes.length()) > 0)
     imgf = biblioteq_misc_functions::imageFormatGuess(bytes);
 
   if (imgf.isEmpty())
@@ -277,6 +277,11 @@ void biblioteq_image_drop_site::mouseDoubleClickEvent(QMouseEvent *event)
       scene()->items().at(0)->setFlags(QGraphicsItem::ItemIsSelectable);
 
   scene()->setSceneRect(scene()->itemsBoundingRect());
+}
+
+QImage biblioteq_image_drop_site::getImage(void) const
+{
+  return m_image;
 }
 
 void biblioteq_image_drop_site::setImage(const QImage &image)

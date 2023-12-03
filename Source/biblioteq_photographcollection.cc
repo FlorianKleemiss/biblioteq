@@ -79,39 +79,22 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   m_photo_diag->setWindowModality(Qt::WindowModal);
   m_photo_compare_diag->setWindowModality(Qt::WindowModal);
   updateFont(QApplication::font(), qobject_cast<QWidget *>(m_photo_diag));
-  connect(pc.select_image_collection, SIGNAL(clicked()),
-          this, SLOT(slotSelectImage()));
-  connect(photo.select_image_item, SIGNAL(clicked()),
-          this, SLOT(slotSelectImage()));
-  connect(pc.okButton, SIGNAL(clicked()),
-          this, SLOT(slotGo()));
-  connect(pc.cancelButton, SIGNAL(clicked()),
-          this, SLOT(slotCancel()));
-  connect(pc.importItems, SIGNAL(clicked()),
-          this, SLOT(slotImportItems()));
-  connect(pc.printButton, SIGNAL(clicked()),
-          this, SLOT(slotPrint()));
-  connect(pc.addItemButton, SIGNAL(clicked()),
-          this, SLOT(slotAddItem()));
-  connect(photo.cancelButton, SIGNAL(clicked()),
-          this, SLOT(slotClosePhoto()));
-  connect(menu2->addAction(tr("&All...")), SIGNAL(triggered()),
-          this, SLOT(slotExportPhotographs()));
-  connect(menu2->addAction(tr("&Current Page...")), SIGNAL(triggered()),
-          this, SLOT(slotExportPhotographs()));
-  connect(menu2->addAction(tr("&Selected...")), SIGNAL(triggered()),
-          this, SLOT(slotExportPhotographs()));
-  connect(pc.page, SIGNAL(currentIndexChanged(int)),
-          this, SLOT(slotPageChanged(int)));
-  connect(pc.graphicsView->scene(), SIGNAL(itemDoubleClicked()),
-          this, SLOT(slotModifyItem()));
+  connect(pc.select_image_collection, SIGNAL(clicked()), this, SLOT(slotSelectImage()));
+  connect(photo.select_image_item, SIGNAL(clicked()), this, SLOT(slotSelectImage()));
+  connect(pc.okButton, SIGNAL(clicked()), this, SLOT(slotGo()));
+  connect(pc.cancelButton, SIGNAL(clicked()), this, SLOT(slotCancel()));
+  connect(pc.importItems, SIGNAL(clicked()), this, SLOT(slotImportItems()));
+  connect(pc.printButton, SIGNAL(clicked()), this, SLOT(slotPrint()));
+  connect(pc.addItemButton, SIGNAL(clicked()), this, SLOT(slotAddItem()));
+  connect(photo.cancelButton, SIGNAL(clicked()), this, SLOT(slotClosePhoto()));
+  connect(menu2->addAction(tr("&All...")), SIGNAL(triggered()), this, SLOT(slotExportPhotographs()));
+  connect(menu2->addAction(tr("&Current Page...")), SIGNAL(triggered()), this, SLOT(slotExportPhotographs()));
+  connect(menu2->addAction(tr("&Selected...")), SIGNAL(triggered()), this, SLOT(slotExportPhotographs()));
+  connect(pc.page, SIGNAL(currentIndexChanged(int)), this, SLOT(slotPageChanged(int)));
+  connect(pc.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotModifyItem()));
   pc.exportPhotographsToolButton->setMenu(menu2);
-  connect(pc.exportPhotographsToolButton,
-          SIGNAL(clicked()),
-          pc.exportPhotographsToolButton,
-          SLOT(showMenu()));
-  connect(pc.linked_picture_button, SIGNAL(clicked()),
-          this, SLOT(slotShowCompare()));
+  connect(pc.exportPhotographsToolButton, SIGNAL(clicked()), pc.exportPhotographsToolButton, SLOT(showMenu()));
+  connect(pc.linked_picture_button, SIGNAL(clicked()), this, SLOT(slotShowCompare()));
 
   if (menu2->actions().size() >= 3)
     menu2->actions().at(2)->setEnabled(false);
@@ -2096,37 +2079,61 @@ void biblioteq_photographcollection::slotPageChanged(const int &nr)
 
 void biblioteq_photographcollection::slotPrint(void)
 {
-  m_html = "<html>";
-  m_html += "<b>" + tr("Collection ID:") + "</b> " +
-            pc.id_collection->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("Collection Title:") + "</b> " +
-            pc.title_collection->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Creation Date:") + "</b> " +
-            pc.creation_date->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("Circulation height:") + "</b> " +
-            pc.circulation_height->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("Total Number of Pictures:") + "</b> " +
-            pc.total_number->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("By Artist:") + "</b> " +
-            pc.by_artist->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("Publisher:") + "</b> " +
-            pc.publisher->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Keywords:") + "</b> " +
-            pc.keywords->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Item ID:") + "</b> " +
-            pc.id_item->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Item Title:") + "</b> " +
-            pc.title_old_item->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Item Creators:") + "</b> " +
-            pc.executing_artist_item->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Item Publication Date:") + "</b> " +
-            pc.creation_date_item->toPlainText() + "<br>";
-  m_html += "<b>" + tr("Item Medium:") + "</b> " +
-            pc.technique_item->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Item Notes:") + "</b> " +
-            pc.notes_item->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Item Format:") + "</b> " +
-            pc.format_item->toPlainText().trimmed() + "<br>";
+
+  m_html = "<html>"; // start building the html string
+
+  // Information about the collection
+  m_html += "<b>" + tr("Collection Information:") + "</b><br>";
+  m_html += "<b>" + tr("ID:") + "</b> " + pc.id_collection->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Title:") + "</b> " + pc.title_collection->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Creation Date:") + "</b> " + pc.creation_date->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Circulation height:") + "</b> " + pc.circulation_height->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Total Number of Pictures:") + "</b> " + pc.total_number->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("By Artist:") + "</b> " + pc.by_artist->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Publisher:") + "</b> " + pc.publisher->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Keywords:") + "</b> " + pc.keywords->toPlainText().trimmed() + "<br>";
+
+  // Information about the item
+  m_html += "<br><br><b>" + tr("Item Specific Information:") + "</b><br>";
+  QImage image(pc.thumbnail_item->getImage()); // Get a copy of the image
+  int resolution = 300;
+  QPageSize pageSize(QPageSize::Letter);
+  auto sizeInPixels = pageSize.sizePixels(resolution).toSizeF();
+  QSize size = sizeInPixels.toSize();
+  size.setWidth(size.width() / 8);                 // Set the new width to be half of the original width
+  image = image.scaled(size, Qt::KeepAspectRatio); // Scale the image to the new size
+
+  QByteArray byteArray;
+  QBuffer buffer(&byteArray);
+  if (!image.save(&buffer, "PNG"))
+  {
+    qDebug() << "Error saving image: " << buffer.errorString();
+  }
+  QString imageBase64 = QString::fromLatin1(byteArray.toBase64().data());
+
+  m_html += "<img src='data:image/png;base64," + imageBase64 + "' style='width: 50%;' alt='Image Description' /><br>"; // Add the image to the HTML
+  m_html += "<b>" + tr("ID:") + "</b> " + pc.id_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Title (old):") + "</b> " + pc.title_old_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Title (new):") + "</b> " + pc.title_new_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Inventor (old):") + "</b> " + pc.inventor_old_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Inventor (new):") + "</b> " + pc.inventor_new_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Based On:") + "</b> " + pc.based_on_artist_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Executing Artist:") + "</b> " + pc.executing_artist_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Printer:") + "</b> " + pc.printer_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Creation Date:") + "</b> " + pc.creation_date_item->toPlainText() + "<br>";
+  m_html += "<b>" + tr("Creation Date (Original):") + "</b> " + pc.creation_date_original_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Title (Original):") + "</b> " + pc.title_original_picture_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Inventory Number/Place of Storage:") + "</b> " + pc.inventory_number_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Delivery Number:") + "</b> " + pc.delivery_number_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Page Number:") + "</b> " + pc.page_number_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Technique:") + "</b> " + pc.technique_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Material:") + "</b> " + pc.material_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Format:") + "</b> " + pc.format_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Signed:") + "</b> " + pc.signed_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Keywords:") + "</b> " + pc.keywords_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Literature/Catalogue:") + "</b> " + pc.catalogue_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Notes:") + "</b> " + pc.notes_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Place of Storage:") + "</b> " + pc.place_of_storage_item->toPlainText().trimmed() + "<br>";
   m_html += "</html>";
   print(this);
 }
