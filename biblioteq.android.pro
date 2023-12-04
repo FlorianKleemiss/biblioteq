@@ -4,7 +4,7 @@ include(biblioteq-source.pro)
 CONFIG		+= qt release thread warn_on
 LANGUAGE	= C++
 QMAKE_CLEAN	+= BiblioteQ
-QT              += core gui network printsupport sql svg widgets
+QT          += core gui network printsupport sql svg widgets
 TEMPLATE	= app
 
 QMAKE_CXXFLAGS_RELEASE += -Wall \
@@ -20,6 +20,7 @@ QMAKE_CXXFLAGS_RELEASE += -Wall \
                           -Wstrict-overflow=1 \
                           -Wundef \
                           -fPIE \
+                          -fPIC \
                           -fstack-protector-all \
                           -fwrapv \
                           -pedantic \
@@ -29,7 +30,7 @@ QMAKE_EXTRA_TARGETS = purge
 
 INCLUDEPATH	+= Android Source temp
 LIBS		+=
-SOURCES         += Android/sqlite3/sqlite3.c
+SOURCES     += Android/sqlite3/sqlite3.c
 
 PROJECTNAME	= BiblioteQ
 TARGET		= BiblioteQ

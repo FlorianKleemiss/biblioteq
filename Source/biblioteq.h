@@ -13,7 +13,7 @@
 #include "biblioteq_myqstring.h"
 #include "biblioteq_numeric_table_item.h"
 #include "biblioteq_photographcollection.h"
-#include "ui_biblioteq_allinfo.h"
+//#include "ui_biblioteq_allinfo.h"
 #include "ui_biblioteq_branch_s.h"
 #include "ui_biblioteq_customquery.h"
 #include "ui_biblioteq_errordiag.h"
