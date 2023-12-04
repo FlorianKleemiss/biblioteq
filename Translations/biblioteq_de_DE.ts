@@ -11122,7 +11122,8 @@ Catalogue</source>
         <source>Inventory number/
 Place of Storage</source>
         <translation>Inventarnummer/
-Aufbewahrungsort</translation>
+Aufbewahrungsort
+(Original)</translation>
     </message>
     <message>
         <location filename="../UI/biblioteq_photograph.ui" line="220"/>
@@ -11179,7 +11180,8 @@ Aufbewahrungsort</translation>
         <location filename="../UI/biblioteq_photograph.ui" line="335"/>
         <location filename="../UI/biblioteq_photograph.ui" line="345"/>
         <source>Place of Storage</source>
-        <translation>Aufbewahrungsort</translation>
+        <translation>Aufbewahrungsort
+(Abbildung)</translation>
     </message>
     <message>
         <location filename="../UI/biblioteq_photograph.ui" line="352"/>
@@ -11230,7 +11232,7 @@ Künstler</translation>
         <location filename="../UI/biblioteq_photograph.ui" line="498"/>
         <source>Inventory Number/ Place of Storage of the Original</source>
         <translation>Inventarnummer/
-Aufbewahrungsort</translation>
+Aufbewahrungsort (Original)</translation>
     </message>
     <message>
         <location filename="../UI/biblioteq_photograph.ui" line="505"/>
