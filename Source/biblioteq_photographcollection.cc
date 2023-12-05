@@ -1489,6 +1489,8 @@ void biblioteq_photographcollection::slotGo(void)
       storeData();
     }
 
+    qmain->slotRefresh();
+
     return;
 
   db_rollback:

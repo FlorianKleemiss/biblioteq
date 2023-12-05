@@ -123,6 +123,7 @@ public:
 public slots:
   void slotDisplaySummary(void);
   void slotResizeColumns(void);
+  void slotRefresh(void);
 
 private:
   enum AdminSetupColumns
@@ -289,7 +290,6 @@ private slots:
   void slotPrintPreview(QPrinter *printer);
   void slotPrintView(void);
   void slotPrintViewPreview(void);
-  void slotRefresh(void);
   void slotRefreshCustomQuery(void);
   void slotReloadBiblioteqConf(void);
   void slotRequest(void);
