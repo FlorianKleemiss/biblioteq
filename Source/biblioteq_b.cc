@@ -94,7 +94,6 @@ int biblioteq::populateTable(const int search_type_arg,
 	QString offsetStr("");
 	QString searchstr = "";
 	QString str = "";
-	QString type = "";
 	QStringList tmplist; // Used for custom queries.
 	QTableWidgetItem *item = nullptr;
 	auto columns = m_otheroptions->iconsViewColumnCount();

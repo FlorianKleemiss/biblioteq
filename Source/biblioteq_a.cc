@@ -2376,15 +2376,6 @@ void biblioteq::slotRefresh(void)
     QString str = "";
     QVariant data(ui.menu_Category->defaultAction() ? ui.menu_Category->defaultAction()->data().toString() : "All");
 
-    if (data.toString() == "All Overdue" && m_roles.isEmpty())
-      str = dbUserName();
-    else if (data.toString() == "All Requested" && m_roles.isEmpty())
-      str = dbUserName();
-    else if (data.toString() == "All Reserved" && m_roles.isEmpty())
-      str = dbUserName();
-    else if (data.toString() == "All Reserved")
-      str = "%";
-
     (void)populateTable(POPULATE_ALL, data.toString(), str.trimmed());
   }
 }

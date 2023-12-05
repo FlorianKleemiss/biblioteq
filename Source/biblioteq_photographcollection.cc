@@ -927,7 +927,7 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
 
 void biblioteq_photographcollection::slotAddItem(void)
 {
-  photo.saveButton->disconnect(SIGNAL(clicked(void)));
+  photo.saveButton->disconnect(SIGNAL(clicked()));
   connect(photo.saveButton, SIGNAL(clicked()), this,
           SLOT(slotInsertItem()));
   m_photo_diag->resize(m_photo_diag->width(),
@@ -1405,10 +1405,6 @@ void biblioteq_photographcollection::slotGo(void)
 
         if (m_index->isValid() &&
             (qmain->getTypeFilterString() == "All" ||
-             qmain->getTypeFilterString() == "All Available" ||
-             qmain->getTypeFilterString() == "All Overdue" ||
-             qmain->getTypeFilterString() == "All Requested" ||
-             qmain->getTypeFilterString() == "All Reserved" ||
              qmain->getTypeFilterString() == "Photograph Collections"))
         {
           qmain->getUI().table->setSortingEnabled(false);
@@ -1490,6 +1486,8 @@ void biblioteq_photographcollection::slotGo(void)
     }
 
     qmain->slotRefresh();
+    this->raise();
+    this->activateWindow();
 
     return;
 
