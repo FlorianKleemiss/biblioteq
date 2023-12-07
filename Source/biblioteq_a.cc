@@ -270,7 +270,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(slotAbout()));
   connect(ui.actionShowGrid, SIGNAL(triggered()), this, SLOT(slotShowGrid()));
   connect(ui.actionResizeColumns, SIGNAL(triggered()), this, SLOT(slotResizeColumns()));
-  connect(ui.actionChangePassword, SIGNAL(triggered()), this, SLOT(slotShowChangePassword()));
   connect(ui.actionSaveSettings, SIGNAL(triggered()), this, SLOT(slotSaveConfig()));
   connect(ui.connectTool, SIGNAL(triggered()), this, SLOT(slotShowConnectionDB()));
   connect(ui.actionConnect, SIGNAL(triggered()), this, SLOT(slotShowConnectionDB()));
@@ -278,8 +277,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(ui.actionDisconnect, SIGNAL(triggered()), this, SLOT(slotDisconnect()));
   connect(br.okButton, SIGNAL(clicked()), this, SLOT(slotConnectDB()));
   connect(br.branch_name, SIGNAL(activated(int)), this, SLOT(slotBranchChanged()));
-  connect(br.role, SIGNAL(currentIndexChanged(int)), this, SLOT(slotRoleChanged(int)));
-  connect(br.show_password, SIGNAL(toggled(bool)), this, SLOT(slotShowPassword(bool)));
   connect(ui.filesTool, SIGNAL(triggered()), this, SLOT(slotShowFiles()));
   connect(ui.searchTool, SIGNAL(triggered()), this, SLOT(slotShowMenu()));
   connect(ui.customQueryTool, SIGNAL(triggered()), this, SLOT(slotShowCustomQuery()));
@@ -333,7 +330,6 @@ biblioteq::biblioteq(void) : QMainWindow()
 #endif
 
   ui.actionAutoPopulateOnCreation->setEnabled(false);
-  ui.actionChangePassword->setEnabled(false);
   ui.actionDatabaseSearch->setEnabled(false);
   ui.actionDatabase_Enumerations->setEnabled(false);
   ui.actionDeleteEntry->setEnabled(false);
@@ -372,7 +368,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   typefilter = m_lastCategory =
       settings.value("last_category", "All").toString();
   typefilter.replace(" ", "_");
-  ui.actionConfigureAdministratorPrivileges->setEnabled(false);
   ui.graphicsView->scene()->clear();
   ui.summary->setVisible(false);
   ui.about->setVisible(false);
@@ -720,12 +715,6 @@ void biblioteq::addError(const QString &type,
 
 void biblioteq::adminSetup(void)
 {
-
-  if (m_db.driverName() == "QSQLITE")
-    ui.actionChangePassword->setEnabled(false);
-  else
-    ui.actionChangePassword->setEnabled(true);
-
   ui.action_VacuumDatabase->setEnabled(true);
   ui.detailsTool->setEnabled(true);
   ui.actionViewDetails->setEnabled(true);
@@ -1323,11 +1312,6 @@ void biblioteq::slotBranchChanged(void)
   {
     br.stackedWidget->setCurrentIndex(0);
     br.fileButton->setFocus();
-  }
-  else
-  {
-    br.stackedWidget->setCurrentIndex(1);
-    br.userid->selectAll();
   }
 
   tmphash.clear();
@@ -1979,8 +1963,6 @@ void biblioteq::slotModify(void)
   foreach (const auto &index, list)
   {
     i = index.row();
-    int temp1 = table->columnNumber("MYOID");
-    int temp2 = table->columnNumber("Type");
     oid = biblioteq_misc_functions::getColumnString(table, i, table->columnNumber("MYOID"));
     type = biblioteq_misc_functions::getColumnString(table, i, table->columnNumber("Type"));
     book = nullptr;
@@ -2194,10 +2176,6 @@ void biblioteq::slotResetErrorLog(void)
 void biblioteq::slotResetLoginDialog(void)
 {
   br.filename->clear();
-  br.password->setText(BIBLIOTEQ_GUEST_ACCOUNT);
-  br.role->setCurrentIndex(1);
-  br.show_password->setChecked(false);
-  br.userid->setText(BIBLIOTEQ_GUEST_ACCOUNT);
 
   QSettings settings;
   int index = 0;

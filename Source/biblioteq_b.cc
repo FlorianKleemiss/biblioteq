@@ -201,7 +201,7 @@ int biblioteq::populateTable(const int search_type_arg,
 		{
 
 			searchstr = QString("SELECT DISTINCT book.title, "
-                                "book.id, "
+								"book.id, "
 								"book.publisher, book.pdate, "
 								"book.category, "
 								"book.quantity, "
@@ -213,7 +213,7 @@ int biblioteq::populateTable(const int search_type_arg,
 								"book "
 								"UNION "
 								"SELECT DISTINCT photograph_collection.title, "
-                                "photograph_collection.id, "
+								"photograph_collection.id, "
 								"'', "
 								"'', "
 								"'', "
@@ -308,7 +308,7 @@ int biblioteq::populateTable(const int search_type_arg,
 			{
 				searchstr.append(searchstrArg);
 				searchstr.append("GROUP BY book.title, "
-                                 "book.id, "
+								 "book.id, "
 								 "book.author, "
 								 "book.publisher, book.pdate, book.place, "
 								 "book.edition, "
@@ -1227,27 +1227,6 @@ void biblioteq::slotResetAllSearch(void)
 	ui.search->setEnabled(true);
 	ui.searchType->setCurrentIndex(0);
 	ui.searchType->setEnabled(true);
-}
-
-void biblioteq::slotRoleChanged(int index)
-{
-	if (index == 1)
-	{
-		br.password->setEnabled(false);
-		br.password->setText(BIBLIOTEQ_GUEST_ACCOUNT);
-		br.userid->setEnabled(false);
-		br.userid->setText(BIBLIOTEQ_GUEST_ACCOUNT);
-	}
-	else
-	{
-		br.password->setText(QString(1024, '0'));
-		br.password->clear();
-		br.password->setEnabled(true);
-		br.userid->clear();
-		br.userid->setEnabled(true);
-	}
-
-	br.userid->setFocus();
 }
 
 void biblioteq::slotSearchBasic(void)

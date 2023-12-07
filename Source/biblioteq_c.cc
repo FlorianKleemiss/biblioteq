@@ -1419,8 +1419,6 @@ void biblioteq::slotConnectDB(void)
 	** Configure some database attributes.
 	*/
 
-	br.userid->setFocus();
-
 	if (tmphash.value("database_type") == "sqlite")
 		str = "QSQLITE";
 
@@ -1494,16 +1492,6 @@ void biblioteq::slotConnectDB(void)
 
 	if (tmphash.value("database_type") == "sqlite")
 		(void)m_db.open();
-	else
-	{
-		(void)m_db.open(br.userid->text().trimmed(), br.password->text());
-
-		if (br.role->currentIndex() != 1)
-		{
-			br.password->setText(QString(1024, '0'));
-			br.password->clear();
-		}
-	}
 
 	QApplication::restoreOverrideCursor();
 
@@ -1540,93 +1528,8 @@ void biblioteq::slotConnectDB(void)
 		}
 	}
 
-	if (tmphash.value("database_type") != "sqlite")
-	{
-		if (!error)
-		{
-			QApplication::setOverrideCursor(Qt::WaitCursor);
-			m_roles = biblioteq_misc_functions::getRoles(m_db, br.userid->text().trimmed(), errorstr).toLower();
-			QApplication::restoreOverrideCursor();
-
-			if (errorstr.isEmpty())
-			{
-				if (br.role->currentIndex() == 0 && m_roles.isEmpty())
-				{
-					error = true;
-					QMessageBox::critical(m_branch_diag, tr("BiblioteQ: User Error"),
-										  QString(tr("It appears that the user ")) +
-											  br.userid->text().trimmed() +
-											  QString(tr(" does not have "
-														 "administrator privileges.")));
-					QApplication::processEvents();
-				}
-				else if (br.role->currentIndex() != 0 && !m_roles.isEmpty())
-				{
-					error = true;
-					QMessageBox::critical(m_branch_diag, tr("BiblioteQ: User Error"),
-										  tr("It appears that you are attempting to assume an "
-											 "administrator role in a non-administrator mode."));
-					QApplication::processEvents();
-				}
-			}
-			else if (br.role->currentIndex() == 0) // Administrator
-			{
-				error = true;
-				addError(QString(tr("Database Error")),
-						 QString(tr("Unable to determine the roles of ")) +
-							 br.userid->text().trimmed() +
-							 tr("."),
-						 errorstr,
-						 __FILE__, __LINE__);
-				QMessageBox::critical(m_branch_diag, tr("BiblioteQ: Database Error"),
-									  QString(tr("Unable to determine the roles of ")) +
-										  br.userid->text().trimmed() +
-										  tr("."));
-				QApplication::processEvents();
-			}
-			else if (br.role->currentIndex() == 1) // Guest
-			{
-				QSqlQuery query(m_db);
-
-				if (!query.exec("SET ROLE biblioteq_guest"))
-				{
-					error = true;
-					addError(QString(tr("Database Error")),
-							 tr("Unable to set a guest role."),
-							 errorstr,
-							 __FILE__, __LINE__);
-					QMessageBox::critical(m_branch_diag, tr("BiblioteQ: Database Error"),
-										  tr("Unable to set a guest role."));
-					QApplication::processEvents();
-				}
-			}
-			else
-			{
-				QSqlQuery query(m_db);
-
-				if (!query.exec("SET ROLE biblioteq_patron"))
-				{
-					error = true;
-					addError(QString(tr("Database Error")),
-							 QString(tr("Unable to set the role for ")) +
-								 br.userid->text().trimmed() +
-								 tr("."),
-							 errorstr,
-							 __FILE__, __LINE__);
-					QMessageBox::critical(m_branch_diag, tr("BiblioteQ: Database Error"),
-										  QString(tr("Unable to set the role for ")) +
-											  br.userid->text().trimmed() +
-											  tr("."));
-					QApplication::processEvents();
-				}
-			}
-		}
-	}
-	else
-	{
-		if (!error)
-			m_roles = "administrator";
-	}
+	if (!error)
+		m_roles = "administrator";
 
 	tmphash.clear();
 
@@ -1674,7 +1577,6 @@ void biblioteq::slotConnectDB(void)
 
 	if (m_db.driverName() == "QSQLITE")
 	{
-		ui.actionChangePassword->setEnabled(false);
 		ui.actionImportCSV->setEnabled(true);
 		ui.action_Merge_SQLite_Databases->setEnabled(true);
 		ui.action_Upgrade_SQLite_Schema->setEnabled(true);
@@ -1696,7 +1598,7 @@ void biblioteq::slotConnectDB(void)
 
 	prepareFilter();
 
-	if (br.role->currentIndex() == 0 || m_db.driverName() == "QSQLITE")
+	if (m_db.driverName() == "QSQLITE")
 	{
 		if (m_db.driverName() == "QSQLITE")
 		{
@@ -1734,22 +1636,6 @@ void biblioteq::slotConnectDB(void)
 		}
 
 		adminSetup();
-	}
-	else if (br.role->currentIndex() == 1)
-	{
-		/*
-		** Guest.
-		*/
-
-		ui.actionChangePassword->setEnabled(false);
-	}
-	else
-	{
-		/*
-		** Patron.
-		*/
-
-		ui.actionChangePassword->setEnabled(true);
 	}
 
 	auto found = false;
@@ -1816,7 +1702,6 @@ void biblioteq::slotDisconnect(void)
 	else
 		QApplication::restoreOverrideCursor();
 
-	br.show_password->setChecked(false);
 	m_allSearchShown = false;
 
 	if (m_files)
@@ -1849,7 +1734,6 @@ void biblioteq::slotDisconnect(void)
 		db_enumerations->clear();
 
 	ui.actionAutoPopulateOnCreation->setEnabled(false);
-	ui.actionChangePassword->setEnabled(false);
 	ui.actionDatabaseSearch->setEnabled(false);
 	ui.actionDeleteEntry->setEnabled(false);
 	ui.actionDisconnect->setEnabled(false);
@@ -1884,7 +1768,6 @@ void biblioteq::slotDisconnect(void)
 
 	ui.actionPopulate_Administrator_Browser_Table_on_Display->setEnabled(false);
 	ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(false);
-	ui.actionConfigureAdministratorPrivileges->setEnabled(false);
 	ui.actionDatabase_Enumerations->setEnabled(false);
 	ui.action_Database_Enumerations->setEnabled(false);
 	ui.graphicsView->scene()->clear();
@@ -2503,14 +2386,6 @@ void biblioteq::slotShowOtherOptions(void)
 	m_otheroptions->showNormal();
 	m_otheroptions->activateWindow();
 	m_otheroptions->raise();
-}
-
-void biblioteq::slotShowPassword(bool state)
-{
-	if (state)
-		br.password->setEchoMode(QLineEdit::Normal);
-	else
-		br.password->setEchoMode(QLineEdit::Password);
 }
 
 void biblioteq::slotVacuum(void)

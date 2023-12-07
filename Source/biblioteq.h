@@ -286,7 +286,6 @@ private slots:
   void slotResetErrorLog(void);
   void slotResetLoginDialog(void);
   void slotResizeColumnsAfterSort(void);
-  void slotRoleChanged(int index);
   void slotSaveConfig(void);
   void slotSaveGeneralSearchCaseSensitivity(bool state);
   void slotSceneSelectionChanged(void);
@@ -307,7 +306,6 @@ private slots:
   void slotShowImport(void);
   void slotShowMenu(void);
   void slotShowOtherOptions(void);
-  void slotShowPassword(bool state);
   void slotShowReleaseNotes(void);
   void slotSqliteFileSelected(bool state);
   void slotUpdateIndicesAfterSort(int column);

@@ -53,18 +53,10 @@ void biblioteq::prepareUpgradeNotification(void)
   if (!(record1.indexOf("alternate_id_1") >= 0 &&
         record1.indexOf("multivolume_set_isbn") >= 0))
   {
-    if (m_db.driverName() == "QPSQL")
-      QMessageBox::critical(this,
-                            tr("BiblioteQ: Database Error"),
-                            tr("The current PostgreSQL schema must be updated. "
-                               "Please execute the statement(s) in %1 for version %2.")
-                                .arg("postgresql_update_schema.sql")
-                                .arg(BIBLIOTEQ_VERSION));
-    else
-      QMessageBox::critical(this,
-                            tr("BiblioteQ: Database Error"),
-                            tr("The current SQLite schema must be updated. "
-                               "Tools -> Upgrade SQLite Schema."));
+    QMessageBox::critical(this,
+                          tr("BiblioteQ: Database Error"),
+                          tr("The current SQLite schema must be updated. "
+                             "Tools -> Upgrade SQLite Schema."));
 
     QApplication::processEvents();
   }

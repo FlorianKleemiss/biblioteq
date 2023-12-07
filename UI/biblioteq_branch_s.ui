@@ -107,131 +107,10 @@
       </layout>
      </widget>
      <widget class="QWidget" name="page_6">
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QFrame" name="db_frame">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <layout class="QGridLayout">
-          <item row="0" column="0" rowspan="2">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="../Icons/icons.qrc">:/32x32/database.png</pixmap>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>&amp;Userid</string>
-            </property>
-            <property name="buddy">
-             <cstring>userid</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <layout class="QHBoxLayout">
-            <item>
-             <widget class="QLineEdit" name="userid">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="inputMask">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string>xbook_guest</string>
-              </property>
-              <property name="placeholderText">
-               <string>PostgreSQL Userid</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="role">
-              <property name="currentIndex">
-               <number>1</number>
-              </property>
-              <property name="sizeAdjustPolicy">
-               <enum>QComboBox::AdjustToContents</enum>
-              </property>
-              <property name="minimumContentsLength">
-               <number>15</number>
-              </property>
-              <item>
-               <property name="text">
-                <string>Administrator</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Guest</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Patron</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="1">
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>&amp;Password</string>
-            </property>
-            <property name="buddy">
-             <cstring>password</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QLineEdit" name="password">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="inputMask">
-               <string notr="true"/>
-              </property>
-              <property name="text">
-               <string>xbook_guest</string>
-              </property>
-              <property name="echoMode">
-               <enum>QLineEdit::Password</enum>
-              </property>
-              <property name="placeholderText">
-               <string>PostgreSQL Password</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QCheckBox" name="show_password">
-              <property name="toolTip">
-               <string>Hide or show the password.</string>
-              </property>
-              <property name="text">
-               <string>&amp;Show</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2"/>
      </widget>
     </widget>
    </item>
@@ -338,10 +217,6 @@
   <tabstop>branch_name</tabstop>
   <tabstop>fileButton</tabstop>
   <tabstop>filename</tabstop>
-  <tabstop>userid</tabstop>
-  <tabstop>role</tabstop>
-  <tabstop>password</tabstop>
-  <tabstop>show_password</tabstop>
   <tabstop>okButton</tabstop>
   <tabstop>resetButton</tabstop>
   <tabstop>cancelButton</tabstop>
