@@ -90,42 +90,40 @@ CREATE TABLE photograph \
     accession_number        TEXT, \
     callnumber		        VARCHAR(64), \
     collection_oid	        BIGINT NOT NULL, \
-    copyright		        TEXT NOT NULL, \
-    creators		        TEXT NOT NULL, \
+    copyright		        TEXT, \
+    creators		        TEXT NOT NULL DEFAULT '', \
     format		            TEXT, \
     id                      TEXT NOT NULL, \
     image		            BYTEA, \
     image_scaled	        BYTEA, \
     image_original          BYTEA, \
-    medium		            TEXT NOT NULL, \
+    medium		            TEXT, \
     myoid		            BIGINT NOT NULL, \
     notes		            TEXT, \
     other_number	        TEXT, \
-    pdate		            VARCHAR(32) NOT NULL, \
-    quantity		        INTEGER NOT NULL DEFAULT 1, \
-    reproduction_number     TEXT NOT NULL, \
+    pdate		            VARCHAR(32), \
+    quantity		        INTEGER DEFAULT 1, \
+    reproduction_number     TEXT, \
     subjects		        TEXT, \
-    title		            TEXT NOT NULL, \
+    title		            TEXT NOT NULL DEFAULT '', \
     inventor_old            TEXT DEFAULT '', \
     inventor_new            TEXT DEFAULT '', \
     based_on_artist         TEXT DEFAULT '', \
     printer                 TEXT DEFAULT '', \
     title_original_picture  TEXT DEFAULT '', \
-    inventory_number        TEXT NOT NULL DEFAULT '', \
-    delivery_number         TEXT NOT NULL DEFAULT '', \
-    page_number             TEXT NOT NULL DEFAULT '', \
-    material                TEXT NOT NULL DEFAULT '', \
-    signed                  TEXT NOT NULL DEFAULT '', \
-    catalogue               TEXT NOT NULL DEFAULT '', \
-    place_of_storage        TEXT NOT NULL DEFAULT '', \
+    inventory_number        TEXT DEFAULT '', \
+    delivery_number         TEXT DEFAULT '', \
+    page_number             TEXT DEFAULT '', \
+    material                TEXT DEFAULT '', \
+    signed                  TEXT DEFAULT '', \
+    catalogue               TEXT DEFAULT '', \
+    place_of_storage        TEXT DEFAULT '', \
     executing_artist        TEXT DEFAULT '', \
-    technique               TEXT NOT NULL DEFAULT '', \
-    creation_date           VARCHAR(32) NOT NULL, \
+    technique               TEXT DEFAULT '', \
+    creation_date           VARCHAR(32), \
     keywords                TEXT DEFAULT '', \
-    title                   TEXT DEFAULT '', \
-    creation_date_original  VARCHAR(32) NOT NULL, \
-    creators                TEXT DEFAULT '', \
-    title_old               TEXT NOT NULL DEFAULT '', \
+    creation_date_original  VARCHAR(32), \
+    title_old               TEXT DEFAULT '', \
     PRIMARY KEY(id, collection_oid), \
     FOREIGN KEY(collection_oid) REFERENCES \
                                 photograph_collection(myoid) ON \

@@ -40,10 +40,6 @@ public:
 	static QString isbn13to10(const QString &text);
 	static QString linearizeString(const QString &text);
 	static QStringList getBookBindingTypes(const QSqlDatabase &, QString &);
-	static QStringList getLanguages(const QSqlDatabase &, QString &);
-	static QStringList getLocations(const QSqlDatabase &,
-									const QString &,
-									QString &);
 
 	static bool isBookRead(const QSqlDatabase &db, const quint64 myoid)
 	{
@@ -60,10 +56,6 @@ public:
 	}
 
 	static bool isGnome(void);
-	static bool isRequested(const QSqlDatabase &,
-							const QString &,
-							const QString &,
-							QString &);
 	static int getColumnNumber(const QTableWidget *, const QString &);
 	static int sqliteQuerySize(const QString &,
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
@@ -104,10 +96,6 @@ public:
 								  const int,
 								  const QString &,
 								  QWidget *);
-	static void grantPrivs(const QString &,
-						   const QString &,
-						   const QSqlDatabase &,
-						   QString &);
 	static void hideAdminFields(QMainWindow *);
 	static void highlightWidget(QWidget *, const QColor &);
 	static void saveQuantity(const QSqlDatabase &,

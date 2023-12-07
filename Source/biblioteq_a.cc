@@ -1979,6 +1979,8 @@ void biblioteq::slotModify(void)
   foreach (const auto &index, list)
   {
     i = index.row();
+    int temp1 = table->columnNumber("MYOID");
+    int temp2 = table->columnNumber("Type");
     oid = biblioteq_misc_functions::getColumnString(table, i, table->columnNumber("MYOID"));
     type = biblioteq_misc_functions::getColumnString(table, i, table->columnNumber("Type"));
     book = nullptr;
