@@ -612,7 +612,6 @@ void biblioteq_photographcollection::modify(const int state,
   query.setForwardOnly(true);
   query.prepare("SELECT id, "
                 "title, "
-                "location, "
                 "about, "
                 "creation_date, "
                 "circulation_height, "

@@ -320,9 +320,6 @@ void biblioteq_main_table::setColumns(const QString &username,
     */
 
     setColumnHidden(list.size() - 1, true);
-
-    if (type == "All Requested")
-      setColumnHidden(list.size() - 2, true);
   }
 
   list.clear();

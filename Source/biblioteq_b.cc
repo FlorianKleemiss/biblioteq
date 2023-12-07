@@ -201,12 +201,10 @@ int biblioteq::populateTable(const int search_type_arg,
 		{
 
 			searchstr = QString("SELECT DISTINCT book.title, "
-								"book.id AS id, "
+                                "book.id, "
 								"book.publisher, book.pdate, "
 								"book.category, "
 								"book.quantity, "
-								"0 AS availability, "
-								"0 AS total_reserved, "
 								"book.accession_number, "
 								"book.type, "
 								"book.myoid, " +
@@ -215,13 +213,11 @@ int biblioteq::populateTable(const int search_type_arg,
 								"book "
 								"UNION "
 								"SELECT DISTINCT photograph_collection.title, "
-								"photograph_collection.id AS id, "
+                                "photograph_collection.id, "
 								"'', "
 								"'', "
 								"'', "
 								"1 AS quantity, "
-								"0 AS availability, "
-								"0 AS total_reserved, "
 								"photograph_collection.accession_number, "
 								"photograph_collection.type, "
 								"photograph_collection.myoid, " +
@@ -312,11 +308,11 @@ int biblioteq::populateTable(const int search_type_arg,
 			{
 				searchstr.append(searchstrArg);
 				searchstr.append("GROUP BY book.title, "
+                                 "book.id, "
 								 "book.author, "
 								 "book.publisher, book.pdate, book.place, "
 								 "book.edition, "
 								 "book.category, "
-								 "book.id, "
 								 "book.quantity, "
 								 "book.binding_type, "
 								 "book.isbn13, "
