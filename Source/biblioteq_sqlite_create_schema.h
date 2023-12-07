@@ -123,33 +123,11 @@ CREATE TABLE book_binding_types						\
 (									\
     binding_type     TEXT NOT NULL PRIMARY KEY				\
 );									\
-									\
-CREATE TABLE languages							\
-(									\
-    language	 TEXT NOT NULL PRIMARY KEY				\
-);      								\
-									\
-CREATE TABLE locations				                        \
-(									\
-    location	 TEXT NOT NULL,						\
-    type	 VARCHAR(32) NOT NULL,					\
-    PRIMARY KEY(location, type)						\
-);      								\
-									\
-CREATE TABLE minimum_days						\
-(									\
-    days		 INTEGER NOT NULL,                              \
-    type		 VARCHAR(16) NOT NULL PRIMARY KEY               \
-);                                                                      \
-									\
-CREATE TABLE monetary_units						\
-(									\
-    monetary_unit	 TEXT NOT NULL PRIMARY KEY                      \
-);                                                                      \
-									\
+\
+\
 CREATE TABLE sequence							\
 (									\
     value            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT		\
 );									\
-									\
+\
 ";

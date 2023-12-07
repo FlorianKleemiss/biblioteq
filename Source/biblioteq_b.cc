@@ -1,6 +1,9 @@
 #include "biblioteq.h"
 #include "biblioteq_graphicsitempixmap.h"
 #include "biblioteq_otheroptions.h"
+#include "biblioteq_callnum_table_item.h"
+#include "biblioteq_myqstring.h"
+#include "biblioteq_numeric_table_item.h"
 #include "ui_biblioteq_generalmessagediag.h"
 
 #include <QActionGroup>
@@ -478,8 +481,6 @@ int biblioteq::populateTable(const int search_type_arg,
 		QApplication::processEvents();
 		return 1;
 	}
-
-	prepareRequestToolButton(typefilter);
 
 	auto found = false;
 
@@ -1119,83 +1120,32 @@ void biblioteq::prepareContextMenus()
 	else
 		m_menu = new QMenu(this);
 
-	auto getTypeFilterString = this->getTypeFilterString();
-
 	if (m_roles.contains("administrator") || m_roles.contains("librarian"))
 	{
-		if (getTypeFilterString == "All Requested" &&
-			!m_roles.contains("librarian"))
-		{
-			m_menu->addAction(tr("Cancel Selected Request(s)"),
-							  this,
-							  SLOT(slotRequest(void)));
-			m_menu->addSeparator();
-		}
-
-		m_menu->addAction(tr("Delete Selected Item(s)"),
-						  this,
-						  SLOT(slotDelete(void)));
-		m_menu->addAction(tr("Duplicate Selected Item(s)..."),
-						  this,
-						  SLOT(slotDuplicate(void)));
-		m_menu->addAction(tr("Modify Selected Item(s)..."),
-						  this,
-						  SLOT(slotModify(void)));
+		m_menu->addAction(tr("Delete Selected Item(s)"), this, SLOT(slotDelete(void)));
+		m_menu->addAction(tr("Duplicate Selected Item(s)..."), this, SLOT(slotDuplicate(void)));
+		m_menu->addAction(tr("Modify Selected Item(s)..."), this, SLOT(slotModify(void)));
 		m_menu->addSeparator();
-		m_menu->addAction(tr("Print Current View..."),
-						  this,
-						  SLOT(slotPrintView(void)));
+		m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
 	}
 	else if (m_roles.contains("circulation"))
 	{
-		if (getTypeFilterString == "All Requested")
-		{
-			m_menu->addAction(tr("Cancel Selected Request(s)"),
-							  this,
-							  SLOT(slotRequest(void)));
-			m_menu->addSeparator();
-		}
-
-		m_menu->addAction(tr("Print Current View..."),
-						  this,
-						  SLOT(slotPrintView(void)));
+		m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
 		m_menu->addSeparator();
-		m_menu->addAction(tr("View Selected Item(s)..."),
-						  this,
-						  SLOT(slotViewDetails(void)));
+		m_menu->addAction(tr("View Selected Item(s)..."), this, SLOT(slotViewDetails(void)));
 	}
 	else if (m_roles.contains("membership"))
 	{
-		m_menu->addAction(tr("Print Current View..."),
-						  this,
-						  SLOT(slotPrintView(void)));
+		m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
 		m_menu->addSeparator();
-		m_menu->addAction(tr("View Selected Item(s)..."),
-						  this,
-						  SLOT(slotViewDetails(void)));
+		m_menu->addAction(tr("View Selected Item(s)..."), this, SLOT(slotViewDetails(void)));
 	}
 	else
 	{
-		if (!isGuest())
-		{
-			if (getTypeFilterString == "All Requested")
-				m_menu->addAction(tr("Cancel Selected Request(s)"),
-								  this,
-								  SLOT(slotRequest(void)));
-			else
-				m_menu->addAction(tr("Request Selected Item(s)"),
-								  this,
-								  SLOT(slotRequest(void)));
-		}
-
 		m_menu->addSeparator();
-		m_menu->addAction(tr("Print Current View..."),
-						  this,
-						  SLOT(slotPrintView(void)));
+		m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
 		m_menu->addSeparator();
-		m_menu->addAction(tr("View Selected Item(s)..."),
-						  this,
-						  SLOT(slotViewDetails(void)));
+		m_menu->addAction(tr("View Selected Item(s)..."), this, SLOT(slotViewDetails(void)));
 	}
 }
 

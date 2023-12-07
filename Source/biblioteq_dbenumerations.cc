@@ -7,21 +7,14 @@ biblioteq_dbenumerations::biblioteq_dbenumerations(biblioteq *parent) : QMainWin
 	m_ui.setupUi(this);
 	qmain = parent;
 	connect(m_ui.addBookBinding, SIGNAL(clicked()), this, SLOT(slotAdd()));
-	connect(m_ui.addLanguage, SIGNAL(clicked()), this, SLOT(slotAdd()));
-	connect(m_ui.addLocation, SIGNAL(clicked()), this, SLOT(slotAdd()));
-	connect(m_ui.addMonetaryUnit, SIGNAL(clicked()), this, SLOT(slotAdd()));
 	connect(m_ui.cancelButton, SIGNAL(clicked()), this, SLOT(slotClose()));
 	connect(m_ui.reloadButton, SIGNAL(clicked()), this, SLOT(slotReload()));
 	connect(m_ui.removeBookBinding, SIGNAL(clicked()), this, SLOT(slotRemove()));
-	connect(m_ui.removeLanguage, SIGNAL(clicked()), this, SLOT(slotRemove()));
-	connect(m_ui.removeLocation, SIGNAL(clicked()), this, SLOT(slotRemove()));
 	connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(slotSave()));
 
 	if (qmain)
 		connect(qmain, SIGNAL(fontChanged(QFont)), this, SLOT(setGlobalFonts(QFont)));
 
-	m_ui.locationsTable->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-	m_ui.minimumDaysTable->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 }
 
@@ -49,11 +42,6 @@ void biblioteq_dbenumerations::clear(void)
 
 	foreach (auto listwidget, findChildren<QListWidget *>())
 		listwidget->clear();
-
-	while (m_ui.locationsTable->rowCount() > 0)
-		m_ui.locationsTable->removeRow(0);
-
-	m_ui.minimumDaysTable->clearSelection();
 }
 
 void biblioteq_dbenumerations::closeEvent(QCloseEvent *event)
@@ -101,7 +89,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
 	for (int i = 0; i < tables.size(); i++)
 	{
 		QListWidget *listwidget = nullptr;
-		QTableWidget *tablewidget = nullptr;
 		const auto &str(tables.at(i));
 
 		QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -111,18 +98,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
 			list = biblioteq_misc_functions::getBookBindingTypes(qmain->getDB(),
 																 errorstr);
 			listwidget = m_ui.bookBindingsList;
-		}
-		else if (str == "languages")
-		{
-			list = biblioteq_misc_functions::getLanguages(qmain->getDB(),
-														  errorstr);
-			listwidget = m_ui.languagesList;
-		}
-		else if (str == "locations")
-		{
-			pairList = biblioteq_misc_functions::getLocations(qmain->getDB(),
-															  errorstr);
-			tablewidget = m_ui.locationsTable;
 		}
 
 		QApplication::restoreOverrideCursor();
@@ -141,50 +116,6 @@ void biblioteq_dbenumerations::populateWidgets(void)
 				item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 				listwidget->addItem(item);
 			}
-		else if (tablewidget == m_ui.locationsTable)
-		{
-			m_ui.locationsTable->setRowCount(pairList.size());
-
-			for (int j = 0; j < pairList.size(); j++)
-			{
-				QStringList list;
-				auto comboBox = new QComboBox();
-				auto item = new QTableWidgetItem(pairList.at(j).second);
-				auto layout = new QHBoxLayout();
-				auto spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
-				auto widget = new QWidget();
-
-				layout->addWidget(comboBox);
-				layout->addSpacerItem(spacer);
-				layout->setContentsMargins(0, 0, 0, 0);
-				list << tr("Book")
-					 << tr("Photograph Collection");
-				comboBox->addItems(list);
-
-				if (pairList.at(j).first == "Book")
-					comboBox->setCurrentIndex(0);
-				else if (pairList.at(j).first == "Photograph Collection")
-					comboBox->setCurrentIndex(4);
-
-				comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-				list.clear();
-				item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-				widget->setLayout(layout);
-				m_ui.locationsTable->setCellWidget(j, 0, widget);
-				m_ui.locationsTable->setItem(j, 1, item);
-			}
-
-			m_ui.locationsTable->resizeColumnToContents(0);
-			m_ui.locationsTable->resizeRowsToContents();
-		}
-		else if (tablewidget == m_ui.minimumDaysTable && tablewidget)
-		{
-			for (int j = 0; j < list.size(); j++)
-				if (tablewidget->item(j, 1))
-					tablewidget->item(j, 1)->setText(list.at(j));
-
-			m_ui.minimumDaysTable->resizeColumnToContents(0);
-		}
 
 		list.clear();
 		pairList.clear();
@@ -264,9 +195,6 @@ void biblioteq_dbenumerations::setGlobalFonts(const QFont &font)
 		widget->setFont(font);
 		widget->update();
 	}
-
-	m_ui.locationsTable->resizeRowsToContents();
-	m_ui.minimumDaysTable->resizeRowsToContents();
 	update();
 }
 
@@ -318,47 +246,6 @@ void biblioteq_dbenumerations::slotAdd(void)
 		list = m_ui.bookBindingsList;
 		listItem = new QListWidgetItem(tr("Book Binding"));
 	}
-	else if (toolButton == m_ui.addLanguage)
-	{
-		list = m_ui.languagesList;
-		listItem = new QListWidgetItem(tr("Language"));
-	}
-	else if (toolButton == m_ui.addLocation)
-	{
-		QStringList list;
-		auto comboBox = new QComboBox();
-		auto item = new QTableWidgetItem();
-		auto layout = new QHBoxLayout();
-		auto spacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Expanding);
-		auto widget = new QWidget();
-
-		layout->addWidget(comboBox);
-		layout->addSpacerItem(spacer);
-		layout->setContentsMargins(0, 0, 0, 0);
-		list << tr("Book")
-			 << tr("Photograph Collection");
-		comboBox->addItems(list);
-		comboBox->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-		list.clear();
-		item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-		widget->setLayout(layout);
-		m_ui.locationsTable->setRowCount(m_ui.locationsTable->rowCount() + 1);
-		m_ui.locationsTable->setCellWidget(m_ui.locationsTable->rowCount() - 1,
-										   0,
-										   widget);
-		m_ui.locationsTable->setItem(m_ui.locationsTable->rowCount() - 1,
-									 1,
-									 item);
-		m_ui.locationsTable->setCurrentCell(m_ui.locationsTable->rowCount() - 1,
-											0);
-		m_ui.locationsTable->resizeColumnToContents(0);
-		m_ui.locationsTable->resizeRowsToContents();
-	}
-	else if (toolButton == m_ui.addMonetaryUnit)
-	{
-		list = m_ui.monetaryUnitsList;
-		listItem = new QListWidgetItem(tr("Monetary Unit"));
-	}
 
 	if (list && listItem)
 	{
@@ -409,12 +296,6 @@ void biblioteq_dbenumerations::slotRemove(void)
 
 	if (toolButton == m_ui.removeBookBinding)
 		list = m_ui.bookBindingsList;
-	else if (toolButton == m_ui.removeLanguage)
-		list = m_ui.languagesList;
-	else if (toolButton == m_ui.removeLocation)
-		m_ui.locationsTable->removeRow(m_ui.locationsTable->currentRow());
-	else if (toolButton == m_ui.removeMonetaryUnit)
-		list = m_ui.monetaryUnitsList;
 
 	if (list)
 		if (list->item(list->currentRow()))
@@ -427,19 +308,14 @@ void biblioteq_dbenumerations::slotSave(void)
 	QSqlQuery query(qmain->getDB());
 	QString querystr("");
 	QStringList tables;
-	QTableWidget *tablewidget = nullptr;
 	auto error = false;
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-	tables << "book_binding_types"
-		   << "languages"
-		   << "locations"
-		   << "monetary_units";
+    tables << "book_binding_types";
 
 	for (int i = 0; i < tables.size(); i++)
 	{
 		listwidget = nullptr;
-		tablewidget = nullptr;
 		querystr = QString("DELETE FROM %1").arg(tables.at(i));
 
 		if (!qmain->getDB().transaction())
@@ -463,14 +339,6 @@ void biblioteq_dbenumerations::slotSave(void)
 
 		if (i == 0)
 			listwidget = m_ui.bookBindingsList;
-		else if (i == 6)
-			listwidget = m_ui.languagesList;
-		else if (i == 7)
-			tablewidget = m_ui.locationsTable;
-		else if (i == 8)
-			tablewidget = m_ui.minimumDaysTable;
-		else if (i == 9)
-			listwidget = m_ui.monetaryUnitsList;
 
 		if (listwidget)
 		{
@@ -488,75 +356,6 @@ void biblioteq_dbenumerations::slotSave(void)
 											tables.at(i) + tr("for ") +
 											listwidget->item(j)->text().trimmed() +
 											QString(tr(".")),
-										query.lastError().text(), __FILE__, __LINE__);
-						goto db_rollback;
-					}
-				}
-		}
-		else if (tablewidget == m_ui.locationsTable && tablewidget)
-		{
-			for (int j = 0; j < tablewidget->rowCount(); j++)
-				if (tablewidget->cellWidget(j, 0) &&
-					tablewidget->item(j, 1))
-				{
-					QString currentText("");
-					auto comboBox = tablewidget->cellWidget(j, 0)->findChild<QComboBox *>();
-					auto index = comboBox ? comboBox->currentIndex() : -1;
-
-					currentText = comboBox ? comboBox->currentText() : "N/A";
-
-					if (index == 0)
-					{
-						query.prepare("INSERT INTO locations "
-									  "(location, type) VALUES "
-									  "(?, 'Book')");
-						query.bindValue(0,
-										tablewidget->item(j, 1)->text().trimmed());
-					}
-					else if (index == 4)
-					{
-						query.prepare("INSERT INTO locations "
-									  "(location, type) VALUES "
-									  "(?, 'Photograph Collection')");
-						query.bindValue(0,
-										tablewidget->item(j, 1)->text().trimmed());
-					}
-
-					if (!query.exec())
-					{
-						qmain->addError(QString(tr("Database Error")),
-										QString(tr("Unable to create the location (")) +
-											currentText +
-											tr(", ") +
-											tablewidget->item(j, 1)->text().trimmed() +
-											QString(tr(").")),
-										query.lastError().text(), __FILE__, __LINE__);
-						goto db_rollback;
-					}
-				}
-		}
-		else if (tablewidget == m_ui.minimumDaysTable && tablewidget)
-		{
-			for (int j = 0; j < tablewidget->rowCount(); j++)
-				if (tablewidget->item(j, 1))
-				{
-					if (j == 0)
-					{
-						query.prepare("INSERT INTO minimum_days "
-									  "(days, type) VALUES "
-									  "(?, 'Book')");
-						query.bindValue(0,
-										tablewidget->item(j, 1)->text().trimmed());
-					}
-
-					if (!query.exec())
-					{
-						qmain->addError(QString(tr("Database Error")),
-										QString(tr("Unable to create the minimum day (")) +
-											tablewidget->item(j, 0)->text() +
-											tr(", ") +
-											tablewidget->item(j, 1)->text().trimmed() +
-											QString(tr(").")),
 										query.lastError().text(), __FILE__, __LINE__);
 						goto db_rollback;
 					}

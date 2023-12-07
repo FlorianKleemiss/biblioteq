@@ -3,8 +3,6 @@
 
 #include "ui_biblioteq_sruResults.h"
 
-class biblioteq_magazine;
-
 class biblioteq_sruresults : public QDialog
 {
   Q_OBJECT
@@ -12,14 +10,12 @@ class biblioteq_sruresults : public QDialog
 public:
   biblioteq_sruresults(QWidget *parent,
                        const QList<QByteArray> &list,
-                       biblioteq_magazine *magazine_arg,
                        const QFont &font);
   ~biblioteq_sruresults();
 
 private:
   QList<QByteArray> m_records;
   Ui_sruResultsDialog m_ui;
-  biblioteq_magazine *m_magazine;
   void changeEvent(QEvent *event);
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);

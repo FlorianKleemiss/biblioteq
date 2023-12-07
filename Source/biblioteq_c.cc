@@ -2,7 +2,9 @@
 #include "biblioteq_copy_editor.h"
 #include "biblioteq_files.h"
 #include "biblioteq_graphicsitempixmap.h"
+#include "biblioteq_callnum_table_item.h"
 #include "biblioteq_otheroptions.h"
+#include "biblioteq_numeric_table_item.h"
 
 #include <QActionGroup>
 #include <QDesktopServices>
@@ -17,8 +19,6 @@
 #endif
 #include <QTextStream>
 #include <QtMath>
-
-#include <limits>
 
 QColor biblioteq::availabilityColor(const QString &itemType) const
 {
@@ -317,8 +317,6 @@ int biblioteq::populateTable(QSqlQuery &query,
 		return 1;
 	}
 
-	prepareRequestToolButton(typefilter);
-
 	auto found = false;
 
 	for (int ii = 0; ii < ui.menu_Category->actions().size(); ii++)
@@ -351,11 +349,8 @@ int biblioteq::populateTable(QSqlQuery &query,
 		ui.menu_Category->setDefaultAction(ui.menu_Category->actions().value(0));
 	}
 
-	disconnect(ui.table,
-			   SIGNAL(itemChanged(QTableWidgetItem *)),
-			   this,
-			   SLOT(slotItemChanged(QTableWidgetItem *)));
-    ui.table->resetTable(dbUserName(), typefilter);
+	disconnect(ui.table, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(slotItemChanged(QTableWidgetItem *)));
+	ui.table->resetTable(dbUserName(), typefilter);
 
 	qint64 currentPage = 0;
 
@@ -1870,10 +1865,6 @@ void biblioteq::slotConnectDB(void)
 		*/
 
 		ui.actionChangePassword->setEnabled(true);
-		ui.actionRequests->setData(RequestActionItems::REQUEST_SELECTED);
-		ui.actionRequests->setEnabled(true);
-		ui.actionRequests->setToolTip(tr("Request Selected Item(s)"));
-		ui.actionReservationHistory->setEnabled(true);
 	}
 
 	auto found = false;
@@ -1994,7 +1985,6 @@ void biblioteq::slotDisconnect(void)
 	ui.actionImportCSV->setEnabled(false);
 	ui.actionModifyEntry->setEnabled(false);
 	ui.actionRefreshTable->setEnabled(false);
-	ui.actionReservationHistory->setEnabled(false);
 	ui.actionViewDetails->setEnabled(false);
 	ui.action_Merge_SQLite_Databases->setEnabled(false);
 	ui.action_Upgrade_SQLite_Schema->setEnabled(false);
@@ -2015,9 +2005,7 @@ void biblioteq::slotDisconnect(void)
 	ui.previousPageButton->setEnabled(false);
 	ui.printTool->setEnabled(false);
 	ui.refreshTool->setEnabled(false);
-	ui.reserveTool->setEnabled(false);
 	ui.searchTool->setEnabled(false);
-	ui.userTool->setEnabled(false);
 
 	if (!ui.menuEntriesPerPage->actions().isEmpty())
 		ui.menuEntriesPerPage->actions().at(ui.menuEntriesPerPage->actions().size() - 1)->setEnabled(true);
@@ -2027,13 +2015,8 @@ void biblioteq::slotDisconnect(void)
 	ui.actionPopulate_Members_Browser_Table_on_Display->setEnabled(false);
 	ui.actionConfigureAdministratorPrivileges->setEnabled(false);
 	ui.actionDatabase_Enumerations->setEnabled(false);
-	ui.actionRequests->setData(RequestActionItems::INACTIVE);
-	ui.actionRequests->setEnabled(false);
-	ui.actionRequests->setIcon(QIcon(":/32x32/request.png"));
-	ui.actionRequests->setToolTip(tr("Item Requests (PostgreSQL)"));
 	ui.action_Database_Enumerations->setEnabled(false);
 	ui.graphicsView->scene()->clear();
-	// bb.table->disconnect(SIGNAL(itemDoubleClicked(QTableWidgetItem *)));
 	ui.table->disconnect(SIGNAL(itemDoubleClicked(QTableWidgetItem *)));
 	ui.graphicsView->scene()->disconnect(SIGNAL(itemDoubleClicked(void)));
 	slotResetAllSearch();
@@ -2089,7 +2072,7 @@ void biblioteq::slotDisconnect(void)
 	ui.nextPageButton->setEnabled(false);
 	ui.pagesLabel->setText(tr("1"));
 	ui.previousPageButton->setEnabled(false);
-    ui.table->resetTable(dbUserName(), m_previousTypeFilter);
+	ui.table->resetTable(dbUserName(), m_previousTypeFilter);
 	ui.itemsCountLabel->setText(tr("0 Results"));
 	prepareFilter();
 
@@ -2552,231 +2535,6 @@ void biblioteq::slotRefreshCustomQuery(void)
 	cq.tables_t->setSortingEnabled(true);
 	cq.tables_t->sortByColumn(0, Qt::AscendingOrder);
 	QApplication::restoreOverrideCursor();
-}
-
-void biblioteq::slotRequest(void)
-{
-	/*
-	** This method is used for canceling request(s), requesting item(s), or
-	** returning selected item(s).
-	*/
-
-	auto list(ui.table->selectionModel()->selectedRows());
-	auto task = RequestActionItems(ui.actionRequests->data().toInt());
-
-	if (task == RequestActionItems::CANCEL_REQUESTED)
-	{
-		if (list.isEmpty())
-		{
-			QMessageBox::critical(this,
-								  tr("BiblioteQ: User Error"),
-								  tr("Please select at least one reservation request to cancel."));
-			QApplication::processEvents();
-			return;
-		}
-
-		if (list.size() > 0)
-		{
-			if (QMessageBox::question(this,
-									  tr("BiblioteQ: Question"),
-									  tr("Are you sure that you wish to "
-										 "cancel the selected reservation "
-										 "request(s)?"),
-									  QMessageBox::No | QMessageBox::Yes,
-									  QMessageBox::No) == QMessageBox::No)
-			{
-				QApplication::processEvents();
-				return;
-			}
-
-			QApplication::processEvents();
-		}
-	}
-	else if (task == RequestActionItems::REQUEST_SELECTED)
-	{
-		if (list.isEmpty())
-		{
-			QMessageBox::critical(this,
-								  tr("BiblioteQ: User Error"),
-								  tr("Please select at least one item to place on request."));
-			QApplication::processEvents();
-			return;
-		}
-	}
-	else if (task == RequestActionItems::RETURN_RESERVED)
-	{
-		if (list.isEmpty())
-		{
-			QMessageBox::critical(this,
-								  tr("BiblioteQ: User Error"),
-								  tr("Please select at least one item to return."));
-			QApplication::processEvents();
-			return;
-		}
-	}
-	else
-		return;
-
-	QProgressDialog progress(this);
-	QString itemType("");
-	QString oid("");
-	auto error = false;
-	auto now(QDate::currentDate());
-	int ct = 0;
-	int i = 0;
-	int numcompleted = 0;
-
-	progress.setCancelButton(nullptr);
-
-	if (task == RequestActionItems::CANCEL_REQUESTED)
-		progress.setLabelText(tr("Canceling the selected reservation request(s)..."));
-	else if (task == RequestActionItems::REQUEST_SELECTED)
-		progress.setLabelText(tr("Requesting the selected item(s)..."));
-	else
-		progress.setLabelText(tr("Returning the selected item(s)..."));
-
-	progress.setMaximum(list.size());
-	progress.setMinimum(0);
-	progress.setModal(true);
-	progress.setWindowTitle(tr("BiblioteQ: Progress Dialog"));
-	progress.show();
-	progress.repaint();
-	QApplication::processEvents();
-
-	foreach (const auto &index, list)
-	{
-		QSqlQuery query(m_db);
-
-		ct += 1;
-		i = index.row();
-		itemType = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Type"));
-
-		if (task == RequestActionItems::CANCEL_REQUESTED)
-		{
-			oid = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("REQUESTOID"));
-
-			if (oid.isEmpty())
-				oid = "-1";
-		}
-		else
-			oid = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("MYOID"));
-
-		if (itemType != "Photograph Collection")
-		{
-			if (task == RequestActionItems::CANCEL_REQUESTED)
-			{
-				query.prepare("DELETE FROM item_request WHERE myoid = ?");
-				query.addBindValue(oid);
-			}
-			else if (task == RequestActionItems::REQUEST_SELECTED)
-			{
-				query.prepare("INSERT INTO item_request "
-							  "(item_oid, memberid, requestdate, type) "
-							  "VALUES (?, ?, ?, ?)");
-				query.addBindValue(oid);
-				query.addBindValue(dbUserName());
-				query.addBindValue(now.toString("MM/dd/yyyy"));
-				query.addBindValue(itemType);
-			}
-			else
-			{
-				QString copyid("");
-
-				copyid = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Barcode"));
-				query.prepare("DELETE FROM item_borrower WHERE "
-							  "copyid = ? AND item_oid = ? AND type = ?");
-				query.addBindValue(copyid);
-				query.addBindValue(oid);
-				query.addBindValue(itemType);
-
-				if (query.exec())
-				{
-					QString memberid("");
-
-					memberid = biblioteq_misc_functions::getColumnString(ui.table, i, ui.table->columnNumber("Member ID"));
-					query.prepare("UPDATE member_history SET returned_date = ? "
-								  "WHERE copyid = ? AND "
-								  "item_oid = ? AND "
-								  "memberid = ?");
-					query.addBindValue(now.toString("MM/dd/yyyy"));
-					query.addBindValue(copyid);
-					query.addBindValue(oid);
-					query.addBindValue(memberid);
-					query.exec();
-				}
-
-				if (query.lastError().isValid())
-				{
-					addError(tr("Database Error"),
-							 tr("Unable to return the item."),
-							 query.lastError().text(),
-							 __FILE__,
-							 __LINE__);
-					error = true;
-				}
-				else
-					numcompleted += 1;
-
-				goto progress_label;
-			}
-
-			if (!query.exec())
-			{
-				error = true;
-
-				if (task == RequestActionItems::CANCEL_REQUESTED)
-					addError(tr("Database Error"),
-							 tr("Unable to cancel the reservation request."),
-							 query.lastError().text(),
-							 __FILE__,
-							 __LINE__);
-				else if (task == RequestActionItems::REQUEST_SELECTED)
-					addError(tr("Database Error"),
-							 tr("Unable to request the item."),
-							 query.lastError().text(),
-							 __FILE__,
-							 __LINE__);
-			}
-			else
-				numcompleted += 1;
-		}
-
-	progress_label:
-
-		if (i + 1 <= progress.maximum())
-			progress.setValue(ct);
-
-		progress.repaint();
-		QApplication::processEvents();
-	}
-
-	progress.close();
-
-	if (error)
-	{
-		if (task == RequestActionItems::CANCEL_REQUESTED)
-			QMessageBox::critical(this,
-								  tr("BiblioteQ: Database Error"),
-								  tr("Unable to cancel some or all of the selected reservation "
-									 "requests."));
-		else if (task == RequestActionItems::REQUEST_SELECTED)
-			QMessageBox::critical(this,
-								  tr("BiblioteQ: Database Error"),
-								  tr("Unable to request some or all of the selected items. "
-									 "Please verify that you are not attempting to request "
-									 "duplicate items."));
-		else
-			QMessageBox::critical(this,
-								  tr("BiblioteQ: Database Error"),
-								  tr("Unable to return some or all of the selected items."));
-	}
-
-	QApplication::processEvents();
-
-	if (numcompleted > 0)
-		if (task == RequestActionItems::CANCEL_REQUESTED ||
-			task == RequestActionItems::RETURN_RESERVED)
-			slotRefresh();
 }
 
 void biblioteq::slotSaveConfig(void)

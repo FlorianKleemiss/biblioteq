@@ -3,8 +3,6 @@
 
 #include "ui_biblioteq_z3950results.h"
 
-class biblioteq_magazine;
-
 class biblioteq_z3950results : public QDialog
 {
   Q_OBJECT
@@ -12,7 +10,6 @@ class biblioteq_z3950results : public QDialog
 public:
   biblioteq_z3950results(QWidget *parent,
                          QStringList &list,
-                         biblioteq_magazine *magazine_arg,
                          const QFont &font,
                          const QString &recordSyntax);
   ~biblioteq_z3950results();
@@ -21,7 +18,6 @@ private:
   QString m_recordSyntax;
   QStringList m_records;
   Ui_z3950ResultsDialog m_ui;
-  biblioteq_magazine *m_magazine;
   void changeEvent(QEvent *event);
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);

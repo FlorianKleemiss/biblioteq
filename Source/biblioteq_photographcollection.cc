@@ -4,6 +4,7 @@
 #include "biblioteq_photographcollection.h"
 #include "ui_biblioteq_photographview.h"
 #include "ui_biblioteq_photographcompare.h"
+#include "biblioteq_myqstring.h"
 
 #include <QFileDialog>
 #include <QScrollBar>
@@ -51,29 +52,18 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   p_compare.setupUi(m_photo_compare_diag);
 
   pc.graphicsView->setContextMenuPolicy(Qt::CustomContextMenu);
-  connect(pc.graphicsView,
-          SIGNAL(customContextMenuRequested(QPoint)),
-          this,
-          SLOT(slotViewContextMenu(QPoint)));
+  connect(pc.graphicsView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotViewContextMenu(QPoint)));
   pc.graphicsView->setScene(m_scene);
   pc.graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
   pc.graphicsView->setRubberBandSelectionMode(Qt::IntersectsItemShape);
 
   pc.thumbnail_item->setReadOnly(true);
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-  new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_A),
-                this,
-                SLOT(slotSelectAll(void)));
-  new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S),
-                this,
-                SLOT(slotGo(void)));
+  new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_A), this, SLOT(slotSelectAll(void)));
+  new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(slotGo(void)));
 #else
-  new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_A),
-                this,
-                SLOT(slotSelectAll(void)));
-  new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S),
-                this,
-                SLOT(slotGo(void)));
+  new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_A), this, SLOT(slotSelectAll(void)));
+  new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S), this, SLOT(slotGo(void)));
 #endif
   updateFont(QApplication::font(), qobject_cast<QWidget *>(this));
   m_photo_diag->setWindowModality(Qt::WindowModal);
@@ -1428,8 +1418,7 @@ void biblioteq_photographcollection::slotGo(void)
 
             if (names.at(i) == "Call Number")
               qmain->getUI().table->item(m_index->row(), i)->setText(pc.executing_artist_item->toPlainText());
-            else if (names.at(i) == "ID" ||
-                     names.at(i) == "ID Number")
+            else if (names.at(i) == "ID" || names.at(i) == "ID Number")
               qmain->getUI().table->item(m_index->row(), i)->setText(pc.id_collection->text());
             else if (names.at(i) == "Title")
               qmain->getUI().table->item(m_index->row(), i)->setText(pc.title_collection->toPlainText());
@@ -2059,9 +2048,8 @@ db_rollback:
 
 void biblioteq_photographcollection::slotModifyItem(void)
 {
-  photo.saveButton->disconnect(SIGNAL(clicked(void)));
-  connect(photo.saveButton, SIGNAL(clicked()), this,
-          SLOT(slotUpdateItem()));
+  photo.saveButton->disconnect(SIGNAL(clicked()));
+  connect(photo.saveButton, SIGNAL(clicked()), this, SLOT(slotUpdateItem()));
   m_photo_diag->resize(m_photo_diag->width(),
                        qRound(0.95 * size().height()));
   biblioteq_misc_functions::center(m_photo_diag, this);
@@ -2309,7 +2297,7 @@ void biblioteq_photographcollection::slotSceneSelectionChanged(void)
           }
           else if (fieldname == "title")
           {
-            pc.title_old_item->setText(var.toString().trimmed());
+            pc.title_new_item->setText(var.toString().trimmed());
             photo.title_item->setText(var.toString().trimmed());
           }
           else if (fieldname == "executing_artist")

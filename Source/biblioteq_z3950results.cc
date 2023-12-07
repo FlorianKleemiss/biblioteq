@@ -2,15 +2,12 @@
 #include "qevent.h"
 
 biblioteq_z3950results::biblioteq_z3950results(QWidget *parent,
-											   QStringList &list,
-											   biblioteq_magazine *magazine_arg,
+                                               QStringList &list,
 											   const QFont &font,
 											   const QString &recordSyntax) : QDialog(parent)
 {
 	int i = 0;
 	int row = -1;
-
-	m_magazine = magazine_arg;
 	m_recordSyntax = recordSyntax;
 	setWindowModality(Qt::ApplicationModal);
 	m_ui.setupUi(this);

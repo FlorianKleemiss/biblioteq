@@ -5,15 +5,11 @@
 #define BIBLIOTEQ_VERSION "2022.03.30"
 
 #include "biblioteq_book.h"
-#include "biblioteq_callnum_table_item.h"
 #include "biblioteq_dbenumerations.h"
 #include "biblioteq_generic_thread.h"
 #include "biblioteq_import.h"
 #include "biblioteq_misc_functions.h"
-#include "biblioteq_myqstring.h"
-#include "biblioteq_numeric_table_item.h"
 #include "biblioteq_photographcollection.h"
-//#include "ui_biblioteq_allinfo.h"
 #include "ui_biblioteq_branch_s.h"
 #include "ui_biblioteq_customquery.h"
 #include "ui_biblioteq_errordiag.h"
@@ -240,7 +236,6 @@ private:
   void prepareContextMenus(void);
   void prepareFilter(void);
   void preparePhotographsPerPageMenu(void);
-  void prepareRequestToolButton(const QString &typefilter);
   void prepareUpgradeNotification(void);
   void readConfig(void);
   void readGlobalSetup(void);
@@ -292,7 +287,6 @@ private slots:
   void slotPrintViewPreview(void);
   void slotRefreshCustomQuery(void);
   void slotReloadBiblioteqConf(void);
-  void slotRequest(void);
   void slotResetAllSearch(void);
   void slotResetErrorLog(void);
   void slotResetLoginDialog(void);

@@ -3,6 +3,7 @@
 #include "biblioteq_copy_editor_book.h"
 #include "biblioteq_filesize_table_item.h"
 #include "biblioteq_pdfreader.h"
+#include "biblioteq_myqstring.h"
 
 #include <QActionGroup>
 #include <QAuthenticator>

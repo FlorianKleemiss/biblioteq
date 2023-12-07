@@ -53,7 +53,7 @@
 
 extern "C"
 {
-#include <math.h>
+//#include <math.h>
 #if defined(Q_OS_ANDROID) || defined(Q_OS_WIN)
 #include <sqlite3/sqlite3.h>
 #else
@@ -201,7 +201,7 @@ biblioteq::biblioteq(void) : QMainWindow()
   m_error_diag = new QMainWindow();
 #endif
   m_import = new biblioteq_import(this);
-  //menu1 = new QMenu(this);
+  // menu1 = new QMenu(this);
   connect(QCoreApplication::instance(),
           SIGNAL(lastWindowClosed()),
           this,
@@ -209,81 +209,27 @@ biblioteq::biblioteq(void) : QMainWindow()
 #ifndef BIBLIOTEQ_LINKED_WITH_POPPLER
   ui.action_Open_PDF_File->setEnabled(false);
 #endif
-  connect(ui.action_Book,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotInsertBook()));
-  connect(ui.action_Contributors,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotContributors()));
-  connect(ui.action_English,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotShowDocumentation()));
-  connect(ui.action_English_Release_Notes,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotShowReleaseNotes()));
-  connect(ui.action_French,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotShowDocumentation()));
-  connect(ui.action_French_Release_Notes,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotShowReleaseNotes()));
-  connect(ui.action_Online_Documentation,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotOpenOnlineDocumentation()));
-  connect(ui.action_Open_PDF_File,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotOpenPDFFiles()));
-  connect(ui.action_Print_Icons_View,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotPrintIconsView()));
-  connect(ui.actionImportCSV,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotShowImport()));
-  connect(ui.actionOther_Options,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotShowOtherOptions()));
-  connect(ui.action_Full_Screen,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotViewFullOrNormalScreen()));
-  connect(ui.action_Merge_SQLite_Databases,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotMergeSQLiteDatabases()));
-  connect(ui.action_Photograph_Collection,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotInsertPhotograph()));
-  connect(ui.action_Upgrade_SQLite_Schema,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotUpgradeSqliteScheme()));
-  connect(ui.action_VacuumDatabase,
-          SIGNAL(triggered()),
-          this,
-          SLOT(slotVacuum()));
-  connect(ui.resetAllSearch,
-          SIGNAL(clicked()),
-          this,
-          SLOT(slotResetAllSearch()));
+  connect(ui.action_Book, SIGNAL(triggered()), this, SLOT(slotInsertBook()));
+  connect(ui.action_Contributors, SIGNAL(triggered()), this, SLOT(slotContributors()));
+  connect(ui.action_English, SIGNAL(triggered()), this, SLOT(slotShowDocumentation()));
+  connect(ui.action_English_Release_Notes, SIGNAL(triggered()), this, SLOT(slotShowReleaseNotes()));
+  connect(ui.action_French, SIGNAL(triggered()), this, SLOT(slotShowDocumentation()));
+  connect(ui.action_French_Release_Notes, SIGNAL(triggered()), this, SLOT(slotShowReleaseNotes()));
+  connect(ui.action_Online_Documentation, SIGNAL(triggered()), this, SLOT(slotOpenOnlineDocumentation()));
+  connect(ui.action_Open_PDF_File, SIGNAL(triggered()), this, SLOT(slotOpenPDFFiles()));
+  connect(ui.action_Print_Icons_View, SIGNAL(triggered()), this, SLOT(slotPrintIconsView()));
+  connect(ui.actionImportCSV, SIGNAL(triggered()), this, SLOT(slotShowImport()));
+  connect(ui.actionOther_Options, SIGNAL(triggered()), this, SLOT(slotShowOtherOptions()));
+  connect(ui.action_Full_Screen, SIGNAL(triggered()), this, SLOT(slotViewFullOrNormalScreen()));
+  connect(ui.action_Merge_SQLite_Databases, SIGNAL(triggered()), this, SLOT(slotMergeSQLiteDatabases()));
+  connect(ui.action_Photograph_Collection, SIGNAL(triggered()), this, SLOT(slotInsertPhotograph()));
+  connect(ui.action_Upgrade_SQLite_Schema, SIGNAL(triggered()), this, SLOT(slotUpgradeSqliteScheme()));
+  connect(ui.action_VacuumDatabase, SIGNAL(triggered()), this, SLOT(slotVacuum()));
+  connect(ui.resetAllSearch, SIGNAL(clicked()), this, SLOT(slotResetAllSearch()));
 
   auto scene = new biblioteq_bgraphicsscene(ui.graphicsView);
 
-  connect(scene,
-          SIGNAL(selectionChanged()),
-          this,
-          SLOT(slotSceneSelectionChanged()));
+  connect(scene, SIGNAL(selectionChanged()), this, SLOT(slotSceneSelectionChanged()));
   ui.graphicsView->setScene(scene);
   ui.graphicsView->setDragMode(QGraphicsView::RubberBandDrag);
   ui.graphicsView->setRubberBandSelectionMode(Qt::IntersectsItemShape);
@@ -301,22 +247,12 @@ biblioteq::biblioteq(void) : QMainWindow()
 #endif
   m_pass_diag->setModal(true);
   m_branch_diag->setModal(true);
-  connect(ui.graphicsView->scene(),
-          SIGNAL(enterKeyPressed()),
-          this,
-          SLOT(slotGraphicsSceneEnterKeyPressed()));
-  connect(ui.table,
-          SIGNAL(enterKeyPressed()),
-          this,
-          SLOT(slotMainTableEnterKeyPressed()));
-  connect(ui.table->horizontalHeader(), SIGNAL(sectionPressed(int)),
-          this, SLOT(slotResizeColumnsAfterSort()));
-  connect(ui.table->horizontalHeader(), SIGNAL(sectionClicked(int)),
-          this, SLOT(slotUpdateIndicesAfterSort(int)));
-  connect(ui.table->horizontalHeader(), SIGNAL(sectionResized(int,int,int)),
-          this, SLOT(slotSectionResized(int,int,int)));
-  connect(er.table->horizontalHeader(), SIGNAL(sectionClicked(int)),
-          this, SLOT(slotResizeColumnsAfterSort()));
+  connect(ui.graphicsView->scene(), SIGNAL(enterKeyPressed()), this, SLOT(slotGraphicsSceneEnterKeyPressed()));
+  connect(ui.table, SIGNAL(enterKeyPressed()), this, SLOT(slotMainTableEnterKeyPressed()));
+  connect(ui.table->horizontalHeader(), SIGNAL(sectionPressed(int)), this, SLOT(slotResizeColumnsAfterSort()));
+  connect(ui.table->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(slotUpdateIndicesAfterSort(int)));
+  connect(ui.table->horizontalHeader(), SIGNAL(sectionResized(int, int, int)), this, SLOT(slotSectionResized(int, int, int)));
+  connect(er.table->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(slotResizeColumnsAfterSort()));
   connect(er.copyButton, SIGNAL(clicked()), this, SLOT(slotCopyError()));
   connect(ui.table, SIGNAL(itemSelectionChanged()), this, SLOT(slotDisplaySummary()));
   connect(ui.exitTool, SIGNAL(triggered()), this, SLOT(slotExit()));
@@ -329,7 +265,7 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(ui.refreshTool, SIGNAL(triggered()), this, SLOT(slotRefresh()));
   connect(ui.actionRefreshTable, SIGNAL(triggered()), this, SLOT(slotRefresh()));
   connect(ui.actionReload_biblioteq_conf, SIGNAL(triggered()), this, SLOT(slotReloadBiblioteqConf()));
-  connect(ui.menu_Category, SIGNAL(triggered(QAction*)), this, SLOT(slotAutoPopOnFilter(QAction*)));
+  connect(ui.menu_Category, SIGNAL(triggered(QAction *)), this, SLOT(slotAutoPopOnFilter(QAction *)));
   connect(ui.modifyTool, SIGNAL(triggered()), this, SLOT(slotModify()));
   connect(ui.actionModifyEntry, SIGNAL(triggered()), this, SLOT(slotModify()));
   connect(ui.actionShowErrorDialog, SIGNAL(triggered()), this, SLOT(slotShowErrorDialog()));
@@ -338,7 +274,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(ui.actionResizeColumns, SIGNAL(triggered()), this, SLOT(slotResizeColumns()));
   connect(ui.actionChangePassword, SIGNAL(triggered()), this, SLOT(slotShowChangePassword()));
   connect(ui.actionSaveSettings, SIGNAL(triggered()), this, SLOT(slotSaveConfig()));
-  connect(ui.actionRequests, SIGNAL(triggered()), this, SLOT(slotRequest()));
   connect(ui.connectTool, SIGNAL(triggered()), this, SLOT(slotShowConnectionDB()));
   connect(ui.actionConnect, SIGNAL(triggered()), this, SLOT(slotShowConnectionDB()));
   connect(ui.disconnectTool, SIGNAL(triggered()), this, SLOT(slotDisconnect()));
@@ -414,8 +349,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(false);
   ui.actionPopulate_Members_Browser_Table_on_Display->setEnabled(false);
   ui.actionRefreshTable->setEnabled(false);
-  ui.actionRequests->setEnabled(false);
-  ui.actionReservationHistory->setEnabled(false);
   ui.actionViewDetails->setEnabled(false);
   ui.action_Database_Enumerations->setEnabled(false);
   ui.action_Merge_SQLite_Databases->setEnabled(false);
@@ -436,9 +369,7 @@ biblioteq::biblioteq(void) : QMainWindow()
   ui.previousPageButton->setEnabled(false);
   ui.printTool->setEnabled(false);
   ui.refreshTool->setEnabled(false);
-  ui.reserveTool->setEnabled(false);
   ui.searchTool->setEnabled(false);
-  ui.userTool->setEnabled(false);
 
   QString typefilter("");
   QSettings settings;
@@ -716,11 +647,7 @@ void biblioteq::addConfigOptions(const QString &typefilter)
   {
     if (typefilter != "Custom")
     {
-      if (typefilter != "All" &&
-          typefilter != "All Available" &&
-          typefilter != "All Overdue" &&
-          typefilter != "All Requested" &&
-          typefilter != "All Reserved")
+      if (typefilter != "All")
       {
         if (ui.table->columnNames().value(i) == "MYOID" ||
             ui.table->columnNames().value(i) == "Type")
@@ -831,8 +758,8 @@ void biblioteq::adminSetup(void)
 
   if (m_roles.contains("administrator") || m_roles.contains("librarian"))
   {
-    ui.table->disconnect(SIGNAL(itemDoubleClicked(QTableWidgetItem*)));
-    connect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(slotModify()));
+    ui.table->disconnect(SIGNAL(itemDoubleClicked(QTableWidgetItem *)));
+    connect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, SLOT(slotModify()));
     ui.graphicsView->scene()->disconnect(SIGNAL(itemDoubleClicked()));
     connect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotModify()));
     updateItemWindows();
@@ -861,9 +788,6 @@ void biblioteq::adminSetup(void)
   if (m_roles.contains("administrator") || m_roles.contains("librarian"))
     ui.actionModifyEntry->setEnabled(true);
 
-  if (m_roles.contains("administrator") || m_roles.contains("circulation"))
-    ui.reserveTool->setEnabled(true);
-
   if (m_roles.contains("administrator") || m_roles.contains("librarian"))
     ui.actionAutoPopulateOnCreation->setEnabled(true);
 
@@ -883,9 +807,6 @@ void biblioteq::adminSetup(void)
     ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(true);
     ui.action_Database_Enumerations->setEnabled(true);
   }
-
-  ui.actionRequests->setData(RequestActionItems::INACTIVE);
-  ui.actionRequests->setToolTip(tr("Item Requests (PostgreSQL)"));
 
   /*
   ** Hide certain fields in the Members Browser.
@@ -999,8 +920,7 @@ void biblioteq::createSqliteMenuActions(void)
 
   auto action = new QAction(tr("&Clear Menu"), ui.menu_Recent_SQLite_Files);
 
-  connect(action, SIGNAL(triggered(bool)), this,
-          SLOT(slotClearSqliteMenu(bool)));
+  connect(action, SIGNAL(triggered(bool)), this, SLOT(slotClearSqliteMenu(bool)));
 
   if (!ui.menu_Recent_SQLite_Files->actions().isEmpty())
     ui.menu_Recent_SQLite_Files->addSeparator();
@@ -1091,46 +1011,9 @@ void biblioteq::prepareFilter(void)
     }
   }
 
-  connect(ui.menu_Category, SIGNAL(triggered(QAction*)), this, SLOT(slotAutoPopOnFilter(QAction*)));
+  connect(ui.menu_Category, SIGNAL(triggered(QAction *)), this, SLOT(slotAutoPopOnFilter(QAction *)));
   tmplist1.clear();
   tmplist2.clear();
-}
-
-void biblioteq::prepareRequestToolButton(const QString &typefilter)
-{
-  ui.actionRequests->setData(RequestActionItems::INACTIVE);
-
-  if (m_db.driverName() == "QPSQL" && m_db.isOpen())
-  {
-    if (dbUserName() == BIBLIOTEQ_GUEST_ACCOUNT)
-    {
-      ui.actionRequests->setEnabled(false);
-      ui.actionRequests->setIcon(QIcon(":/32x32/request.png"));
-      ui.actionRequests->setToolTip(tr("Item Requests"));
-    }
-    else if (m_roles.isEmpty() &&
-             (typefilter == "All" ||
-              typefilter == "Books"))
-    {
-      ui.actionRequests->setData(RequestActionItems::REQUEST_SELECTED);
-      ui.actionRequests->setEnabled(true);
-      ui.actionRequests->setIcon(QIcon(":/32x32/request.png"));
-      ui.actionRequests->setToolTip(tr("Request Selected Item(s)"));
-    }
-    else
-    {
-      ui.actionRequests->setEnabled(false);
-      ui.actionRequests->setIcon(QIcon(":/32x32/request.png"));
-      ui.actionRequests->setToolTip(tr("Item Requests"));
-    }
-  }
-
-  if (m_db.driverName() == "QSQLITE")
-  {
-    ui.actionRequests->setEnabled(false);
-    ui.actionRequests->setIcon(QIcon(":/32x32/request.png"));
-    ui.actionRequests->setToolTip(tr("Item Requests (PostgreSQL)"));
-  }
 }
 
 void biblioteq::quit(const char *msg, const char *file, const int line)
@@ -1452,7 +1335,7 @@ void biblioteq::slotAbout(void)
 #ifdef BIBLIOTEQ_POPPLER_VERSION_DEFINED
                 "Poppler version %5.<br>"
 #else
-                 "%5<br>"
+                "%5<br>"
 #endif
                 "Qt version %6 (runtime %7).<br>"
                 "SQLite version %9.<br>"
@@ -1474,8 +1357,8 @@ void biblioteq::slotAbout(void)
              arg(POPPLER_VERSION)
                  .
 #else
-              arg(tr("0.1."))
-                  .
+             arg(tr("0.1."))
+                 .
 #endif
              arg(QT_VERSION_STR)
                  .arg(qversion)
@@ -1484,8 +1367,8 @@ void biblioteq::slotAbout(void)
              arg(YAZ_VERSION)
                  .
 #else
-              arg(tr("is not available"))
-                  .
+             arg(tr("is not available"))
+                 .
 #endif
              arg(SQLITE_VERSION));
   mb.setStandardButtons(QMessageBox::Ok);
@@ -1502,9 +1385,8 @@ void biblioteq::slotAutoPopOnFilter(QAction *action)
   disconnect(ui.menu_Category, SIGNAL(triggered(QAction *)), this, SLOT(slotAutoPopOnFilter(QAction *)));
   action->setChecked(true);
   ui.menu_Category->setDefaultAction(action);
-  connect(ui.menu_Category, SIGNAL(triggered(QAction*)), this, SLOT(slotAutoPopOnFilter(QAction*)));
+  connect(ui.menu_Category, SIGNAL(triggered(QAction *)), this, SLOT(slotAutoPopOnFilter(QAction *)));
   ui.categoryLabel->setText(action->text());
-  prepareRequestToolButton(action->data().toString());
 
   QSettings settings;
 
@@ -1707,7 +1589,6 @@ void biblioteq::slotDelete(void)
       list.clear();
       return;
     }
-
   }
 
   if (!list.isEmpty())
@@ -2352,7 +2233,7 @@ void biblioteq::slotPrintViewPreview(void)
   printer.setOrientation(QPrinter::Landscape);
   printer.setPageSize(QPrinter::Letter);
 #endif
-  connect(printDialog.data(), SIGNAL(paintRequested(QPrinter*)), this, SLOT(slotPrintPreview(QPrinter*)));
+  connect(printDialog.data(), SIGNAL(paintRequested(QPrinter *)), this, SLOT(slotPrintPreview(QPrinter *)));
   QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
   m_printPreview->setHtml(viewHtml());
   printDialog->show();

@@ -5,13 +5,11 @@
 
 biblioteq_sruresults::biblioteq_sruresults(QWidget *parent,
                                            const QList<QByteArray> &list,
-                                           biblioteq_magazine *magazine_arg,
                                            const QFont &font) : QDialog(parent)
 {
   int row = -1;
 
   m_records = list;
-  m_magazine = magazine_arg;
   setWindowModality(Qt::ApplicationModal);
   m_ui.setupUi(this);
 

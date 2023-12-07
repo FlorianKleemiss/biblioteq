@@ -125,7 +125,7 @@
           <x>0</x>
           <y>0</y>
           <width>200</width>
-          <height>343</height>
+          <height>348</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -405,7 +405,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -493,9 +493,6 @@
        <normaloff>:/16x16/add.png</normaloff>:/16x16/add.png</iconset>
      </property>
      <addaction name="action_Book"/>
-     <addaction name="action_Grey_Literature"/>
-     <addaction name="action_Journal"/>
-     <addaction name="action_Magazine"/>
      <addaction name="action_Photograph_Collection"/>
     </widget>
     <addaction name="menu_Add_Item"/>
@@ -945,24 +942,6 @@
     <string>Print Current View</string>
    </property>
   </action>
-  <action name="reserveTool">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/32x32/checkout.png</normaloff>:/32x32/checkout.png</iconset>
-   </property>
-   <property name="text">
-    <string>Reserve Selected Item</string>
-   </property>
-  </action>
-  <action name="userTool">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/32x32/members.png</normaloff>:/32x32/members.png</iconset>
-   </property>
-   <property name="text">
-    <string>Display Members Browser</string>
-   </property>
-  </action>
   <action name="searchTool">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
@@ -1008,18 +987,6 @@
     <string>Exit BiblioteQ</string>
    </property>
   </action>
-  <action name="actionReservationHistory">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/32x32/history.png</normaloff>:/32x32/history.png</iconset>
-   </property>
-   <property name="text">
-    <string>View Member's Reservation History (Patrons Only)</string>
-   </property>
-   <property name="toolTip">
-    <string>View Member's Reservation History (Patrons Only)</string>
-   </property>
-  </action>
   <action name="actionChangePassword">
    <property name="icon">
     <iconset resource="../Icons/icons.qrc">
@@ -1061,18 +1028,6 @@
    </property>
    <property name="toolTip">
     <string>Configure Administrator Privileges (PostgreSQL)</string>
-   </property>
-  </action>
-  <action name="actionRequests">
-   <property name="icon">
-    <iconset resource="../Icons/icons.qrc">
-     <normaloff>:/32x32/request.png</normaloff>:/32x32/request.png</iconset>
-   </property>
-   <property name="text">
-    <string>Item Requests</string>
-   </property>
-   <property name="toolTip">
-    <string>Item Requests (PostgreSQL)</string>
    </property>
   </action>
   <action name="actionPopulate_Members_Browser_Table_on_Display">
@@ -1161,16 +1116,6 @@
     <string>&amp;Book...</string>
    </property>
   </action>
-  <action name="action_Journal">
-   <property name="text">
-    <string>&amp;Journal...</string>
-   </property>
-  </action>
-  <action name="action_Magazine">
-   <property name="text">
-    <string>&amp;Magazine...</string>
-   </property>
-  </action>
   <action name="action_Photograph_Collection">
    <property name="text">
     <string>&amp;Photograph Collection...</string>
@@ -1205,11 +1150,6 @@
   <action name="action_Open_PDF_File">
    <property name="text">
     <string>&amp;Open PDF File(s)...</string>
-   </property>
-  </action>
-  <action name="action_Grey_Literature">
-   <property name="text">
-    <string>&amp;Grey Literature...</string>
    </property>
   </action>
   <action name="action_Online_Documentation">
