@@ -125,7 +125,7 @@
           <x>0</x>
           <y>0</y>
           <width>200</width>
-          <height>348</height>
+          <height>345</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -405,7 +405,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>19</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuHelp">
@@ -1028,14 +1028,6 @@
    </property>
    <property name="toolTip">
     <string>Configure Administrator Privileges (PostgreSQL)</string>
-   </property>
-  </action>
-  <action name="actionPopulate_Members_Browser_Table_on_Display">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Populate &amp;Members Browser on Display</string>
    </property>
   </action>
   <action name="actionPopulate_Administrator_Browser_Table_on_Display">

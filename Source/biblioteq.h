@@ -60,7 +60,6 @@ public:
   QHash<QString, QString> getOpenLibraryItemsHash(void) const;
   QHash<QString, QString> getSRUHash(const QString &name) const;
   QHash<QString, QString> getZ3950Hash(const QString &name) const;
-  QMainWindow *getMembersBrowser(void) const;
   QSqlDatabase getDB(void) const;
   QString formattedISBN10(const QString &str) const;
   QString formattedISBN13(const QString &str) const;
@@ -98,8 +97,6 @@ public:
                 const char *file = "",
                 const int line = 0);
   void bookSearch(const QString &field, const QString &value);
-  void journSearch(const QString &field, const QString &value);
-  void magSearch(const QString &field, const QString &value);
   void pcSearch(const QString &field, const QString &value);
   void removeBook(biblioteq_book *book);
   void removePhotographCollection(biblioteq_photographcollection *pc);
@@ -114,7 +111,6 @@ public:
   void updateSceneItem(const QString &oid,
                        const QString &type,
                        const QImage &image);
-  void vgSearch(const QString &field, const QString &value);
 
 public slots:
   void slotDisplaySummary(void);
@@ -212,7 +208,6 @@ private:
   biblioteq_import *m_import;
   biblioteq_otheroptions *m_otheroptions;
   bool m_allSearchShown;
-  bool m_membersWasRefreshed;
   int m_lastSearchType;
   qint64 m_pages;
   qint64 m_queryOffset;
@@ -293,9 +288,7 @@ private slots:
   void slotResizeColumnsAfterSort(void);
   void slotRoleChanged(int index);
   void slotSaveConfig(void);
-  void slotSaveDnt(bool state);
   void slotSaveGeneralSearchCaseSensitivity(bool state);
-  void slotSavePassword(void);
   void slotSceneSelectionChanged(void);
   void slotSearch(void);
   void slotSearchBasic(void);

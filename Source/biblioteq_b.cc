@@ -199,55 +199,27 @@ int biblioteq::populateTable(const int search_type_arg,
 	{
 		if (typefilter == "All")
 		{
-			QString checkAvailability("");
-
-			if (typefilter == "All Available")
-				checkAvailability =
-					" HAVING (quantity - COUNT(item_borrower.item_oid)) > 0 ";
 
 			searchstr = QString("SELECT DISTINCT book.title, "
-								"book.id, "
+								"book.id AS id, "
 								"book.publisher, book.pdate, "
 								"book.category, "
-								"book.language, "
-								"book.price, book.monetary_units, "
 								"book.quantity, "
-								"book.location, "
-								"book.quantity - COUNT(item_borrower.item_oid) "
-								"AS availability, "
-								"COUNT(item_borrower.item_oid) AS total_reserved, "
+								"0 AS availability, "
+								"0 AS total_reserved, "
 								"book.accession_number, "
 								"book.type, "
 								"book.myoid, " +
 								bookFrontCover +
 								"FROM "
-								"book LEFT JOIN item_borrower ON "
-								"book.myoid = item_borrower.item_oid "
-								"AND item_borrower.type = 'Book' "
-								"GROUP BY book.title, "
-								"book.id, "
-								"book.publisher, book.pdate, "
-								"book.category, "
-								"book.language, "
-								"book.price, book.monetary_units, "
-								"book.quantity, "
-								"book.location, "
-								"book.accession_number, "
-								"book.type, "
-								"book.myoid, "
-								"book.front_cover "
-								" %1 "
+								"book "
 								"UNION "
 								"SELECT DISTINCT photograph_collection.title, "
-								"photograph_collection.id, "
+								"photograph_collection.id AS id, "
 								"'', "
 								"'', "
-								"'', "
-								"'', "
-								"0.00, "
 								"'', "
 								"1 AS quantity, "
-								"'' AS location, "
 								"0 AS availability, "
 								"0 AS total_reserved, "
 								"photograph_collection.accession_number, "
@@ -262,31 +234,25 @@ int biblioteq::populateTable(const int search_type_arg,
 								"photograph_collection.type, "
 								"photograph_collection.myoid, " +
 								"photograph_collection.image_scaled "
-								" %1 "
-								"ORDER BY 1")
-							.arg(checkAvailability) +
+								"ORDER BY 2") +
 						limitStr + offsetStr;
 		}
 		else if (typefilter == "Books")
 		{
 			searchstr = "SELECT DISTINCT book.title, "
+						"book.id, "
 						"book.author, "
 						"book.publisher, book.pdate, book.place, "
 						"book.edition, "
-						"book.category, book.language, "
-						"book.id, "
-						"book.price, book.monetary_units, "
+						"book.category, "
 						"book.quantity, "
 						"book.binding_type, "
-						"book.location, "
 						"book.isbn13, "
 						"book.lccontrolnumber, "
 						"book.callnumber, "
 						"book.deweynumber, "
-						"book.quantity - "
-						"COUNT(item_borrower.item_oid) "
-						"AS availability, "
-						"COUNT(item_borrower.item_oid) AS total_reserved, "
+						"book.quantity AS availability, "
+						"book.quantity AS total_reserved, "
 						"book.originality, "
 						"book.condition, "
 						"book.accession_number, "
@@ -294,43 +260,19 @@ int biblioteq::populateTable(const int search_type_arg,
 						"book.myoid, " +
 						bookFrontCover +
 						"FROM "
-						"book LEFT JOIN item_borrower ON "
-						"book.myoid = item_borrower.item_oid "
-						"AND item_borrower.type = 'Book' "
-						"GROUP BY "
-						"book.title, "
-						"book.author, "
-						"book.publisher, book.pdate, book.place, "
-						"book.edition, "
-						"book.category, book.language, "
-						"book.id, "
-						"book.price, book.monetary_units, "
-						"book.quantity, "
-						"book.binding_type, "
-						"book.location, "
-						"book.isbn13, "
-						"book.lccontrolnumber, "
-						"book.callnumber, "
-						"book.deweynumber, "
-						"book.originality, "
-						"book.condition, "
-						"book.accession_number, "
-						"book.type, "
-						"book.myoid, "
-						"book.front_cover "
-						"ORDER BY "
-						"book.title" +
+						"book "
+						"ORDER BY CAST(book.id AS INTEGER)" +
 						limitStr + offsetStr;
 		}
 		else if (typefilter == "Photograph Collections")
 		{
 			searchstr = "SELECT DISTINCT photograph_collection.title, "
+						"photograph_collection.id, "
 						"photograph_collection.creation_date, "
 						"photograph_collection.total_number, "
 						"COUNT(photograph.myoid) AS photograph_count, "
 						"photograph_collection.by_artist, "
 						"photograph_collection.notes, "
-						"photograph_collection.id, "
 						"photograph_collection.type, "
 						"photograph_collection.myoid, " +
 						photographCollectionFrontCover +
@@ -345,8 +287,7 @@ int biblioteq::populateTable(const int search_type_arg,
 						"photograph_collection.type, "
 						"photograph_collection.myoid, "
 						"photograph_collection.image_scaled "
-						"ORDER BY "
-						"photograph_collection.id" +
+						"ORDER BY CAST(photograph_collection.id AS INTEGER)" +
 						limitStr + offsetStr;
 		}
 
@@ -374,13 +315,10 @@ int biblioteq::populateTable(const int search_type_arg,
 								 "book.author, "
 								 "book.publisher, book.pdate, book.place, "
 								 "book.edition, "
-								 "book.category, book.language, "
+								 "book.category, "
 								 "book.id, "
-								 "book.price, "
-								 "book.monetary_units, "
 								 "book.quantity, "
 								 "book.binding_type, "
-								 "book.location, "
 								 "book.isbn13, "
 								 "book.lccontrolnumber, "
 								 "book.callnumber, "
@@ -391,7 +329,7 @@ int biblioteq::populateTable(const int search_type_arg,
 								 "book.type, "
 								 "book.myoid, "
 								 "book.front_cover "
-								 "ORDER BY book.title");
+								 "ORDER BY book.id");
 			}
 
 			if (searchstr.lastIndexOf("LIMIT") != -1)
@@ -624,15 +562,7 @@ int biblioteq::populateTable(const int search_type_arg,
 	}
 
 	m_queryOffset = offset;
-
-	if (search_type == POPULATE_SEARCH_BASIC)
-		m_lastSearchStr = searchstrArg;
-	else if (typefilter != "All Overdue" &&
-			 typefilter != "All Requested" &&
-			 typefilter != "All Reserved")
-		m_lastSearchStr = searchstr;
-	else
-		m_lastSearchStr = searchstrArg;
+	m_lastSearchStr = searchstrArg;
 
 	m_lastSearchType = search_type;
 	ui.table->scrollToTop();
@@ -811,8 +741,7 @@ int biblioteq::populateTable(const int search_type_arg,
 				if (!fieldName.endsWith("front_cover") &&
 					!fieldName.endsWith("image_scaled"))
 				{
-					if (fieldName.contains("date") ||
-						fieldName.contains("membersince"))
+					if (fieldName.contains("date"))
 					{
 						auto date(QDate::
 									  fromString(query.value(j).toString(), "MM/dd/yyyy"));
@@ -868,25 +797,15 @@ int biblioteq::populateTable(const int search_type_arg,
 						 fieldName.endsWith("issueno") ||
 						 fieldName.endsWith("issuevolume") ||
 						 fieldName.endsWith("photograph_count") ||
-						 fieldName.endsWith("price") ||
 						 fieldName.endsWith("quantity") ||
 						 fieldName.endsWith("total_reserved") ||
 						 fieldName.endsWith("volume"))
 				{
-					if (fieldName.endsWith("price"))
-					{
-						item = new biblioteq_numeric_table_item(query.value(j).toDouble());
-						str = QString::number(query.value(j).toDouble(), 'f', 2);
-					}
-					else
-					{
-						item = new biblioteq_numeric_table_item(query.value(j).toInt());
+					item = new biblioteq_numeric_table_item(query.value(j).toInt());
 
-						if (availabilityColors &&
-							fieldName.endsWith("availability"))
-							availabilityItem =
-								dynamic_cast<biblioteq_numeric_table_item *>(item);
-					}
+					if (availabilityColors &&
+						fieldName.endsWith("availability"))
+						availabilityItem = dynamic_cast<biblioteq_numeric_table_item *>(item);
 				}
 				else if (fieldName.endsWith("callnumber"))
 				{
@@ -1046,6 +965,8 @@ int biblioteq::populateTable(const int search_type_arg,
 	}
 
 	ui.table->setSortingEnabled(true);
+	ui.table->horizontalHeader()->setSortIndicatorShown(true);
+	ui.table->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
 
 	if (search_type == CUSTOM_QUERY)
 	{
@@ -1120,33 +1041,15 @@ void biblioteq::prepareContextMenus()
 	else
 		m_menu = new QMenu(this);
 
-	if (m_roles.contains("administrator") || m_roles.contains("librarian"))
-	{
-		m_menu->addAction(tr("Delete Selected Item(s)"), this, SLOT(slotDelete(void)));
-		m_menu->addAction(tr("Duplicate Selected Item(s)..."), this, SLOT(slotDuplicate(void)));
-		m_menu->addAction(tr("Modify Selected Item(s)..."), this, SLOT(slotModify(void)));
-		m_menu->addSeparator();
-		m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
-	}
-	else if (m_roles.contains("circulation"))
-	{
-		m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
-		m_menu->addSeparator();
-		m_menu->addAction(tr("View Selected Item(s)..."), this, SLOT(slotViewDetails(void)));
-	}
-	else if (m_roles.contains("membership"))
-	{
-		m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
-		m_menu->addSeparator();
-		m_menu->addAction(tr("View Selected Item(s)..."), this, SLOT(slotViewDetails(void)));
-	}
-	else
-	{
-		m_menu->addSeparator();
-		m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
-		m_menu->addSeparator();
-		m_menu->addAction(tr("View Selected Item(s)..."), this, SLOT(slotViewDetails(void)));
-	}
+	m_menu->addAction(tr("Delete Selected Item(s)"), this, SLOT(slotDelete(void)));
+	m_menu->addAction(tr("Duplicate Selected Item(s)..."), this, SLOT(slotDuplicate(void)));
+	m_menu->addAction(tr("Modify Selected Item(s)..."), this, SLOT(slotModify(void)));
+	m_menu->addSeparator();
+	m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
+	m_menu->addSeparator();
+	m_menu->addAction(tr("Print Current View..."), this, SLOT(slotPrintView(void)));
+	m_menu->addSeparator();
+	m_menu->addAction(tr("View Selected Item(s)..."), this, SLOT(slotViewDetails(void)));
 }
 
 void biblioteq::preparePhotographsPerPageMenu(void)
@@ -1351,40 +1254,6 @@ void biblioteq::slotRoleChanged(int index)
 	br.userid->setFocus();
 }
 
-void biblioteq::slotSaveDnt(bool state)
-{
-	QSqlQuery query(m_db);
-
-	query.prepare("INSERT INTO member_history_dnt "
-				  "(dnt, memberid) "
-				  "VALUES (?, ?)");
-	query.bindValue(0, QVariant(state).toInt());
-	query.bindValue(1, dbUserName());
-	query.exec();
-
-	if (!(query.lastError().text().toLower().contains("duplicate") ||
-		  query.lastError().text().toLower().contains("unique")))
-		addError(QString(tr("Database Error")),
-				 QString(tr("Unable to insert into member_history_dnt for "
-							"member %1.")
-							 .arg(dbUserName())),
-				 query.lastError().text(), __FILE__, __LINE__);
-
-	query.prepare("UPDATE member_history_dnt "
-				  "SET dnt = ? "
-				  "WHERE memberid = ?");
-	query.bindValue(0, QVariant(state).toInt());
-	query.bindValue(1, dbUserName());
-	query.exec();
-
-	if (query.lastError().isValid())
-		addError(QString(tr("Database Error")),
-				 QString(tr("Unable to update member_history_dnt for "
-							"member %1.")
-							 .arg(dbUserName())),
-				 query.lastError().text(), __FILE__, __LINE__);
-}
-
 void biblioteq::slotSearchBasic(void)
 {
 	if (!m_db.isOpen())
@@ -1440,13 +1309,10 @@ void biblioteq::slotSearchBasic(void)
 						  "%1.id, "
 						  "%1.publisher, %1.pdate, "
 						  "%1.category, "
-						  "%1.language, "
-						  "%1.price, %1.monetary_units, "
 						  "%1.quantity, "
 						  "%1.location, "
-						  "%1.quantity - "
-						  "COUNT(item_borrower.item_oid) AS availability, "
-						  "COUNT(item_borrower.item_oid) AS total_reserved, "
+						  "%1.quantity AS availability, "
+						  "%1.quantity AS total_reserved, "
 						  "%1.accession_number, "
 						  "%1.type, "
 						  "%1.myoid, ")
@@ -1456,19 +1322,11 @@ void biblioteq::slotSearchBasic(void)
 				str.append(bookFrontCover);
 
 			str += QString("FROM "
-						   "%1 LEFT JOIN item_borrower ON "
-						   "%1.myoid = "
-						   "item_borrower.item_oid "
-						   "AND item_borrower.type = '%2' "
-						   "WHERE ")
-					   .arg(type.toLower().remove(" "))
-					   .arg(type);
+						   "%1 WHERE ")
+					   .arg(type.toLower().remove(" "));
 		}
 
 		QString E("");
-
-		if (m_db.driverName() != "QSQLITE")
-			E = "E";
 
 		switch (ui.searchType->currentIndex())
 		{
@@ -1614,9 +1472,6 @@ void biblioteq::slotSearchBasic(void)
 						   "%1.id, "
 						   "%1.publisher, %1.pdate, "
 						   "%1.category, "
-						   "%1.language, "
-						   "%1.price, "
-						   "%1.monetary_units, "
 						   "%1.quantity, "
 						   "%1.location, "
 						   "%1.keyword, "
@@ -1642,7 +1497,7 @@ void biblioteq::slotSearchBasic(void)
 		searchstr += str;
 	}
 
-	searchstr.append("ORDER BY 1");
+	searchstr.append("ORDER BY 2");
 
 	if (m_db.driverName() == "QSQLITE")
 		query.exec("PRAGMA case_sensitive_like = TRUE");
@@ -1659,7 +1514,7 @@ void biblioteq::slotSearchBasic(void)
 void biblioteq::slotUpgradeSqliteScheme(void)
 {
 	if (m_db.driverName() != "QSQLITE")
-		return;
+		exit(-1);
 
 	if (QMessageBox::question(this, tr("BiblioteQ: Question"),
 							  tr("You are about to upgrade the "
@@ -1693,21 +1548,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 				"FOREIGN KEY(item_oid) REFERENCES book(myoid) ON DELETE CASCADE,"
 				"PRIMARY KEY(file_digest, item_oid)"
 				")");
-	list.append("CREATE TABLE IF NOT EXISTS locations "
-				"("
-				"location TEXT NOT NULL,"
-				"type VARCHAR(16),"
-				"PRIMARY KEY(location, type))");
-	list.append("CREATE TABLE IF NOT EXISTS monetary_units "
-				"("
-				"monetary_unit TEXT NOT NULL PRIMARY KEY)");
-	list.append("CREATE TABLE IF NOT EXISTS languages "
-				"("
-				"language TEXT NOT NULL PRIMARY KEY)");
-	list.append("CREATE TABLE IF NOT EXISTS minimum_days "
-				"("
-				"days INTEGER NOT NULL,"
-				"type VARCHAR(16) NOT NULL PRIMARY KEY)");
 	list.append("ALTER TABLE book ADD marc_tags TEXT");
 	list.append("ALTER TABLE book ADD keyword TEXT");
 	list.append("CREATE TABLE IF NOT EXISTS photograph_collection "
@@ -1753,7 +1593,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 	list.append("ALTER TABLE book ADD accession_number TEXT");
 	list.append("ALTER TABLE photograph ADD accession_number TEXT");
 	list.append("ALTER TABLE photograph_collection ADD accession_number TEXT");
-	list.append("DROP VIEW IF EXISTS item_borrower_vw");
 	list.append("CREATE TABLE IF NOT EXISTS book_sequence "
 				"("
 				"value            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"
@@ -1761,13 +1600,9 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 	list.append("ALTER TABLE book_copy_info ADD status TEXT");
 	list.append("ALTER TABLE book ADD url");
 	list.append("ALTER TABLE book ADD book_read INTEGER DEFAULT 0");
-	list.append("ALTER TABLE member ADD maximum_reserved_books "
-				"INTEGER NOT NULL DEFAULT 0");
 #endif
 	list.append("ALTER TABLE book ADD alternate_id_1 TEXT");
 	list.append("ALTER TABLE book ADD multivolume_set_isbn VARCHAR(32)");
-	list.append("ALTER TABLE member ADD membership_fees NUMERIC(10, 2) "
-				"NOT NULL DEFAULT 0.00");
 
 	QString errors("<html>");
 	int ct = 1;

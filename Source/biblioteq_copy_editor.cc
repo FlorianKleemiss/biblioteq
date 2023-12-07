@@ -104,24 +104,14 @@ QString biblioteq_copy_editor::saveCopies(void)
       if (!copy)
         goto continue_label;
 
-      if (qmain->getDB().driverName() != "QSQLITE")
-        query.prepare(QString("INSERT INTO %1_copy_info "
-                              "(item_oid, "
-                              "copy_number, "
-                              "copyid, "
-                              "status) "
-                              "VALUES "
-                              "(?, ?, ?, ?)")
-                          .arg(m_itemType.toLower().remove(" ")));
-      else
-        query.prepare(QString("INSERT INTO %1_copy_info "
-                              "(item_oid, "
-                              "copy_number, "
-                              "copyid, "
-                              "myoid, "
-                              "status) "
-                              "VALUES (?, ?, ?, ?, ?)")
-                          .arg(m_itemType.toLower().remove(" ")));
+      query.prepare(QString("INSERT INTO %1_copy_info "
+                            "(item_oid, "
+                            "copy_number, "
+                            "copyid, "
+                            "myoid, "
+                            "status) "
+                            "VALUES (?, ?, ?, ?, ?)")
+                        .arg(m_itemType.toLower().remove(" ")));
 
       query.addBindValue(copy->m_itemoid);
 
@@ -257,12 +247,6 @@ void biblioteq_copy_editor::populateCopiesEditor(void)
     int maximumReserved = 0;
     qint64 totalReserved = 0;
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    duedate = duedate.addDays(biblioteq_misc_functions::
-                                  getMinimumDays(qmain->getDB(), m_itemType, errorstr1));
-
-    QApplication::restoreOverrideCursor();
-
     if (!errorstr1.isEmpty())
       qmain->addError(tr("Database Error"),
                       tr("Unable to retrieve the minimum number of days."),
@@ -384,19 +368,13 @@ void biblioteq_copy_editor::populateCopiesEditor(void)
 
   query.prepare(QString("SELECT %1.title, "
                         "%1_copy_info.copyid, "
-                        "(1 - COUNT(item_borrower.copyid)), "
+                        "1, "
                         "%1_copy_info.status, "
                         "%1_copy_info.item_oid, "
                         "%1_copy_info.copy_number "
                         "FROM "
                         "%1, "
-                        "%1_copy_info LEFT JOIN item_borrower ON "
-                        "%1_copy_info.copyid = "
-                        "item_borrower.copyid AND "
-                        "%1_copy_info.item_oid = "
-                        "item_borrower.item_oid AND "
-                        "item_borrower.type = ? "
-                        "WHERE %1_copy_info.item_oid = ? AND "
+                        "%1_copy_info WHERE %1_copy_info.item_oid = ? AND "
                         "%1.myoid = ? "
                         "GROUP BY %1.title, "
                         "%1_copy_info.copyid, "
@@ -440,8 +418,6 @@ void biblioteq_copy_editor::populateCopiesEditor(void)
                                                                      __LINE__,
                                                                      qmain));
   }
-  else
-    progress2.setMaximum(query.size());
 
   progress2.show();
   progress2.repaint();

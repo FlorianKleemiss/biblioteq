@@ -125,7 +125,7 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   pc.splitter->setStretchFactor(1, 2);
   pc.splitter->setStretchFactor(2, 1);
   biblioteq_misc_functions::center(this, m_parentWid);
-  biblioteq_misc_functions::hideAdminFields(this, qmain->getRoles());
+  biblioteq_misc_functions::hideAdminFields(this);
   biblioteq_misc_functions::highlightWidget(photo.id_item, QColor(255, 248, 220));
   biblioteq_misc_functions::highlightWidget(photo.title_item, QColor(255, 248, 220));
   biblioteq_misc_functions::highlightWidget(photo.executing_artist_item->viewport(), QColor(255, 248, 220));
@@ -1268,12 +1268,6 @@ void biblioteq_photographcollection::slotGo(void)
                     "accession_number = ? "
                     "WHERE "
                     "myoid = ?");
-    else if (qmain->getDB().driverName() != "QSQLITE")
-      query.prepare("INSERT INTO photograph_collection "
-                    "(id, title, creation_date, circulation_height, total_number, by_artist, "
-                    "publisher, keywords, notes, image,"
-                    "image_scaled, accession_number) VALUES (?, "
-                    "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     else
       query.prepare("INSERT INTO photograph_collection "
                     "(id, title, creation_date, circulation_height, total_number, by_artist, "
@@ -1399,7 +1393,7 @@ void biblioteq_photographcollection::slotGo(void)
         {
           qmain->getUI().table->setSortingEnabled(false);
           if (qmain->getTypeFilterString() == "Photograph Collections")
-            qmain->getUI().table->horizontalHeader()->setSortIndicator(6, Qt::AscendingOrder);
+            qmain->getUI().table->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
 
           auto names(qmain->getUI().table->columnNames());
 
@@ -1426,7 +1420,7 @@ void biblioteq_photographcollection::slotGo(void)
 
           qmain->getUI().table->setSortingEnabled(true);
           if (qmain->getTypeFilterString() == "Photograph Collections")
-            qmain->getUI().table->horizontalHeader()->setSortIndicator(6, Qt::AscendingOrder);
+            qmain->getUI().table->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
           qmain->getUI().table->updateToolTips(m_index->row());
 
           foreach (auto textfield, findChildren<QLineEdit *>())
@@ -1521,9 +1515,6 @@ void biblioteq_photographcollection::slotGo(void)
 
     QString ESCAPE("");
     auto UNACCENT(qmain->unaccent());
-
-    if (qmain->getDB().driverName() != "QSQLITE")
-      ESCAPE = "E";
 
     searchstr.append(UNACCENT + "(LOWER(photograph_collection.id)) LIKE " + UNACCENT +
                      "(LOWER(" + ESCAPE + "'%' || ? || '%')) AND ");
@@ -1689,22 +1680,13 @@ void biblioteq_photographcollection::slotImportItems(void)
 
     QSqlQuery query(qmain->getDB());
 
-    if (qmain->getDB().driverName() != "QSQLITE")
-      query.prepare("INSERT INTO photograph "
-                    "(id, collection_oid, title, creators, pdate, "
-                    "quantity, medium, reproduction_number, "
-                    "copyright, callnumber, other_number, notes, subjects, "
-                    "format, image, image_scaled, accession_number) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                    "?, ?, ?, ?, ?, ?, ?, ?)");
-    else
-      query.prepare("INSERT INTO photograph "
-                    "(id, collection_oid, title, creators, pdate, "
-                    "quantity, medium, reproduction_number, "
-                    "copyright, callnumber, other_number, notes, subjects, "
-                    "format, image, image_scaled, accession_number, myoid) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "
-                    "?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    query.prepare("INSERT INTO photograph "
+                  "(id, collection_oid, title, creators, pdate, "
+                  "quantity, medium, reproduction_number, "
+                  "copyright, callnumber, other_number, notes, subjects, "
+                  "format, image, image_scaled, accession_number, myoid) "
+                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                  "?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
     QString id("");
 
@@ -1838,23 +1820,14 @@ void biblioteq_photographcollection::slotInsertItem(void)
   QString errorstr("");
   int pages = 1;
 
-  if (qmain->getDB().driverName() != "QSQLITE")
-    query.prepare("INSERT INTO photograph "
-                  "(id, collection_oid, title, creators, pdate, "
-                  "quantity, medium, reproduction_number, "
-                  "copyright, callnumber, other_number, notes, subjects, "
-                  "format, image, image_scaled, accession_number, "
-                  "creators, copyright, reproduction_number) "
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-  else
-    query.prepare("INSERT INTO photograph "
-                  "(id, collection_oid, title, executing_artist, creation_date, "
-                  "creation_date_original, technique, title_original_picture, "
-                  "based_on_artist, title_old, delivery_number, notes, signed, "
-                  "format, printer, catalogue, inventor_new, inventor_old, inventory_number, "
-                  "keywords, material, page_number, place_of_storage, image, image_scaled, "
-                  "creators, copyright, reproduction_number, myoid) "
-                  "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  query.prepare("INSERT INTO photograph "
+                "(id, collection_oid, title, executing_artist, creation_date, "
+                "creation_date_original, technique, title_original_picture, "
+                "based_on_artist, title_old, delivery_number, notes, signed, "
+                "format, printer, catalogue, inventor_new, inventor_old, inventory_number, "
+                "keywords, material, page_number, place_of_storage, image, image_scaled, "
+                "creators, copyright, reproduction_number, myoid) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
   QString blanky(' ');
   query.bindValue(0, photo.id_item->text());
@@ -2949,7 +2922,7 @@ void biblioteq_photographcollection::updateTablePhotographCount(const int count)
   {
     qmain->getUI().table->setSortingEnabled(false);
     if (qmain->getTypeFilterString() == "Photograph Collections")
-      qmain->getUI().table->horizontalHeader()->setSortIndicator(6, Qt::AscendingOrder);
+      qmain->getUI().table->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
 
     auto names(qmain->getUI().table->columnNames());
 
@@ -2964,7 +2937,7 @@ void biblioteq_photographcollection::updateTablePhotographCount(const int count)
     qmain->getUI().table->setSortingEnabled(true);
     qmain->getUI().table->updateToolTips(m_index->row());
     if (qmain->getTypeFilterString() == "Photograph Collections")
-      qmain->getUI().table->horizontalHeader()->setSortIndicator(6, Qt::AscendingOrder);
+      qmain->getUI().table->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
   }
 }
 

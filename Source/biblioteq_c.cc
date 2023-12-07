@@ -37,49 +37,12 @@ QHash<QString, QString> biblioteq::getOpenLibraryItemsHash(void) const
 
 QString biblioteq::dbUserName(void) const
 {
-	if (m_db.driverName() != "QSQLITE")
-		return m_db.userName();
-	else
-		return "SQLITE";
+	return "SQLITE";
 }
 
 QString biblioteq::publicationDateFormat(const QString &itemType) const
 {
 	return m_otheroptions->publicationDateFormat(itemType);
-}
-
-QString biblioteq::reservationHistoryHtml(void) const
-{
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-
-	QString firstname("");
-	QString information("");
-	QString lastname("");
-	QString memberid("");
-	QString html("<html>");
-	static QString endl("<br>");
-	if (m_roles.isEmpty())
-	{
-		html += memberid;
-		html += endl;
-		html += endl;
-		html += information.trimmed();
-	}
-	else
-	{
-		html += memberid;
-		html += endl;
-		html += lastname;
-		html += ", ";
-		html += firstname;
-		html += endl;
-		html += endl;
-		html += information.trimmed();
-	}
-
-	html += "</html>";
-	QApplication::restoreOverrideCursor();
-	return html;
 }
 
 QString biblioteq::viewHtml(void) const
@@ -588,8 +551,7 @@ int biblioteq::populateTable(QSqlQuery &query,
 				if (!fieldName.endsWith("front_cover") &&
 					!fieldName.endsWith("image_scaled"))
 				{
-					if (fieldName.contains("date") ||
-						fieldName.contains("membersince"))
+					if (fieldName.contains("date"))
 					{
 						auto date(QDate::fromString(m_searchQuery.value(j).toString().trimmed(),
 													"MM/dd/yyyy"));
@@ -638,24 +600,15 @@ int biblioteq::populateTable(QSqlQuery &query,
 						 fieldName.endsWith("issueno") ||
 						 fieldName.endsWith("issuevolume") ||
 						 fieldName.endsWith("photograph_count") ||
-						 fieldName.endsWith("price") ||
 						 fieldName.endsWith("quantity") ||
 						 fieldName.endsWith("total_reserved") ||
 						 fieldName.endsWith("volume"))
 				{
-					if (fieldName.endsWith("price"))
-					{
-						item = new biblioteq_numeric_table_item(m_searchQuery.value(j).toDouble());
-						str = QString::number(m_searchQuery.value(j).toDouble(), 'f', 2);
-					}
-					else
-					{
-						item = new biblioteq_numeric_table_item(m_searchQuery.value(j).toInt());
+					item = new biblioteq_numeric_table_item(m_searchQuery.value(j).toInt());
 
-						if (availabilityColors &&
-							fieldName.endsWith("availability"))
-							availabilityItem = dynamic_cast<biblioteq_numeric_table_item *>(item);
-					}
+					if (availabilityColors &&
+						fieldName.endsWith("availability"))
+						availabilityItem = dynamic_cast<biblioteq_numeric_table_item *>(item);
 				}
 				else if (fieldName.endsWith("callnumber"))
 				{
@@ -1077,13 +1030,6 @@ void biblioteq::readConfig(void)
 	QApplication::setFont(font);
 #endif
 	ui.actionAutomaticallySaveSettingsOnExit->setChecked(settings.value("save_settings_on_exit", true).toBool());
-	ui.actionPopulate_Members_Browser_Table_on_Display->setChecked(settings.value("automatically_populate_members_"
-																				  "list_on_display",
-																				  false)
-																	   .toBool());
-	ui.actionPopulate_Administrator_Browser_Table_on_Display->setChecked(settings.value("automatically_populate_admin_list_on_display",
-																						false)
-																			 .toBool());
 	ui.actionPopulate_Database_Enumerations_Browser_on_Display->setChecked(settings.value("automatically_populate_enum_list_on_display",
 																						  false)
 																			   .toBool());
@@ -1401,13 +1347,10 @@ void biblioteq::slotAllGo(void)
 						  "%1.id, "
 						  "%1.publisher, %1.pdate, "
 						  "%1.category, "
-						  "%1.language, "
-						  "%1.price, %1.monetary_units, "
 						  "%1.quantity, "
 						  "%1.location, "
-						  "%1.quantity - "
-						  "COUNT(item_borrower.item_oid) AS availability, "
-						  "COUNT(item_borrower.item_oid) AS total_reserved, "
+						  "%1.quantity AS availability, "
+						  "%1.quantity AS total_reserved, "
 						  "%1.accession_number, "
 						  "%1.type, "
 						  "%1.myoid, ")
@@ -1417,19 +1360,11 @@ void biblioteq::slotAllGo(void)
 				str.append(bookFrontCover);
 
 			str += QString("FROM "
-						   "%1 LEFT JOIN item_borrower ON "
-						   "%1.myoid = "
-						   "item_borrower.item_oid "
-						   "AND item_borrower.type = '%2' "
-						   "WHERE ")
-					   .arg(type.toLower().remove(" "))
-					   .arg(type);
+						   "%1 WHERE ")
+					   .arg(type.toLower().remove(" "));
 		}
 
 		QString ESCAPE("");
-
-		if (m_db.driverName() != "QSQLITE")
-			ESCAPE = "E";
 
 		str.append(")");
 		str += " UNION ALL ";
@@ -1486,9 +1421,7 @@ void biblioteq::slotConnectDB(void)
 
 	br.userid->setFocus();
 
-	if (tmphash.value("database_type") == "postgresql")
-		str = "QPSQL";
-	else if (tmphash.value("database_type") == "sqlite")
+	if (tmphash.value("database_type") == "sqlite")
 		str = "QSQLITE";
 
 	foreach (const auto &driver, QSqlDatabase::drivers())
@@ -1613,7 +1546,6 @@ void biblioteq::slotConnectDB(void)
 		{
 			QApplication::setOverrideCursor(Qt::WaitCursor);
 			m_roles = biblioteq_misc_functions::getRoles(m_db, br.userid->text().trimmed(), errorstr).toLower();
-			m_unaccent = biblioteq_misc_functions::hasUnaccentExtension(m_db) ? "unaccent" : "";
 			QApplication::restoreOverrideCursor();
 
 			if (errorstr.isEmpty())
@@ -1635,33 +1567,6 @@ void biblioteq::slotConnectDB(void)
 										  tr("It appears that you are attempting to assume an "
 											 "administrator role in a non-administrator mode."));
 					QApplication::processEvents();
-				}
-				else
-				{
-					if (br.role->currentIndex() == 0) // Administrator
-						biblioteq_misc_functions::setRole(m_db, errorstr, m_roles);
-					else if (br.role->currentIndex() == 1) // Guest
-						biblioteq_misc_functions::setRole(m_db, errorstr, "guest");
-					else
-						biblioteq_misc_functions::setRole(m_db, errorstr, "patron");
-
-					if (!errorstr.isEmpty())
-					{
-						error = true;
-						addError(QString(tr("Database Error")),
-								 QString(tr("Unable to set "
-											"the role for ")) +
-									 br.userid->text().trimmed() +
-									 tr("."),
-								 errorstr,
-								 __FILE__, __LINE__);
-						QMessageBox::critical(m_branch_diag, tr("BiblioteQ: Database Error"),
-											  QString(tr("Unable to set the role "
-														 "for ")) +
-												  br.userid->text().trimmed() +
-												  tr("."));
-						QApplication::processEvents();
-					}
 				}
 			}
 			else if (br.role->currentIndex() == 0) // Administrator
@@ -1788,26 +1693,6 @@ void biblioteq::slotConnectDB(void)
 		else
 			setWindowTitle(tr("BiblioteQ: %1 (%2)").arg(QFileInfo(br.filename->text()).fileName()).arg("missing roles"));
 	}
-	else
-	{
-		ui.menuEntriesPerPage->setEnabled(true);
-
-		if (!ui.menuEntriesPerPage->actions().isEmpty())
-			ui.menuEntriesPerPage->actions().at(ui.menuEntriesPerPage->actions().size() - 1)->setEnabled(false);
-
-		ui.actionChangePassword->setEnabled(true);
-		disconnect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, SLOT(slotViewDetails()));
-		disconnect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotViewDetails()));
-		connect(ui.table, SIGNAL(itemDoubleClicked(QTableWidgetItem *)), this, SLOT(slotViewDetails()));
-		connect(ui.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotViewDetails()));
-
-		/*
-		** Set the window's title.
-		*/
-
-		setWindowTitle(tr("BiblioteQ: ") + m_selectedBranch.value("branch_name") +
-					   QString(" (%1)").arg(dbUserName()));
-	}
 
 	prepareFilter();
 
@@ -1880,17 +1765,6 @@ void biblioteq::slotConnectDB(void)
 				break;
 			}
 	}
-	else
-	{
-		for (int i = 0; i < ui.menuEntriesPerPage->actions().size(); i++)
-			if (ui.menuEntriesPerPage->actions().at(i)->data().toInt() ==
-				settings.value("postgresql_entries_per_page").toInt())
-			{
-				found = true;
-				ui.menuEntriesPerPage->actions().at(i)->setChecked(true);
-				break;
-			}
-	}
 
 	if (!found && !ui.menuEntriesPerPage->actions().isEmpty())
 		ui.menuEntriesPerPage->actions().at(0)->setChecked(true);
@@ -1948,7 +1822,6 @@ void biblioteq::slotDisconnect(void)
 	if (m_files)
 		m_files->reset();
 
-	m_membersWasRefreshed = false;
 	m_roles = "";
 	m_pages = 0;
 	m_queryOffset = 0;
@@ -1956,7 +1829,6 @@ void biblioteq::slotDisconnect(void)
 	if (m_searchQuery.isActive())
 		m_searchQuery.clear();
 
-		// userinfo_diag->m_memberProperties.clear();
 #ifdef Q_OS_ANDROID
 	m_customquery_diag->hide();
 	m_import->hide();
@@ -2012,7 +1884,6 @@ void biblioteq::slotDisconnect(void)
 
 	ui.actionPopulate_Administrator_Browser_Table_on_Display->setEnabled(false);
 	ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(false);
-	ui.actionPopulate_Members_Browser_Table_on_Display->setEnabled(false);
 	ui.actionConfigureAdministratorPrivileges->setEnabled(false);
 	ui.actionDatabase_Enumerations->setEnabled(false);
 	ui.action_Database_Enumerations->setEnabled(false);
@@ -2031,16 +1902,6 @@ void biblioteq::slotDisconnect(void)
 				if (ui.menuEntriesPerPage->actions().at(i)->isChecked())
 				{
 					settings.setValue("sqlite_entries_per_page",
-									  ui.menuEntriesPerPage->actions().at(i)->data().toInt());
-					break;
-				}
-		}
-		else
-		{
-			for (int i = 0; i < ui.menuEntriesPerPage->actions().size(); i++)
-				if (ui.menuEntriesPerPage->actions().at(i)->isChecked())
-				{
-					settings.setValue("postgresql_entries_per_page",
 									  ui.menuEntriesPerPage->actions().at(i)->data().toInt());
 					break;
 				}
@@ -2335,11 +2196,6 @@ void biblioteq::slotItemChanged(QTableWidgetItem *item)
 	if (!item || !(Qt::ItemIsUserCheckable & item->flags()))
 		return;
 
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	biblioteq_misc_functions::setBookRead(m_db,
-										  item->checkState() == Qt::Checked,
-										  item->data(Qt::UserRole).toULongLong());
-	QApplication::restoreOverrideCursor();
 	slotDisplaySummary();
 }
 
@@ -2478,21 +2334,6 @@ void biblioteq::slotRefreshCustomQuery(void)
 			 << "book_binding_types"
 			 << "book_copy_info"
 			 << "book_files"
-			 << "languages"
-			 << "locations"
-			 << "monetary_units"
-			 << "photograph"
-			 << "photograph_collection";
-	else
-		list << "admin"
-			 << "book"
-			 << "book_binding_types"
-			 << "book_copy_info"
-			 << "book_files"
-			 << "languages"
-			 << "locations"
-			 << "minimum_days"
-			 << "monetary_units"
 			 << "photograph"
 			 << "photograph_collection";
 
@@ -2545,8 +2386,6 @@ void biblioteq::slotSaveConfig(void)
 					  ui.actionPopulate_Administrator_Browser_Table_on_Display->isChecked());
 	settings.setValue("automatically_populate_enum_list_on_display",
 					  ui.actionPopulate_Database_Enumerations_Browser_on_Display->isChecked());
-	settings.setValue("automatically_populate_members_list_on_display",
-					  ui.actionPopulate_Members_Browser_Table_on_Display->isChecked());
 	settings.setValue("automatically_populate_on_create",
 					  ui.actionAutoPopulateOnCreation->isChecked());
 	settings.setValue("automatically_resize_column_widths",
@@ -2585,16 +2424,6 @@ void biblioteq::slotSaveConfig(void)
 				if (ui.menuEntriesPerPage->actions().at(i)->isChecked())
 				{
 					settings.setValue("sqlite_entries_per_page",
-									  ui.menuEntriesPerPage->actions().at(i)->data().toInt());
-					break;
-				}
-		}
-		else
-		{
-			for (int i = 0; i < ui.menuEntriesPerPage->actions().size(); i++)
-				if (ui.menuEntriesPerPage->actions().at(i)->isChecked())
-				{
-					settings.setValue("postgresql_entries_per_page",
 									  ui.menuEntriesPerPage->actions().at(i)->data().toInt());
 					break;
 				}

@@ -34,9 +34,9 @@
        <property name="geometry">
         <rect>
          <x>0</x>
-         <y>-78</y>
-         <width>1068</width>
-         <height>1058</height>
+         <y>0</y>
+         <width>1075</width>
+         <height>923</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_9">
@@ -265,74 +265,6 @@
                 <layout class="QHBoxLayout" name="horizontalLayout">
                  <item>
                   <layout class="QGridLayout" name="gridLayout_3">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_14">
-                     <property name="text">
-                      <string>Publisher</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="biblioteq_hyperlinked_text_edit" name="publisher">
-                     <property name="verticalScrollBarPolicy">
-                      <enum>Qt::ScrollBarAlwaysOff</enum>
-                     </property>
-                     <property name="horizontalScrollBarPolicy">
-                      <enum>Qt::ScrollBarAlwaysOff</enum>
-                     </property>
-                     <property name="tabChangesFocus">
-                      <bool>true</bool>
-                     </property>
-                     <property name="undoRedoEnabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="readOnly">
-                      <bool>false</bool>
-                     </property>
-                     <property name="textInteractionFlags">
-                      <set>Qt::TextEditorInteraction</set>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Publisher</string>
-                     </property>
-                     <property name="openLinks">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="label_20">
-                     <property name="text">
-                      <string>Place of Publication</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="biblioteq_hyperlinked_text_edit" name="place">
-                     <property name="tabChangesFocus">
-                      <bool>true</bool>
-                     </property>
-                     <property name="undoRedoEnabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="textInteractionFlags">
-                      <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                     </property>
-                     <property name="placeholderText">
-                      <string>Place of Publication</string>
-                     </property>
-                     <property name="openLinks">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QLabel" name="label_13">
-                     <property name="text">
-                      <string>Publication Date</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="2" column="1">
                     <layout class="QHBoxLayout" name="_13">
                      <item>
@@ -382,6 +314,32 @@
                      </item>
                     </layout>
                    </item>
+                   <item row="1" column="1">
+                    <widget class="biblioteq_hyperlinked_text_edit" name="place">
+                     <property name="tabChangesFocus">
+                      <bool>true</bool>
+                     </property>
+                     <property name="undoRedoEnabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="textInteractionFlags">
+                      <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse|Qt::TextBrowserInteraction|Qt::TextEditable|Qt::TextEditorInteraction|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                     </property>
+                     <property name="placeholderText">
+                      <string>Place of Publication</string>
+                     </property>
+                     <property name="openLinks">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QLabel" name="label_13">
+                     <property name="text">
+                      <string>Publication Date</string>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="3" column="0">
                     <widget class="QLabel" name="label_3">
                      <property name="text">
@@ -419,10 +377,48 @@
                      </item>
                     </layout>
                    </item>
-                   <item row="4" column="0">
-                    <widget class="QLabel" name="label_15">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_14">
                      <property name="text">
-                      <string>Categories</string>
+                      <string>Publisher</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="label_20">
+                     <property name="text">
+                      <string>Place of Publication</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="5" column="1">
+                    <layout class="QHBoxLayout" name="horizontalLayout_5"/>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="biblioteq_hyperlinked_text_edit" name="publisher">
+                     <property name="verticalScrollBarPolicy">
+                      <enum>Qt::ScrollBarAlwaysOff</enum>
+                     </property>
+                     <property name="horizontalScrollBarPolicy">
+                      <enum>Qt::ScrollBarAlwaysOff</enum>
+                     </property>
+                     <property name="tabChangesFocus">
+                      <bool>true</bool>
+                     </property>
+                     <property name="undoRedoEnabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="readOnly">
+                      <bool>false</bool>
+                     </property>
+                     <property name="textInteractionFlags">
+                      <set>Qt::TextEditorInteraction</set>
+                     </property>
+                     <property name="placeholderText">
+                      <string>Publisher</string>
+                     </property>
+                     <property name="openLinks">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -448,69 +444,10 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="5" column="0">
-                    <widget class="QLabel" name="label_4">
+                   <item row="4" column="0">
+                    <widget class="QLabel" name="label_15">
                      <property name="text">
-                      <string>Monetary Units</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="5" column="1">
-                    <layout class="QHBoxLayout" name="horizontalLayout_5">
-                     <item>
-                      <widget class="QComboBox" name="monetary_units">
-                       <property name="sizePolicy">
-                        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="sizeAdjustPolicy">
-                        <enum>QComboBox::AdjustToContents</enum>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_3">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
-                   </item>
-                   <item row="6" column="1">
-                    <widget class="QDoubleSpinBox" name="price">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <property name="minimum">
-                      <double>0.010000000000000</double>
-                     </property>
-                     <property name="maximum">
-                      <double>10000.000000000000000</double>
-                     </property>
-                     <property name="singleStep">
-                      <double>0.010000000000000</double>
-                     </property>
-                     <property name="value">
-                      <double>0.010000000000000</double>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="0">
-                    <widget class="QLabel" name="label_16">
-                     <property name="text">
-                      <string>Price</string>
+                      <string>Categories</string>
                      </property>
                     </widget>
                    </item>
@@ -1493,8 +1430,6 @@
   <tabstop>publication_date</tabstop>
   <tabstop>language</tabstop>
   <tabstop>category</tabstop>
-  <tabstop>monetary_units</tabstop>
-  <tabstop>price</tabstop>
   <tabstop>edition</tabstop>
   <tabstop>originality</tabstop>
   <tabstop>condition</tabstop>

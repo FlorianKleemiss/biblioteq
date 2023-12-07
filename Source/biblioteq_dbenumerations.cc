@@ -82,9 +82,7 @@ void biblioteq_dbenumerations::populateWidgets(void)
 	QStringList list;
 	QStringList tables;
 
-	tables << "book_binding_types"
-		   << "languages"
-		   << "locations";
+	tables << "book_binding_types";
 
 	for (int i = 0; i < tables.size(); i++)
 	{
@@ -311,7 +309,7 @@ void biblioteq_dbenumerations::slotSave(void)
 	auto error = false;
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-    tables << "book_binding_types";
+	tables << "book_binding_types";
 
 	for (int i = 0; i < tables.size(); i++)
 	{

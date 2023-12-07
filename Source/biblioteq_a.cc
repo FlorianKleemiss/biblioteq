@@ -34,6 +34,7 @@
 #include <QSettings>
 #include <QTranslator>
 #include <QtDebug>
+#include <QSortFilterProxyModel>
 
 #include <limits>
 
@@ -53,7 +54,6 @@
 
 extern "C"
 {
-//#include <math.h>
 #if defined(Q_OS_ANDROID) || defined(Q_OS_WIN)
 #include <sqlite3/sqlite3.h>
 #else
@@ -177,7 +177,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   m_files = nullptr;
   m_idCt = 0;
   m_lastSearchType = POPULATE_ALL;
-  m_membersWasRefreshed = false;
   m_pages = 0;
   m_previousTypeFilter = "";
   m_queryOffset = 0;
@@ -194,7 +193,6 @@ biblioteq::biblioteq(void) : QMainWindow()
 #else
   m_customquery_diag = new QMainWindow();
 #endif
-  // userinfo_diag = new userinfo_diag_class(m_members_diag);
 #ifdef Q_OS_ANDROID
   m_error_diag = new QMainWindow(this);
 #else
@@ -304,8 +302,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(cq.close_pb, SIGNAL(clicked()), this, SLOT(slotCloseCustomQueryDialog()));
   connect(cq.execute_pb, SIGNAL(clicked()), this, SLOT(slotExecuteCustomQuery()));
   connect(cq.refresh_pb, SIGNAL(clicked()), this, SLOT(slotRefreshCustomQuery()));
-  connect(pass.okButton, SIGNAL(clicked()), this, SLOT(slotSavePassword()));
-  connect(pass.cancelButton, SIGNAL(clicked()), this, SLOT(slotClosePasswordDialog()));
   connect(m_otheroptions, SIGNAL(mainWindowCanvasBackgroundColorChanged(QColor)), this, SLOT(slotMainWindowCanvasBackgroundColorChanged(QColor)));
   connect(m_otheroptions, SIGNAL(mainWindowCanvasBackgroundColorPreview(QColor)), this, SLOT(slotPreviewCanvasBackgroundColor(QColor)));
   connect(m_otheroptions, SIGNAL(saved()), this, SLOT(slotOtherOptionsSaved()));
@@ -347,7 +343,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   ui.actionModifyEntry->setEnabled(false);
   ui.actionPopulate_Administrator_Browser_Table_on_Display->setEnabled(false);
   ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(false);
-  ui.actionPopulate_Members_Browser_Table_on_Display->setEnabled(false);
   ui.actionRefreshTable->setEnabled(false);
   ui.actionViewDetails->setEnabled(false);
   ui.action_Database_Enumerations->setEnabled(false);
@@ -625,11 +620,6 @@ Ui_mainWindow biblioteq::getUI(void) const
   return ui;
 }
 
-// Ui_membersBrowser biblioteq::getBB(void) const
-//{
-//   return bb;
-// }
-
 QVector<QString> biblioteq::getBBColumnIndexes(void) const
 {
   return m_bbColumnHeaderIndexes;
@@ -744,16 +734,7 @@ void biblioteq::adminSetup(void)
   {
     m_status_bar_label->setPixmap(QPixmap(":/16x16/unlock.png"));
 
-    if (m_roles.contains("administrator"))
-      m_status_bar_label->setToolTip(tr("Administrator Mode"));
-    else if (m_roles == "circulation")
-      m_status_bar_label->setToolTip(tr("Circulation Mode"));
-    else if (m_roles == "librarian")
-      m_status_bar_label->setToolTip(tr("Librarian Mode"));
-    else if (m_roles == "membership")
-      m_status_bar_label->setToolTip(tr("Membership Mode"));
-    else
-      m_status_bar_label->setToolTip(tr("Privileged Mode"));
+    m_status_bar_label->setToolTip(tr("Privileged Mode"));
   }
 
   if (m_roles.contains("administrator") || m_roles.contains("librarian"))
@@ -791,37 +772,9 @@ void biblioteq::adminSetup(void)
   if (m_roles.contains("administrator") || m_roles.contains("librarian"))
     ui.actionAutoPopulateOnCreation->setEnabled(true);
 
-  ui.actionPopulate_Members_Browser_Table_on_Display->setEnabled(m_roles.contains("administrator"));
-
-  if (m_db.driverName() != "QSQLITE")
-  {
-    ui.actionConfigureAdministratorPrivileges->setEnabled(m_roles.contains("administrator"));
-    ui.actionPopulate_Administrator_Browser_Table_on_Display->setEnabled(m_roles.contains("administrator"));
-    ui.actionDatabase_Enumerations->setEnabled(m_roles.contains("administrator"));
-    ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(m_roles.contains("administrator"));
-    ui.action_Database_Enumerations->setEnabled(ui.actionDatabase_Enumerations->isEnabled());
-  }
-  else
-  {
-    ui.actionDatabase_Enumerations->setEnabled(true);
-    ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(true);
-    ui.action_Database_Enumerations->setEnabled(true);
-  }
-
-  /*
-  ** Hide certain fields in the Members Browser.
-  */
-
-  if (m_roles == "circulation" || m_roles == "librarian")
-  {
-
-    if (m_roles == "librarian")
-    {
-      ui.actionDatabase_Enumerations->setEnabled(true);
-      ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(true);
-      ui.action_Database_Enumerations->setEnabled(true);
-    }
-  }
+  ui.actionDatabase_Enumerations->setEnabled(true);
+  ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(true);
+  ui.action_Database_Enumerations->setEnabled(true);
 }
 
 void biblioteq::changeEvent(QEvent *event)
@@ -948,49 +901,12 @@ void biblioteq::prepareFilter(void)
   QStringList tmplist1;
   QStringList tmplist2;
 
-  if (m_db.driverName() == "QSQLITE")
-  {
-    tmplist1 << "All"
-             << "Books"
-             << "Photograph Collections";
-    tmplist2 << tr("All")
-             << tr("Books")
-             << tr("Photograph Collections");
-  }
-  else if (m_roles.contains("administrator") ||
-           m_roles.contains("circulation"))
-  {
-    tmplist1 << "All"
-             << "Books"
-             << "Photograph Collections";
-    tmplist2 << tr("All")
-             << tr("Books")
-             << tr("Photograph Collections");
-  }
-  else
-  {
-    if (dbUserName() == BIBLIOTEQ_GUEST_ACCOUNT ||
-        m_roles == "librarian" ||
-        m_roles == "membership")
-    {
-      tmplist1 << "All"
-               << "Books"
-               << "Photograph Collections";
-      tmplist2 << tr("All")
-               << tr("All Available")
-               << tr("Books")
-               << tr("Photograph Collections");
-    }
-    else
-    {
-      tmplist1 << "All"
-               << "Books"
-               << "Photograph Collections";
-      tmplist2 << tr("All")
-               << tr("Books")
-               << tr("Photograph Collections");
-    }
-  }
+  tmplist1 << "All"
+           << "Books"
+           << "Photograph Collections";
+  tmplist2 << tr("All")
+           << tr("Books")
+           << tr("Photograph Collections");
 
   disconnect(ui.menu_Category, SIGNAL(triggered(QAction *)), this,
              SLOT(slotAutoPopOnFilter(QAction *)));
@@ -1145,8 +1061,6 @@ void biblioteq::showMain(void)
 
   QSettings settings;
 
-  // bb.pages->setValue(settings.value("membersPerPage", 500).toInt());
-
   if (settings.contains("mainwindowState"))
     restoreState(settings.value("mainwindowState").toByteArray());
 
@@ -1244,20 +1158,19 @@ void biblioteq::showMain(void)
     QApplication::processEvents();
   }
 
-  if (!(QSqlDatabase::isDriverAvailable("QPSQL") ||
-        QSqlDatabase::isDriverAvailable("QSQLITE")))
+  if (!(QSqlDatabase::isDriverAvailable("QSQLITE")))
   {
     QFileInfo fileInfo("qt.conf");
     QString str("");
 
     if (fileInfo.isReadable() && fileInfo.size() > 0)
-      str = tr("Please verify that the PostgreSQL driver or the "
+      str = tr("Please verify that the "
                "SQLite driver is installed. "
                "The file qt.conf is present in BiblioteQ's "
                "current working directory. Perhaps a plugin conflict "
                "exists. Please resolve!");
     else
-      str = tr("Please verify that the PostgreSQL driver or the "
+      str = tr("Please verify that the "
                "SQLite driver is installed.");
 
     QMessageBox::critical(this, tr("BiblioteQ: Error"), str);
@@ -1268,23 +1181,7 @@ void biblioteq::showMain(void)
     auto list(QApplication::arguments());
 
     for (int i = 0; i < list.size(); i++)
-      if (list.at(i) == "--open-postgresql-database")
-      {
-        i += 1;
-
-        if (i >= list.size())
-          continue;
-
-        auto index = br.branch_name->findText(list.at(i));
-
-        if (index >= 0)
-        {
-          br.branch_name->setCurrentIndex(index);
-          slotConnectDB();
-          break;
-        }
-      }
-      else if (list.at(i) == "--open-sqlite-database")
+      if (list.at(i) == "--open-sqlite-database")
       {
         i += 1;
 
@@ -1844,12 +1741,12 @@ void biblioteq::slotDuplicate(void)
   if (!m_db.isOpen())
     return;
 
+  biblioteq_main_table *table = ui.table;
   QString oid = "";
   QString type = "";
   auto error = false;
-  auto list(ui.table->selectionModel()->selectedRows());
+  auto list(table->selectionModel()->selectedRows());
   biblioteq_book *book = nullptr;
-  biblioteq_main_table *table = ui.table;
   biblioteq_photographcollection *photograph = nullptr;
   int i = 0;
 
@@ -2280,7 +2177,7 @@ void biblioteq::slotResetErrorLog(void)
   er.table->setColumnCount(list.size());
   er.table->setHorizontalHeaderLabels(list);
   list.clear();
-  er.table->horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
+  er.table->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
 
   for (int i = 0; i < er.table->columnCount() - 1; i++)
     er.table->resizeColumnToContents(i);
@@ -2347,108 +2244,11 @@ void biblioteq::slotResizeColumnsAfterSort(void)
   }
 }
 
-void biblioteq::slotSavePassword(void)
-{
-  QString errorstr = "";
-
-  if (pass.password->text().length() < 8)
-  {
-    QMessageBox::critical(m_pass_diag, tr("BiblioteQ: User Error"),
-                          tr("The password must be at least eight characters long."));
-    QApplication::processEvents();
-    pass.password->selectAll();
-    pass.password->setFocus();
-    return;
-  }
-  else if (pass.password->text() != pass.passwordAgain->text())
-  {
-    QMessageBox::critical(m_pass_diag, tr("BiblioteQ: User Error"),
-                          tr("The passwords do not match. Please try again."));
-    QApplication::processEvents();
-    pass.password->selectAll();
-    pass.password->setFocus();
-    return;
-  }
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  biblioteq_misc_functions::savePassword(pass.userid->text(), m_db, pass.password->text(), errorstr);
-
-  if (m_roles.isEmpty())
-    biblioteq_misc_functions::setRole(m_db, errorstr, "patron");
-  else
-    biblioteq_misc_functions::setRole(m_db, errorstr, m_roles);
-
-  QApplication::restoreOverrideCursor();
-  pass.password->setText(QString(1024, '0'));
-  pass.password->clear();
-  pass.passwordAgain->setText(QString(1024, '0'));
-  pass.passwordAgain->clear();
-
-  if (!errorstr.isEmpty())
-  {
-    addError(QString(tr("Database Error")),
-             QString(tr("Unable to save the new password.")),
-             errorstr, __FILE__, __LINE__);
-    QMessageBox::critical(m_pass_diag, tr("BiblioteQ: Database Error"),
-                          tr("Unable to save the new password."));
-    QApplication::processEvents();
-  }
-  else
-#ifdef Q_OS_ANDROID
-    m_pass_diag->hide();
-#else
-    m_pass_diag->close();
-#endif
-}
-
 void biblioteq::slotSearch(void)
 {
   if (!m_db.isOpen())
     return;
 
-  QString errorstr("");
-
-  if (m_allSearchShown)
-    goto done_label;
-
-  /*
-  ** Hide certain fields if we're a regular user.
-  */
-
-  /*
-  ** Populate combination boxes.
-  */
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  QApplication::restoreOverrideCursor();
-
-  if (!errorstr.isEmpty())
-    addError(QString(tr("Database Error")),
-             QString(tr("Unable to retrieve the languages.")),
-             errorstr,
-             __FILE__,
-             __LINE__);
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  QApplication::restoreOverrideCursor();
-
-  if (!errorstr.isEmpty())
-    addError(QString(tr("Database Error")),
-             QString(tr("Unable to retrieve the monetary units.")),
-             errorstr,
-             __FILE__,
-             __LINE__);
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  QApplication::restoreOverrideCursor();
-
-  if (!errorstr.isEmpty())
-    addError(QString(tr("Database Error")),
-             QString(tr("Unable to retrieve the locations.")),
-             errorstr,
-             __FILE__,
-             __LINE__);
-done_label:
   m_allSearchShown = true;
 }
 
@@ -2551,7 +2351,7 @@ void biblioteq::slotShowDbEnumerations(void)
 
 void biblioteq::slotShowErrorDialog(void)
 {
-  er.table->horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
+  er.table->horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
 
   for (int i = 0; i < er.table->columnCount() - 1; i++)
     er.table->resizeColumnToContents(i);

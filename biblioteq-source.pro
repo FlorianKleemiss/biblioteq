@@ -14,8 +14,6 @@ FORMS           = \
                   UI/biblioteq_merge_sqlite_databases.ui \
                   UI/biblioteq_otheroptions.ui \
                   UI/biblioteq_pdfreader.ui \
-                  UI/biblioteq_password.ui \
-                  UI/biblioteq_passwordPrompt.ui \
                   UI/biblioteq_photograph.ui \
                   UI/biblioteq_photographcompare.ui \
                   UI/biblioteq_photographinfo.ui \

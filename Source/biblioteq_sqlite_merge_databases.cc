@@ -113,9 +113,6 @@ void biblioteq_sqlite_merge_databases::slotMerge(void)
 				<< "book_copy_info"
 				<< "book_files"
 				<< "book_sequence"
-				<< "languages"
-				<< "locations"
-				<< "monetary_units"
 				<< "photograph"
 				<< "photograph_collection"
 				<< "sequence");

@@ -28,8 +28,7 @@ private:
     // Zero is the text Templates.
 
     TEMPLATE_1 = 1,
-    TEMPLATE_2,
-    TEMPLATE_3
+    TEMPLATE_2
   };
 
   QMap<int, QPair<QString, QString>> m_mappings;
@@ -42,10 +41,6 @@ private:
                    const int idIndex, // ISBN-10
                    qint64 *imported,
                    qint64 *notImported);
-  void importPatrons(QProgressDialog *progress,
-                     QStringList &errors,
-                     qint64 *imported,
-                     qint64 *notImported);
   void loadPreview(void);
 
 private slots:

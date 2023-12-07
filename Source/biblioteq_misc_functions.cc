@@ -331,74 +331,6 @@ QStringList biblioteq_misc_functions::getBookBindingTypes(const QSqlDatabase &db
   return types;
 }
 
-QStringList biblioteq_misc_functions::getLanguages(const QSqlDatabase &db,
-                                                   QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr("");
-  QStringList languages;
-
-  errorstr = "";
-  querystr = "SELECT language FROM languages "
-             "WHERE LENGTH(TRIM(language)) > 0 "
-             "ORDER BY language";
-
-  if (query.exec(querystr))
-    while (query.next())
-      languages.append(query.value(0).toString().trimmed());
-
-  if (query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return languages;
-}
-
-QStringList biblioteq_misc_functions::getLocations(const QSqlDatabase &db,
-                                                   const QString &type,
-                                                   QString &errorstr)
-{
-  QSqlQuery query(db);
-  QStringList locations;
-
-  errorstr = "";
-
-  if (type.isEmpty())
-    query.prepare("SELECT DISTINCT(location) FROM locations "
-                  "WHERE LENGTH(TRIM(location)) > 0 "
-                  "ORDER BY location");
-  else
-  {
-    query.prepare("SELECT location FROM locations WHERE type = ? AND "
-                  "LENGTH(TRIM(location)) > 0 "
-                  "ORDER BY location");
-    query.bindValue(0, type);
-  }
-
-  if (query.exec())
-    while (query.next())
-      locations.append(query.value(0).toString().trimmed());
-
-  if (query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return locations;
-}
-
-bool biblioteq_misc_functions::hasUnaccentExtension(const QSqlDatabase &db)
-{
-  if (db.driverName() == "QSQLITE")
-    return false;
-
-  QSqlQuery query(db);
-
-  if (query.exec("SELECT LOWER(extname) FROM pg_extension WHERE "
-                 "LOWER(extname) = 'unaccent'") &&
-      query.next())
-    return query.value(0).toString().trimmed() == "unaccent";
-
-  return false;
-}
-
 bool biblioteq_misc_functions::isGnome(void)
 {
   auto session(qgetenv("DESKTOP_SESSION").toLower().trimmed());
@@ -407,71 +339,6 @@ bool biblioteq_misc_functions::isGnome(void)
     return true;
   else
     return false;
-}
-
-bool biblioteq_misc_functions::isRequested(const QSqlDatabase &db,
-                                           const QString &oid,
-                                           const QString &itemTypeArg,
-                                           QString &errorstr)
-{
-  auto isRequested = false;
-
-  errorstr = "";
-
-  if (db.driverName() == "QSQLITE")
-    return isRequested; // Requests are not supported.
-
-  QSqlQuery query(db);
-  QString itemType = "";
-
-  itemType = itemTypeArg;
-  query.prepare("SELECT EXISTS(SELECT 1 FROM item_request "
-                "WHERE item_oid = ? AND type = ?)");
-  query.bindValue(0, oid);
-  query.bindValue(1, itemType);
-
-  if (query.exec())
-    if (query.next())
-      isRequested = query.value(0).toBool();
-
-  if (query.lastError().isValid())
-  {
-    errorstr = query.lastError().text();
-    isRequested = false;
-  }
-
-  return isRequested;
-}
-
-bool biblioteq_misc_functions::userExists(const QString &userid,
-                                          const QSqlDatabase &db,
-                                          QString &errorstr)
-{
-  QSqlQuery query(db);
-  auto exists = false;
-
-  errorstr = "";
-
-  if (db.driverName() == "QSQLITE")
-    query.prepare("SELECT EXISTS(SELECT 1 FROM member WHERE "
-                  "memberid = ?)");
-  else
-    query.prepare("SELECT EXISTS(SELECT 1 FROM pg_user WHERE "
-                  "LOWER(usename) = LOWER(?))");
-
-  query.bindValue(0, userid);
-
-  if (query.exec())
-    if (query.next())
-      exists = query.value(0).toBool();
-
-  if (query.lastError().isValid())
-  {
-    exists = false;
-    errorstr = query.lastError().text();
-  }
-
-  return exists;
 }
 
 int biblioteq_misc_functions::getColumnNumber(const QTableWidget *table,
@@ -502,75 +369,6 @@ int biblioteq_misc_functions::getColumnNumber(const QTableWidget *table,
   return num;
 }
 
-int biblioteq_misc_functions::getMaxCopyNumber(const QSqlDatabase &db,
-                                               const QString &oid,
-                                               const QString &itemTypeArg,
-                                               QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString itemType = "";
-  int copy_number = -1;
-
-  errorstr = "";
-  itemType = itemTypeArg;
-  query.prepare("SELECT MAX(copy_number) FROM item_borrower "
-                "WHERE item_oid = ? AND type = ?");
-  query.bindValue(0, oid);
-  query.bindValue(1, itemType);
-
-  if (query.exec())
-    if (query.next())
-      copy_number = query.value(0).toInt();
-
-  if (query.lastError().isValid())
-  {
-    copy_number = -1;
-    errorstr = query.lastError().text();
-  }
-
-  return copy_number;
-}
-
-int biblioteq_misc_functions::getMinimumDays(const QSqlDatabase &db,
-                                             const QString &type,
-                                             QString &errorstr)
-{
-  QSqlQuery query(db);
-  int minimumdays = 1;
-
-  errorstr = "";
-  query.prepare("SELECT days FROM minimum_days WHERE type = ?");
-  query.bindValue(0, type);
-
-  if (query.exec())
-    if (query.next())
-      minimumdays = query.value(0).toInt();
-
-  if (query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return minimumdays;
-}
-
-int biblioteq_misc_functions::maximumReserved(const QSqlDatabase &db,
-                                              const QString &memberid,
-                                              const QString &type)
-{
-  QSqlQuery query(db);
-  QString querystr = "";
-
-  if (type.toLower() == "book")
-    querystr = "SELECT maximum_reserved_books FROM member WHERE memberid = ?";
-
-  query.prepare(querystr);
-  query.addBindValue(memberid);
-
-  if (query.exec() && query.next())
-    return query.value(0).toInt();
-
-  return 0;
-}
-
 int biblioteq_misc_functions::sqliteQuerySize(const QString &querystr,
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
                                               const QMap<QString, QVariant> &boundValues,
@@ -584,9 +382,7 @@ int biblioteq_misc_functions::sqliteQuerySize(const QString &querystr,
 {
   int count = 0;
 
-  if (db.driverName() != "QSQLITE")
-    return count; // SQLite only.
-  else if (querystr.trimmed().isEmpty())
+  if (querystr.trimmed().isEmpty())
     return count;
 
   QSqlQuery query(db);
@@ -622,9 +418,7 @@ int biblioteq_misc_functions::sqliteQuerySize(const QString &querystr,
 {
   int count = 0;
 
-  if (db.driverName() != "QSQLITE")
-    return count; // SQLite only.
-  else if (querystr.trimmed().isEmpty())
+  if (querystr.trimmed().isEmpty())
     return count;
 
   QSqlQuery query(db);
@@ -646,15 +440,10 @@ qint64 biblioteq_misc_functions::bookAccessionNumber(const QSqlDatabase &db)
 {
   QSqlQuery query(db);
 
-  if (db.driverName() == "QPSQL")
-    query.prepare("SELECT NEXTVAL('book_sequence')");
+  if (query.exec("INSERT INTO book_sequence VALUES (NULL)"))
+    return query.lastInsertId().toLongLong();
   else
-  {
-    if (query.exec("INSERT INTO book_sequence VALUES (NULL)"))
-      return query.lastInsertId().toLongLong();
-    else
-      query.prepare("SELECT value FROM book_sequence");
-  }
+    query.prepare("SELECT value FROM book_sequence");
 
   if (query.exec() && query.next())
     return query.value(0).toLongLong();
@@ -666,9 +455,6 @@ qint64 biblioteq_misc_functions::getSqliteUniqueId(const QSqlDatabase &db,
                                                    QString &errorstr)
 {
   qint64 value = -1;
-
-  if (db.driverName() != "QSQLITE")
-    return value;
 
   QSqlQuery query(db);
 
@@ -697,165 +483,6 @@ qint64 biblioteq_misc_functions::getSqliteUniqueId(const QSqlDatabase &db,
     errorstr = "Query failure.";
 
   return value;
-}
-
-void biblioteq_misc_functions::DBAccount(const QString &userid,
-                                         const QSqlDatabase &db,
-                                         const int action,
-                                         QString &errorstr,
-                                         const QString &roles)
-{
-  errorstr = "";
-
-  if (db.driverName() == "QSQLITE")
-    return; // Users are not supported.
-
-  QSqlQuery query(db);
-  QString querystr = "";
-  QStringList objectlist;
-  auto exists = false;
-
-  if (action == CREATE_USER)
-  {
-    /*
-    ** Does the user exist?
-    */
-
-    exists = userExists(userid, db, errorstr);
-
-    if (!exists)
-    {
-      auto str(roles);
-
-      if (str.contains("administrator") || str.contains("membership"))
-        querystr = QString("CREATE USER %1 ENCRYPTED PASSWORD 'tempPass' "
-                           "CREATEROLE")
-                       .arg(userid);
-      else
-        querystr = QString("CREATE USER %1 ENCRYPTED PASSWORD 'tempPass'").arg(userid);
-
-      (void)query.exec(querystr);
-
-      if (query.lastError().isValid())
-        errorstr = query.lastError().text();
-
-      if (!errorstr.isEmpty())
-        return;
-
-      if (str.isEmpty() || str == "none")
-        str = "biblioteq_patron";
-      else
-      {
-        str.replace(" ", "_");
-        str.prepend("biblioteq_");
-      }
-
-      if (str.contains("administrator"))
-      {
-        (void)query.exec(QString("GRANT biblioteq_administrator "
-                                 "TO %1 WITH ADMIN OPTION")
-                             .arg(userid));
-        goto done_label;
-      }
-
-      if (str.contains("membership"))
-      {
-        (void)query.exec(QString("GRANT %1 "
-                                 "TO %2 WITH ADMIN OPTION")
-                             .arg(str)
-                             .arg(userid));
-        goto done_label;
-      }
-
-      (void)query.exec(QString("GRANT %1 "
-                               "TO %2")
-                           .arg(str)
-                           .arg(userid));
-
-    done_label:
-
-      if (query.lastError().isValid())
-        errorstr = query.lastError().text();
-
-      return;
-    }
-    else if (!errorstr.isEmpty())
-      return;
-  }
-
-  if (action == UPDATE_USER)
-  {
-    auto str(roles);
-
-    if (str.isEmpty() || str == "none")
-      str = "biblioteq_patron";
-    else
-    {
-      str.replace(" ", "_");
-      str.prepend("biblioteq_");
-    }
-
-    objectlist << str;
-
-    for (int i = 0; i < objectlist.size(); i++)
-    {
-      querystr = QString("REVOKE %1 FROM %2").arg(objectlist.at(i)).arg(userid);
-
-      if (!query.exec(querystr))
-        break;
-    }
-
-    if (query.lastError().isValid())
-      errorstr = query.lastError().text();
-
-    if (errorstr.isEmpty())
-    {
-      if (str.contains("administrator"))
-      {
-        (void)query.exec(QString("GRANT biblioteq_administrator "
-                                 "TO %1 WITH ADMIN OPTION")
-                             .arg(userid));
-
-        if (!query.lastError().isValid())
-        {
-          querystr = QString("ALTER USER %1 CREATEROLE").arg(userid);
-          (void)query.exec(querystr);
-        }
-      }
-      else if (str.contains("membership"))
-      {
-        (void)query.exec(QString("GRANT %1 "
-                                 "TO %2 WITH ADMIN OPTION")
-                             .arg(str)
-                             .arg(userid));
-
-        if (!query.lastError().isValid())
-        {
-          querystr = QString("ALTER USER %1 CREATEROLE").arg(userid);
-          (void)query.exec(querystr);
-        }
-      }
-      else
-        (void)query.exec(QString("GRANT %1 "
-                                 "TO %2")
-                             .arg(str)
-                             .arg(userid));
-
-      if (query.lastError().isValid())
-        errorstr = query.lastError().text();
-    }
-  }
-
-  if (action == DELETE_USER || action == UPDATE_USER)
-  {
-    if (action == DELETE_USER)
-    {
-      (void)query.exec(QString("DROP USER IF EXISTS %1").arg(userid));
-
-      if (errorstr.isEmpty() && query.lastError().isValid())
-        errorstr = query.lastError().text();
-    }
-  }
 }
 
 void biblioteq_misc_functions::center(QWidget *child, QMainWindow *parent)
@@ -921,26 +548,14 @@ void biblioteq_misc_functions::createInitialCopies(const QString &idArg,
   if (!itemoid.isEmpty())
     for (i = 0; i < copies; i++)
     {
-      if (db.driverName() != "QSQLITE")
-      {
-        if (itemType == "book")
-          query.prepare(QString("INSERT INTO %1_copy_info "
-                                "(item_oid, copy_number, "
-                                "copyid) "
-                                "VALUES (?, "
-                                "?, ?)")
-                            .arg(itemType));
-      }
-      else
-      {
-        if (itemType == "book")
-          query.prepare(QString("INSERT INTO %1_copy_info "
-                                "(item_oid, copy_number, "
-                                "copyid, myoid) "
-                                "VALUES (?, "
-                                "?, ?, ?)")
-                            .arg(itemType));
-      }
+
+      if (itemType == "book")
+        query.prepare(QString("INSERT INTO %1_copy_info "
+                              "(item_oid, copy_number, "
+                              "copyid, myoid) "
+                              "VALUES (?, "
+                              "?, ?, ?)")
+                          .arg(itemType));
 
       query.bindValue(0, itemoid);
       query.bindValue(1, i + 1);
@@ -1101,101 +716,21 @@ void biblioteq_misc_functions::exportPhotographs(const QSqlDatabase &db,
   }
 }
 
-void biblioteq_misc_functions::grantPrivs(const QString &userid,
-                                          const QString &roles,
-                                          const QSqlDatabase &db,
-                                          QString &errorstr)
-{
-  errorstr = "";
-
-  if (db.driverName() == "QSQLITE")
-    return; // Users are not supported.
-
-  QSqlQuery query(db);
-  QString querystr = "";
-  auto str(roles);
-
-  if (str.isEmpty() || str == "none")
-    str = "biblioteq_patron";
-  else
-  {
-    str.replace(" ", "_");
-    str.prepend("biblioteq_");
-  }
-
-  if (str.contains("administrator"))
-  {
-    (void)query.exec(QString("GRANT biblioteq_administrator "
-                             "TO %1 WITH ADMIN OPTION")
-                         .arg(userid));
-
-    if (!query.lastError().isValid())
-    {
-      querystr = QString("ALTER USER %1 CREATEROLE").arg(userid);
-      (void)query.exec(querystr);
-    }
-
-    goto done_label;
-  }
-
-  if (str.contains("membership"))
-  {
-    (void)query.exec(QString("GRANT %1 "
-                             "TO %2 WITH ADMIN OPTION")
-                         .arg(str)
-                         .arg(userid));
-
-    if (!query.lastError().isValid())
-    {
-      querystr = QString("ALTER USER %1 CREATEROLE").arg(userid);
-      (void)query.exec(querystr);
-    }
-
-    goto done_label;
-  }
-
-  (void)query.exec(QString("GRANT %1 "
-                           "TO %2")
-                       .arg(str)
-                       .arg(userid));
-
-done_label:
-
-  if (query.lastError().isValid())
-    errorstr = query.lastError().text();
-}
-
-void biblioteq_misc_functions::hideAdminFields(QMainWindow *window,
-                                               const QString &roles)
+void biblioteq_misc_functions::hideAdminFields(QMainWindow *window)
 {
   if (!window)
     return;
 
   QString str = "";
-  auto showWidgets = true;
-
-  if (roles.isEmpty())
-    showWidgets = false;
-  else if (roles.contains("administrator") ||
-           roles.contains("librarian"))
-    showWidgets = true;
-  else
-    showWidgets = false;
 
   foreach (auto widget, window->findChildren<QWidget *>())
   {
     str = widget->objectName().toLower();
-
-    if (str.contains("price") || str.contains("monetary"))
-      widget->setVisible(showWidgets);
   }
 
   foreach (auto widget, window->findChildren<QLabel *>())
   {
     str = widget->text().toLower();
-
-    if (str.contains("price") || str.contains("monetary"))
-      widget->setVisible(showWidgets);
   }
 
   foreach (auto button, window->findChildren<QToolButton *>())
@@ -1204,9 +739,6 @@ void biblioteq_misc_functions::hideAdminFields(QMainWindow *window,
       foreach (auto action, button->menu()->findChildren<QAction *>())
       {
         str = action->text().toLower();
-
-        if (str.contains("price") || str.contains("monetary"))
-          action->setVisible(showWidgets);
       }
     }
 }
@@ -1222,76 +754,6 @@ void biblioteq_misc_functions::highlightWidget(QWidget *widget,
   pal = widget->palette();
   pal.setColor(widget->backgroundRole(), color);
   widget->setPalette(pal);
-}
-
-void biblioteq_misc_functions::revokeAll(const QString &userid,
-                                         const QSqlDatabase &db,
-                                         QString &errorstr)
-{
-  errorstr = "";
-
-  if (db.driverName() == "QSQLITE")
-    return; // Users are not supported.
-
-  QSqlQuery query(db);
-  QString querystr = "";
-  QStringList objectlist;
-  auto exists = userExists(userid, db, errorstr);
-
-  if (exists)
-  {
-    objectlist << "biblioteq_administrator"
-               << "biblioteq_circulation"
-               << "biblioteq_circulation_librarian"
-               << "biblioteq_circulation_librarian_membership"
-               << "biblioteq_circulation_membership"
-               << "biblioteq_librarian"
-               << "biblioteq_librarian_membership"
-               << "biblioteq_membership"
-               << "biblioteq_patron";
-
-    for (int i = 0; i < objectlist.size(); i++)
-    {
-      querystr = QString("REVOKE %1 FROM %2").arg(objectlist.at(i)).arg(userid);
-
-      if (!query.exec(querystr))
-        break;
-    }
-
-    if (query.lastError().isValid())
-      errorstr = query.lastError().text();
-    else
-    {
-      querystr = QString("ALTER USER %1 NOCREATEROLE").arg(userid);
-      (void)query.exec(querystr);
-
-      if (query.lastError().isValid())
-        errorstr = query.lastError().text();
-    }
-  }
-}
-
-void biblioteq_misc_functions::savePassword(const QString &userid,
-                                            const QSqlDatabase &db,
-                                            const QString &password,
-                                            QString &errorstr)
-{
-  errorstr = "";
-
-  if (db.driverName() == "QSQLITE")
-    return; // Users are not supported.
-
-  QSqlQuery query(db);
-  QString querystr = "";
-
-  query.exec("SET ROLE NONE");
-  querystr = QString("ALTER USER %1 WITH ENCRYPTED "
-                     "PASSWORD '%2'")
-                 .arg(userid)
-                 .arg(password);
-
-  if (!query.exec(querystr))
-    errorstr = query.lastError().text();
 }
 
 void biblioteq_misc_functions::saveQuantity(const QSqlDatabase &db,
@@ -1318,68 +780,6 @@ void biblioteq_misc_functions::saveQuantity(const QSqlDatabase &db,
   query.bindValue(0, quantity);
   query.bindValue(1, oid);
   (void)query.exec();
-
-  if (query.lastError().isValid())
-    errorstr = query.lastError().text();
-}
-
-void biblioteq_misc_functions::setBookRead(const QSqlDatabase &db,
-                                           const bool state,
-                                           const quint64 myoid)
-{
-  if (db.driverName() != "QSQLITE")
-    return;
-
-  QSqlQuery query(db);
-
-  query.prepare("UPDATE book SET book_read = ? WHERE myoid = ?");
-  query.addBindValue(state ? 1 : 0);
-  query.addBindValue(myoid);
-  query.exec();
-}
-
-void biblioteq_misc_functions::setRole(const QSqlDatabase &db,
-                                       QString &errorstr,
-                                       const QString &roles)
-{
-  errorstr = "";
-
-  if (db.driverName() == "QSQLITE")
-    return; // Users are not supported.
-
-  QSqlQuery query(db);
-
-  if (!roles.isEmpty())
-  {
-    if (roles.contains("administrator"))
-      query.exec("SET ROLE biblioteq_administrator");
-    else
-    {
-      if (roles.contains("circulation") &&
-          roles.contains("librarian") &&
-          roles.contains("membership"))
-        query.exec("SET ROLE biblioteq_circulation_librarian_membership");
-      else if (roles.contains("circulation") && roles.contains("librarian"))
-        query.exec("SET ROLE biblioteq_circulation_librarian");
-      else if (roles.contains("circulation") &&
-               roles.contains("membership"))
-        query.exec("SET ROLE biblioteq_circulation_membership");
-      else if (roles.contains("librarian") && roles.contains("membership"))
-        query.exec("SET ROLE biblioteq_librarian_membership");
-      else if (roles.contains("circulation"))
-        query.exec("SET ROLE biblioteq_circulation");
-      else if (roles.contains("librarian"))
-        query.exec("SET ROLE biblioteq_librarian");
-      else if (roles.contains("membership"))
-        query.exec("SET ROLE biblioteq_membership");
-      else if (roles.contains("patron"))
-        query.exec("SET ROLE biblioteq_patron");
-      else
-        query.exec("SET ROLE biblioteq_guest");
-    }
-  }
-  else
-    query.exec("SET ROLE biblioteq_guest");
 
   if (query.lastError().isValid())
     errorstr = query.lastError().text();

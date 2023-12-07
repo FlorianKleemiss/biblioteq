@@ -86,27 +86,16 @@ QString biblioteq_copy_editor_book::saveCopies(void)
 			if (!copy)
 				goto continue_label;
 
-			if (qmain->getDB().driverName() != "QSQLITE")
-				query.prepare(QString("INSERT INTO %1_copy_info "
-									  "(item_oid, "
-									  "copy_number, "
-									  "copyid, "
-									  "originality, "
-									  "condition, "
-									  "status) "
-									  "VALUES (?, ?, ?, ?, ?, ?)")
-								  .arg(m_itemType.toLower().remove(" ")));
-			else
-				query.prepare(QString("INSERT INTO %1_copy_info "
-									  "(item_oid, "
-									  "copy_number, "
-									  "copyid, "
-									  "originality, "
-									  "condition, "
-									  "myoid, "
-									  "status) "
-									  "VALUES (?, ?, ?, ?, ?, ?, ?)")
-								  .arg(m_itemType.toLower().remove(" ")));
+			query.prepare(QString("INSERT INTO %1_copy_info "
+								  "(item_oid, "
+								  "copy_number, "
+								  "copyid, "
+								  "originality, "
+								  "condition, "
+								  "myoid, "
+								  "status) "
+								  "VALUES (?, ?, ?, ?, ?, ?, ?)")
+							  .arg(m_itemType.toLower().remove(" ")));
 
 			query.addBindValue(copy->m_itemoid);
 
@@ -223,10 +212,10 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
 
 	if (!m_showForLending)
 	{
-        disconnect(m_cb.deleteButton, SIGNAL(clicked()));
-        disconnect(m_cb.saveButton, SIGNAL(clicked()));
-        connect(m_cb.deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteCopy()));
-        connect(m_cb.saveButton, SIGNAL(clicked()), this, SLOT(slotSaveCopies()));
+		disconnect(m_cb.deleteButton, SIGNAL(clicked()));
+		disconnect(m_cb.saveButton, SIGNAL(clicked()));
+		connect(m_cb.deleteButton, SIGNAL(clicked()), this, SLOT(slotDeleteCopy()));
+		connect(m_cb.saveButton, SIGNAL(clicked()), this, SLOT(slotSaveCopies()));
 		m_cb.saveButton->setText(tr("&Save"));
 	}
 	else
@@ -238,12 +227,6 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
 		QString errorstr("");
 		auto duedate = QDate::currentDate();
 
-		QApplication::setOverrideCursor(Qt::WaitCursor);
-		duedate = duedate.addDays(biblioteq_misc_functions::getMinimumDays(qmain->getDB(),
-																		   m_itemType,
-																		   errorstr));
-		QApplication::restoreOverrideCursor();
-
 		if (!errorstr.isEmpty())
 			qmain->addError(tr("Database Error"),
 							tr("Unable to retrieve the minimum number of days."),
@@ -253,11 +236,11 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
 
 		m_cb.dueDate->setMinimumDate(duedate);
 		m_cb.saveButton->setText(tr("&Reserve"));
-        disconnect(m_cb.saveButton, SIGNAL(clicked()));
+		disconnect(m_cb.saveButton, SIGNAL(clicked()));
 	}
 
-    disconnect(m_cb.cancelButton, SIGNAL(clicked()));
-    connect(m_cb.cancelButton, SIGNAL(clicked()), this, SLOT(slotCloseCopyEditor()));
+	disconnect(m_cb.cancelButton, SIGNAL(clicked()));
+	connect(m_cb.cancelButton, SIGNAL(clicked()), this, SLOT(slotCloseCopyEditor()));
 
 	QProgressDialog progress1(this);
 	QProgressDialog progress2(this);
@@ -411,7 +394,7 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
 	m_cb.table->setRowCount(i); // Support cancellation.
 	query.prepare(QString("SELECT %1.title, "
 						  "%1_copy_info.copyid, "
-						  "(1 - COUNT(item_borrower.copyid)), "
+						  "1, "
 						  "%1_copy_info.originality, "
 						  "%1_copy_info.condition, "
 						  "%1_copy_info.status, "
@@ -419,13 +402,7 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
 						  "%1_copy_info.copy_number "
 						  "FROM "
 						  "%1, "
-						  "%1_copy_info LEFT JOIN item_borrower ON "
-						  "%1_copy_info.copyid = "
-						  "item_borrower.copyid AND "
-						  "%1_copy_info.item_oid = "
-						  "item_borrower.item_oid AND "
-						  "item_borrower.type = ? "
-						  "WHERE %1_copy_info.item_oid = ? AND "
+						  "%1_copy_info LEFT WHERE %1_copy_info.item_oid = ? AND "
 						  "%1.myoid = ? "
 						  "GROUP BY %1.title, "
 						  "%1_copy_info.copyid, "
@@ -470,8 +447,6 @@ void biblioteq_copy_editor_book::populateCopiesEditor(void)
 																		   __LINE__,
 																		   qmain));
 	}
-	else
-		progress2.setMaximum(query.size());
 
 	progress2.show();
 	progress2.repaint();
@@ -583,7 +558,7 @@ void biblioteq_copy_editor_book::slotDeleteCopy(void)
 	}
 
 	copyid = biblioteq_misc_functions::getColumnString(m_cb.table, row, m_columnHeaderIndexes.indexOf("Barcode"));
-    if (errorstr.length() > 0)
+	if (errorstr.length() > 0)
 	{
 		qmain->addError(tr("Database Error"),
 						tr("Unable to determine the reservation "
@@ -748,7 +723,6 @@ success_label:
 	}
 
 	QApplication::restoreOverrideCursor();
-
 
 	biblioteq_misc_functions::updateColumn(qmain->getUI().table,
 										   m_bitem->getRow(),

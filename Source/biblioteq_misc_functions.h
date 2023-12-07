@@ -44,13 +44,9 @@ public:
 	static QStringList getLocations(const QSqlDatabase &,
 									const QString &,
 									QString &);
-	static bool hasUnaccentExtension(const QSqlDatabase &);
 
 	static bool isBookRead(const QSqlDatabase &db, const quint64 myoid)
 	{
-		if (db.driverName() != "QSQLITE")
-			return false;
-
 		QSqlQuery query(db);
 
 		query.setForwardOnly(true);
@@ -68,16 +64,7 @@ public:
 							const QString &,
 							const QString &,
 							QString &);
-	static bool userExists(const QString &, const QSqlDatabase &, QString &);
 	static int getColumnNumber(const QTableWidget *, const QString &);
-	static int getMaxCopyNumber(const QSqlDatabase &,
-								const QString &,
-								const QString &,
-								QString &);
-	static int getMinimumDays(const QSqlDatabase &, const QString &, QString &);
-	static int maximumReserved(const QSqlDatabase &,
-							   const QString &,
-							   const QString &);
 	static int sqliteQuerySize(const QString &,
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 							   const QMap<QString, QVariant> &,
@@ -121,20 +108,13 @@ public:
 						   const QString &,
 						   const QSqlDatabase &,
 						   QString &);
-	static void hideAdminFields(QMainWindow *, const QString &);
+	static void hideAdminFields(QMainWindow *);
 	static void highlightWidget(QWidget *, const QColor &);
-	static void revokeAll(const QString &, const QSqlDatabase &, QString &);
-	static void savePassword(const QString &,
-							 const QSqlDatabase &,
-							 const QString &,
-							 QString &);
 	static void saveQuantity(const QSqlDatabase &,
 							 const QString &,
 							 const int,
 							 const QString &,
 							 QString &);
-	static void setBookRead(const QSqlDatabase &, const bool, const quint64);
-	static void setRole(const QSqlDatabase &, QString &, const QString &);
 	static void updateColumn(QTableWidget *,
 							 const int,
 							 const int,

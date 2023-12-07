@@ -31,7 +31,7 @@ biblioteq_main_table::biblioteq_main_table(QWidget *parent) : QTableWidget(paren
   setAcceptDrops(false);
   setDragEnabled(false);
   horizontalHeader()->setSectionsMovable(true);
-  horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
+  horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
   horizontalHeader()->setSortIndicatorShown(true);
   horizontalHeader()->setStretchLastSection(true);
   verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
@@ -176,7 +176,7 @@ void biblioteq_main_table::resetTable(const QString &username,
   }
 
   clearSelection();
-  horizontalHeader()->setSortIndicator(0, Qt::AscendingOrder);
+  horizontalHeader()->setSortIndicator(1, Qt::AscendingOrder);
   horizontalHeader()->setSortIndicatorShown(true);
   setCurrentItem(nullptr);
   sortByColumn(0, Qt::AscendingOrder);
@@ -206,34 +206,16 @@ void biblioteq_main_table::setColumns(const QString &username,
 
     list.append(tr("Title"));
     list.append(tr("ID Number"));
-
     list.append(tr("Publisher"));
     list.append(tr("Publication Date"));
     list.append(tr("Categories"));
-    list.append(tr("Language"));
-    list.append(tr("Price"));
-    list.append(tr("Monetary Units"));
     list.append(tr("Quantity"));
-    list.append(tr("Location"));
     m_columnHeaderIndexes.append("Title");
     m_columnHeaderIndexes.append("ID Number");
-
     m_columnHeaderIndexes.append("Publisher");
     m_columnHeaderIndexes.append("Publication Date");
     m_columnHeaderIndexes.append("Categories");
-    m_columnHeaderIndexes.append("Language");
-    m_columnHeaderIndexes.append("Price");
-    m_columnHeaderIndexes.append("Monetary Units");
     m_columnHeaderIndexes.append("Quantity");
-    m_columnHeaderIndexes.append("Location");
-
-    if (type != "All Requested")
-    {
-      list.append(tr("Availability"));
-      list.append(tr("Total Reserved"));
-      m_columnHeaderIndexes.append("Availability");
-      m_columnHeaderIndexes.append("Total Reserved");
-    }
 
     list.append(tr("Accession Number"));
     list.append(tr("Type"));
@@ -245,19 +227,15 @@ void biblioteq_main_table::setColumns(const QString &username,
   else if (type == "Books")
   {
     list.append(tr("Title"));
+    list.append(tr("ISBN-10"));
     list.append(tr("Authors"));
     list.append(tr("Publisher"));
     list.append(tr("Publication Date"));
     list.append(tr("Place of Publication"));
     list.append(tr("Edition"));
     list.append(tr("Categories"));
-    list.append(tr("Language"));
-    list.append(tr("ISBN-10"));
-    list.append(tr("Price"));
-    list.append(tr("Monetary Units"));
     list.append(tr("Quantity"));
     list.append(tr("Book Binding Type"));
-    list.append(tr("Location"));
     list.append(tr("ISBN-13"));
     list.append(tr("LC Control Number"));
     list.append(tr("Call Number"));
@@ -270,19 +248,15 @@ void biblioteq_main_table::setColumns(const QString &username,
     list.append(tr("Type"));
     list.append("MYOID");
     m_columnHeaderIndexes.append("Title");
+    m_columnHeaderIndexes.append("ISBN-10");
     m_columnHeaderIndexes.append("Authors");
     m_columnHeaderIndexes.append("Publisher");
     m_columnHeaderIndexes.append("Publication Date");
     m_columnHeaderIndexes.append("Place of Publication");
     m_columnHeaderIndexes.append("Edition");
     m_columnHeaderIndexes.append("Categories");
-    m_columnHeaderIndexes.append("Language");
-    m_columnHeaderIndexes.append("ISBN-10");
-    m_columnHeaderIndexes.append("Price");
-    m_columnHeaderIndexes.append("Monetary Units");
     m_columnHeaderIndexes.append("Quantity");
     m_columnHeaderIndexes.append("Book Binding Type");
-    m_columnHeaderIndexes.append("Location");
     m_columnHeaderIndexes.append("ISBN-13");
     m_columnHeaderIndexes.append("LC Control Number");
     m_columnHeaderIndexes.append("Call Number");
@@ -298,21 +272,21 @@ void biblioteq_main_table::setColumns(const QString &username,
   else if (type == "Photograph Collections")
   {
     list.append(tr("Title"));
+    list.append(tr("ID"));
     list.append(tr("Creation Date"));
     list.append(tr("Total Size"));
     list.append(tr("Element Count"));
     list.append(tr("Element Count Strixner"));
     list.append(tr("About"));
-    list.append(tr("ID"));
     list.append(tr("Type"));
     list.append("MYOID");
     m_columnHeaderIndexes.append("Title");
+    m_columnHeaderIndexes.append("ID");
     m_columnHeaderIndexes.append("Creation date");
     m_columnHeaderIndexes.append("Total Size");
     m_columnHeaderIndexes.append("Element Count");
     m_columnHeaderIndexes.append("Element Count Strixner");
     m_columnHeaderIndexes.append("About");
-    m_columnHeaderIndexes.append("ID");
     m_columnHeaderIndexes.append("Type");
     m_columnHeaderIndexes.append("MYOID");
   }
