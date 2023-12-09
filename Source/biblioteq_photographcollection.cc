@@ -735,20 +735,24 @@ void biblioteq_photographcollection::modify(const int state,
       if (query.exec())
         if (query.next())
         {
-          auto i = photographsPerPage();
+          int i = photographsPerPage();
+
+          int nr_photos = query.value(0).toInt();
 
           if (i == -1) // Unlimited.
           {
             pages = 1;
-            setSceneRect(query.value(0).toInt());
+            setSceneRect(nr_photos);
           }
           else
-            pages = qCeil(query.value(0).toDouble() / qMax(1, i));
+            pages = qCeil((double)nr_photos / qMax(1, i));
         }
 
       QApplication::restoreOverrideCursor();
       pages = qMax(1, pages);
     }
+
+    int old_page = pc.page->currentText().toInt();
 
     pc.page->blockSignals(true);
     pc.page->clear();
@@ -774,7 +778,10 @@ void biblioteq_photographcollection::modify(const int state,
     QApplication::processEvents();
 
     if (!m_engWindowTitle.contains("Create"))
-      showPhotographs(pc.page->currentText().toInt());
+    {
+      showPhotographs(old_page - 1);
+      pc.page->setCurrentIndex(old_page - 1);
+    }
   }
 
   pc.id_collection->setFocus();
@@ -836,20 +843,21 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
     query.prepare("SELECT image_scaled, myoid FROM "
                   "photograph WHERE "
                   "collection_oid = ? "
-                  "ORDER BY id");
+                  "ORDER BY CAST(page_number AS INTEGER) ASC");
     query.bindValue(0, m_oid);
   }
   else
   {
+    auto temp = photographsPerPage();
     query.prepare("SELECT image_scaled, myoid FROM "
                   "photograph WHERE "
                   "collection_oid = ? "
-                  "ORDER BY id "
+                  "ORDER BY CAST(page_number AS INTEGER) ASC "
                   "LIMIT ? "
                   "OFFSET ?");
     query.bindValue(0, m_oid);
-    query.bindValue(1, photographsPerPage());
-    query.bindValue(2, photographsPerPage() * (page - 1));
+    query.bindValue(1, temp);
+    query.bindValue(2, page * temp);
   }
 
   if (query.exec())
@@ -1051,17 +1059,23 @@ void biblioteq_photographcollection::slotDeleteItem(void)
     }
 
   pages = qMax(1, pages);
+  auto old_page = pc.page->currentText().toInt();
   pc.page->blockSignals(true);
   pc.page->clear();
 
   for (int i = 1; i <= pages; i++)
     pc.page->addItem(QString::number(i));
 
+  if (old_page < pages)
+  {
+    old_page -= 1;
+  }
   pc.page->blockSignals(false);
   progress.close();
   repaint();
   QApplication::processEvents();
-  showPhotographs(pc.page->currentText().toInt());
+  showPhotographs(old_page - 1);
+  pc.page->setCurrentIndex(old_page - 1);
 }
 
 void biblioteq_photographcollection::slotExportItem(void)
@@ -1777,6 +1791,7 @@ void biblioteq_photographcollection::slotImportItems(void)
 
   QApplication::restoreOverrideCursor();
   pages = qMax(1, pages);
+  int old_page = pc.page->currentText().toInt();
   pc.page->blockSignals(true);
   pc.page->clear();
 
@@ -1784,7 +1799,8 @@ void biblioteq_photographcollection::slotImportItems(void)
     pc.page->addItem(QString::number(i));
 
   pc.page->blockSignals(false);
-  showPhotographs(1);
+  showPhotographs(old_page - 1);
+  pc.page->setCurrentIndex(old_page - 1);
   QMessageBox::information(this,
                            tr("BiblioteQ: Information"),
                            tr("Imported a total of %1 image(s) from the "
@@ -1796,6 +1812,7 @@ void biblioteq_photographcollection::slotImportItems(void)
 
 void biblioteq_photographcollection::slotInsertItem(void)
 {
+  int temp;
   if (!verifyItemFields())
     return;
 
@@ -1908,22 +1925,19 @@ void biblioteq_photographcollection::slotInsertItem(void)
 #endif
   }
 
-  if (qmain->getDB().driverName() == "QSQLITE")
+  auto value = biblioteq_misc_functions::getSqliteUniqueId(qmain->getDB(), errorstr);
+
+  if (errorstr.isEmpty())
   {
-    auto value = biblioteq_misc_functions::getSqliteUniqueId(qmain->getDB(), errorstr);
+    query.bindValue(28, value);
+  }
 
-    if (errorstr.isEmpty())
-    {
-      query.bindValue(28, value);
-    }
-
-    else
-    {
-      qmain->addError(QString(tr("Database Error")),
-                      QString(tr("Unable to generate a unique "
-                                 "integer.")),
-                      errorstr);
-    }
+  else
+  {
+    qmain->addError(QString(tr("Database Error")),
+                    QString(tr("Unable to generate a unique "
+                               "integer.")),
+                    errorstr);
   }
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -1989,6 +2003,7 @@ void biblioteq_photographcollection::slotInsertItem(void)
 
   QApplication::restoreOverrideCursor();
   pages = qMax(1, pages);
+  temp = pc.page->currentText().toInt();
   pc.page->blockSignals(true);
   pc.page->clear();
 
@@ -1996,10 +2011,10 @@ void biblioteq_photographcollection::slotInsertItem(void)
     pc.page->addItem(QString::number(i));
 
   pc.page->blockSignals(false);
-  showPhotographs(pc.page->currentText().toInt());
+  showPhotographs(temp - 1);
+  pc.page->setCurrentIndex(temp - 1);
   photo.saveButton->disconnect(SIGNAL(clicked(void)));
-  connect(photo.saveButton, SIGNAL(clicked()), this,
-          SLOT(slotModifyItem()));
+  connect(photo.saveButton, SIGNAL(clicked()), this, SLOT(slotModifyItem()));
   return;
 
 db_rollback:
