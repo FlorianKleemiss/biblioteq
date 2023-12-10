@@ -43,6 +43,7 @@ HEADERS		= Source/biblioteq.h \
                   Source/biblioteq_photograph_compare.h \
 		  Source/biblioteq_photographcollection.h \
                   Source/biblioteq_photograph_view.h \
+    Source/biblioteq_sqlite_create_schema.h \
                   Source/biblioteq_sqlite_merge_databases.h \
 		  Source/biblioteq_sruResults.h \
 		  Source/biblioteq_z3950results.h
