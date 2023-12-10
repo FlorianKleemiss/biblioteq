@@ -2033,7 +2033,7 @@ void biblioteq::slotPrintView(void)
   QTextDocument document;
 
   printer.setColorMode(QPrinter::GrayScale);
-  printer.setResolution(300);
+  printer.setResolution(600);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
   printer.setPageOrientation(QPageLayout::Landscape);
   printer.setPageSize(QPageSize(QPageSize::Letter));
@@ -2059,7 +2059,7 @@ void biblioteq::slotPrintViewPreview(void)
 
   printDialog->setWindowModality(Qt::ApplicationModal);
   printer.setColorMode(QPrinter::GrayScale);
-  printer.setResolution(300);
+  printer.setResolution(600);
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
   printer.setPageOrientation(QPageLayout::Landscape);
   printer.setPageSize(QPageSize(QPageSize::Letter));

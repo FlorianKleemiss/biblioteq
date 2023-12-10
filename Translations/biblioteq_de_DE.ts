@@ -6084,7 +6084,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2094"/>
         <source>Publisher:</source>
-        <translation>Verlag:</translation>
+        <translation type="unfinished">Herausgeber:</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2096"/>
@@ -6105,7 +6105,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2119"/>
         <source>Title (new):</source>
-        <translation>Titel (Neu):</translation>
+        <translation>Titel (heute):</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2120"/>
@@ -6120,7 +6120,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2122"/>
         <source>Inventor (new):</source>
-        <translation>Inventor(Neu):</translation>
+        <translation>Inventor (heute):</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2123"/>
@@ -6140,7 +6140,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2127"/>
         <source>Creation Date (Original):</source>
-        <translation>Entstehungszeitraum (Original):</translation>
+        <translation>Entstehungsdatum (Original):</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2128"/>
@@ -6150,7 +6150,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2129"/>
         <source>Inventory Number/Place of Storage:</source>
-        <translation>Inventarnummer/WVZ:</translation>
+        <translation>Inventarnummer/Aufbewahrungsort (Original):</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2130"/>
@@ -6160,7 +6160,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2131"/>
         <source>Page Number:</source>
-        <translation>Seitenzahl:</translation>
+        <translation>Blattnummer:</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2132"/>
@@ -6180,7 +6180,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2135"/>
         <source>Signed:</source>
-        <translation>Signiert:</translation>
+        <translation>Bezeichnet/Signiert:</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2095"/>
@@ -6196,7 +6196,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2139"/>
         <source>Place of Storage:</source>
-        <translation>Aufbewahrungsort:</translation>
+        <translation>Aufbewahrungsort (Abbildung):</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2741"/>

@@ -2075,29 +2075,13 @@ void biblioteq_photographcollection::slotSortByChanged(void)
 void biblioteq_photographcollection::slotPrint(void)
 {
 
-  m_html = "<html>"; // start building the html string
-
-  // Information about the collection
-  m_html += "<b>" + tr("Collection Information:") + "</b><br>";
-  m_html += "<b>" + tr("ID:") + "</b> " + pc.id_collection->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("Title:") + "</b> " + pc.title_collection->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Creation Date:") + "</b> " + pc.creation_date->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("First Release Date:") + "</b> " + pc.first_release->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("Circulation height:") + "</b> " + pc.circulation_height->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("Total Number of Pictures:") + "</b> " + pc.total_number->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("By Artist:") + "</b> " + pc.by_artist->text().trimmed() + "<br>";
-  m_html += "<b>" + tr("Publisher:") + "</b> " + pc.publisher->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Literature/Catalogue:") + "</b> " + pc.catalogue->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Keywords:") + "</b> " + pc.keywords->toPlainText().trimmed() + "<br>";
-
-  // Information about the item
-  m_html += "<br><br><b>" + tr("Item Specific Information:") + "</b><br>";
+  m_html = "<html>";                           // start building the html string
   QImage image(pc.thumbnail_item->getImage()); // Get a copy of the image
-  int resolution = 300;
+  int resolution = 600;
   QPageSize pageSize(QPageSize::Letter);
   auto sizeInPixels = pageSize.sizePixels(resolution).toSizeF();
   QSize size = sizeInPixels.toSize();
-  size.setWidth(size.width() / 8);                                           // Set the new width to be smaller than the original width
+  size.setWidth(size.width() / 15);                                          // Set the new width to be smaller than the original width
   image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation); // Scale the image to the new size
 
   QByteArray byteArray;
@@ -2108,10 +2092,26 @@ void biblioteq_photographcollection::slotPrint(void)
   }
   QString imageBase64 = QString::fromLatin1(byteArray.toBase64().data());
 
-  m_html += "<img src='data:image/png;base64," + imageBase64 + "' style='width: 50%;' alt='Image Description' /><br>"; // Add the image to the HTML
+  m_html += "<img src='data:image/png;base64," + imageBase64 + "' style='width: 50%; float: right; margin-left: 10px;' alt='Image Description' /><br>"; // Add the image to the HTML
+  // Information about the collection
+  m_html += "<b>" + tr("Collection Information:") + "</b><br>";
+  m_html += "<b>" + tr("ID:") + "</b> " + pc.id_collection->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Title:") + "</b> " + pc.title_collection->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Creation Date:") + "</b> " + pc.creation_date->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("First Release Date:") + "</b> " + pc.first_release->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Total Number of Pictures:") + "</b> " + pc.total_number->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("By Artist:") + "</b> " + pc.by_artist->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Circulation height:") + "</b> " + pc.circulation_height->text().trimmed() + "<br>";
+  m_html += "<b>" + tr("Publisher:") + "</b> " + pc.publisher->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Keywords:") + "</b> " + pc.keywords->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Notes:") + "</b> " + pc.notes->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Literature/Catalogue:") + "</b> " + pc.catalogue->toPlainText().trimmed() + "<br>";
+
+  // Information about the item
+  m_html += "<br><br><b>" + tr("Item Specific Information:") + "</b><br>";
   m_html += "<b>" + tr("ID:") + "</b> " + pc.id_item->toPlainText().trimmed() + "<br>";
-  m_html += "<b>" + tr("Title (old):") + "</b> " + pc.title_old_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Title (new):") + "</b> " + pc.title_new_item->toPlainText().trimmed() + "<br>";
+  m_html += "<b>" + tr("Title (old):") + "</b> " + pc.title_old_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Title Description:") + "</b> " + pc.title_description_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Inventor (old):") + "</b> " + pc.inventor_old_item->toPlainText().trimmed() + "<br>";
   m_html += "<b>" + tr("Inventor (new):") + "</b> " + pc.inventor_new_item->toPlainText().trimmed() + "<br>";
