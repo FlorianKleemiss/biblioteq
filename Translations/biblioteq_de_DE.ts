@@ -6042,7 +6042,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2086"/>
         <source>Collection Information:</source>
-        <translation>Sammlungs Informationen:</translation>
+        <translation>Sammlungsinformationen:</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2087"/>
@@ -6095,7 +6095,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2099"/>
         <source>Item Specific Information:</source>
-        <translation>Eintrags spezifische Informationen:</translation>
+        <translation>Eintragsspezifische Informationen:</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2118"/>
@@ -6125,7 +6125,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2123"/>
         <source>Based On:</source>
-        <translation>Basierend auf:</translation>
+        <translation>Nach KÃ¼nstler:</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2124"/>
@@ -10991,7 +10991,7 @@ Aufbewahrungsort (Original)</translation>
         <location filename="../UI/biblioteq_photograph.ui" line="563"/>
         <location filename="../UI/biblioteq_photograph.ui" line="570"/>
         <source>Title (description)</source>
-        <translation>Titel (bschreibend)</translation>
+        <translation>Titel (beschreibend)</translation>
     </message>
     <message>
         <location filename="../UI/biblioteq_photograph.ui" line="607"/>

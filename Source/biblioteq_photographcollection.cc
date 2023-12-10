@@ -39,10 +39,7 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   setQMain(this);
   pc.thumbnail_item->enableDoubleClickResize(true);
   m_scene = new biblioteq_bgraphicsscene(pc.graphicsView);
-  connect(m_scene,
-          SIGNAL(selectionChanged()),
-          this,
-          SLOT(slotSceneSelectionChanged()));
+  connect(m_scene, SIGNAL(selectionChanged()), this, SLOT(slotSceneSelectionChanged()));
   m_oid = oidArg;
   m_isQueryEnabled = false;
   m_parentWid = parentArg;
@@ -100,9 +97,7 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   QApplication::restoreOverrideCursor();
 
   if (!errorstr.isEmpty())
-    qmain->addError(QString(tr("Database Error")),
-                    QString(tr("Unable to retrieve the photograph collection locations.")),
-                    errorstr, __FILE__, __LINE__);
+    qmain->addError(QString(tr("Database Error")), QString(tr("Unable to retrieve the photograph collection locations.")), errorstr, __FILE__, __LINE__);
 
   pc.thumbnail_collection->setScene(scene1);
   pc.thumbnail_item->setScene(scene2);
@@ -621,13 +616,8 @@ void biblioteq_photographcollection::modify(const int state,
   if (!query.exec() || !query.next())
   {
     QApplication::restoreOverrideCursor();
-    qmain->addError(QString(tr("Database Error")),
-                    QString(tr("Unable to retrieve the selected photograph "
-                               "collection's data.")),
-                    query.lastError().text(), __FILE__, __LINE__);
-    QMessageBox::critical(this, tr("BiblioteQ: Database Error"),
-                          tr("Unable to retrieve the selected photograph "
-                             "collection's data."));
+    qmain->addError(QString(tr("Database Error")), QString(tr("Unable to retrieve the selected photograph collection's data.")), query.lastError().text(), __FILE__, __LINE__);
+    QMessageBox::critical(this, tr("BiblioteQ: Database Error"), tr("Unable to retrieve the selected photograph collection's data."));
     QApplication::processEvents();
     close();
     return;
@@ -1284,7 +1274,7 @@ void biblioteq_photographcollection::slotGo(void)
     pc.by_artist->setText(pc.by_artist->text().trimmed());
     pc.publisher->setPlainText(pc.publisher->toPlainText().trimmed());
     pc.keywords->setPlainText(pc.keywords->toPlainText().trimmed());
-    pc.catalogue->setText(pc.catalogue->toPlainText().trimmed());
+    pc.catalogue->setPlainText(pc.catalogue->toPlainText().trimmed());
     pc.first_release->setText(pc.first_release->text().trimmed());
 
     if (!qmain->getDB().transaction())
@@ -1325,7 +1315,9 @@ void biblioteq_photographcollection::slotGo(void)
                     "(id, title, creation_date, circulation_height, total_number, by_artist, "
                     "publisher, keywords, notes, first_release_date, catalogue, image,"
                     "image_scaled, myoid) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    "VALUES (?, ?, ?, ?, ?, ?, "
+                    "?, ?, ?, ?, ?, ?, "
+                    "?, ?)");
 
     query.bindValue(0, pc.id_collection->text().trimmed());
     query.bindValue(1, pc.title_collection->toPlainText().trimmed());
@@ -1868,7 +1860,10 @@ void biblioteq_photographcollection::slotInsertItem(void)
                 "format, printer, catalogue, inventor_new, inventor_old, inventory_number, "
                 "keywords, material, page_number, place_of_storage, image, image_scaled, "
                 "creators, copyright, reproduction_number, myoid) "
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                "VALUES (?, ?, ?, ?, ?, "
+                "?, ?, ?, "
+                "?, ?, ?, ?, ?, ?, "
+                "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
   QString blanky(' ');
   query.bindValue(0, photo.id_item->text());
@@ -1955,7 +1950,7 @@ void biblioteq_photographcollection::slotInsertItem(void)
 
   if (errorstr.isEmpty())
   {
-    query.bindValue(28, value);
+    query.bindValue(29, value);
   }
 
   else
@@ -2240,15 +2235,6 @@ void biblioteq_photographcollection::slotSceneSelectionChanged(void)
     pc.page_number_item->clear();
     pc.material_item->clear();
     pc.title_original_picture_item->clear();
-
-    pc.creation_date->clear();
-    pc.circulation_height->clear();
-    pc.total_number->clear();
-    pc.by_artist->clear();
-    pc.publisher->clear();
-    pc.keywords->clear();
-    pc.first_release->clear();
-    pc.catalogue->clear();
 
     return;
   }
