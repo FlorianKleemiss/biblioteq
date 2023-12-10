@@ -394,7 +394,6 @@ void biblioteq_import::slotAddRow(void)
 	{
 		comboBox->addItems(QStringList()
 						   << "<ignored>"
-						   << "accession_number"
 						   << "author"
 						   << "binding_type"
 						   << "callnumber"
@@ -690,8 +689,7 @@ void biblioteq_import::slotTemplates(int index)
 		QStringList list;
 
 		if (index == TEMPLATE_1)
-			list << "accession_number"
-				 << "author"
+			list << "author"
 				 << "binding_type"
 				 << "callnumber"
 				 << "category"
@@ -729,8 +727,7 @@ void biblioteq_import::slotTemplates(int index)
 				 << "<ignored>" // Availability
 				 << "<ignored>" // Total Reserved
 				 << "originality"
-				 << "condition"
-				 << "accession_number";
+				 << "condition";
 
 		for (int i = 0; i < list.size(); i++)
 		{

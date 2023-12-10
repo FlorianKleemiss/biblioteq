@@ -68,15 +68,6 @@ bool biblioteq_otheroptions::showMainTableProgressDialogs(void) const
   return settings.value("show_maintable_progress_dialogs", true).toBool();
 }
 
-int biblioteq_otheroptions::booksAccessionNumberIndex(void) const
-{
-  QSettings settings;
-
-  return qBound(0,
-                settings.value("otheroptions/books_accession_number_index").toInt(),
-                m_ui.books_accession_number->count() - 1);
-}
-
 int biblioteq_otheroptions::iconsViewColumnCount(void) const
 {
   QSettings settings;
@@ -177,9 +168,6 @@ void biblioteq_otheroptions::prepareSettings(void)
   list3 << "books"
         << "photographcollections";
   m_ui.book_read_status->setChecked(settings.value("otheroptions/book_read_status", false).toBool());
-  m_ui.books_accession_number->setCurrentIndex(qBound(0,
-                                                      settings.value("otheroptions/books_accession_number_index").toInt(),
-                                                      m_ui.books_accession_number->count() - 1));
   m_ui.icons_view_column_count->setValue(settings.value("otheroptions/icons_view_column_count").toInt());
   m_ui.isbn10_display_format->setCurrentIndex(qBound(0,
                                                      settings.value("otheroptions/isbn10_display_format_index").toInt(),
@@ -341,8 +329,6 @@ void biblioteq_otheroptions::slotSave(void)
   settings.setValue("mainwindow_canvas_background_color",
                     m_ui.main_window_canvas_background_color->text().toLatin1());
   settings.setValue("otheroptions/book_read_status", m_ui.book_read_status->isChecked());
-  settings.setValue("otheroptions/books_accession_number_index",
-                    m_ui.books_accession_number->currentIndex());
   settings.setValue("otheroptions/icons_view_column_count",
                     m_ui.icons_view_column_count->value());
   settings.setValue("otheroptions/isbn10_display_format_index",

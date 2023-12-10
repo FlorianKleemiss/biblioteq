@@ -446,7 +446,6 @@ int biblioteq::populateTable(QSqlQuery &query,
 	QSettings settings;
 	QString dateFormat("");
 	auto availabilityColors = this->availabilityColors();
-	auto booksAccessionNumberIndex = m_otheroptions->booksAccessionNumberIndex();
 	auto columnNames(ui.table->columnNames());
 	auto showBookReadStatus = m_db.driverName() == "QSQLITE" &&
 							  m_otheroptions->showBookReadStatus() &&
@@ -581,18 +580,6 @@ int biblioteq::populateTable(QSqlQuery &query,
 						str = m_otheroptions->isbn13DisplayFormat(str);
 
 					item = new QTableWidgetItem(str);
-				}
-				else if (fieldName.endsWith("accession_number"))
-				{
-					if (typefilter == "Books")
-					{
-						if (booksAccessionNumberIndex == 0)
-							item = new biblioteq_numeric_table_item(query.value(j).toInt());
-						else
-							item = new QTableWidgetItem();
-					}
-					else
-						item = new QTableWidgetItem();
 				}
 				else if (fieldName.endsWith("availability") ||
 						 fieldName.endsWith("file_count") ||
@@ -1334,7 +1321,6 @@ void biblioteq::slotAllGo(void)
 				  "'' AS location,  "
 				  "0 AS availability, "
 				  "0 AS total_reserved, "
-				  "photograph_collection.accession_number, "
 				  "photograph_collection.type, "
 				  "photograph_collection.myoid, " +
 				  photographCollectionFrontCover +
@@ -1351,7 +1337,6 @@ void biblioteq::slotAllGo(void)
 						  "%1.location, "
 						  "%1.quantity AS availability, "
 						  "%1.quantity AS total_reserved, "
-						  "%1.accession_number, "
 						  "%1.type, "
 						  "%1.myoid, ")
 					  .arg(type.toLower().remove(" "));

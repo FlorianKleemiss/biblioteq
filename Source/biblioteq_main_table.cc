@@ -210,17 +210,14 @@ void biblioteq_main_table::setColumns(const QString &username,
     list.append(tr("Publication Date"));
     list.append(tr("Categories"));
     list.append(tr("Quantity"));
+    list.append(tr("Type"));
+    list.append("MYOID");
     m_columnHeaderIndexes.append("Title");
     m_columnHeaderIndexes.append("ID Number");
     m_columnHeaderIndexes.append("Publisher");
     m_columnHeaderIndexes.append("Publication Date");
     m_columnHeaderIndexes.append("Categories");
     m_columnHeaderIndexes.append("Quantity");
-
-    list.append(tr("Accession Number"));
-    list.append(tr("Type"));
-    list.append("MYOID");
-    m_columnHeaderIndexes.append("Accession Number");
     m_columnHeaderIndexes.append("Type");
     m_columnHeaderIndexes.append("MYOID");
   }
@@ -244,7 +241,6 @@ void biblioteq_main_table::setColumns(const QString &username,
     list.append(tr("Total Reserved"));
     list.append(tr("Originality"));
     list.append(tr("Condition"));
-    list.append(tr("Accession Number"));
     list.append(tr("Type"));
     list.append("MYOID");
     m_columnHeaderIndexes.append("Title");
@@ -265,7 +261,6 @@ void biblioteq_main_table::setColumns(const QString &username,
     m_columnHeaderIndexes.append("Total Reserved");
     m_columnHeaderIndexes.append("Originality");
     m_columnHeaderIndexes.append("Condition");
-    m_columnHeaderIndexes.append("Accession Number");
     m_columnHeaderIndexes.append("Type");
     m_columnHeaderIndexes.append("MYOID");
   }

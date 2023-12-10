@@ -6,7 +6,6 @@
 const char *sqlite_create_schema_text = "\
 CREATE TABLE book \
 ( \
-    accession_number        TEXT, \
     alternate_id_1          TEXT, \
     author                  TEXT NOT NULL, \
     back_cover	            BYTEA, \
@@ -69,7 +68,6 @@ CREATE TABLE book_sequence \
 CREATE TABLE photograph_collection \
 ( \
     about	            TEXT DEFAULT '', \
-    accession_number    TEXT DEFAULT '', \
     id		            TEXT PRIMARY KEY NOT NULL, \
     image	            BYTEA, \
     image_scaled        BYTEA, \
@@ -77,18 +75,18 @@ CREATE TABLE photograph_collection \
     notes	            TEXT DEFAULT '', \
     title	            TEXT NOT NULL, \
     creation_date       TEXT DEFAULT '', \
+    first_release_date  TEXT DEFAULT '', \
     circulation_height  TEXT DEFAULT '', \
     total_number        TEXT DEFAULT '', \
     by_artist           TEXT DEFAULT '', \
     publisher           TEXT DEFAULT '', \
     keywords            TEXT DEFAULT '', \
+    catalogue           TEXT DEFAULT '', \
     type	            VARCHAR(32) NOT NULL DEFAULT 'Photograph Collection' \
 ); \
  \
 CREATE TABLE photograph \
 ( \
-    accession_number        TEXT, \
-    callnumber		        VARCHAR(64), \
     collection_oid	        BIGINT NOT NULL, \
     copyright		        TEXT, \
     creators		        TEXT NOT NULL DEFAULT '', \
@@ -124,6 +122,7 @@ CREATE TABLE photograph \
     keywords                TEXT DEFAULT '', \
     creation_date_original  VARCHAR(32), \
     title_old               TEXT DEFAULT '', \
+    title_description       TEXT DEFAULT '', \
     PRIMARY KEY(id, collection_oid), \
     FOREIGN KEY(collection_oid) REFERENCES \
                                 photograph_collection(myoid) ON \

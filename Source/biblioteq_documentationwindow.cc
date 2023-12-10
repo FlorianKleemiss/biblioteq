@@ -44,12 +44,6 @@ void biblioteq_documentationwindow::connectSignals(void)
   connect(m_ui.text, SIGNAL(anchorClicked(QUrl)), this, SLOT(slotAnchorClicked(QUrl)), Qt::UniqueConnection);
 }
 
-void biblioteq_documentationwindow::
-    setAllowOpeningOfExternalLinks(const bool state)
-{
-  m_openExternalLinks = state;
-}
-
 void biblioteq_documentationwindow::setHtml(const QString &html)
 {
   m_ui.text->setHtml(html);

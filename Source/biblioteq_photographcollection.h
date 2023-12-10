@@ -51,7 +51,6 @@ private:
   void showPhotographs(const int &page);
   void storeData(void);
   void updateTablePhotographCount(const int count);
-  bool eventFilter(QObject *object, QEvent *event);
 
 private slots:
   void slotAddItem(void);

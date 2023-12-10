@@ -14,7 +14,6 @@
 #include "ui_biblioteq_customquery.h"
 #include "ui_biblioteq_errordiag.h"
 #include "ui_biblioteq_mainwindow.h"
-#include "ui_biblioteq_password.h"
 
 #include <QMessageBox>
 
@@ -65,18 +64,14 @@ public:
   QString formattedISBN13(const QString &str) const;
   QString getPreferredSRUSite(void) const;
   QString getPreferredZ3950Site(void) const;
-  QString getRoles(void) const;
   QString getTypeFilterString(void) const;
   QString publicationDateFormat(const QString &itemType) const;
   QString unaccent(void) const;
   QStringList getSRUNames(void) const;
   QStringList getZ3950Names(void) const;
   QVariant setting(const QString &name) const;
-  QVector<QString> getBBColumnIndexes(void) const;
   Ui_mainWindow getUI(void) const;
   bool availabilityColors(void) const;
-  bool isGuest(void) const;
-  bool isPatron(void) const;
   bool showBookReadStatus(void) const;
   bool showMainTableImages(void) const;
   int pageLimit(void) const;
@@ -139,7 +134,6 @@ private:
 
   enum GenericSearchTypes
   {
-    ACCESSION_NUMBER_GENERIC_SEARCH_TYPE = 0,
     CATEGORY_GENERIC_SEARCH_TYPE = 1,
     ID_GENERIC_SEARCH_TYPE = 2,
     KEYWORD_GENERIC_SEARCH_TYPE = 3,
@@ -203,7 +197,6 @@ private:
   Ui_customquery cq;
   Ui_errordialog er;
   Ui_mainWindow ui;
-  Ui_passSelect pass;
   biblioteq_files *m_files;
   biblioteq_import *m_import;
   biblioteq_otheroptions *m_otheroptions;
@@ -244,7 +237,6 @@ private slots:
   void slotChangeView(bool checked);
   void slotClearSqliteMenu(bool state);
   void slotCloseCustomQueryDialog(void);
-  void slotClosePasswordDialog(void);
   void slotConnectDB(void);
   void slotContextMenu(const QPoint &point);
   void slotContributors(void);
@@ -295,7 +287,6 @@ private slots:
   void slotSelectDatabaseFile(void);
   void slotSetColumns(void);
   void slotSetFonts(void);
-  void slotShowChangePassword(void);
   void slotShowConnectionDB(void);
   void slotShowCustomQuery(void);
   void slotShowDbEnumerations(void);

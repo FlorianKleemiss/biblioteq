@@ -56,7 +56,6 @@ public:
   bool showBookReadStatus(void) const;
   bool showMainTableImages(void) const;
   bool showMainTableProgressDialogs(void) const;
-  int booksAccessionNumberIndex(void) const;
   int iconsViewColumnCount(void) const;
   void prepareSettings(void);
 

@@ -4,7 +4,6 @@
 #include "biblioteq_item.h"
 #include "biblioteq_marc.h"
 #include "ui_biblioteq_bookinfo.h"
-#include "ui_biblioteq_passwordPrompt.h"
 
 #include <QBuffer>
 #include <QNetworkReply>
@@ -59,7 +58,6 @@ private:
   QString m_dt_orig_ss;
   QString m_engWindowTitle;
   Ui_informationDialog id;
-  Ui_passwordDialog ui_p;
   bool m_duplicate;
   biblioteq_item_working_dialog *createImageDownloadDialog(const QString &downloadType);
   void changeEvent(QEvent *event);
@@ -104,8 +102,6 @@ private slots:
   void slotPrint(void);
   void slotPrintAuthorTitleDewey(void);
   void slotPrintCallDewey(void);
-  void slotProxyAuthenticationRequired(const QNetworkProxy &proxy,
-                                       QAuthenticator *authenticator);
   void slotPublicationDateEnabled(bool state);
   void slotReadyRead(void);
   void slotReset(void);

@@ -214,15 +214,15 @@ void biblioteq_generic_thread::run(void)
 
 void biblioteq_generic_thread::setFilename(const QString &filename)
 {
-	m_filename = filename;
+    m_filename = filename;
 }
 
 void biblioteq_generic_thread::setOutputList(const QList<bool> &list)
 {
-	int i = 0;
+    int i = 0;
 
-	for (i = 0; i < list.size(); i++)
-		m_outputListBool.append(list.at(i));
+    for (i = 0; i < list.size(); i++)
+        m_outputListBool.append(list.at(i));
 }
 
 void biblioteq_generic_thread::setType(const int type)

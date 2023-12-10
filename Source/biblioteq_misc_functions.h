@@ -72,13 +72,7 @@ public:
 							   const char *,
 							   const int,
 							   biblioteq *);
-	static qint64 bookAccessionNumber(const QSqlDatabase &);
 	static qint64 getSqliteUniqueId(const QSqlDatabase &, QString &);
-	static void DBAccount(const QString &,
-						  const QSqlDatabase &,
-						  const int,
-						  QString &,
-						  const QString & = "");
 	static void center(QWidget *, QMainWindow *);
 	static void createInitialCopies(QString const &,
 									const int,

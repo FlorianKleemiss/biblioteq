@@ -37,7 +37,6 @@ biblioteq_book::biblioteq_book(biblioteq *parentArg,
 	m_openLibraryManager = new QNetworkAccessManager(this);
 	m_proxyDialog = new QDialog(this);
 	m_sruManager = new QNetworkAccessManager(this);
-	ui_p.setupUi(m_proxyDialog);
 	m_parentWid = parentArg;
 	m_oid = oidArg;
 	m_oldq = biblioteq_misc_functions::getColumnString(qmain->getUI().table,
@@ -57,19 +56,12 @@ biblioteq_book::biblioteq_book(biblioteq *parentArg,
 	id.view_pdf->setEnabled(false);
 	id.view_pdf->setToolTip(tr("BiblioteQ was not assembled with Poppler support."));
 #else
-	connect(id.view_pdf,
-			SIGNAL(clicked(void)),
-			this,
-			SLOT(slotShowPDF(void)));
+	connect(id.view_pdf, SIGNAL(clicked(void)), this, SLOT(slotShowPDF(void)));
 #endif
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S),
-				  this,
-				  SLOT(slotGo(void)));
+	new QShortcut(QKeySequence(Qt::CTRL + Qt::Key_S), this, SLOT(slotGo(void)));
 #else
-	new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S),
-				  this,
-				  SLOT(slotGo()));
+	new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_S), this, SLOT(slotGo()));
 #endif
 	updateFont(QApplication::font(), qobject_cast<QWidget *>(this));
 	connect(id.attach_files, SIGNAL(clicked()), this, SLOT(slotAttachFiles()));
@@ -109,7 +101,6 @@ biblioteq_book::biblioteq_book(biblioteq *parentArg,
 	connect(menu->addAction(tr("Reset Abstract")), SIGNAL(triggered()), this, SLOT(slotReset()));
 	connect(menu->addAction(tr("Reset MARC Tags")), SIGNAL(triggered()), this, SLOT(slotReset()));
 	connect(menu->addAction(tr("Reset Keywords")), SIGNAL(triggered()), this, SLOT(slotReset()));
-	connect(menu->addAction(tr("Reset Accession Number")), SIGNAL(triggered()), this, SLOT(slotReset()));
 	connect(menu->addAction(tr("Reset URL")), SIGNAL(triggered()), this, SLOT(slotReset()));
 	connect(menu->addAction(tr("Reset Multi-Volume Set ISBN")), SIGNAL(triggered()), this, SLOT(slotReset()));
 	connect(id.frontButton, SIGNAL(clicked()), this, SLOT(slotSelectImage()));
@@ -123,14 +114,8 @@ biblioteq_book::biblioteq_book(biblioteq *parentArg,
 
 	if (menu->actions().size() >= 4)
 	{
-		connect(id.isbnAvailableCheckBox,
-				SIGNAL(toggled(bool)),
-				menu->actions().at(2),
-				SLOT(setEnabled(bool)));
-		connect(id.isbnAvailableCheckBox,
-				SIGNAL(toggled(bool)),
-				menu->actions().at(3),
-				SLOT(setEnabled(bool)));
+		connect(id.isbnAvailableCheckBox, SIGNAL(toggled(bool)), menu->actions().at(2), SLOT(setEnabled(bool)));
+		connect(id.isbnAvailableCheckBox, SIGNAL(toggled(bool)), menu->actions().at(3), SLOT(setEnabled(bool)));
 	}
 
 	QString errorstr("");
@@ -341,7 +326,6 @@ void biblioteq_book::changeEvent(QEvent *event)
 		case QEvent::LanguageChange:
 		{
 			id.retranslateUi(this);
-			ui_p.retranslateUi(m_proxyDialog);
 			break;
 		}
 		default:
@@ -488,8 +472,6 @@ void biblioteq_book::duplicate(const QString &p_oid, const int state)
 {
 	m_duplicate = true;
 	modify(state); // Initial population.
-	id.accession_number->setText(QString::number(biblioteq_misc_functions::
-													 bookAccessionNumber(qmain->getDB())));
 	id.attach_files->setEnabled(false);
 	id.view_pdf->setEnabled(false);
 	id.copiesButton->setEnabled(false);
@@ -504,8 +486,6 @@ void biblioteq_book::duplicate(const QString &p_oid, const int state)
 void biblioteq_book::insert(void)
 {
 	slotReset();
-	id.accession_number->setText(QString::number(biblioteq_misc_functions::
-													 bookAccessionNumber(qmain->getDB())));
 	id.attach_files->setEnabled(false);
 	id.marc_tags_format->setVisible(true);
 	id.parse_marc_tags->setVisible(true);
@@ -662,7 +642,6 @@ void biblioteq_book::modify(const int state)
 				  "keyword, "
 				  "originality, "
 				  "condition, "
-				  "accession_number, "
 				  "url, "
 				  "alternate_id_1, "
 				  "multivolume_set_isbn "
@@ -813,8 +792,6 @@ void biblioteq_book::modify(const int state)
 						id.back_image->loadFromData(var.toByteArray());
 				}
 			}
-			else if (fieldname == "accession_number")
-				id.accession_number->setText(var.toString().trimmed());
 			else if (fieldname == "url")
 				id.url->setPlainText(var.toString().trimmed());
 			else if (fieldname == "alternate_id_1")
@@ -1527,7 +1504,6 @@ void biblioteq_book::search(const QString &field, const QString &value)
 	id.binding->setCurrentIndex(0);
 	id.originality->setCurrentIndex(0);
 	id.condition->setCurrentIndex(0);
-	id.accession_number->clear();
 	id.isbnAvailableCheckBox->setCheckable(false);
 	m_engWindowTitle = "Search";
 
@@ -1825,10 +1801,6 @@ void biblioteq_book::slotDownloadImage(void)
 
 				if (reply)
 					reply->deleteLater();
-
-				connect(m_imageManager, SIGNAL(proxyAuthenticationRequired(QNetworkProxy, QAuthenticator *)),
-						this, SLOT(slotProxyAuthenticationRequired(QNetworkProxy, QAuthenticator *)),
-						Qt::UniqueConnection);
 			}
 
 			if (type == "http" || type == "socks5")
@@ -1932,10 +1904,6 @@ void biblioteq_book::slotDownloadImage(void)
 
 				if (reply)
 					reply->deleteLater();
-
-				connect(m_imageManager, SIGNAL(proxyAuthenticationRequired(QNetworkProxy, QAuthenticator *)),
-						this, SLOT(slotProxyAuthenticationRequired(QNetworkProxy, QAuthenticator *)),
-						Qt::UniqueConnection);
 			}
 
 			if (type == "http" || type == "socks5")
@@ -2360,8 +2328,6 @@ void biblioteq_book::slotGo(void)
 		id.marc_tags->setPlainText(str);
 		str = id.keyword->toPlainText().trimmed();
 		id.keyword->setPlainText(str);
-		str = id.accession_number->text().trimmed();
-		id.accession_number->setText(str);
 		id.url->setPlainText(id.url->toPlainText().trimmed());
 		id.alternate_id_1->setText(id.alternate_id_1->text().trimmed());
 		id.multivolume_set_isbn->setText(id.multivolume_set_isbn->text().remove('-').trimmed());
@@ -2392,7 +2358,6 @@ void biblioteq_book::slotGo(void)
 						  "keyword = ?, "
 						  "originality = ?, "
 						  "condition = ?, "
-						  "accession_number = ?, "
 						  "url = ?, "
 						  "alternate_id_1 = ?, "
 						  "multivolume_set_isbn = ? "
@@ -2408,12 +2373,12 @@ void biblioteq_book::slotGo(void)
 						  "deweynumber, front_cover, "
 						  "back_cover, "
 						  "place, marc_tags, keyword, originality, condition, "
-						  "accession_number, url, alternate_id_1, "
+						  "url, alternate_id_1, "
 						  "multivolume_set_isbn, myoid) "
 						  "VALUES (?, ?, ?, ?, "
 						  "?, ?, ?, "
 						  "?, ?, "
-						  "?, ?, ?, "
+						  "?, ?, "
 						  "?, ?, ?, ?, ?, ?, ?, ?, ?, "
 						  "?, ?, ?, ?, ?)");
 
@@ -2535,28 +2500,27 @@ void biblioteq_book::slotGo(void)
 		query.bindValue(18, id.keyword->toPlainText().trimmed());
 		query.bindValue(19, id.originality->currentText().trimmed());
 		query.bindValue(20, id.condition->currentText().trimmed());
-		query.bindValue(21, id.accession_number->text().trimmed());
-		query.bindValue(22, id.url->toPlainText().trimmed());
-		query.bindValue(23, id.alternate_id_1->text().trimmed());
+		query.bindValue(21, id.url->toPlainText().trimmed());
+		query.bindValue(22, id.alternate_id_1->text().trimmed());
 
 		if (id.multivolume_set_isbn->text().isEmpty())
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
-			query.bindValue(24, QVariant(QMetaType(QMetaType::QString)));
+			query.bindValue(23, QVariant(QMetaType(QMetaType::QString)));
 #else
-			query.bindValue(24, QVariant(QVariant::String));
+			query.bindValue(23, QVariant(QVariant::String));
 #endif
 		else
-			query.bindValue(24, id.multivolume_set_isbn->text());
+			query.bindValue(23, id.multivolume_set_isbn->text());
 
 		if (m_engWindowTitle.contains("Modify"))
-			query.bindValue(25, m_oid);
-		else if (qmain->getDB().driverName() == "QSQLITE")
+			query.bindValue(24, m_oid);
+		else
 		{
 			auto value = biblioteq_misc_functions::getSqliteUniqueId(qmain->getDB(), errorstr);
 
 			if (errorstr.isEmpty())
 			{
-				query.bindValue(25, value);
+				query.bindValue(24, value);
 				m_oid = QString::number(value);
 			}
 			else
@@ -2770,8 +2734,6 @@ void biblioteq_book::slotGo(void)
 							qmain->getUI().table->item(m_index->row(), i)->setText(id.originality->currentText().trimmed());
 						else if (names.at(i) == "Condition")
 							qmain->getUI().table->item(m_index->row(), i)->setText(id.condition->currentText().trimmed());
-						else if (names.at(i) == "Accession Number")
-							qmain->getUI().table->item(m_index->row(), i)->setText(id.accession_number->text());
 					}
 
 					if (imageColumn == -1)
@@ -2856,7 +2818,6 @@ void biblioteq_book::slotGo(void)
 					"book.quantity AS total_reserved, "
 					"book.originality, "
 					"book.condition, "
-					"book.accession_number, "
 					"book.type, "
 					"book.myoid, " +
 					frontCover +
@@ -2957,9 +2918,6 @@ void biblioteq_book::slotGo(void)
 							  escape(id.condition->currentText().trimmed()));
 		}
 
-		searchstr.append("AND " + UNACCENT + "(LOWER(COALESCE(accession_number, ''))) LIKE " +
-						 UNACCENT + "(LOWER(" + ESCAPE + "'%' || ? || '%')) ");
-		values.append(biblioteq_myqstring::escape(id.accession_number->text().trimmed()));
 		searchstr.append("AND " + UNACCENT + "(LOWER(COALESCE(alternate_id_1, ''))) LIKE " +
 						 UNACCENT + "(LOWER(" + ESCAPE + "'%' || ? || '%')) AND ");
 		values.append(biblioteq_myqstring::escape(id.alternate_id_1->text().trimmed()));
@@ -2981,7 +2939,6 @@ void biblioteq_book::slotGo(void)
 						 "book.deweynumber, "
 						 "book.originality, "
 						 "book.condition, "
-						 "book.accession_number, "
 						 "book.type, "
 						 "book.myoid, "
 						 "book.front_cover "
@@ -3145,14 +3102,6 @@ void biblioteq_book::slotOpenLibraryQuery(void)
 
 			if (reply)
 				reply->deleteLater();
-
-			connect(m_openLibraryManager,
-					SIGNAL(proxyAuthenticationRequired(QNetworkProxy,
-													   QAuthenticator *)),
-					this,
-					SLOT(slotProxyAuthenticationRequired(QNetworkProxy,
-														 QAuthenticator *)),
-					Qt::UniqueConnection);
 		}
 
 		if (type == "http" || type == "socks5")
@@ -3366,8 +3315,6 @@ void biblioteq_book::slotPrint(void)
 			  id.marc_tags->toPlainText().trimmed() + "<br>";
 	m_html += "<b>" + tr("Keywords:") + "</b> " +
 			  id.keyword->toPlainText().trimmed() + "<br>";
-	m_html += "<b>" + tr("Accession Number:") + "</b> " +
-			  id.accession_number->text().trimmed() + "<br>";
 	m_html += "<b>" + tr("URL:") + "</b> " +
 			  id.url->toPlainText().trimmed();
 	m_html += "</html>";
@@ -3444,27 +3391,6 @@ void biblioteq_book::slotPrintCallDewey(void)
 	}
 
 	QApplication::processEvents();
-}
-
-void biblioteq_book::slotProxyAuthenticationRequired(const QNetworkProxy &proxy, QAuthenticator *authenticator)
-{
-	if (authenticator)
-	{
-		ui_p.messageLabel->setText(QString(tr("The proxy %1:%2 is requesting "
-											  "credentials.")
-											   .arg(proxy.hostName())
-											   .arg(proxy.port())));
-		m_proxyDialog->resize(QSize(m_proxyDialog->width(), m_proxyDialog->sizeHint().height()));
-
-		if (m_proxyDialog->exec() == QDialog::Accepted)
-		{
-			QApplication::processEvents();
-			authenticator->setUser(ui_p.usernameLineEdit->text());
-			authenticator->setPassword(ui_p.passwordLineEdit->text());
-		}
-
-		QApplication::processEvents();
-	}
 }
 
 void biblioteq_book::slotPublicationDateEnabled(bool state)
@@ -3645,15 +3571,10 @@ void biblioteq_book::slotReset(void)
 		}
 		else if (action == actions[21])
 		{
-			id.accession_number->clear();
-			id.accession_number->setFocus();
-		}
-		else if (action == actions[22])
-		{
 			id.url->clear();
 			id.url->setFocus();
 		}
-		else if (action == actions[23])
+		else if (action == actions[22])
 		{
 			id.multivolume_set_isbn->clear();
 			id.multivolume_set_isbn->setFocus();
@@ -3742,7 +3663,6 @@ void biblioteq_book::slotReset(void)
 		id.keyword->viewport()->setPalette(m_white_pal);
 		id.publisher->viewport()->setPalette(m_te_orig_pal);
 		id.place->viewport()->setPalette(m_te_orig_pal);
-		id.accession_number->clear();
 		id.multivolume_set_isbn->clear();
 		id.id->setFocus();
 	}
@@ -3893,14 +3813,6 @@ void biblioteq_book::slotSRUQuery(void)
 
 			if (reply)
 				reply->deleteLater();
-
-			connect(m_sruManager,
-					SIGNAL(proxyAuthenticationRequired(QNetworkProxy,
-													   QAuthenticator *)),
-					this,
-					SLOT(slotProxyAuthenticationRequired(QNetworkProxy,
-														 QAuthenticator *)),
-					Qt::UniqueConnection);
 		}
 
 		if (type == "http" || type == "socks5")

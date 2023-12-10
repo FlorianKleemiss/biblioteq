@@ -199,11 +199,7 @@ biblioteq::biblioteq(void) : QMainWindow()
   m_error_diag = new QMainWindow();
 #endif
   m_import = new biblioteq_import(this);
-  // menu1 = new QMenu(this);
-  connect(QCoreApplication::instance(),
-          SIGNAL(lastWindowClosed()),
-          this,
-          SLOT(slotLastWindowClosed()));
+  connect(QCoreApplication::instance(), SIGNAL(lastWindowClosed()), this, SLOT(slotLastWindowClosed()));
 #ifndef BIBLIOTEQ_LINKED_WITH_POPPLER
   ui.action_Open_PDF_File->setEnabled(false);
 #endif
@@ -233,8 +229,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   ui.graphicsView->setRubberBandSelectionMode(Qt::IntersectsItemShape);
 
   br.setupUi(m_branch_diag);
-  pass.setupUi(m_pass_diag);
-
   cq.setupUi(m_customquery_diag);
   er.setupUi(m_error_diag);
 #ifdef Q_OS_ANDROID
@@ -302,7 +296,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(m_otheroptions, SIGNAL(mainWindowCanvasBackgroundColorChanged(QColor)), this, SLOT(slotMainWindowCanvasBackgroundColorChanged(QColor)));
   connect(m_otheroptions, SIGNAL(mainWindowCanvasBackgroundColorPreview(QColor)), this, SLOT(slotPreviewCanvasBackgroundColor(QColor)));
   connect(m_otheroptions, SIGNAL(saved()), this, SLOT(slotOtherOptionsSaved()));
-  connect(m_pass_diag, SIGNAL(finished(int)), this, SLOT(slotClosePasswordDialog()));
   connect(br.resetButton, SIGNAL(clicked()), this, SLOT(slotResetLoginDialog()));
   connect(br.fileButton, SIGNAL(clicked()), this, SLOT(slotSelectDatabaseFile()));
 #ifdef Q_OS_ANDROID
@@ -337,7 +330,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   ui.actionDuplicateEntry->setEnabled(false);
   ui.actionImportCSV->setEnabled(false);
   ui.actionModifyEntry->setEnabled(false);
-  ui.actionPopulate_Administrator_Browser_Table_on_Display->setEnabled(false);
   ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(false);
   ui.actionRefreshTable->setEnabled(false);
   ui.actionViewDetails->setEnabled(false);
@@ -593,15 +585,6 @@ QString biblioteq::getPreferredZ3950Site(void) const
   return "";
 }
 
-QString biblioteq::getRoles(void) const
-{
-  /*
-  ** Empty roles suggest that the user is a guest or a patron.
-  */
-
-  return m_roles;
-}
-
 QString biblioteq::getTypeFilterString(void) const
 {
   if (ui.menu_Category->defaultAction())
@@ -613,11 +596,6 @@ QString biblioteq::getTypeFilterString(void) const
 Ui_mainWindow biblioteq::getUI(void) const
 {
   return ui;
-}
-
-QVector<QString> biblioteq::getBBColumnIndexes(void) const
-{
-  return m_bbColumnHeaderIndexes;
 }
 
 void biblioteq::addConfigOptions(const QString &typefilter)
@@ -722,7 +700,6 @@ void biblioteq::adminSetup(void)
   if (m_status_bar_label != nullptr)
   {
     m_status_bar_label->setPixmap(QPixmap(":/16x16/unlock.png"));
-
     m_status_bar_label->setToolTip(tr("Privileged Mode"));
   }
 
@@ -776,7 +753,6 @@ void biblioteq::changeEvent(QEvent *event)
       br.retranslateUi(m_branch_diag);
       cq.retranslateUi(m_customquery_diag);
       er.retranslateUi(m_error_diag);
-      pass.retranslateUi(m_pass_diag);
       ui.retranslateUi(this);
       ui.graphicsView->scene()->clear();
       ui.graphicsView->resetTransform();
@@ -897,8 +873,7 @@ void biblioteq::prepareFilter(void)
            << tr("Books")
            << tr("Photograph Collections");
 
-  disconnect(ui.menu_Category, SIGNAL(triggered(QAction *)), this,
-             SLOT(slotAutoPopOnFilter(QAction *)));
+  disconnect(ui.menu_Category, SIGNAL(triggered(QAction *)), this, SLOT(slotAutoPopOnFilter(QAction *)));
   ui.menu_Category->clear();
 
   for (int i = 0; i < m_menuCategoryActionGroup->actions().size(); i++)
@@ -919,28 +894,6 @@ void biblioteq::prepareFilter(void)
   connect(ui.menu_Category, SIGNAL(triggered(QAction *)), this, SLOT(slotAutoPopOnFilter(QAction *)));
   tmplist1.clear();
   tmplist2.clear();
-}
-
-void biblioteq::quit(const char *msg, const char *file, const int line)
-{
-  if (msg != nullptr && qstrnlen(msg, std::numeric_limits<uint>::max()) > 0)
-    qDebug() << tr(msg)
-             << tr(" in file ")
-             << file << tr(", line ") << line
-             << tr(".");
-  else
-    qDebug() << tr("An unknown error occurred in file ")
-             << file << tr(", line ")
-             << line << tr(".");
-
-  exit(EXIT_FAILURE);
-#ifdef Q_OS_ANDROID
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 1, 0))
-  auto activity = QJniObject(QNativeInterface::QAndroidApplication::context());
-
-  activity.callMethod<void>("finishAndRemoveTask");
-#endif
-#endif
 }
 
 void biblioteq::quit(void)
@@ -1366,14 +1319,6 @@ void biblioteq::slotCloseCustomQueryDialog(void)
 #else
   m_customquery_diag->close();
 #endif
-}
-
-void biblioteq::slotClosePasswordDialog(void)
-{
-  m_pass_diag->setVisible(false);
-  pass.password->setText(QString(1024, '0'));
-  pass.password->clear();
-  pass.userid->clear();
 }
 
 void biblioteq::slotCopyError(void)
@@ -2284,17 +2229,6 @@ void biblioteq::slotSetFonts(void)
   }
 
   QApplication::processEvents();
-}
-
-void biblioteq::slotShowChangePassword(void)
-{
-  pass.userid->setText(dbUserName());
-  pass.password->setText(QString(1024, '0'));
-  pass.password->clear();
-  pass.passwordAgain->setText(QString(1024, '0'));
-  pass.passwordAgain->clear();
-  pass.password->setFocus();
-  m_pass_diag->show();
 }
 
 void biblioteq::slotShowConnectionDB(void)

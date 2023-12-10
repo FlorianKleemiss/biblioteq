@@ -13,7 +13,6 @@ public:
   biblioteq_documentationwindow(QWidget *parent);
   biblioteq_documentationwindow(const QUrl &url, QWidget *parent);
   ~biblioteq_documentationwindow();
-  void setAllowOpeningOfExternalLinks(const bool state);
   void setHtml(const QString &html);
 
 public slots:

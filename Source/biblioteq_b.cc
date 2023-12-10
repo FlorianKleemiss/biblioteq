@@ -49,28 +49,6 @@ QVariant biblioteq::setting(const QString &name) const
 		return QVariant();
 }
 
-bool biblioteq::isGuest(void) const
-{
-	if (m_db.driverName() == "QSQLITE")
-		return false;
-	else if (dbUserName() == BIBLIOTEQ_GUEST_ACCOUNT)
-		return true;
-	else
-		return false;
-}
-
-bool biblioteq::isPatron(void) const
-{
-	if (m_db.driverName() == "QSQLITE")
-		return true; // Administrator and patron.
-	else if (dbUserName() == BIBLIOTEQ_GUEST_ACCOUNT)
-		return false;
-	else if (m_roles.isEmpty())
-		return true;
-	else
-		return false;
-}
-
 int biblioteq::pageLimit(void) const
 {
 	int limit = 25;
@@ -205,7 +183,6 @@ int biblioteq::populateTable(const int search_type_arg,
 								"book.publisher, book.pdate, "
 								"book.category, "
 								"book.quantity, "
-								"book.accession_number, "
 								"book.type, "
 								"book.myoid, " +
 								bookFrontCover +
@@ -218,7 +195,6 @@ int biblioteq::populateTable(const int search_type_arg,
 								"'', "
 								"'', "
 								"1 AS quantity, "
-								"photograph_collection.accession_number, "
 								"photograph_collection.type, "
 								"photograph_collection.myoid, " +
 								photographCollectionFrontCover +
@@ -251,7 +227,6 @@ int biblioteq::populateTable(const int search_type_arg,
 						"book.quantity AS total_reserved, "
 						"book.originality, "
 						"book.condition, "
-						"book.accession_number, "
 						"book.type, "
 						"book.myoid, " +
 						bookFrontCover +
@@ -279,7 +254,6 @@ int biblioteq::populateTable(const int search_type_arg,
 						"GROUP BY "
 						"photograph_collection.title, "
 						"photograph_collection.id, "
-						"photograph_collection.accession_number, "
 						"photograph_collection.type, "
 						"photograph_collection.myoid, "
 						"photograph_collection.image_scaled "
@@ -321,7 +295,6 @@ int biblioteq::populateTable(const int search_type_arg,
 								 "book.deweynumber, "
 								 "book.originality, "
 								 "book.condition, "
-								 "book.accession_number, "
 								 "book.type, "
 								 "book.myoid, "
 								 "book.front_cover "
@@ -341,7 +314,6 @@ int biblioteq::populateTable(const int search_type_arg,
 				searchstr.append(searchstrArg);
 				searchstr.append("GROUP BY photograph_collection.title, "
 								 "photograph_collection.id, "
-								 "photograph_collection.accession_number, "
 								 "photograph_collection.type, "
 								 "photograph_collection.myoid, "
 								 "photograph_collection.image_scaled "
@@ -405,13 +377,8 @@ int biblioteq::populateTable(const int search_type_arg,
 					break;
 				}
 
-		addError(QString(tr("Database Error")),
-				 QString(tr("Unable to retrieve the data required for "
-							"populating the main views.")),
-				 query.lastError().text(), __FILE__, __LINE__);
-		QMessageBox::critical(this, tr("BiblioteQ: Database Error"),
-							  tr("Unable to retrieve the data required for "
-								 "populating the main views."));
+		addError(QString(tr("Database Error")), QString(tr("Unable to retrieve the data required for populating the main views.")), query.lastError().text(), __FILE__, __LINE__);
+		QMessageBox::critical(this, tr("BiblioteQ: Database Error"), tr("Unable to retrieve the data required for populating the main views."));
 		QApplication::processEvents();
 		return 1;
 	}
@@ -645,7 +612,6 @@ int biblioteq::populateTable(const int search_type_arg,
 
 	QFontMetrics fontMetrics(ui.table->font());
 	auto availabilityColors = this->availabilityColors();
-	auto booksAccessionNumberIndex = m_otheroptions->booksAccessionNumberIndex();
 	auto showBookReadStatus = m_db.driverName() == "QSQLITE" &&
 							  m_otheroptions->showBookReadStatus() &&
 							  typefilter == "Books";
@@ -774,18 +740,6 @@ int biblioteq::populateTable(const int search_type_arg,
 						str = m_otheroptions->isbn13DisplayFormat(str);
 
 					item = new QTableWidgetItem(str);
-				}
-				else if (fieldName.endsWith("accession_number"))
-				{
-					if (typefilter == "Books")
-					{
-						if (booksAccessionNumberIndex == 0)
-							item = new biblioteq_numeric_table_item(query.value(j).toInt());
-						else
-							item = new QTableWidgetItem();
-					}
-					else
-						item = new QTableWidgetItem();
 				}
 				else if (fieldName.endsWith("availability") ||
 						 fieldName.endsWith("file_count") ||
@@ -1272,7 +1226,6 @@ void biblioteq::slotSearchBasic(void)
 				  "photograph_collection.location, "
 				  "0 AS availability, "
 				  "0 AS total_reserved, "
-				  "photograph_collection.accession_number, "
 				  "photograph_collection.type, "
 				  "photograph_collection.myoid, " +
 				  photographCollectionFrontCover +
@@ -1288,7 +1241,6 @@ void biblioteq::slotSearchBasic(void)
 						  "%1.location, "
 						  "%1.quantity AS availability, "
 						  "%1.quantity AS total_reserved, "
-						  "%1.accession_number, "
 						  "%1.type, "
 						  "%1.myoid, ")
 					  .arg(type.toLower().remove(" "));
@@ -1305,24 +1257,6 @@ void biblioteq::slotSearchBasic(void)
 
 		switch (ui.searchType->currentIndex())
 		{
-		case ACCESSION_NUMBER_GENERIC_SEARCH_TYPE:
-		{
-			if (ui.case_insensitive->isChecked())
-			{
-				str.append("COALESCE(LOWER(accession_number), '') LIKE " +
-						   E + "'%' || ? || '%' ");
-				values.append(biblioteq_myqstring::
-								  escape(text.toLower().trimmed(), true));
-			}
-			else
-			{
-				str.append("COALESCE(accession_number, '') LIKE " +
-						   E + "'%' || ? || '%' ");
-				values.append(biblioteq_myqstring::escape(text.trimmed()));
-			}
-
-			break;
-		}
 		case CATEGORY_GENERIC_SEARCH_TYPE:
 		{
 			if (type != "Photograph Collection")
@@ -1450,7 +1384,6 @@ void biblioteq::slotSearchBasic(void)
 						   "%1.quantity, "
 						   "%1.location, "
 						   "%1.keyword, "
-						   "%1.accession_number, "
 						   "%1.type, "
 						   "%1.myoid, "
 						   "%1.front_cover ")
@@ -1461,7 +1394,6 @@ void biblioteq::slotSearchBasic(void)
 				   "photograph_collection.title, "
 				   "photograph_collection.id, "
 				   "photograph_collection.location, "
-				   "photograph_collection.accession_number, "
 				   "photograph_collection.type, "
 				   "photograph_collection.myoid, "
 				   "photograph_collection.image_scaled ";
@@ -1548,7 +1480,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 				"medium TEXT NOT NULL,"
 				"reproduction_number TEXT NOT NULL,"
 				"copyright TEXT NOT NULL,"
-				"callnumber VARCHAR(64),"
 				"other_number TEXT,"
 				"notes TEXT,"
 				"subjects TEXT,"
@@ -1565,9 +1496,6 @@ void biblioteq::slotUpgradeSqliteScheme(void)
 	list.append("CREATE TABLE IF NOT EXISTS book_binding_types "
 				"("
 				"binding_type TEXT NOT NULL PRIMARY KEY)");
-	list.append("ALTER TABLE book ADD accession_number TEXT");
-	list.append("ALTER TABLE photograph ADD accession_number TEXT");
-	list.append("ALTER TABLE photograph_collection ADD accession_number TEXT");
 	list.append("CREATE TABLE IF NOT EXISTS book_sequence "
 				"("
 				"value            INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT"

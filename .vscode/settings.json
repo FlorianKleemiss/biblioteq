@@ -4,6 +4,9 @@
         "list": "cpp",
         "string": "cpp",
         "vector": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "filesystem": "cpp",
+        "xstring": "cpp",
+        "*.tcc": "cpp"
     }
 }
