@@ -114,9 +114,7 @@ int main(int argc, char *argv[])
   QCoreApplication::setOrganizationName("BiblioteQ");
   QCoreApplication::setOrganizationDomain("biblioteq.sourceforge.net");
   QCoreApplication::setApplicationName("BiblioteQ");
-  QSettings::setPath(QSettings::IniFormat,
-                     QSettings::UserScope,
-                     biblioteq::homePath());
+  QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, biblioteq::homePath());
   QSettings::setDefaultFormat(QSettings::IniFormat);
   QDir().mkdir(biblioteq::homePath());
 
@@ -167,11 +165,8 @@ biblioteq::biblioteq(void) : QMainWindow()
 {
   ui.setupUi(this);
   QScreen *screen = QGuiApplication::primaryScreen();
-  QRect screenGeometry = screen->geometry();
-  int height = screenGeometry.height();
-  int width = screenGeometry.width();
-
-  this->resize(width * 0.8, height * 0.8);
+  set_Screensize(screen->geometry());
+  this->resize(get_Screensize().width() * 0.8, get_Screensize().height() * 0.8);
   ui.table->setQMain(this);
 
   if (menuBar())

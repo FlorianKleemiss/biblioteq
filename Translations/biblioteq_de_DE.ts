@@ -6084,7 +6084,7 @@ Die Datei qt.conf existiert in BiblioteQ&apos;s aktuellem Arbeitsverzeichnis. MÃ
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2094"/>
         <source>Publisher:</source>
-        <translation type="unfinished">Herausgeber:</translation>
+        <translation>Herausgeber:</translation>
     </message>
     <message>
         <location filename="../Source/biblioteq_photographcollection.cc" line="2096"/>

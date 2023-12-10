@@ -36,6 +36,7 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   scene2 = new QGraphicsScene(this);
   scene3 = new QGraphicsScene(this);
   pc.setupUi(this);
+  this->resize(qmain->get_Screensize().width() * 0.75, qmain->get_Screensize().height() * 0.75);
   setQMain(this);
   pc.thumbnail_item->enableDoubleClickResize(true);
   m_scene = new biblioteq_bgraphicsscene(pc.graphicsView);

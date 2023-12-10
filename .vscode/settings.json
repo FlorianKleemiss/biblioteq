@@ -7,6 +7,7 @@
         "*.rh": "cpp",
         "filesystem": "cpp",
         "xstring": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "qmessagebox": "cpp"
     }
 }

@@ -103,6 +103,8 @@ public:
   void showMain(void);
   void updateItemWindows(void);
   void updateRows(const QString &oid, const QTableWidgetItem *item, const QString &it);
+  QRect get_Screensize(void);
+  void set_Screensize(const QRect &size);
   void updateSceneItem(const QString &oid,
                        const QString &type,
                        const QImage &image);
@@ -175,6 +177,7 @@ private:
   QLabel *m_status_bar_label;
   QMainWindow *m_customquery_diag;
   QMainWindow *m_error_diag;
+  QRect m_screensize;
   QMap<QString, QHash<QString, QString>> m_branches;
   QMap<QString, QHash<QString, QString>> m_sruMaps;
   QMultiMap<QString, QHash<QString, QString>> m_z3950Maps;
