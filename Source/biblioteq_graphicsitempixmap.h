@@ -1,6 +1,9 @@
 #ifndef _BIBLIOTEQ_GRAPHICSITEMPIXMAP_H_
 #define _BIBLIOTEQ_GRAPHICSITEMPIXMAP_H_
 
+#include <qgraphicsitem.h>
+#include <qpainter.h>
+#include <qstyleoption.h>
 static void qt_graphicsItem_highlightSelected(QGraphicsItem *item,
                                               QPainter *painter,
                                               const QStyleOptionGraphicsItem *option)

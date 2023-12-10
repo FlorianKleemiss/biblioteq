@@ -111,11 +111,6 @@ bool biblioteq_item::hasDataChanged(QMainWindow *window) const
   return hasChanged;
 }
 
-int biblioteq_item::getOldQ(void) const
-{
-  return m_oldq;
-}
-
 int biblioteq_item::getRow(void) const
 {
   if (m_index->isValid())

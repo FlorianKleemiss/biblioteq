@@ -47,29 +47,6 @@ QImage biblioteq_misc_functions::getImage(const QString &oid,
   return image;
 }
 
-QList<QPair<QString, QString>> biblioteq_misc_functions::getLocations(const QSqlDatabase &db, QString &errorstr)
-{
-  QList<QPair<QString, QString>> locations;
-  QSqlQuery query(db);
-  QString querystr("");
-
-  errorstr = "";
-  querystr = "SELECT type, location FROM locations "
-             "WHERE LENGTH(TRIM(type)) > 0 AND "
-             "LENGTH(TRIM(location)) > 0 "
-             "ORDER BY type, location";
-
-  if (query.exec(querystr))
-    while (query.next())
-      locations.append(qMakePair(query.value(0).toString().trimmed(),
-                                 query.value(1).toString().trimmed()));
-
-  if (query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return locations;
-}
-
 QList<int> biblioteq_misc_functions::selectedRows(QTableWidget *table)
 {
   QList<int> rows;
@@ -203,34 +180,6 @@ QString biblioteq_misc_functions::getOID(const QString &idArg,
   return oid;
 }
 
-QString biblioteq_misc_functions::getRoles(const QSqlDatabase &db,
-                                           const QString &username,
-                                           QString &errorstr)
-{
-  QSqlQuery query(db);
-  QString querystr = "";
-  QString roles = "";
-
-  errorstr = "";
-  querystr = "SELECT LOWER(roles) FROM admin WHERE LOWER(username) = LOWER(?)";
-  query.prepare(querystr);
-  query.bindValue(0, username);
-
-  if (query.exec())
-    if (query.next())
-    {
-      roles = query.value(0).toString().trimmed();
-
-      if (roles == "none")
-        roles = "";
-    }
-
-  if (query.lastError().isValid())
-    errorstr = query.lastError().text();
-
-  return roles;
-}
-
 QString biblioteq_misc_functions::imageFormatGuess(const QByteArray &bytes)
 {
   QString format("");
@@ -305,11 +254,6 @@ QString biblioteq_misc_functions::isbn13to10(const QString &text)
   return str + z;
 }
 
-QString biblioteq_misc_functions::linearizeString(const QString &text)
-{
-  return text.simplified().replace("<br>", " ").simplified().trimmed();
-}
-
 QStringList biblioteq_misc_functions::getBookBindingTypes(const QSqlDatabase &db, QString &errorstr)
 {
   QSqlQuery query(db);
@@ -339,34 +283,6 @@ bool biblioteq_misc_functions::isGnome(void)
     return true;
   else
     return false;
-}
-
-int biblioteq_misc_functions::getColumnNumber(const QTableWidget *table,
-                                              const QString &columnName)
-{
-  if (columnName.isEmpty() || !table)
-    return -1;
-
-  QTableWidgetItem *column = nullptr;
-  int i = 0;
-  int num = -1;
-
-  for (i = 0; i < table->columnCount(); i++)
-  {
-    column = table->horizontalHeaderItem(i);
-
-    if (column == nullptr)
-      continue;
-
-    if (column->text() == columnName ||
-        column->text().toLower() == columnName.toLower())
-    {
-      num = i;
-      break;
-    }
-  }
-
-  return num;
 }
 
 int biblioteq_misc_functions::sqliteQuerySize(const QString &querystr,

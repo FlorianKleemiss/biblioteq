@@ -17,7 +17,9 @@ public:
   biblioteq_pdfreader(QWidget *parent);
   ~biblioteq_pdfreader();
   void load(const QByteArray &data, const QString &fileName);
+#ifdef BIBLIOTEQ_LINKED_WITH_POPPLER
   void load(const QString &fileName);
+#endif
 
 private:
 #ifdef BIBLIOTEQ_LINKED_WITH_POPPLER
@@ -30,7 +32,9 @@ private:
   void changeEvent(QEvent *event);
   void closeEvent(QCloseEvent *event);
   void keyPressEvent(QKeyEvent *event);
+#ifdef BIBLIOTEQ_LINKED_WITH_POPPLER
   void prepareContents(void);
+#endif
   void resizeEvent(QResizeEvent *event);
 
 private slots:

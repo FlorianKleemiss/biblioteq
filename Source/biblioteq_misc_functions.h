@@ -38,7 +38,6 @@ public:
 	static QString imageFormatGuess(const QByteArray &bytes);
 	static QString isbn10to13(const QString &text);
 	static QString isbn13to10(const QString &text);
-	static QString linearizeString(const QString &text);
 	static QStringList getBookBindingTypes(const QSqlDatabase &, QString &);
 
 	static bool isBookRead(const QSqlDatabase &db, const quint64 myoid)
@@ -56,7 +55,7 @@ public:
 	}
 
 	static bool isGnome(void);
-	static int getColumnNumber(const QTableWidget *, const QString &);
+    //static int getColumnNumber(const QTableWidget *, const QString &);
 	static int sqliteQuerySize(const QString &,
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 							   const QMap<QString, QVariant> &,

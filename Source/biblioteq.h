@@ -84,7 +84,7 @@ public:
                     const QString &searchstrArg,
                     const int pagingType = NEW_PAGE);
   static QString homePath(void);
-  static void quit(const char *msg, const char *file, const int line);
+  //static void quit(const char *msg, const char *file, const int line);
   static void quit(void);
   void addError(const QString &type,
                 const QString &summary,

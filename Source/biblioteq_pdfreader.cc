@@ -172,10 +172,9 @@ void biblioteq_pdfreader::load(const QByteArray &data, const QString &fileName)
   Q_UNUSED(fileName);
 #endif
 }
-
+#ifdef BIBLIOTEQ_LINKED_WITH_POPPLER
 void biblioteq_pdfreader::load(const QString &fileName)
 {
-#ifdef BIBLIOTEQ_LINKED_WITH_POPPLER
   delete m_document;
   m_document = Poppler::Document::load(fileName);
 
@@ -203,14 +202,10 @@ void biblioteq_pdfreader::load(const QString &fileName)
     setWindowTitle(tr("BiblioteQ: PDF Reader (%1)").arg(fileName.trimmed()));
 
   slotShowPage(1);
-#else
-  Q_UNUSED(fileName);
-#endif
 }
 
 void biblioteq_pdfreader::prepareContents(void)
 {
-#ifdef BIBLIOTEQ_LINKED_WITH_POPPLER
   if (!m_document)
     return;
 
@@ -223,8 +218,8 @@ void biblioteq_pdfreader::prepareContents(void)
     item->setData(Qt::UserRole, i);
     m_ui.contents->addItem(item);
   }
-#endif
 }
+#endif
 
 void biblioteq_pdfreader::resizeEvent(QResizeEvent *event)
 {

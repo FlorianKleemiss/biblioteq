@@ -48,7 +48,6 @@ public:
   biblioteq_item(void);
   virtual ~biblioteq_item();
   QString getID(void) const;
-  int getOldQ(void) const;
   int getRow(void) const;
   void setOldQ(const int q);
   void updateQuantity(const int q);

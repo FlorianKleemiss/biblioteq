@@ -1,5 +1,4 @@
-FORMS           = \
-                  UI/biblioteq_bookcopybrowser.ui \
+FORMS           = UI/biblioteq_bookcopybrowser.ui \
                   UI/biblioteq_bookinfo.ui \
                   UI/biblioteq_branch_s.ui \
                   UI/biblioteq_copybrowser.ui \
@@ -22,41 +21,49 @@ FORMS           = \
                   UI/biblioteq_tracks.ui \
                   UI/biblioteq_z3950results.ui
 
-HEADERS		= Source/biblioteq.h \
+HEADERS         = Source/biblioteq.h \
+                  Source/CocoaInitializer.h \
+                  Source/biblioteq_architecture.h \
                   Source/biblioteq_bgraphicsscene.h \
-		  Source/biblioteq_book.h \
-		  Source/biblioteq_copy_editor.h \
-		  Source/biblioteq_copy_editor_book.h \
+                  Source/biblioteq_book.h \
+                  Source/biblioteq_callnum_table_item.h \
+                  Source/biblioteq_copy_editor.h \
+                  Source/biblioteq_copy_editor_book.h \
                   Source/biblioteq_dbenumerations.h \
                   Source/biblioteq_documentationwindow.h \
                   Source/biblioteq_files.h \
-		  Source/biblioteq_filesize_table_item.h \
+                  Source/biblioteq_filesize_table_item.h \
                   Source/biblioteq_generic_thread.h \
-		  Source/biblioteq_hyperlinked_text_edit.h \
+                  Source/biblioteq_graphicsitempixmap.h \
+                  Source/biblioteq_hyperlinked_text_edit.h \
                   Source/biblioteq_image_drop_site.h \
                   Source/biblioteq_import.h \
-		  Source/biblioteq_item.h \
+                  Source/biblioteq_item.h \
                   Source/biblioteq_main_table.h \
+                  Source/biblioteq_marc.h \
+                  Source/biblioteq_misc_functions.h \
                   Source/biblioteq_myqstring.h \
+                  Source/biblioteq_numeric_table_item.h \
+                  Source/biblioteq_open_library.h \
                   Source/biblioteq_otheroptions.h \
                   Source/biblioteq_pdfreader.h \
                   Source/biblioteq_photograph_compare.h \
-		  Source/biblioteq_photographcollection.h \
+                  Source/biblioteq_photographcollection.h \
                   Source/biblioteq_photograph_view.h \
                   Source/biblioteq_sqlite_create_schema.h \
                   Source/biblioteq_sqlite_merge_databases.h \
-		  Source/biblioteq_sruResults.h \
-		  Source/biblioteq_z3950results.h
+                  Source/biblioteq_sruResults.h \
+                  Source/biblioteq_z3950results.h
 
-RESOURCES	= Documentation/documentation.qrc \
+RESOURCES	    = Documentation/documentation.qrc \
                   Icons/icons.qrc \
                   Translations/translations.qrc
 
-SOURCES		= Source/biblioteq_a.cc \
+SOURCES         = Source/biblioteq_a.cc \
                   Source/biblioteq_b.cc \
                   Source/biblioteq_bgraphicsscene.cc \
                   Source/biblioteq_book.cc \
-		  Source/biblioteq_c.cc \
+                  Source/biblioteq_c.cc \
                   Source/biblioteq_callnum_table_item.cc \
                   Source/biblioteq_copy_editor.cc \
                   Source/biblioteq_copy_editor_book.cc \
@@ -64,7 +71,7 @@ SOURCES		= Source/biblioteq_a.cc \
                   Source/biblioteq_d.cc \
                   Source/biblioteq_documentationwindow.cc \
                   Source/biblioteq_files.cc \
-		  Source/biblioteq_filesize_table_item.cc \
+                  Source/biblioteq_filesize_table_item.cc \
                   Source/biblioteq_flo.cc \
                   Source/biblioteq_generic_thread.cc \
                   Source/biblioteq_hyperlinked_text_edit.cc \
@@ -86,19 +93,19 @@ SOURCES		= Source/biblioteq_a.cc \
                   Source/biblioteq_z3950results.cc
 
 TRANSLATIONS    = Translations/biblioteq_ar_JO.ts \
-		  Translations/biblioteq_cs_CZ.ts \
-		  Translations/biblioteq_de_DE.ts \
+                  Translations/biblioteq_cs_CZ.ts \
+                  Translations/biblioteq_de_DE.ts \
                   Translations/biblioteq_el_GR.ts \
                   Translations/biblioteq_es_AR.ts \
                   Translations/biblioteq_fr_FR.ts \
                   Translations/biblioteq_he_IL.ts \
-		  Translations/biblioteq_hu_HU.ts \
-		  Translations/biblioteq_it_IT.ts \
+                  Translations/biblioteq_hu_HU.ts \
+                  Translations/biblioteq_it_IT.ts \
                   Translations/biblioteq_nl_BE.ts \
                   Translations/biblioteq_nl_NL.ts \
-		  Translations/biblioteq_pl_PL.ts \
-		  Translations/biblioteq_pt_PT.ts \
-		  Translations/biblioteq_ru_RU.ts \
+                  Translations/biblioteq_pl_PL.ts \
+                  Translations/biblioteq_pt_PT.ts \
+                  Translations/biblioteq_ru_RU.ts \
                   Translations/biblioteq_zh_CN.ts
 
 UI_DIR          = temp
