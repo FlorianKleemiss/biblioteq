@@ -32,8 +32,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1186</width>
-         <height>658</height>
+         <width>1182</width>
+         <height>650</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -422,7 +422,7 @@
               <item>
                <widget class="QLabel" name="label_16">
                 <property name="text">
-                 <string>Page</string>
+                 <string>Page:</string>
                 </property>
                </widget>
               </item>
@@ -434,6 +434,20 @@
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
+                <property name="sizeAdjustPolicy">
+                 <enum>QComboBox::AdjustToContents</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_4">
+                <property name="text">
+                 <string>Sort By:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="sort_box">
                 <property name="sizeAdjustPolicy">
                  <enum>QComboBox::AdjustToContents</enum>
                 </property>
@@ -520,7 +534,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>333</width>
+                 <width>331</width>
                  <height>1594</height>
                 </rect>
                </property>

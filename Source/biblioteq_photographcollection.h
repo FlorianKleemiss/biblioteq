@@ -80,6 +80,7 @@ private slots:
   void slotViewNextPhotograph(void);
   void slotViewPhotograph(void);
   void slotViewPreviousPhotograph(void);
+  void slotSortByChanged(void);
 };
 
 #endif

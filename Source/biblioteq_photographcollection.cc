@@ -81,6 +81,7 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   connect(menu2->addAction(tr("&Current Page...")), SIGNAL(triggered()), this, SLOT(slotExportPhotographs()));
   connect(menu2->addAction(tr("&Selected...")), SIGNAL(triggered()), this, SLOT(slotExportPhotographs()));
   connect(pc.page, SIGNAL(currentIndexChanged(int)), this, SLOT(slotPageChanged(int)));
+  connect(pc.sort_box, SIGNAL(currentIndexChanged(int)), this, SLOT(slotSortByChanged()));
   connect(pc.graphicsView->scene(), SIGNAL(itemDoubleClicked()), this, SLOT(slotModifyItem()));
   pc.exportPhotographsToolButton->setMenu(menu2);
   connect(pc.exportPhotographsToolButton, SIGNAL(clicked()), pc.exportPhotographsToolButton, SLOT(showMenu()));
@@ -124,6 +125,10 @@ biblioteq_photographcollection::biblioteq_photographcollection(biblioteq *parent
   pc.splitter->setStretchFactor(0, 0);
   pc.splitter->setStretchFactor(1, 2);
   pc.splitter->setStretchFactor(2, 1);
+  pc.sort_box->insertItem(0, tr("ID"));
+  pc.sort_box->insertItem(1, tr("Title"));
+  pc.sort_box->insertItem(2, tr("Page Number"));
+  pc.sort_box->insertItem(3, tr("Delivery Number"));
   biblioteq_misc_functions::center(this, m_parentWid);
   biblioteq_misc_functions::hideAdminFields(this);
   biblioteq_misc_functions::highlightWidget(photo.id_item, QColor(255, 248, 220));
@@ -290,6 +295,7 @@ void biblioteq_photographcollection::insert(void)
   pc.page->clear();
   pc.page->addItem("1");
   pc.page->blockSignals(false);
+  pc.page->setCurrentIndex(0);
   storeData();
 #ifdef Q_OS_ANDROID
   showMaximized();
@@ -780,7 +786,7 @@ void biblioteq_photographcollection::modify(const int state,
     if (!m_engWindowTitle.contains("Create"))
     {
       showPhotographs(old_page - 1);
-      pc.page->setCurrentIndex(old_page - 1);
+      pc.page->setCurrentIndex(fmax(old_page - 1, 0));
     }
   }
 
@@ -837,22 +843,50 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
   QSqlQuery query(qmain->getDB());
 
   query.setForwardOnly(true);
+  QString orderBy("");
+  QString selection(pc.sort_box->currentText());
+
+  if (selection == "ID")
+  {
+    orderBy = "id";
+  }
+  else if (selection == "Page Number")
+  {
+    orderBy = "CAST(page_number AS INTEGER)";
+  }
+  else if (selection == "Delivery Number")
+  {
+    orderBy = "delivery_number";
+  }
+  else if (selection == "Title")
+  {
+    orderBy = "title";
+  }
+  else
+  {
+    orderBy = "myoid"; // Default case if none of the above match.
+  }
 
   if (photographsPerPage() == -1) // Unlimited.
   {
-    query.prepare("SELECT image_scaled, myoid FROM "
+    query.prepare("SELECT image_scaled, myoid, " + orderBy +
+                  " FROM "
                   "photograph WHERE "
                   "collection_oid = ? "
-                  "ORDER BY CAST(page_number AS INTEGER) ASC");
+                  "ORDER BY CAST(" +
+                  orderBy + " AS INTEGER) ASC");
     query.bindValue(0, m_oid);
   }
   else
   {
     auto temp = photographsPerPage();
-    query.prepare("SELECT image_scaled, myoid FROM "
+    query.prepare("SELECT image_scaled, myoid, " + orderBy +
+                  " FROM "
                   "photograph WHERE "
                   "collection_oid = ? "
-                  "ORDER BY CAST(page_number AS INTEGER) ASC "
+                  "ORDER BY CAST(" +
+                  orderBy +
+                  " AS INTEGER) ASC "
                   "LIMIT ? "
                   "OFFSET ?");
     query.bindValue(0, m_oid);
@@ -1075,7 +1109,7 @@ void biblioteq_photographcollection::slotDeleteItem(void)
   repaint();
   QApplication::processEvents();
   showPhotographs(old_page - 1);
-  pc.page->setCurrentIndex(old_page - 1);
+  pc.page->setCurrentIndex(fmax(old_page - 1, 0));
 }
 
 void biblioteq_photographcollection::slotExportItem(void)
@@ -1800,7 +1834,7 @@ void biblioteq_photographcollection::slotImportItems(void)
 
   pc.page->blockSignals(false);
   showPhotographs(old_page - 1);
-  pc.page->setCurrentIndex(old_page - 1);
+  pc.page->setCurrentIndex(fmax(old_page - 1, 0));
   QMessageBox::information(this,
                            tr("BiblioteQ: Information"),
                            tr("Imported a total of %1 image(s) from the "
@@ -2012,7 +2046,7 @@ void biblioteq_photographcollection::slotInsertItem(void)
 
   pc.page->blockSignals(false);
   showPhotographs(temp - 1);
-  pc.page->setCurrentIndex(temp - 1);
+  pc.page->setCurrentIndex(fmax(temp - 1, 0));
   photo.saveButton->disconnect(SIGNAL(clicked(void)));
   connect(photo.saveButton, SIGNAL(clicked()), this, SLOT(slotModifyItem()));
   return;
@@ -2050,6 +2084,14 @@ void biblioteq_photographcollection::slotPageChanged(const int &nr)
   pc.page->repaint();
   QApplication::processEvents();
   showPhotographs(nr);
+}
+
+void biblioteq_photographcollection::slotSortByChanged(void)
+{
+  pc.sort_box->repaint();
+  QApplication::processEvents();
+  auto temp = pc.page->currentText().toInt();
+  showPhotographs(temp - 1);
 }
 
 void biblioteq_photographcollection::slotPrint(void)
