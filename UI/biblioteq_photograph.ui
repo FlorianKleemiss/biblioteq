@@ -27,9 +27,9 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>0</y>
-        <width>516</width>
-        <height>1378</height>
+        <y>-354</y>
+        <width>526</width>
+        <height>1120</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -658,6 +658,7 @@ Catalogue</string>
   <tabstop>title_collection_item</tabstop>
   <tabstop>title_item</tabstop>
   <tabstop>title_old_item</tabstop>
+  <tabstop>title_description_item</tabstop>
   <tabstop>inventor_old_item</tabstop>
   <tabstop>inventor_new_item</tabstop>
   <tabstop>based_on_artist_item</tabstop>
@@ -678,11 +679,11 @@ Catalogue</string>
   <tabstop>notes_item</tabstop>
   <tabstop>place_of_storage_item</tabstop>
   <tabstop>link_button</tabstop>
-  <tabstop>select_image_item</tabstop>
   <tabstop>saveButton</tabstop>
   <tabstop>cancelButton</tabstop>
   <tabstop>thumbnail_item</tabstop>
   <tabstop>scrollArea</tabstop>
+  <tabstop>select_image_item</tabstop>
  </tabstops>
  <resources>
   <include location="../Icons/icons.qrc"/>
