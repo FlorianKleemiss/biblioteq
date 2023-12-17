@@ -838,19 +838,19 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
   QString orderBy("");
   QString selection(pc.sort_box->currentText());
 
-  if (selection == "ID")
+  if (selection == tr("ID"))
   {
     orderBy = "id";
   }
-  else if (selection == "Page Number")
+  else if (selection == tr("Page Number"))
   {
     orderBy = "CAST(page_number AS INTEGER)";
   }
-  else if (selection == "Delivery Number")
+  else if (selection == tr("Delivery Number"))
   {
-    orderBy = "delivery_number";
+    orderBy = "CAST(delivery_number AS INTEGER)";
   }
-  else if (selection == "Title")
+  else if (selection == tr("Title"))
   {
     orderBy = "title";
   }
@@ -865,8 +865,8 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
                   " FROM "
                   "photograph WHERE "
                   "collection_oid = ? "
-                  "ORDER BY CAST(" +
-                  orderBy + " AS INTEGER) ASC");
+                  "ORDER BY " +
+                  orderBy + " ASC");
     query.bindValue(0, m_oid);
   }
   else
@@ -876,9 +876,9 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
                   " FROM "
                   "photograph WHERE "
                   "collection_oid = ? "
-                  "ORDER BY CAST(" +
+                  "ORDER BY " +
                   orderBy +
-                  " AS INTEGER) ASC "
+                  " ASC "
                   "LIMIT ? "
                   "OFFSET ?");
     query.bindValue(0, m_oid);
@@ -1564,7 +1564,7 @@ void biblioteq_photographcollection::slotGo(void)
                      UNACCENT + "(LOWER(" + ESCAPE + "'%' || ? || '%')) AND ");
 
     searchstr.append("GROUP BY photograph_collection.title, "
-                     "photograph_collection.id, "
+                     "CAST(photograph_collection.id AS INTEGER), "
                      "photograph_collection.type, "
                      "photograph_collection.myoid, "
                      "photograph_collection.image_scaled");

@@ -177,12 +177,11 @@ int biblioteq::populateTable(const int search_type_arg,
 	{
 		if (typefilter == "All")
 		{
-
 			searchstr = QString("SELECT DISTINCT book.title, "
-								"book.id, "
+								"CAST(book.id AS INTEGER), "
 								"book.publisher, book.pdate, "
 								"book.category, "
-								"book.quantity, "
+								"CAST(book.quantity AS INTEGER), "
 								"book.type, "
 								"book.myoid, " +
 								bookFrontCover +
@@ -190,7 +189,7 @@ int biblioteq::populateTable(const int search_type_arg,
 								"book "
 								"UNION "
 								"SELECT DISTINCT photograph_collection.title, "
-								"photograph_collection.id, "
+								"CAST(photograph_collection.id AS INTEGER), "
 								"'', "
 								"'', "
 								"'', "
@@ -212,12 +211,12 @@ int biblioteq::populateTable(const int search_type_arg,
 		else if (typefilter == "Books")
 		{
 			searchstr = "SELECT DISTINCT book.title, "
-						"book.id, "
+						"CAST(book.id AS INTEGER), "
 						"book.author, "
 						"book.publisher, book.pdate, book.place, "
 						"book.edition, "
 						"book.category, "
-						"book.quantity, "
+						"CAST(book.quantity AS INTEGER), "
 						"book.binding_type, "
 						"book.isbn13, "
 						"book.lccontrolnumber, "
@@ -238,9 +237,9 @@ int biblioteq::populateTable(const int search_type_arg,
 		else if (typefilter == "Photograph Collections")
 		{
 			searchstr = "SELECT DISTINCT photograph_collection.title, "
-						"photograph_collection.id, "
+						"CAST(photograph_collection.id AS INTEGER), "
 						"photograph_collection.creation_date, "
-						"photograph_collection.total_number, "
+						"CAST(photograph_collection.total_number AS INTEGER), "
 						"COUNT(photograph.myoid) AS photograph_count, "
 						"photograph_collection.by_artist, "
 						"photograph_collection.notes, "
@@ -252,11 +251,7 @@ int biblioteq::populateTable(const int search_type_arg,
 						"LEFT JOIN photograph "
 						"ON photograph_collection.myoid = photograph.collection_oid "
 						"GROUP BY "
-						"photograph_collection.title, "
-						"photograph_collection.id, "
-						"photograph_collection.type, "
-						"photograph_collection.myoid, "
-						"photograph_collection.image_scaled "
+						"photograph_collection.myoid "
 						"ORDER BY CAST(photograph_collection.id AS INTEGER)" +
 						limitStr + offsetStr;
 		}
@@ -282,7 +277,7 @@ int biblioteq::populateTable(const int search_type_arg,
 			{
 				searchstr.append(searchstrArg);
 				searchstr.append("GROUP BY book.title, "
-								 "book.id, "
+								 "CAST(book.id AS INTEGER), "
 								 "book.author, "
 								 "book.publisher, book.pdate, book.place, "
 								 "book.edition, "
@@ -313,7 +308,7 @@ int biblioteq::populateTable(const int search_type_arg,
 			{
 				searchstr.append(searchstrArg);
 				searchstr.append("GROUP BY photograph_collection.title, "
-								 "photograph_collection.id, "
+								 "CAST(photograph_collection.id AS INTEGER), "
 								 "photograph_collection.type, "
 								 "photograph_collection.myoid, "
 								 "photograph_collection.image_scaled "
