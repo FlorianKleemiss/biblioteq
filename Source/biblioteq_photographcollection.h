@@ -43,10 +43,9 @@ private:
   void loadTwoPhotographFromItem(QGraphicsScene *scene1,
                                  QGraphicsScene *scene2,
                                  QGraphicsPixmapItem *item1,
-                                 QGraphicsPixmapItem *item2,
                                  const int percent);
   void loadPhotographFromItemInNewWindow(QGraphicsPixmapItem *item);
-  void loadcompareFromItemInNewWindow(QGraphicsPixmapItem *item1, QGraphicsPixmapItem *item2);
+  void loadcompareFromItemInNewWindow(QGraphicsPixmapItem *item1);
   void setSceneRect(const int size);
   void showPhotographs(const int &page);
   void storeData(void);

@@ -36,7 +36,6 @@
 #include <QtDebug>
 #include <QSortFilterProxyModel>
 
-#include <limits>
 
 #ifdef Q_OS_ANDROID
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 1, 0))
