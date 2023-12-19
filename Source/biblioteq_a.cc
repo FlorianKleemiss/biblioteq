@@ -206,7 +206,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(ui.action_Contributors, SIGNAL(triggered()), this, SLOT(slotContributors()));
   connect(ui.action_English, SIGNAL(triggered()), this, SLOT(slotShowDocumentation()));
   connect(ui.action_English_Release_Notes, SIGNAL(triggered()), this, SLOT(slotShowReleaseNotes()));
-  connect(ui.action_French_Release_Notes, SIGNAL(triggered()), this, SLOT(slotShowReleaseNotes()));
   connect(ui.action_Online_Documentation, SIGNAL(triggered()), this, SLOT(slotOpenOnlineDocumentation()));
   connect(ui.action_Open_PDF_File, SIGNAL(triggered()), this, SLOT(slotOpenPDFFiles()));
   connect(ui.action_Print_Icons_View, SIGNAL(triggered()), this, SLOT(slotPrintIconsView()));

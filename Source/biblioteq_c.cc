@@ -1751,7 +1751,6 @@ void biblioteq::slotDisconnect(void)
 	if (!ui.menuEntriesPerPage->actions().isEmpty())
 		ui.menuEntriesPerPage->actions().at(ui.menuEntriesPerPage->actions().size() - 1)->setEnabled(true);
 
-	ui.actionPopulate_Administrator_Browser_Table_on_Display->setEnabled(false);
 	ui.actionPopulate_Database_Enumerations_Browser_on_Display->setEnabled(false);
 	ui.actionDatabase_Enumerations->setEnabled(false);
 	ui.action_Database_Enumerations->setEnabled(false);
@@ -2250,8 +2249,6 @@ void biblioteq::slotSaveConfig(void)
 {
 	QSettings settings;
 
-	settings.setValue("automatically_populate_admin_list_on_display",
-					  ui.actionPopulate_Administrator_Browser_Table_on_Display->isChecked());
 	settings.setValue("automatically_populate_enum_list_on_display",
 					  ui.actionPopulate_Database_Enumerations_Browser_on_Display->isChecked());
 	settings.setValue("automatically_populate_on_create",

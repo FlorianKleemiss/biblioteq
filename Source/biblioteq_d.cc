@@ -255,10 +255,7 @@ void biblioteq::slotShowReleaseNotes(void)
 
   if (!m_releaseNotes.value(action))
   {
-    if (action == ui.action_French_Release_Notes)
-      m_releaseNotes[action] = new biblioteq_documentationwindow(QUrl("qrc:/Release-Notes-French.html"), this);
-    else
-      m_releaseNotes[action] = new biblioteq_documentationwindow(QUrl("qrc:/Release-Notes.html"), this);
+    m_releaseNotes[action] = new biblioteq_documentationwindow(QUrl("qrc:/Release-Notes.html"), this);
 
     m_releaseNotes.value(action)->setWindowTitle(tr("BiblioteQ: Release Notes"));
   }
