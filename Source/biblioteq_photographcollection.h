@@ -60,6 +60,7 @@ private slots:
   void slotExportPhotographs(void);
   void slotGo(void);
   void slotImageViewSizeChanged(const int &text);
+  void slotImageViewSizeChanged(const int &text, QGraphicsScene *scene1, QGraphicsScene *scene2);
   void slotImportItems(void);
   void slotInsertItem(void);
   void slotModifyItem(void);

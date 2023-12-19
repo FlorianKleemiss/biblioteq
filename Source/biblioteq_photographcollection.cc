@@ -1626,6 +1626,99 @@ void biblioteq_photographcollection::slotImageViewSizeChanged(const int &text)
   }
 }
 
+void biblioteq_photographcollection::slotImageViewSizeChanged(const int &text, QGraphicsScene *scene1, QGraphicsScene *scene2)
+{
+  auto comboBox = qobject_cast<QComboBox *>(sender());
+
+  if (!comboBox)
+    return;
+  auto percent = comboBox->itemText(text).remove("%").toInt();
+  if (scene1)
+  {
+    auto item = qgraphicsitem_cast<QGraphicsPixmapItem *>(scene1->items().value(0));
+
+    if (item)
+    {
+      QImage image;
+
+      if (image.loadFromData(item->data(1).toByteArray()))
+      {
+        QSize size;
+
+        if (percent == 0)
+        {
+          if (scene1->views().value(0))
+          {
+            scene1->setProperty("view_size", scene1->views().value(0)->size());
+            size = scene1->views().value(0)->size();
+          }
+          else
+            size = scene1->property("view_size").toSize();
+        }
+        else
+        {
+          size = image.size();
+          size.setHeight((percent * size.height()) / 100);
+          size.setWidth((percent * size.width()) / 100);
+        }
+
+        if (!image.isNull())
+          image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        item->setPixmap(QPixmap::fromImage(image));
+        scene1->setSceneRect(scene1->itemsBoundingRect());
+
+        auto view = qobject_cast<biblioteq_photograph_view *>(scene1->views().value(0));
+
+        if (view)
+          view->setBestFit(percent == 0);
+      }
+    }
+  }
+  if (scene2)
+  {
+    auto item2 = qgraphicsitem_cast<QGraphicsPixmapItem *>(scene2->items().value(0));
+
+    if (item2)
+    {
+      QImage image;
+
+      if (image.loadFromData(item2->data(1).toByteArray()))
+      {
+        QSize size;
+
+        if (percent == 0)
+        {
+          if (scene2->views().value(0))
+          {
+            scene2->setProperty("view_size", scene2->views().value(0)->size());
+            size = scene2->views().value(0)->size();
+          }
+          else
+            size = scene2->property("view_size").toSize();
+        }
+        else
+        {
+          size = image.size();
+          size.setHeight((percent * size.height()) / 100);
+          size.setWidth((percent * size.width()) / 100);
+        }
+
+        if (!image.isNull())
+          image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+        item2->setPixmap(QPixmap::fromImage(image));
+        scene2->setSceneRect(scene2->itemsBoundingRect());
+
+        auto view = qobject_cast<biblioteq_photograph_view *>(scene2->views().value(0));
+
+        if (view)
+          view->setBestFit(percent == 0);
+      }
+    }
+  }
+}
+
 void biblioteq_photographcollection::slotImportItems(void)
 {
   QFileDialog dialog(this);
@@ -2444,10 +2537,9 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow(QGraphicsPix
     ui.setupUi(mainWindow);
     mainWindow->resize(mainWindow->width(), qRound(0.95 * size().height()));
     connect(ui.closeButton, SIGNAL(clicked()), mainWindow, SLOT(close()));
-    connect(ui.view_size, SIGNAL(currentIndexChanged(int)), this, SLOT(slotImageViewSizeChanged(int)));
-
     auto scene = new QGraphicsScene(mainWindow);
     auto scene2 = new QGraphicsScene(mainWindow);
+    connect(ui.view_size, SIGNAL(currentIndexChanged(int)), this, SLOT(slotImageViewSizeChanged(int, scene, scene2)));
 
     biblioteq_misc_functions::center(mainWindow, this);
     mainWindow->hide();
