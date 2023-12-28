@@ -1330,8 +1330,6 @@ void biblioteq::slotAllGo(void)
 					   .arg(type.toLower().remove(" "));
 		}
 
-		QString ESCAPE("");
-
 		str.append(")");
 		str += " UNION ALL ";
 
@@ -1371,7 +1369,6 @@ void biblioteq::slotConnectDB(void)
 	}
 
 	QString drivers = "";
-	QString errorstr = "";
 	QString plugins = "";
 	QString str = "";
 	auto error = false;
