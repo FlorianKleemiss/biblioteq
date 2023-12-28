@@ -2539,7 +2539,13 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow(QGraphicsPix
     connect(ui.closeButton, SIGNAL(clicked()), mainWindow, SLOT(close()));
     auto scene = new QGraphicsScene(mainWindow);
     auto scene2 = new QGraphicsScene(mainWindow);
-    connect(ui.view_size, SIGNAL(currentIndexChanged(int)), this, SLOT(slotImageViewSizeChanged(int, scene, scene2)));
+    connect(ui.view_size,
+            static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+            this,
+            [this, scene, scene2](int index)
+            {
+              this->slotImageViewSizeChanged(index, scene, scene2);
+            });
 
     biblioteq_misc_functions::center(mainWindow, this);
     mainWindow->hide();
