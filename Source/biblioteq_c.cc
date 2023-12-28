@@ -1059,13 +1059,6 @@ void biblioteq::readConfig(void)
 	if (!found && !ui.menuPreferredZ3950Server->actions().isEmpty())
 		ui.menuPreferredZ3950Server->actions().at(0)->setChecked(true);
 
-	auto index = br.branch_name->findText(settings.value("previous_branch_name", "").toString());
-
-	if (index >= 0)
-		br.branch_name->setCurrentIndex(index);
-	else
-		br.branch_name->setCurrentIndex(0);
-
 	auto viewModeIndex = settings.value("view_mode_index", 1).toInt();
 
 	if (viewModeIndex < 0 || viewModeIndex > 1)
@@ -1226,28 +1219,16 @@ void biblioteq::readGlobalSetup(void)
 		settings.endGroup();
 	}
 
-	br.branch_name->clear();
+	QHash<QString, QString> hash;
 
-	auto list(m_branches.keys());
+	hash["branch_name"] = "local_db";
+	hash["hostname"] = "127.0.0.1";
+	hash["database_type"] = "sqlite";
+	hash["port"] = "-1";
+	hash["ssl_enabled"] = "false";
 
-	for (int i = 0; i < list.size(); i++)
-		br.branch_name->addItem(list.at(i));
-
-	if (br.branch_name->count() == 0)
-	{
-		QHash<QString, QString> hash;
-
-		hash["branch_name"] = "local_db";
-		hash["hostname"] = "127.0.0.1";
-		hash["database_type"] = "sqlite";
-		hash["port"] = "-1";
-		hash["ssl_enabled"] = "false";
-
-		if (!m_branches.contains(hash.value("branch_name")))
-			m_branches[hash.value("branch_name")] = hash;
-
-		br.branch_name->addItem(hash.value("branch_name"));
-	}
+	if (!m_branches.contains(hash.value("branch_name")))
+		m_branches[hash.value("branch_name")] = hash;
 
 	if (m_sruMaps.isEmpty())
 	{
@@ -1373,25 +1354,20 @@ void biblioteq::slotConnectDB(void)
 {
 	slotDisconnect();
 
-	auto tmphash(m_branches[br.branch_name->currentText()]);
+	QFileInfo fileInfo(br.filename->text());
 
-	if (tmphash.value("database_type") == "sqlite")
+	if (!fileInfo.exists() || !fileInfo.isReadable() || !fileInfo.isWritable())
 	{
-		QFileInfo fileInfo(br.filename->text());
+		QWidget *parent = this;
 
-		if (!fileInfo.exists() || !fileInfo.isReadable() || !fileInfo.isWritable())
-		{
-			QWidget *parent = this;
+		if (m_branch_diag->isVisible())
+			parent = m_branch_diag;
 
-			if (m_branch_diag->isVisible())
-				parent = m_branch_diag;
-
-			QMessageBox::critical(parent, tr("BiblioteQ: User Error"),
-								  tr("The selected SQLite file is not accessible. Please "
-									 "verify that the file exists, is readable, and is writable."));
-			QApplication::processEvents();
-			return;
-		}
+		QMessageBox::critical(parent, tr("BiblioteQ: User Error"),
+							  tr("The selected SQLite file is not accessible. Please "
+								 "verify that the file exists, is readable, and is writable."));
+		QApplication::processEvents();
+		return;
 	}
 
 	QString drivers = "";
@@ -1404,8 +1380,7 @@ void biblioteq::slotConnectDB(void)
 	** Configure some database attributes.
 	*/
 
-	if (tmphash.value("database_type") == "sqlite")
-		str = "QSQLITE";
+	str = "QSQLITE";
 
 	foreach (const auto &driver, QSqlDatabase::drivers())
 		drivers += driver + ", ";
@@ -1428,7 +1403,6 @@ void biblioteq::slotConnectDB(void)
 
 	if (!QSqlDatabase::isDriverAvailable(str))
 	{
-		tmphash.clear();
 
 		QFileInfo fileInfo("qt.conf");
 		QString str("");
@@ -1454,29 +1428,11 @@ void biblioteq::slotConnectDB(void)
 
 	m_db = QSqlDatabase::addDatabase(str, "Default");
 
-	if (tmphash.value("database_type") == "sqlite")
-		m_db.setDatabaseName(br.filename->text());
-	else
-	{
-		m_db.setHostName(tmphash.value("hostname"));
-		m_db.setDatabaseName(br.branch_name->currentText());
-		m_db.setPort(static_cast<int>(tmphash.value("port").toUShort()));
-	}
-
-	if (tmphash.value("database_type") != "sqlite")
-	{
-		auto str(tmphash.value("connection_options"));
-
-		if (tmphash.value("ssl_enabled") == "true")
-			str.append(";requiressl=1");
-
-		m_db.setConnectOptions(str);
-	}
+	m_db.setDatabaseName(br.filename->text());
 
 	QApplication::setOverrideCursor(Qt::WaitCursor);
 
-	if (tmphash.value("database_type") == "sqlite")
-		(void)m_db.open();
+	(void)m_db.open();
 
 	QApplication::restoreOverrideCursor();
 
@@ -1516,8 +1472,6 @@ void biblioteq::slotConnectDB(void)
 	if (!error)
 		m_roles = "administrator";
 
-	tmphash.clear();
-
 	if (error)
 	{
 		m_db = QSqlDatabase();
@@ -1537,9 +1491,6 @@ void biblioteq::slotConnectDB(void)
 	*/
 
 	QSettings settings;
-
-	settings.setValue("previous_branch_name", br.branch_name->currentText());
-	m_selectedBranch = m_branches[br.branch_name->currentText()];
 
 	if (m_connected_bar_label != nullptr)
 	{

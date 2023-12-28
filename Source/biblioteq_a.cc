@@ -267,7 +267,6 @@ biblioteq::biblioteq(void) : QMainWindow()
   connect(ui.disconnectTool, SIGNAL(triggered()), this, SLOT(slotDisconnect()));
   connect(ui.actionDisconnect, SIGNAL(triggered()), this, SLOT(slotDisconnect()));
   connect(br.okButton, SIGNAL(clicked()), this, SLOT(slotConnectDB()));
-  connect(br.branch_name, SIGNAL(activated(int)), this, SLOT(slotBranchChanged()));
   connect(ui.filesTool, SIGNAL(triggered()), this, SLOT(slotShowFiles()));
   connect(ui.searchTool, SIGNAL(triggered()), this, SLOT(slotShowMenu()));
   connect(ui.customQueryTool, SIGNAL(triggered()), this, SLOT(slotShowCustomQuery()));
@@ -1129,15 +1128,6 @@ void biblioteq::showMain(void)
 
         br.filename->setText(QFileInfo(list.at(i)).absoluteFilePath());
 
-        for (int j = 0; j < br.branch_name->count(); j++)
-          if (m_branches.contains(br.branch_name->itemText(j)))
-            if (m_branches[br.branch_name->itemText(j)].value("database_type") == "sqlite")
-            {
-              br.branch_name->setCurrentIndex(j);
-              slotConnectDB();
-              break;
-            }
-
         break;
       }
   }
@@ -1254,17 +1244,7 @@ void biblioteq::slotAutoPopOnFilter(QAction *action)
 
 void biblioteq::slotBranchChanged(void)
 {
-  QHash<QString, QString> tmphash;
-
-  tmphash = m_branches[br.branch_name->currentText()];
-
-  if (tmphash.value("database_type") == "sqlite")
-  {
-    br.stackedWidget->setCurrentIndex(0);
-    br.fileButton->setFocus();
-  }
-
-  tmphash.clear();
+  br.fileButton->setFocus();
   m_branch_diag->update();
   m_branch_diag->resize(m_branch_diag->width(),
                         m_branch_diag->minimumSize().height());
@@ -1594,62 +1574,21 @@ void biblioteq::slotDisplayNewSqliteDialog(void)
         ** Attempt to locate an SQLite branch.
         */
 
-        auto found = false;
-
-        for (int i = 0; i < br.branch_name->count(); i++)
+        if (QMessageBox::question(this,
+                                  tr("BiblioteQ: Question"),
+                                  tr("It appears that you are already "
+                                     "connected to a database. Do you "
+                                     "want to terminate the current connection "
+                                     "and connect to the new SQLite database?"),
+                                  QMessageBox::Yes | QMessageBox::No,
+                                  QMessageBox::No) == QMessageBox::Yes)
         {
-          if (m_branches.contains(br.branch_name->itemText(i)))
-            if (m_branches[br.branch_name->itemText(i)].value("database_type") == "sqlite")
-            {
-              found = true;
-              br.branch_name->setCurrentIndex(i);
-              break;
-            }
-        }
-
-        if (found)
-        {
-          if (QMessageBox::question(this,
-                                    tr("BiblioteQ: Question"),
-                                    tr("It appears that you are already "
-                                       "connected to a database. Do you "
-                                       "want to terminate the current connection "
-                                       "and connect to the new SQLite database?"),
-                                    QMessageBox::Yes | QMessageBox::No,
-                                    QMessageBox::No) == QMessageBox::Yes)
-          {
-            QApplication::processEvents();
-            br.filename->setText(dialog.selectedFiles().value(0));
-            slotConnectDB();
-          }
-          else
-            QApplication::processEvents();
-        }
-      }
-      else
-      {
-        /*
-        ** Attempt to locate an SQLite branch.
-        */
-
-        auto found = false;
-
-        for (int i = 0; i < br.branch_name->count(); i++)
-        {
-          if (m_branches.contains(br.branch_name->itemText(i)))
-            if (m_branches[br.branch_name->itemText(i)].value("database_type") == "sqlite")
-            {
-              found = true;
-              br.branch_name->setCurrentIndex(i);
-              break;
-            }
-        }
-
-        if (found)
-        {
+          QApplication::processEvents();
           br.filename->setText(dialog.selectedFiles().value(0));
           slotConnectDB();
         }
+        else
+          QApplication::processEvents();
       }
     }
     else
@@ -2121,16 +2060,6 @@ void biblioteq::slotResetLoginDialog(void)
 {
   br.filename->clear();
 
-  QSettings settings;
-  int index = 0;
-
-  index = br.branch_name->findText(settings.value("previous_branch_name").toString());
-
-  if (index >= 0)
-    br.branch_name->setCurrentIndex(index);
-  else
-    br.branch_name->setCurrentIndex(0);
-
   slotBranchChanged();
 }
 
@@ -2345,17 +2274,6 @@ void biblioteq::slotSqliteFileSelected(bool state)
 
   br.filename->setText(action->data().toString());
   br.filename->setCursorPosition(0);
-
-  for (int i = 0; i < br.branch_name->count(); i++)
-  {
-    if (m_branches.contains(br.branch_name->itemText(i)))
-      if (m_branches[br.branch_name->itemText(i)].value("database_type") ==
-          "sqlite")
-      {
-        br.branch_name->setCurrentIndex(i);
-        break;
-      }
-  }
 
   slotConnectDB();
   slotRefresh();

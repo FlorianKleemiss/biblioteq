@@ -2839,6 +2839,16 @@ void biblioteq_photographcollection::slotViewContextMenu(const QPoint &pos)
 
     QAction *action = nullptr;
     QMenu menu(this);
+    action = menu.addAction(tr("&View Photograph..."),
+                            this,
+                            SLOT(slotViewPhotograph(void)));
+    action->setData(pos);
+    action = menu.addAction(tr("&Show Comparison..."),
+                            this,
+                            SLOT(slotViewCompare(void)));
+    action->setData(pos);
+
+    menu.addSeparator();
 
     action = menu.addAction(tr("&Delete Photograph"),
                             this,
@@ -2856,15 +2866,6 @@ void biblioteq_photographcollection::slotViewContextMenu(const QPoint &pos)
     if (m_engWindowTitle != "Modify")
       action->setEnabled(false);
 
-    menu.addSeparator();
-    action = menu.addAction(tr("&View Photograph..."),
-                            this,
-                            SLOT(slotViewPhotograph(void)));
-    action->setData(pos);
-    action = menu.addAction(tr("&Show Comparison..."),
-                            this,
-                            SLOT(slotViewCompare(void)));
-    action->setData(pos);
     menu.exec(QCursor::pos());
   }
 }
