@@ -2536,6 +2536,7 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow(QGraphicsPix
     mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
     ui.setupUi(mainWindow);
     mainWindow->resize(mainWindow->width(), qRound(0.95 * size().height()));
+    mainWindow->setWindowFlags(windowFlags() | Qt::WindowMaximizeButtonHint);
     connect(ui.closeButton, SIGNAL(clicked()), mainWindow, SLOT(close()));
     auto scene = new QGraphicsScene(mainWindow);
     auto scene2 = new QGraphicsScene(mainWindow);
