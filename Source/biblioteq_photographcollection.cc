@@ -412,16 +412,17 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem(QGraphicsScene *s
                 image2.loadFromData(bytes2);
             }
 
-            QSize size1(500, 300);
+            QSize min(500, 300);
+            QSize size1, size2;
             if (image1.isNull())
             {
                 image1 = QImage(":/no_image.png");
-                image1 = image1.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                image1 = image1.scaled(min, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
             if (image2.isNull())
             {
                 image2 = QImage(":/no_image.png");
-                image2 = image2.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                image2 = image2.scaled(min, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
 
             if (!image1.isNull() && image1.size().width() < 500)
@@ -433,10 +434,25 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem(QGraphicsScene *s
             }
             if (!image2.isNull() && image2.size().width() < 500)
             {
-                size1 = image2.size();
-                size1.setHeight((500 * size1.height()) / size1.width());
-                size1.setWidth(500);
-                image2 = image2.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+                size2 = image2.size();
+                size2.setHeight((500 * size1.height()) / size1.width());
+                size2.setWidth(500);
+                image2 = image2.scaled(size2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            }
+            size1 = image1.size();
+            size2 = image2.size();
+            // Make it so both images are the same width.
+            if (size1.width() < size2.width())
+            {
+                size1.setHeight((size2.height() * size1.width()) / size2.width());
+                size1.setWidth(size2.width());
+                image1 = image1.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            }
+            else if (size2.width() < size1.width())
+            {
+                size2.setHeight((size1.height() * size2.width()) / size1.width());
+                size2.setWidth(size1.width());
+                image2 = image2.scaled(size2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
 
             QGraphicsPixmapItem *pixmapItem1 = nullptr;
@@ -490,17 +506,17 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem(QGraphicsScene *s
 
             if (view1)
             {
-                view1->horizontalScrollBar()->setValue(0);
                 view1->setBestFit(percent == 0);
                 view1->setImage(image1, format1, item1->data(0).toLongLong());
                 view1->verticalScrollBar()->setValue(0);
+                view1->horizontalScrollBar()->setValue(0);
             }
             if (view2)
             {
-                view2->horizontalScrollBar()->setValue(0);
                 view2->setBestFit(percent == 0);
                 view2->setImage(image2, format2, item1->data(0).toLongLong());
                 view2->verticalScrollBar()->setValue(0);
+                view2->horizontalScrollBar()->setValue(0);
             }
         }
     }
@@ -2570,6 +2586,7 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow(QGraphicsPix
         ui.view->setScene(scene);
         ui.view_2->setScene(scene2);
         loadTwoPhotographFromItem(scene, scene2, item1, ui.view_size->currentText().remove("%").toInt());
+        this->slotImageViewSizeChanged(ui.view_size->currentText().remove("%").toInt(), scene, scene2);
         mainWindow->show();
     }
 }

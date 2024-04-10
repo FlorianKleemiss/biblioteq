@@ -17,6 +17,8 @@
 #include <QTimer>
 #include <QXmlStreamReader>
 
+static QRegularExpression w_regex("\\W+");
+
 biblioteq_book::biblioteq_book(biblioteq *parentArg,
 							   const QString &oidArg,
 							   const QModelIndex &index) : QMainWindow(), biblioteq_item(index)
@@ -3357,7 +3359,7 @@ void biblioteq_book::slotPrintCallDewey(void)
 	QString html("");
 	auto list((id.callnum->text().trimmed() + " " +
 			   id.deweynum->text().trimmed())
-				  .split(QRegularExpression("\\W+"),
+                  .split(w_regex,
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 15, 0))
 						 Qt::SkipEmptyParts
 #else
