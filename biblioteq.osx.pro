@@ -1,10 +1,10 @@
 include(biblioteq-source.pro)
 purge.commands = find . -name '*~*' -exec rm -f {} \;
 
-CONFIG		+= app_bundle qt release thread warn_on
+CONFIG		+= app_bundle qt release thread
 DEFINES		+= QT_DEPRECATED_WARNINGS
 LANGUAGE	= C++
-QT		+= network sql
+QT		+= network sql printsupport widgets
 QT		-= webkit
 
 exists(/usr/local/opt/poppler-qt5/include/poppler/cpp) {
@@ -46,7 +46,7 @@ QMAKE_CXXFLAGS_RELEASE += -O3 \
                           -std=c++17
 QMAKE_DISTCLEAN += -r temp .qmake.cache .qmake.stash
 QMAKE_EXTRA_TARGETS = purge
-QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
+QMAKE_MACOSX_DEPLOYMENT_TARGET = 14.5
 
 ICON		= Icons/book.icns
 INCLUDEPATH	+= /usr/local/include \
@@ -54,7 +54,7 @@ INCLUDEPATH	+= /usr/local/include \
                    temp
 LIBS		+= -L/usr/local/lib \
                    -framework Cocoa \
-                   -lpq \
+                   #-lpq \
                    -lsqlite3
 
 exists(/usr/local/include/yaz) {
