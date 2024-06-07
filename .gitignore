@@ -13,3 +13,4 @@ java*
 *.user
 release*
 android*
+*.idx
