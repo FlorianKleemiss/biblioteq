@@ -62,6 +62,16 @@
            </item>
            <item>
             <property name="text">
+             <string>250%</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>200%</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>100%</string>
             </property>
            </item>
@@ -100,7 +110,10 @@
        <item>
         <widget class="biblioteq_photograph_view" name="view">
          <property name="renderHints">
-          <set>QPainter::Antialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+          <set>QPainter::Antialiasing|QPainter::LosslessImageRendering|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+         </property>
+         <property name="dragMode">
+          <enum>QGraphicsView::ScrollHandDrag</enum>
          </property>
         </widget>
        </item>

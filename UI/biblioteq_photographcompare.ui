@@ -109,22 +109,48 @@
          </layout>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="biblioteq_photograph_view" name="view">
-            <property name="renderHints">
-             <set>QPainter::Antialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="biblioteq_photograph_view" name="view_2">
-            <property name="renderHints">
-             <set>QPainter::Antialiasing|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
+         <widget class="QSplitter" name="splitter">
+          <property name="midLineWidth">
+           <number>3</number>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="handleWidth">
+           <number>6</number>
+          </property>
+          <property name="childrenCollapsible">
+           <bool>false</bool>
+          </property>
+          <widget class="biblioteq_photograph_view" name="view">
+           <property name="sizeAdjustPolicy">
+            <enum>QAbstractScrollArea::AdjustToContents</enum>
+           </property>
+           <property name="renderHints">
+            <set>QPainter::Antialiasing|QPainter::LosslessImageRendering|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+           </property>
+           <property name="dragMode">
+            <enum>QGraphicsView::ScrollHandDrag</enum>
+           </property>
+           <property name="resizeAnchor">
+            <enum>QGraphicsView::AnchorUnderMouse</enum>
+           </property>
+          </widget>
+          <widget class="biblioteq_photograph_view" name="view_2">
+           <property name="sizeAdjustPolicy">
+            <enum>QAbstractScrollArea::AdjustToContents</enum>
+           </property>
+           <property name="renderHints">
+            <set>QPainter::Antialiasing|QPainter::LosslessImageRendering|QPainter::SmoothPixmapTransform|QPainter::TextAntialiasing</set>
+           </property>
+           <property name="dragMode">
+            <enum>QGraphicsView::ScrollHandDrag</enum>
+           </property>
+           <property name="resizeAnchor">
+            <enum>QGraphicsView::AnchorUnderMouse</enum>
+           </property>
+          </widget>
+         </widget>
         </item>
        </layout>
       </widget>

@@ -4,7 +4,6 @@ include(biblioteq-source.pro)
 purge.commands = del /Q *~ && del /Q *\\*~
 
 CONFIG		+= qt thread warn_on windows
-#DEFINES         += BIBLIOTEQ_LINKED_WITH_YAZ
 LANGUAGE	= C++
 QT		+= network sql printsupport widgets
 QT		-= webkit d-bus test
@@ -77,16 +76,11 @@ libraries.files = Libraries.win32\\miscellaneous\\*.dll \
                   Libraries.win32\\yaz\\*.dll \
                   Libraries.win64\\*.exe
 libraries.path = release\\.
-plugins1.files = $$[QT_INSTALL_PLUGINS]\\*
+plugins1.files = $$[QT_INSTALL_PLUGINS]\\imageformats \
+                 $$[QT_INSTALL_PLUGINS]\\sqldrivers \
+                 $$[QT_INSTALL_PLUGINS]\\platforms \
+                 $$[QT_INSTALL_PLUGINS]\\styles
 plugins1.path = release\\plugins\\.
-plugins2.files = $$[QT_INSTALL_PLUGINS]\\gamepads\\xinputgamepad.dll
-plugins2.path = release\\plugins\\gamepads\\.
-plugins3.files = $$[QT_INSTALL_PLUGINS]\\platforms\\qdirect2d.dll
-plugins3.path = release\\plugins\\platforms\\.
-plugins4.files = $$[QT_INSTALL_PLUGINS]\\renderplugins\\scene2d.dll
-plugins4.path = release\\plugins\\renderplugins\\.
-pluginspurge.extra = del /Q /S *d.dll
-pluginspurge.path = release\\plugins\\.
 qt.files = Qt\\qt.conf
 qt.path = release\\.
 qtlibraries.files = $$[QT_INSTALL_BINS]\\Qt6Concurrent.dll \
@@ -110,12 +104,8 @@ sql2.path = release\\SQL\\.
 INSTALLS = biblioteq \
            data \
            plugins1 \
-           pluginspurge \
            libraries \
            documentation \
-           plugins2 \
-           plugins3 \
-           plugins4 \
            qt \
            qtlibraries \
            sql1 \
