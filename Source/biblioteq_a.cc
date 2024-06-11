@@ -306,7 +306,7 @@ biblioteq::biblioteq(void) : QMainWindow()
     connect(ui.table, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(slotContextMenu(QPoint)));
 
 #ifdef Q_OS_MACOS
-    foreach (auto tool_button, m_all_diag->findChildren<QToolButton *>())
+    foreach (auto tool_button, m_pass_diag->findChildren<QToolButton *>())
 #if (QT_VERSION < QT_VERSION_CHECK(5, 10, 0))
         tool_button->setStyleSheet("QToolButton {border: none; padding-right: 10px}"
                                    "QToolButton::menu-button {border: none;}");

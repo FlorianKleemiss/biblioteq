@@ -54,8 +54,8 @@ INCLUDEPATH	+= Include.win32 \
                    Source \
                    temp
 LIBS		+= -L"." \
-                   -L"..\\biblioteq\\Libraries.win32\\sqlite3\\" \
-                   -L"..\\biblioteq\\Libraries.win32\\yaz\\" \
+                   -L"..\\..\\Libraries.win32\\sqlite3\\" \
+                   -L"..\\..\\Libraries.win32\\yaz\\" \
                    -lsqlite3 \
                    -lyaz5
 RC_FILE		= biblioteq.win.rc
