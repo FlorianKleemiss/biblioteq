@@ -428,14 +428,14 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem(QGraphicsScene *s
             if (!image1.isNull() && image1.size().width() < 500)
             {
                 size1 = image1.size();
-                size1.setHeight((500 * size1.height()) / size1.width());
+                size1.setHeight((size1.width() * size1.height()) / 500);
                 size1.setWidth(500);
                 image1 = image1.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
             if (!image2.isNull() && image2.size().width() < 500)
             {
                 size2 = image2.size();
-                size2.setHeight((500 * size1.height()) / size1.width());
+                size2.setHeight((500 * size2.height()) / size2.width());
                 size2.setWidth(500);
                 image2 = image2.scaled(size2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
@@ -444,13 +444,13 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem(QGraphicsScene *s
             // Make it so both images are the same width.
             if (size1.width() < size2.width())
             {
-                size1.setHeight((size2.height() * size1.width()) / size2.width());
+                size1.setHeight((size2.height() * size2.width()) / size1.width());
                 size1.setWidth(size2.width());
                 image1 = image1.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
             else if (size2.width() < size1.width())
             {
-                size2.setHeight((size1.height() * size2.width()) / size1.width());
+                size2.setHeight((size1.height() * size1.width()) / size2.width());
                 size2.setWidth(size1.width());
                 image2 = image2.scaled(size2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
             }
@@ -520,6 +520,7 @@ void biblioteq_photographcollection::loadTwoPhotographFromItem(QGraphicsScene *s
             }
         }
     }
+    slotImageViewSizeChanged(percent, scene1, scene2);
 
     QApplication::restoreOverrideCursor();
 }
@@ -1664,88 +1665,114 @@ void biblioteq_photographcollection::slotImageViewSizeChanged(const int &text, Q
     if (!comboBox)
         return;
     auto percent = comboBox->itemText(text).remove("%").toInt();
+
+    QSize size1, size2;
+    QGraphicsPixmapItem *item1 = nullptr, *item2 = nullptr;
+    QImage image1, image2;
+    // Check for sizes and select the bigger one
     if (scene1)
     {
-        auto item = qgraphicsitem_cast<QGraphicsPixmapItem *>(scene1->items().value(0));
+        item1 = qgraphicsitem_cast<QGraphicsPixmapItem *>(scene1->items().value(0));
 
-        if (item)
+        if (item1)
         {
-            QImage image;
-
-            if (image.loadFromData(item->data(1).toByteArray()))
+            if (image1.loadFromData(item1->data(1).toByteArray()))
             {
-                QSize size;
 
                 if (percent == 0)
                 {
                     if (scene1->views().value(0))
                     {
                         scene1->setProperty("view_size", scene1->views().value(0)->size());
-                        size = scene1->views().value(0)->size();
+                        size1 = scene1->views().value(0)->size();
                     }
                     else
-                        size = scene1->property("view_size").toSize();
+                        size1 = scene1->property("view_size").toSize();
                 }
                 else
                 {
-                    size = image.size();
-                    size.setHeight((percent * size.height()) / 100);
-                    size.setWidth((percent * size.width()) / 100);
+                    size1 = image1.size();
+                    size1.setHeight((percent * size1.height()) / 100);
+                    size1.setWidth((percent * size1.width()) / 100);
                 }
-
-                if (!image.isNull())
-                    image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-                item->setPixmap(QPixmap::fromImage(image));
-                scene1->setSceneRect(scene1->itemsBoundingRect());
-
-                auto view = qobject_cast<biblioteq_photograph_view *>(scene1->views().value(0));
-
-                if (view)
-                    view->setBestFit(percent == 0);
             }
         }
     }
     if (scene2)
     {
-        auto item2 = qgraphicsitem_cast<QGraphicsPixmapItem *>(scene2->items().value(0));
+        item2 = qgraphicsitem_cast<QGraphicsPixmapItem *>(scene2->items().value(0));
 
         if (item2)
         {
-            QImage image;
-
-            if (image.loadFromData(item2->data(1).toByteArray()))
+            if (image2.loadFromData(item2->data(1).toByteArray()))
             {
-                QSize size;
-
                 if (percent == 0)
                 {
                     if (scene2->views().value(0))
                     {
                         scene2->setProperty("view_size", scene2->views().value(0)->size());
-                        size = scene2->views().value(0)->size();
+                        size2 = scene2->views().value(0)->size();
                     }
                     else
-                        size = scene2->property("view_size").toSize();
+                        size2 = scene2->property("view_size").toSize();
                 }
                 else
                 {
-                    size = image.size();
-                    size.setHeight((percent * size.height()) / 100);
-                    size.setWidth((percent * size.width()) / 100);
+                    size2 = image2.size();
+                    size2.setHeight((percent * size2.height()) / 100);
+                    size2.setWidth((percent * size2.width()) / 100);
                 }
-
-                if (!image.isNull())
-                    image = image.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-                item2->setPixmap(QPixmap::fromImage(image));
-                scene2->setSceneRect(scene2->itemsBoundingRect());
-
-                auto view = qobject_cast<biblioteq_photograph_view *>(scene2->views().value(0));
-
-                if (view)
-                    view->setBestFit(percent == 0);
             }
+        }
+    }
+
+    // compare and make same width
+    if (size1.width() > size2.width())
+    {
+        size2.setHeight((size1.width() * size2.height()) / size2.width());
+        size2.setWidth(size1.width());
+    }
+    else
+    {
+        size1.setHeight((size2.width() * size1.height()) / size1.width());
+        size1.setWidth(size2.width());
+    }
+    // Apply the size to the images
+    if (scene1)
+    {
+
+        if (item1)
+        {
+
+            if (!image1.isNull())
+                image1 = image1.scaled(size1, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            item1->setPixmap(QPixmap::fromImage(image1));
+            scene1->setSceneRect(scene1->itemsBoundingRect());
+
+            auto view = qobject_cast<biblioteq_photograph_view *>(scene1->views().value(0));
+
+            if (view)
+                view->setBestFit(percent == 0);
+        }
+    }
+
+    if (scene2)
+    {
+
+        if (item2)
+        {
+
+            if (!image2.isNull())
+                image2 = image2.scaled(size2, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+            item2->setPixmap(QPixmap::fromImage(image2));
+            scene2->setSceneRect(scene2->itemsBoundingRect());
+
+            auto view = qobject_cast<biblioteq_photograph_view *>(scene2->views().value(0));
+
+            if (view)
+                view->setBestFit(percent == 0);
         }
     }
 }
@@ -2586,7 +2613,6 @@ void biblioteq_photographcollection::loadcompareFromItemInNewWindow(QGraphicsPix
         ui.view->setScene(scene);
         ui.view_2->setScene(scene2);
         loadTwoPhotographFromItem(scene, scene2, item1, ui.view_size->currentText().remove("%").toInt());
-        this->slotImageViewSizeChanged(ui.view_size->currentText().remove("%").toInt(), scene, scene2);
         mainWindow->show();
     }
 }
