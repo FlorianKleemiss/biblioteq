@@ -2405,6 +2405,7 @@ void biblioteq_photographcollection::slotSceneSelectionChanged(void)
                       "material, "
                       "page_number, "
                       "place_of_storage, "
+                      "title_description, "
                       "image "
                       "FROM photograph "
                       "WHERE collection_oid = ? AND "
