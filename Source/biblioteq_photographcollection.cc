@@ -872,7 +872,7 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
 
     if (photographsPerPage() == -1) // Unlimited.
     {
-        query.prepare("SELECT image_scaled, myoid, " + orderBy +
+        query.prepare("SELECT image_scaled, myoid, image_original, " + orderBy +
                       " FROM "
                       "photograph WHERE "
                       "collection_oid = ? "
@@ -883,7 +883,7 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
     else
     {
         auto temp = photographsPerPage();
-        query.prepare("SELECT image_scaled, myoid, " + orderBy +
+        query.prepare("SELECT image_scaled, myoid, image_original, " + orderBy +
                       " FROM "
                       "photograph WHERE "
                       "collection_oid = ? "
@@ -936,6 +936,10 @@ void biblioteq_photographcollection::showPhotographs(const int &page)
                 image = image.scaled(126, 187, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
             pixmapItem = new biblioteq_graphicsitempixmap(QPixmap::fromImage(image), nullptr);
+
+            // Check if original image exists (query.value(2) is image_original)
+            bool hasOriginalImage = !query.value(2).isNull();
+            pixmapItem->setHasOriginalImage(hasOriginalImage);
 
             if (rowIdx == 0)
                 pixmapItem->setPos(140 * columnIdx + 15, 15);
@@ -1352,7 +1356,7 @@ void biblioteq_photographcollection::slotGo(void)
 
             if (buffer.open(QIODevice::WriteOnly))
             {
-                pc.thumbnail_collection->m_image.save(&buffer, pc.thumbnail_collection->m_imageFormat.toLatin1(), 100);
+                pc.thumbnail_collection->m_image.save(&buffer, "JPEG", 100);
                 query.bindValue(11, bytes.toBase64());
             }
             else
@@ -1371,8 +1375,7 @@ void biblioteq_photographcollection::slotGo(void)
 
             if (buffer.open(QIODevice::WriteOnly))
             {
-                image.save(&buffer, pc.thumbnail_collection->m_imageFormat.toLatin1(),
-                           100);
+                image.save(&buffer, "JPEG", 100);
                 query.bindValue(12, bytes.toBase64());
             }
             else
@@ -2035,7 +2038,7 @@ void biblioteq_photographcollection::slotInsertItem(void)
 
         if (buffer.open(QIODevice::WriteOnly))
         {
-            photo.thumbnail_item->m_image.save(&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
+            photo.thumbnail_item->m_image.save(&buffer, "JPEG", 100);
             query.bindValue(24, bytes.toBase64());
         }
         else
@@ -2054,7 +2057,7 @@ void biblioteq_photographcollection::slotInsertItem(void)
 
         if (buffer.open(QIODevice::WriteOnly))
         {
-            image.save(&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
+            image.save(&buffer, "JPEG", 100);
             query.bindValue(25, bytes.toBase64());
         }
         else
@@ -2780,7 +2783,7 @@ void biblioteq_photographcollection::slotUpdateItem(void)
 
         if (buffer.open(QIODevice::WriteOnly))
         {
-            photo.thumbnail_item->m_image.save(&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
+            photo.thumbnail_item->m_image.save(&buffer, "JPEG", 100);
             query.bindValue(23, bytes.toBase64());
         }
         else
@@ -2799,7 +2802,7 @@ void biblioteq_photographcollection::slotUpdateItem(void)
 
         if (buffer.open(QIODevice::WriteOnly))
         {
-            image.save(&buffer, photo.thumbnail_item->m_imageFormat.toLatin1(), 100);
+            image.save(&buffer, "JPEG", 100);
             query.bindValue(24, bytes.toBase64());
         }
         else

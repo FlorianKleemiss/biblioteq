@@ -35,10 +35,21 @@ class biblioteq_graphicsitempixmap : public QGraphicsPixmapItem
 public:
   biblioteq_graphicsitempixmap(const QPixmap &pixmap, QGraphicsItem *parent) : QGraphicsPixmapItem(pixmap, parent)
   {
+    m_hasOriginalImage = false;
   }
 
   ~biblioteq_graphicsitempixmap()
   {
+  }
+
+  void setHasOriginalImage(bool hasOriginal)
+  {
+    m_hasOriginalImage = hasOriginal;
+  }
+
+  bool hasOriginalImage() const
+  {
+    return m_hasOriginalImage;
   }
 
   void paint(QPainter *painter,
@@ -62,7 +73,37 @@ public:
 
     if (option->state & (QStyle::State_Selected | QStyle::State_HasFocus))
       qt_graphicsItem_highlightSelected(this, painter, option);
+
+    // Draw green tickmark if original image exists
+    if (m_hasOriginalImage)
+    {
+      QRectF rect = boundingRect();
+      qreal size = qMin(rect.width(), rect.height()) * 0.25; // 25% of smaller dimension
+      QRectF tickRect(rect.right() - size - 2, rect.bottom() - size - 2, size, size);
+
+      // Draw background circle
+      painter->setBrush(QColor(34, 139, 34)); // Forest green
+      painter->setPen(QPen(QColor(255, 255, 255), 1.5)); // White border
+      painter->drawEllipse(tickRect);
+
+      // Draw checkmark
+      painter->setPen(QPen(QColor(255, 255, 255), 2.0, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      
+      QPointF center = tickRect.center();
+      qreal checkSize = size * 0.5;
+      
+      // Draw checkmark path
+      QPointF p1(center.x() - checkSize * 0.3, center.y());
+      QPointF p2(center.x() - checkSize * 0.05, center.y() + checkSize * 0.3);
+      QPointF p3(center.x() + checkSize * 0.35, center.y() - checkSize * 0.35);
+      
+      painter->drawLine(p1, p2);
+      painter->drawLine(p2, p3);
+    }
   }
+
+private:
+  bool m_hasOriginalImage;
 };
 
 #endif

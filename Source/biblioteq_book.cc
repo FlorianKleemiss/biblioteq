@@ -2448,7 +2448,7 @@ void biblioteq_book::slotGo(void)
 
 			if (buffer.open(QIODevice::WriteOnly))
 			{
-				id.front_image->m_image.save(&buffer, id.front_image->m_imageFormat.toLatin1(), 100);
+                id.front_image->m_image.save(&buffer, "JPEG", 100);
 				query.bindValue(14, bytes.toBase64());
 			}
 			else
@@ -2477,7 +2477,7 @@ void biblioteq_book::slotGo(void)
 
 			if (buffer.open(QIODevice::WriteOnly))
 			{
-				id.back_image->m_image.save(&buffer, id.back_image->m_imageFormat.toLatin1(), 100);
+                id.back_image->m_image.save(&buffer, "JPEG", 100);
 				query.bindValue(15, bytes.toBase64());
 			}
 			else
